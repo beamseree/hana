@@ -1,0 +1,15 @@
+#!/bin/bash
+# Human-assisted native focus check; state flags cannot supply this verdict.
+set -euo pipefail
+printf '%s\n' 'In native full-screen Notes with all three Hana working windows open:'
+printf '%s\n' '1. Click the disposable Notes text area.'
+printf '%s\n' '2. Physically press Option+Space, then Command+2.'
+printf '%s\n' '3. Without clicking, type destination.'
+printf '%s\n' 'PASS only if Mock Note A appears and receives that typing without a click.'
+read -r -p 'Observed outcome (pass/fail/unclear): ' outcome
+printf 'DESTINATION_FOCUS=%s\n' "$outcome"
+case "$outcome" in
+    pass) exit 0 ;;
+    fail) exit 1 ;;
+    *) exit 2 ;;
+esac

@@ -21,7 +21,11 @@ These project-local documents are the working source of truth from this handoff 
 
 The window/focus prototype supports continuing with a single-process design on the tested Mac. Full-screen invocation, Dock/Command-Tab access, minimized windows and three-display pointer placement have user-observed evidence. The reported minimize anomaly did not recur in three follow-up checks; its original cause remains unknown. Candidate-based IME testing is explicitly deferred for current English/Thai use.
 
-The bounded milestone is tracked in spec #2. The #3 shell uses a documented local ad-hoc identity; physical acceptance is recorded separately from builds. App/file search, working windows and permission coverage remain later tickets. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
+The bounded milestone is tracked in spec #2. The #3 shell uses a documented local ad-hoc identity; physical acceptance is recorded separately from builds. Issue #4 adds validation-only working windows; app/file search and permission coverage remain later tickets. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
+
+## Working-window validation
+
+The native shell now includes Main and two separately identified mock note windows for [issue #4](https://github.com/beamseree/hana-searchbar/issues/4). All content is validation-only. See [controls and run instructions](docs/native-shell.md) and the [current runtime matrix](docs/evidence/issue-4/validation.md).
 
 ## Tracker
 

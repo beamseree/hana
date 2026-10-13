@@ -21,6 +21,11 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
         interaction.start()
     }
 
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        interaction?.open(.main)
+        return false
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
     func applicationWillTerminate(_ notification: Notification) { interaction?.stop() }
 }

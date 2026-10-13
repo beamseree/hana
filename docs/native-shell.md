@@ -1,6 +1,6 @@
-# Native Search shell — issue #3
+# Native Search shell and validation windows — issues #3–4
 
-This implements only [#3](https://github.com/beamseree/hana-searchbar/issues/3), under [parent #2](https://github.com/beamseree/hana-searchbar/issues/2). Search is an empty native input shell. There are no results, capture modes, working windows, or saved notes; `-`, `[`, pasted punctuation and Thai remain ordinary editor content. Hana is a local development label, not a final product name.
+This implements [#3](https://github.com/beamseree/hana-searchbar/issues/3) and [#4](https://github.com/beamseree/hana-searchbar/issues/4), under [parent #2](https://github.com/beamseree/hana-searchbar/issues/2). Search is an empty native input shell. Three ordinary working windows contain clearly labeled validation content and temporary keyboard focus probes. There are no results, capture modes, real note editing, organizer, or saved notes; `-`, `[`, pasted punctuation and Thai remain ordinary editor content. Hana is a local development label, not a final product name.
 
 ## Build, test, install and run
 
@@ -34,7 +34,7 @@ codesign --display -r- "$HOME/Applications/Hana.app"
 security find-identity -v -p codesigning
 ```
 
-The build product is `build/Hana.app`; the repeatable installed location is `~/Applications/Hana.app`. `scripts/run` refuses replacement while Hana is running. Normal `open` uses the existing process; do not use `open -n` to start competing instances. The executable is `Hana`, with stable bundle identifier **com.beamseree.hana** and `LSUIElement=true`. The app remains accessory with zero working windows; no Dock or Command-Tab presence is expected in this ticket.
+The build product is `build/Hana.app`; the repeatable installed location is `~/Applications/Hana.app`. `scripts/run` refuses replacement while Hana is running. Normal `open` uses the existing process; do not use `open -n` to start competing instances. The executable is `Hana`, with stable bundle identifier **com.beamseree.hana** and `LSUIElement=true`. The app is accessory with zero working windows and regular while any working window remains open, including minimized windows. Dock reopening explicitly opens/focuses Main, leaving the two mock note windows alone.
 
 No valid certificate identity was available on the tested Mac. The scripts explicitly use **ad-hoc signing**, no TeamIdentifier, no entitlements, no App Sandbox and no Hardened Runtime. Strict local signature validation is not notarization or public distribution readiness. The designated requirement for this ad-hoc build is a code hash; keeping the bundle identifier and installed path stable does **not** promise TCC permission continuity after a rebuild. No paid account is required for these local checks. No privacy grants or global shortcut/Spaces changes are performed.
 
@@ -44,7 +44,7 @@ No valid certificate identity was available on the tested Mac. The scripts expli
 
 The retained panel is nonactivating from construction, key-eligible but never main, at `.floating` (3). It uses `.canJoinAllSpaces`, `.fullScreenAuxiliary` and `.canJoinAllApplications`. Its rounded interior is opaque white; pixels outside its corners are transparent. The input is retained `NSTextView`, with native selection, paste and undo, black text/caret, and smart punctuation substitutions disabled. Empty Search has no hints, buttons, modes or results. Native composition sees Escape first. Temporary native menu/key loss does not by itself dismiss Search; candidate IME verification remains explicitly deferred.
 
-Escape orders out the nonactivating panel, releasing keyboard control to the still-active foreign origin where possible. No delayed origin activation is queued. Outside clicks and app/Space transitions dismiss without activating the old origin. The app does not attempt to reconstruct a foreign insertion point. Pointer placement uses that screen's `visibleFrame`, centers horizontally and clamps vertically and in size, including negative origins. Focused-window AX placement is later milestone work; this ticket uses the permitted initial pointer fallback without querying or requesting Accessibility.
+Escape orders out the nonactivating panel, releasing keyboard control to the still-active foreign origin where possible. No delayed origin activation is queued. Outside clicks and app/Space transitions dismiss without activating the old origin. The app does not attempt to reconstruct a foreign insertion point. For an app-owned origin, Escape restores its still-visible, nonminimized window and prior responder only while Hana remains the frontmost app. Explicit destination opening dismisses without origin restoration. Pointer placement uses that screen's `visibleFrame`, centers horizontally and clamps vertically and in size, including negative origins. Focused-window AX placement is later milestone work; this ticket uses the permitted initial pointer fallback without querying or requesting Accessibility.
 
 `GlobalShortcut` uses HIToolbox's exclusive registration. On failure the menu-bar title becomes **Hana !**, and the menu shows the OSStatus plus **use Search**. Menu invocation is independent of registration. Quit and relaunch after resolving a conflict; do not change system shortcuts for this test.
 
@@ -87,3 +87,14 @@ open "$HOME/Applications/Hana.app" --args --diagnostics
 ```
 
 Verify **Hana !**, the unavailable-shortcut menu message, and working **Search** menu invocation/typing. Stop the fixture with Control-C, quit Hana, and relaunch Hana. Startup should report registration status 0 and physical Option+Space should work again. This does not modify shortcut preferences or privacy settings.
+
+
+## Working-window validation controls — issue #4
+
+Hana's menu-bar menu and the native **Window** menu offer **Open Main**, **Open Mock Note A**, **Open Mock Note B**, **Minimize all working windows**, and **Close all working windows**. The Window menu also exposes native Minimize (⌘M) and Close (⌘W). Each open action reuses its existing window, deminiaturizing only the requested destination if needed. Closing discards that window's temporary focus-probe text; no collection or note exists.
+
+From the bar, **⌘1**, **⌘2**, and **⌘3** open/focus Main, Mock Note A, and Mock Note B respectively. These are validation shortcuts, not search results or capture commands. Empty Search stays input-only. Destination opening requests activation explicitly from the current frontmost app and selects its labeled keyboard focus probe. Naming that source fixed the physically reproduced failure where a plain activation request left Notes active in its full-screen Space. Activation acknowledgment alone is not focus proof. Normal Option+Space presentation neither activates Hana nor changes policy or orders working windows.
+
+The registry is internal to Mac Interaction and owns retained AppKit window controllers keyed by three typed validation destinations. Only closing removes membership; minimizing does not. The app delegate routes Dock reopening to `open(.main)` and suppresses AppKit's default reopen handling. An invocation-bound `open(destination, from:)` ignores an obsolete session before touching any window or focus. No delayed activation/restore callback is scheduled.
+
+Working-window diagnostics add numeric validation IDs (1 Main, 2 Mock Note A, 3 Mock Note B), minimized/visible/key/active-Space state, open/close/minimize events, and activation-policy transition success. Probe contents are not logged. See the [issue #4 runtime matrix](evidence/issue-4/validation.md) for current evidence and the physical procedure. Prior #1/#3 observations are not automatically passes for this integration.
