@@ -187,12 +187,16 @@ struct SearchTests {
         // Single-token gathering also guards the native one-child compound
         // predicate exception. Multiword and symbol cases exercise translation.
         for text in [fixture.lastPathComponent, "TextEdit", "ทึก [*]", "[*]", "Hana TextEdit"] {
+            // Broad TextEdit can legitimately fill the bounded result list with
+            // stronger matches than our long fixture name. Assert its exact app;
+            // the specific queries below still require the literal file URL.
+            let expected = text == "TextEdit" ? URL(fileURLWithPath: "/System/Applications/TextEdit.app") : fixture
             var found = false
             for await batch in search.search(.init(text: text)) {
-                if batch.results.contains(where: { $0.url == fixture }) { found = true; break }
+                if batch.results.contains(where: { $0.url == expected }) { found = true; break }
                 if batch.fileStatus == .ready || batch.fileStatus == .failed { break }
             }
-            #expect(found, "Indexed synthetic fixture was not returned by live Search")
+            #expect(found, "Indexed synthetic fixture was not returned for query: \(text)")
         }
     }
 

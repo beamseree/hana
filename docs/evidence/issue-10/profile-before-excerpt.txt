@@ -1,0 +1,24 @@
+Call graph:
+    3020 Thread_229949669: Main Thread   DispatchQueue_<multiple>
+    + 2218 completeTaskWithClosure(swift::AsyncContext*, swift::SwiftError*)  (in libswift_Concurrency.dylib) + 1  [0x28c092ec5]
+    + ! 2216 partial apply for specialized thunk for @escaping @isolated(any) @callee_guaranteed @async () -> (@out A)  (in Hana) + 1  [0x10419682d]
+    + ! : 2216 specialized thunk for @escaping @isolated(any) @callee_guaranteed @async () -> (@out A)  (in Hana) + 1  [0x104196855]
+    + ! :   2127 partial apply for closure #2 in SpotlightSource.changed(_:)  (in Hana) + 1  [0x104196861]
+    + ! :   | 1575 closure #2 in SpotlightSource.changed(_:)  (in Hana) + 572  [0x10418f040]  SpotlightSource.swift:122
+    + ! :   | + 1538 closure #1 in closure #2 in SpotlightSource.changed(_:)  (in Hana) + 496  [0x10418fd44]  SpotlightSource.swift:126
+    + ! :   | + ! 1538 -[NSMetadataItem valueForAttribute:]  (in Foundation) + 168  [0x18995cdd8]
+    + ! :   | + !   1538 MDItemCopyAttribute  (in Metadata) + 248  [0x191be8bc4]
+    + ! :   | + !     1524 __newAttr  (in Metadata) + 752  [0x191be8ef8]
+    + ! :   | + !     : 1521 fetchAttributesForItems  (in Metadata) + 228  [0x191c17a04]
+    + ! :   | + !     : | 1509 sendServerMessageWithTimeout  (in Metadata) + 80  [0x191be9a78]
+    + ! :   | + !     : | + 1507 xpc_connection_send_message_with_reply_sync  (in libxpc.dylib) + 284  [0x187c9deb0]
+    + ! :   | + !     : | + ! 1507 dispatch_mach_send_with_result_and_wait_for_reply  (in libdispatch.dylib) + 60  [0x187e24004]
+    + ! :   | + !     : | + !   1497 _dispatch_mach_send_and_wait_for_reply  (in libdispatch.dylib) + 548  [0x187e23c64]
+    + ! :   | + !     : | + !   : 1497 mach_msg  (in libsystem_kernel.dylib) + 24  [0x187f7ffc0]
+    + ! :   | + !     : | + !   :   1497 mach_msg_overwrite  (in libsystem_kernel.dylib) + 480  [0x187f889c0]
+    + ! :   | + !     : | + !   :     1497 mach_msg2_internal  (in libsystem_kernel.dylib) + 76  [0x187f92574]
+    + ! :   | + !     : | + !   :       1497 mach_msg2_trap  (in libsystem_kernel.dylib) + 8  [0x187f7fc34]
+    + ! :   | + !     : | + !   9 _dispatch_mach_send_and_wait_for_reply  (in libdispatch.dylib) + 296  [0x187e23b68]
+    + ! :   | + !     : | + !   : 9 _dispatch_mach_send_msg  (in libdispatch.dylib) + 392  [0x187e238dc]
+    + ! :   | + !     : | + !   :   9 _dispatch_mach_send_drain  (in libdispatch.dylib) + 288  [0x187e26fa0]
+    + ! :   | + !     : | + !   :     9 _dispatch_mach_msg_send  (in libdispatch.dylib) + 900  [0x187e27784]

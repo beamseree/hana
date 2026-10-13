@@ -7,7 +7,15 @@ import sys
 from pathlib import Path
 
 rows = [json.loads(line) for line in Path(sys.argv[1]).read_text().splitlines()]
-complete = {row['run'] for row in rows if row['event'] == 'performance.complete'}
+finished = {row['run'] for row in rows if row['event'] == 'performance.complete'}
+complete = set()
+for run in finished:
+    integrated = [r for r in rows if r.get('run') == run and r['event'] == 'performance.integrated']
+    local = [r for r in rows if r.get('run') == run and r['event'] == 'performance.local']
+    if (len(integrated) == 31 and len(local) == 31
+            and all(r['contextIntact'] and r['appFound'] and r['fileFound'] for r in integrated)
+            and all(r['found'] for r in local)):
+        complete.add(run)
 rows = [row for row in rows if row.get('run') in complete]
 
 def describe(values):
@@ -16,7 +24,8 @@ def describe(values):
             'p95_nearest_rank': values[math.ceil(len(values) * .95) - 1],
             'max': max(values)} if values else {'n': 0}
 
-output = {'complete_runs': len(complete), 'units': 'milliseconds', 'groups': {}}
+output = {'finished_runs': len(finished), 'complete_uninterrupted_runs': len(complete),
+          'excluded_incomplete_runs': sorted(finished - complete), 'units': 'milliseconds', 'groups': {}}
 for event, cold_key, fields in [
     ('performance.integrated', 'coldProcessSample', [
         'presentationCallMilliseconds', 'nativeInsertionCallMilliseconds',

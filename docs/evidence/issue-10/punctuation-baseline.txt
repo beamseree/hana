@@ -1,0 +1,29 @@
+[0/1] Planning build
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/7] Emitting module Hana
+[4/7] Compiling Hana SpotlightSource.swift
+[4/9] Write Objects.LinkFileList
+[5/9] Linking Hana
+[6/9] Applying Hana
+[8/10] Emitting module HanaTests
+[8/10] Write Objects.LinkFileList
+[9/10] Linking HanaPackageTests
+Build complete! (2.02s)
+Test Suite 'Selected tests' started at 2026-10-13 17:20:32.113.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 17:20:32.114.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 17:20:32.114.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 17:20:32.114.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchTests started.
+􀟈  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() started.
+􀢄  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() recorded an issue at SearchTests.swift:195:13: Expectation failed: found
+􀄵  Indexed synthetic fixture was not returned for query: TextEdit
+􀢄  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() failed after 5.948 seconds with 1 issue.
+􀢄  Suite SearchTests failed after 5.948 seconds with 1 issue.
+􀢄  Test run with 1 test in 1 suite failed after 5.948 seconds with 1 issue.

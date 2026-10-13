@@ -1,0 +1,14 @@
+Building for production...
+[0/4] Write sources
+[1/4] Write swift-version--112E4EF74740DA65.txt
+[3/5] Compiling Hana ApplicationCatalog.swift
+[3/5] Write Objects.LinkFileList
+[4/5] Linking Hana
+Build complete! (10.16s)
+/Users/beamsereeyothin/.codex/worktrees/317b/hana/build/Hana.app/Contents/Info.plist: OK
+/Users/beamsereeyothin/.codex/worktrees/317b/hana/build/Hana.app: replacing existing signature
+/Users/beamsereeyothin/.codex/worktrees/317b/hana/build/Hana.app: valid on disk
+/Users/beamsereeyothin/.codex/worktrees/317b/hana/build/Hana.app: satisfies its Designated Requirement
+/Users/beamsereeyothin/.codex/worktrees/317b/hana/build/Hana.app
+/Users/beamsereeyothin/Applications/Hana.app: valid on disk
+/Users/beamsereeyothin/Applications/Hana.app: satisfies its Designated Requirement
