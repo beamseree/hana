@@ -51,14 +51,18 @@ struct SearchResultsView: View {
         .environment(\.colorScheme, .light)
     }
 
-    // Icon and name columns line up with the mode icon and query text above.
+    // Icons center on the mode icon and names start with the query text. The
+    // surface sits cardPadding inside the card.
+    private static let iconLeading = BarStyle.modeIconFrame.midX - BarStyle.cardPadding - BarStyle.resultIconSize / 2
+    private static let nameLeading = BarStyle.textInset - BarStyle.cardPadding - iconLeading - BarStyle.resultIconSize
+
     private func row(_ result: SearchResult) -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Self.nameLeading) {
             icon(result)
-                .frame(width: 28, height: 28)
+                .frame(width: BarStyle.resultIconSize, height: BarStyle.resultIconSize)
                 // Arrival swaps the image in place, never animated.
                 .transaction { $0.animation = nil }
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 1) {
                 Text(result.name).font(.system(size: 16)).tracking(-0.16).lineLimit(1)
                 Text(result.subtitle).font(.system(size: 12))
                     .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
@@ -68,7 +72,7 @@ struct SearchResultsView: View {
             Text(result.typeLabel).font(.system(size: 12))
                 .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
         }
-        .padding(.horizontal, 8).frame(height: Self.rowHeight)
+        .padding(.leading, Self.iconLeading).padding(.trailing, 8).frame(height: Self.rowHeight)
         .background(selectedID == result.id ? Color.black.opacity(0.06) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: BarStyle.cardRadius - BarStyle.cardPadding))
         .contentShape(Rectangle())

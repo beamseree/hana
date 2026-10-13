@@ -26,7 +26,7 @@ actor ResultIcons {
     private var uses = 0
     var cachedCount: Int { entries.count }
 
-    init(pointSize: CGFloat = 28, capacity: Int = 128) {
+    init(pointSize: CGFloat = BarStyle.resultIconSize, capacity: Int = 128) {
         self.pointSize = pointSize
         self.capacity = max(1, capacity)
     }
@@ -43,8 +43,9 @@ actor ResultIcons {
         }
         // Rasterise outside the actor so one slow bundle never holds back other rows.
         let pixels = Int((pointSize * scale).rounded())
+        let artwork = (pointSize - 2) / pointSize
         guard let icon = await Task.detached(priority: .userInitiated, operation: {
-            Self.rasterise(key.application, pixels: pixels, scale: scale)
+            Self.rasterise(key.application, pixels: pixels, artwork: artwork, scale: scale)
         }).value else {
             entries[key] = nil
             return nil
@@ -56,7 +57,7 @@ actor ResultIcons {
         return icon
     }
 
-    private nonisolated static func rasterise(_ application: URL, pixels: Int, scale: CGFloat) -> ResultIcon? {
+    private nonisolated static func rasterise(_ application: URL, pixels: Int, artwork: CGFloat, scale: CGFloat) -> ResultIcon? {
         // The workspace answers even for a missing or locked path, with a
         // generic image. Those fall back to the row's own symbol instead.
         guard access(application.path, R_OK | X_OK) == 0 else { return nil }
@@ -65,9 +66,9 @@ actor ResultIcons {
               let context = CGContext(data: nil, width: pixels, height: pixels, bitsPerComponent: 8, bytesPerRow: 0,
                                       space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
         // macOS draws app artwork in the central 824 of its 1024-point canvas.
-        // Trim that margin so the artwork spans 26 of 28 points, the Hana
-        // logo's extent, within the unchanged frame.
-        let edge = CGFloat(pixels) * (26.0 / 28.0) / (824.0 / 1024.0)
+        // Trim that margin so the artwork fills the frame, less a 1-point
+        // shadow margin on each side.
+        let edge = CGFloat(pixels) * artwork / (824.0 / 1024.0)
         let offset = (CGFloat(pixels) - edge) / 2
         // NSGraphicsContext.current is per-thread, so drawing here stays off the main actor.
         NSGraphicsContext.saveGraphicsState()

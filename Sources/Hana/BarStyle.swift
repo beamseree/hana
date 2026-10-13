@@ -13,6 +13,12 @@ enum BarStyle {
     static let cardRadius = bezelRadius - inset
     /// Card padding around the input row and the results, and the gap between them.
     static let cardPadding: CGFloat = 8
+    /// The mode icon's gutter in card coordinates. Result icons share its center.
+    static let modeIconFrame = NSRect(x: 16, y: 16, width: 28, height: 28)
+    /// Larger than the mode icon so app artwork reads at a glance.
+    nonisolated static let resultIconSize: CGFloat = 32
+    /// Where query text and result names begin, in card coordinates.
+    static let textInset: CGFloat = 58
 
     static let font = NSFont.systemFont(ofSize: 26)
     static let textColor = NSColor(srgbRed: 0x17 / 255, green: 0x17 / 255, blue: 0x17 / 255, alpha: 1)

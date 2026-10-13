@@ -70,7 +70,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         self.search = search
         self.launchApplication = launchApplication
         self.openFile = openFile
-        let icons = ResultIcons()
+        let icons = ResultIcons(pointSize: BarStyle.resultIconSize)
         self.loadIcon = loadIcon ?? { await icons.icon(for: $0, scale: $1) }
         super.init()
         configurePanel()
@@ -289,14 +289,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             width: BarStyle.width - 2 * BarStyle.inset, height: BarStyle.inputHeight))
         card.autoresizingMask = [.width, .height]
         bezel.addSubview(card)
-        modeIcon.frame = NSRect(x: 16, y: 16, width: 28, height: 28)
+        modeIcon.frame = BarStyle.modeIconFrame
         modeIcon.autoresizingMask = [.minYMargin]
         modeIcon.image = NSImage.hanaLogo
         modeIcon.contentTintColor = BarStyle.iconColor
         modeIcon.setAccessibilityElement(false)
         card.addSubview(modeIcon)
 
-        let scroll = NSScrollView(frame: NSRect(x: 54, y: 10, width: card.frame.width - 54 - 16, height: 40))
+        let scroll = NSScrollView(frame: NSRect(x: BarStyle.textInset, y: 10, width: card.frame.width - BarStyle.textInset - 16, height: 40))
         scroll.autoresizingMask = [.width, .minYMargin]
         scroll.drawsBackground = false
         scroll.hasHorizontalScroller = false
