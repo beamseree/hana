@@ -1,18 +1,18 @@
 # Issue tracker: GitHub
 
-Specs, implementation tickets and bugs live in [beamseree/hana-searchbar](https://github.com/beamseree/hana-searchbar/issues). This is a private repository with a temporary name. A request to publish a spec means creating or updating a GitHub issue there. Read existing issues before creating a duplicate.
+Specs, implementation tickets and bugs live in [beamseree/hana](https://github.com/beamseree/hana/issues). This is a private repository. A request to publish a spec means creating or updating a GitHub issue there. Read existing issues before creating a duplicate.
 
 ## Access
 
-Use `./scripts/github` from the project root, or the connected GitHub tools with `repository_full_name: beamseree/hana-searchbar`. The script runs the installed `gh` CLI using an existing `GH_TOKEN`/`GITHUB_TOKEN`, or the standard Git HTTPS credential helper for `github.com`. It neither stores nor prints a token. The existing personal-repository credential is sufficient; setting up this tracker did not grant new scopes. If the helper has no credential, authenticate through the normal GitHub flow rather than putting tokens in project files.
+Use `./scripts/github` from the project root, or the connected GitHub tools with `repository_full_name: beamseree/hana`. The script runs the installed `gh` CLI using an existing `GH_TOKEN`/`GITHUB_TOKEN`, or the standard Git HTTPS credential helper for `github.com`. It neither stores nor prints a token. The existing personal-repository credential is sufficient; setting up this tracker did not grant new scopes. If the helper has no credential, authenticate through the normal GitHub flow rather than putting tokens in project files.
 
 Always name the repository explicitly in CLI issue/PR operations, especially when working inside the independent local prototype repository.
 
 ```sh
-./scripts/github issue list --repo beamseree/hana-searchbar --state open --json number,title,labels
-./scripts/github issue view NUMBER --repo beamseree/hana-searchbar --json number,title,body,labels,comments
-./scripts/github issue create --repo beamseree/hana-searchbar --title 'TITLE' --body-file /path/to/body.md --label ready-for-agent
-./scripts/github issue edit NUMBER --repo beamseree/hana-searchbar --add-label ready-for-agent
+./scripts/github issue list --repo beamseree/hana --state open --json number,title,labels
+./scripts/github issue view NUMBER --repo beamseree/hana --json number,title,body,labels,comments
+./scripts/github issue create --repo beamseree/hana --title 'TITLE' --body-file /path/to/body.md --label ready-for-agent
+./scripts/github issue edit NUMBER --repo beamseree/hana --add-label ready-for-agent
 ```
 
 Use UTF-8 body files for multiline issue, PR and comment text. Read the issue and applicable project documents before changing scope. Use [triage-labels.md](triage-labels.md) for label semantics; readiness requires sufficient scope and acceptance criteria.

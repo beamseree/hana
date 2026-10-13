@@ -87,9 +87,9 @@ The interview created no code. Subsequent work added an isolated native prototyp
 
 | Field | Value |
 | --- | --- |
-| Local path | `/Users/beamsereeyothin/Documents/Projects/macos-shapeshifting-searchbar` |
+| Local path | `/Users/beamsereeyothin/Documents/Projects/hana` |
 | Working branch | `main` for project documentation and tracker setup; `prototype/window-focus` for the isolated experiment |
-| Remote | Private GitHub repository: [beamseree/hana-searchbar](https://github.com/beamseree/hana-searchbar) (temporary name) |
+| Remote | Private GitHub repository: [beamseree/hana](https://github.com/beamseree/hana) |
 | Stack | AppKit/SwiftUI and SQLite through GRDB selected in technical design; no implementation yet |
 
 ## Related
@@ -113,4 +113,6 @@ The interview created no code. Subsequent work added an isolated native prototyp
 - 2026-10-13: Beam confirmed shared understanding and requested the dedicated project directory. Working documentation now lives there; this vault retains the interview record.
 - 2026-10-13: Technical architecture documented separately. Beam clarified that working windows need Dock and Command-Tab access, superseding his earlier menu-bar-only answer in that design session. No app code or native prototype was created.
 
-- 2026-10-13: Set up the private `beamseree/hana-searchbar` GitHub repository and Issues tracker; temporary name only. Existing product scope is unchanged.
+- 2026-10-13: Set up the private `beamseree/hana` GitHub repository and Issues tracker. Existing product scope is unchanged.
+
+- 2026-10-13: Renamed the GitHub repository to `beamseree/hana` and the local project folder to `hana`. A compatibility symlink at the former local path keeps existing chats usable. Product scope is unchanged.

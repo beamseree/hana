@@ -1,6 +1,6 @@
 # Issue #4 working-window validation — 2026-10-13
 
-Scope: [#4](https://github.com/beamseree/hana-searchbar/issues/4), under parent #2. Branch `codex/issue-4-working-windows`; review baseline `d71eee798674c2a6a8800ef4977bde4e21db9243` (merged PR #11), confirmed by Beam. GitHub #3 is closed, PR #11 is merged, and its merge commit is an ancestor of this branch. No other ticket is implemented.
+Scope: [#4](https://github.com/beamseree/hana/issues/4), under parent #2. Branch `codex/issue-4-working-windows`; review baseline `d71eee798674c2a6a8800ef4977bde4e21db9243` (merged PR #11), confirmed by Beam. GitHub #3 is closed, PR #11 is merged, and its merge commit is an ancestor of this branch. No other ticket is implemented.
 
 ## Environment and build
 
@@ -64,7 +64,7 @@ No automated test was added to claim this native activation fix. The existing un
 
 ## Prototype and documented capability
 
-Read-only Git-object inspection of preserved [#1 matrix](https://github.com/beamseree/hana-searchbar/blob/prototype/window-focus/prototypes/window-focus/TEST-MATRIX.md) and [minimize investigation](https://github.com/beamseree/hana-searchbar/blob/prototype/window-focus/prototypes/window-focus/debug/MINIMIZE-INVESTIGATION.md) informed this implementation. No prototype file or branch was changed.
+Read-only Git-object inspection of preserved [#1 matrix](https://github.com/beamseree/hana/blob/prototype/window-focus/prototypes/window-focus/TEST-MATRIX.md) and [minimize investigation](https://github.com/beamseree/hana/blob/prototype/window-focus/prototypes/window-focus/debug/MINIMIZE-INVESTIGATION.md) informed this implementation. No prototype file or branch was changed.
 
 The original sequential-bulk top-left animation report remains unexplained. The prototype's later single, bulk, and close-all/reopen/bulk observations all went toward the Dock, with unchanged native window behavior. That is neither a diagnosed cause nor a verified fix; current results must be recorded independently. No animation suppression, delay workaround, extreme panel level, helper, or global settings change was introduced. ADR 0005 remains **proposed**.
 

@@ -1,6 +1,6 @@
 # Issue #5 — application Search validation
 
-Parent: [#2](https://github.com/beamseree/hana-searchbar/issues/2). Scope: cached application search and exact-installation launching only. File search, capture, persistence and organizer remain absent. The isolated prototype is untouched.
+Parent: [#2](https://github.com/beamseree/hana/issues/2). Scope: cached application search and exact-installation launching only. File search, capture, persistence and organizer remain absent. The isolated prototype is untouched.
 
 ## Base and environment
 

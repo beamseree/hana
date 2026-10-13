@@ -1,6 +1,6 @@
 # Native Search and validation windows — issues #3–5
 
-This implements [#3](https://github.com/beamseree/hana-searchbar/issues/3) and [#4](https://github.com/beamseree/hana-searchbar/issues/4), under [parent #2](https://github.com/beamseree/hana-searchbar/issues/2). Search finds installed applications from a cached catalog and launches the selected installation. Three ordinary working windows contain clearly labeled validation content and temporary keyboard focus probes. There are no file results, capture modes, real note editing, organizer, or saved notes; `-`, `[`, pasted punctuation and Thai remain ordinary editor content. Hana is a local development label, not a final product name.
+This implements [#3](https://github.com/beamseree/hana/issues/3) and [#4](https://github.com/beamseree/hana/issues/4), under [parent #2](https://github.com/beamseree/hana/issues/2). Search finds installed applications from a cached catalog and launches the selected installation. Three ordinary working windows contain clearly labeled validation content and temporary keyboard focus probes. There are no file results, capture modes, real note editing, organizer, or saved notes; `-`, `[`, pasted punctuation and Thai remain ordinary editor content. Hana is a local development label, not a final product name.
 
 ## Build, test, install and run
 

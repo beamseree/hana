@@ -4,7 +4,7 @@ Personal macOS app combining app/file search, quick note capture, and task manag
 
 ## Status
 
-Product scope confirmed by Beam on 2026-10-13 after a 44-question design interview. Technical design now recommends AppKit/SwiftUI and SQLite through GRDB, with native validation gates. An isolated throwaway AppKit window/focus prototype is now available. Issues #3–5 add an independent native shell, validation working windows, and cached application Search with exact-installation launching. See [build/run instructions](docs/native-shell.md) and [current Search validation evidence](docs/evidence/issue-5/validation.md). The private GitHub repository is [beamseree/hana-searchbar](https://github.com/beamseree/hana-searchbar), a temporary repository name. The prototype retains its independent local Git history and is published on `prototype/window-focus`.
+Product scope confirmed by Beam on 2026-10-13 after a 44-question design interview. Technical design now recommends AppKit/SwiftUI and SQLite through GRDB, with native validation gates. An isolated throwaway AppKit window/focus prototype is now available. Issues #3–5 add an independent native shell, validation working windows, and cached application Search with exact-installation launching. See [build/run instructions](docs/native-shell.md) and [current Search validation evidence](docs/evidence/issue-5/validation.md). The private GitHub repository is [beamseree/hana](https://github.com/beamseree/hana). The prototype retains its independent local Git history and is published on `prototype/window-focus`.
 
 ## Start here
 
@@ -25,16 +25,16 @@ The bounded milestone is tracked in spec #2. The #3 shell uses a documented loca
 
 ## Working-window validation
 
-The native shell now includes Main and two separately identified mock note windows for [issue #4](https://github.com/beamseree/hana-searchbar/issues/4). All content is validation-only. See [controls and run instructions](docs/native-shell.md) and the [current runtime matrix](docs/evidence/issue-4/validation.md).
+The native shell now includes Main and two separately identified mock note windows for [issue #4](https://github.com/beamseree/hana/issues/4). All content is validation-only. See [controls and run instructions](docs/native-shell.md) and the [current runtime matrix](docs/evidence/issue-4/validation.md).
 
 ## Tracker
 
-Use [GitHub Issues](https://github.com/beamseree/hana-searchbar/issues) for specs, implementation tickets and bugs. [Tracker conventions](docs/agents/issue-tracker.md), [triage labels](docs/agents/triage-labels.md), and [domain-document rules](docs/agents/domain.md) are shared by `AGENTS.md` and `CLAUDE.md`.
+Use [GitHub Issues](https://github.com/beamseree/hana/issues) for specs, implementation tickets and bugs. [Tracker conventions](docs/agents/issue-tracker.md), [triage labels](docs/agents/triage-labels.md), and [domain-document rules](docs/agents/domain.md) are shared by `AGENTS.md` and `CLAUDE.md`.
 
 No further product interview confirmation is pending. Model-assisted classification (including the user-supplied Typesafe Jev reference) is future exploration, not a first-version dependency.
 
 ## Completion evidence
 
-[Issue #1](https://github.com/beamseree/hana-searchbar/issues/1) records the completed window/focus experiment, its artifacts and remaining limitations.
+[Issue #1](https://github.com/beamseree/hana/issues/1) records the completed window/focus experiment, its artifacts and remaining limitations.
 
 The specification includes the accepted end-to-end verification loop. Source changes alone do not establish that keyboard focus, animations, file search, persistence, export, or recovery work on the target Mac.
