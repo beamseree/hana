@@ -17,3 +17,11 @@
 7. Beam then reported **“I allowed full disk access just now but had to quit and reopen.”** This is a user-reported FDA grant and restart, not an agent settings change or a verified TCC inventory. Subsequent checks must be distinguished from earlier permission-conditioned runs.
 
 8. Final five-second delayed-file-source check from a native full-screen origin, after user-reported FDA and restart: Beam answered **“1 works, 2 works i think, 3 that works.”** Item 1 selected Downloads duplicate, verified HANA9-DUPLICATE-DOWNLOADS and typing without clicking/undo. Item 2 kept exact Two selected through delayed file arrival, then opened/typed; this is **tentative** because of “I think,” not an unequivocal selection-stability pass. Item 3 opened the exact `~/Hana Issue 10 Validation/Hana Search Fixture.txt`, verified HANA10-LATE-BATCH and typing without clicking. The grouped procedure asked that successful opens stay at the destination; items 1/3 are confirmed under that procedure. The five-second delay is intentional, not a performance result.
+
+## Timing follow-up — definitive late-batch app check
+
+2026-10-13, unchanged installed source `ac4138a`, executable SHA-256 `cc19d09a7d6d0a72cbc03ff402f3bc69dec98ef79df511493e75c13ffa46571b`, `--diagnostics --validation-file-delay`, two displays recorded at startup.
+
+Procedure sent: From another app’s native full-screen Space, Option+Space → search “Hana Search Fixture” → select the application row whose path contains “/Two/” while files are pending. Stop editing the query, wait for the .txt result to arrive, confirm the same Two app stays selected, Return, confirm “Installation: Two”, type without clicking and remain at that destination.
+
+Beam’s exact answer: **“yes”**. This closes the earlier tentative “works i think” result for this explicit grouped procedure. The [runtime trace](timing-followup/physical-runtime.jsonl) is separate corroboration of batches/open acknowledgments, not a record of query text, exact path, physical typing or focus. No other functional cases were repeated. Physical latency quantiles and physical stall attribution remain unmeasured.

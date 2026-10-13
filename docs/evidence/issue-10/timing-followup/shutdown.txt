@@ -1,0 +1,4 @@
+2026-10-13T21:20:55+07:00
+NSRunningApplication.terminate(): Hana PID 54324 true; Two fixture PID 54396 true.
+Reserved Option+Space exclusively. PID=54591. Stop with Control-C.
+Probe stopped with Control-C; tool-reported exit 1. No matching Hana/Two/probe process in final inspection above.

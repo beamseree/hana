@@ -25,3 +25,15 @@ Final review totals: Standards 0 findings; Spec 0 substantiated implementation f
 Post-review timing isolation: optimized test-process timing also failed at 89.78 ms; idle and local-only controls passed. Reducing copy chunks failed and was reverted. This strengthens the same unresolved responsiveness limitation; no additional production change was retained.
 
 The Spec reviewer reread the final timing-isolation paragraph: no overclaim or missing requirement; the controls and remaining unknown cause satisfy the requirement to investigate misses without claiming unmeasured guarantees. No production changes followed the two-axis review. Final documented sequential suite passed; a later rebuild’s binary hash differs from the preserved installed human-tested artifact despite identical source, and both identities are now explicitly recorded rather than conflated.
+
+## Standards — timing follow-up
+
+No actionable issue found. The refined probe keeps its state on the main actor, timestamps from an independent serial producer, drains submitted callbacks on cancellation and restores activation policy. The assertion measures enqueue-to-execution; sleep lateness is reported separately. No physical input/rendering claim follows. Read-only review against the same user-selected baseline, including the follow-up working-tree diff.
+
+## Spec — timing follow-up
+
+Valid correction to a narrower regression metric, with no substantiated attempt to hide failure. The unchanged 50 ms threshold still catches the original type-fetch defect at 351.4 ms; current production passes debug and release. Preserve raw red/green evidence and historical failures. Different queue/sleep timings do not locate every historical delay or establish absence of all physical stalls. Exact Two selection through the delayed batch remains tentative until unequivocally confirmed. No production/style change is needed merely to make the old sleep assertion pass.
+
+Timing follow-up totals: Standards 0 findings; Spec 0 implementation findings, 2 acceptance limitations (physical latency/stall measurement and tentative late-batch app selection).
+
+Both reviewers then checked the final timing report/raw evidence and found no concrete inconsistencies. Subsequently Beam answered “yes” to the explicit Two-app late-batch/destination/physical typing procedure; that human acceptance limitation is now closed. Final totals: **Standards 0 findings; Spec 0 implementation findings, 1 remaining acceptance limitation (unmeasured physical latency/stall targets)**. The PR remains draft.

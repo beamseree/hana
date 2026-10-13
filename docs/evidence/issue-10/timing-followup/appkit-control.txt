@@ -1,0 +1,25 @@
+[0/1] Planning build
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Compiling HanaTests SearchResponsivenessTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (1.50s)
+Test Suite 'Selected tests' started at 2026-10-13 21:05:20.209.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 21:05:20.210.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 21:05:20.210.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 21:05:20.210.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchResponsivenessTests started.
+􀟈  Test liveIndexedSearchLeavesInputActorResponsive() started.
+Indexed Search scheduling: samples=752, maximumExcessMs=163.41383278369904
+Input-queue scheduling: samples=1002, maximumEnqueueDelayMs=2.9284581542015076
+􁁛  Test liveIndexedSearchLeavesInputActorResponsive() passed after 5.075 seconds.
+􁁛  Suite SearchResponsivenessTests passed after 5.075 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 5.075 seconds.

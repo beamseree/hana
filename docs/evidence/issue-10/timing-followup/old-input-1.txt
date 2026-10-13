@@ -1,0 +1,17 @@
+Test Suite 'Selected tests' started at 2026-10-13 21:07:08.521.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 21:07:08.522.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 21:07:08.522.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 21:07:08.522.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchResponsivenessTests started.
+􀟈  Test liveIndexedSearchLeavesInputActorResponsive() started.
+Indexed Search scheduling: samples=740, maximumExcessMs=95.61762481927872
+Input-queue scheduling: samples=1001, maximumEnqueueDelayMs=32.9220425337553
+􁁛  Test liveIndexedSearchLeavesInputActorResponsive() passed after 5.079 seconds.
+􁁛  Suite SearchResponsivenessTests passed after 5.080 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 5.080 seconds.
+[0/1] Planning build

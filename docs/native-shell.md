@@ -139,3 +139,12 @@ While holding the native testing slot, quit your test app and run `./scripts/run
 Integrated samples measure `presentBar()` call duration, native programmatic `insertText` call duration, and time from insertion start until app/file results are observable through Mac Interaction (2 ms polling, including the configured 100 ms debounce and rendering). Local-only samples separately use Search with zero debounce and no file adapter: delivery/ranking cost, excluding UI. A 5 ms cooperative heartbeat records excess main-actor scheduling delay, including system contention. These are proxies; none proves physical shortcut-to-typing p95 or absence of app-attributable physical typing stalls. Shared output contains timings/counts/display geometry, not query text or result paths. See the integrated report for sample counts, actual results and misses.
 
 For an integrated late-file selection check, `scripts/validation/install-integrated-fixture` creates one marker-checked file at `~/Hana Issue 10 Validation/Hana Search Fixture.txt`. Reuse the two existing synthetic application installations. With `--diagnostics --validation-file-delay`, query `Hana Search Fixture`: applications remain usable during the five-second artificial file delay, then the file joins the results. Select the exact Two app across the arriving batch, open it, then repeat and choose the exact file. Verify the `HANA10-LATE-BATCH` marker and physical typing focus. This public-home fixture does not substitute for Desktop/Documents/Downloads permission coverage.
+
+For the optional live-index queue regression (existing indexed Hana fixtures and the shared native testing slot required):
+
+```sh
+HANA_PERFORMANCE_CHECK=1 xcrun swift test --filter SearchResponsivenessTests
+HANA_PERFORMANCE_CHECK=1 xcrun swift test -c release --filter SearchResponsivenessTests
+```
+
+The test initializes AppKit and measures independently produced callbacks from main-queue enqueue to execution, keeping the 50 ms maximum bound. It also prints the previous cooperative `Task.sleep` excess separately as a scheduling diagnostic. A late timer or producer before enqueue is outside the queue metric. Neither measurement proves physical shortcut-to-typing latency, rendered response, or universal typing-stall attribution. See the [timing follow-up](evidence/issue-10/timing-followup/validation.md) for regression sensitivity, sample counts and the complete all-options command.
