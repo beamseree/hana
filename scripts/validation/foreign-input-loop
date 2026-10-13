@@ -1,0 +1,9 @@
+#!/bin/bash
+# Human-assisted Mac Interaction regression. Native key flags are not a verdict.
+set -euo pipefail
+printf '%s\n' 'Click a disposable text field in another app (not Hana).'
+printf '%s\n' 'Press physical Option+Space, then type abc without clicking Search.'
+printf '%s\n' 'PASS only if abc appears in Search, not in the other app.'
+read -r -p 'Immediate typing (pass/fail/unclear): ' outcome
+printf 'FOREIGN_INPUT=%s\n' "$outcome"
+case "$outcome" in pass) exit 0 ;; fail) exit 1 ;; *) exit 2 ;; esac

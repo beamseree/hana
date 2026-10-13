@@ -1,0 +1,17 @@
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.12s)
+Test Suite 'Selected tests' started at 2026-10-13 15:54:34.821.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 15:54:34.822.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 15:54:34.822.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 15:54:34.822.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite NativeEditingTests started.
+􀟈  Test lateResultsPreserveEditorSelectionUndoAndInputPosition() started.
+􁁛  Test lateResultsPreserveEditorSelectionUndoAndInputPosition() passed after 0.276 seconds.
+􁁛  Suite NativeEditingTests passed after 0.276 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 0.276 seconds.
