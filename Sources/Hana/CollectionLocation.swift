@@ -12,6 +12,9 @@ struct CollectionLocation: Sendable, Equatable {
 
     var collectionDirectory: URL { root.appendingPathComponent("Collection", isDirectory: true) }
     var databaseURL: URL { collectionDirectory.appendingPathComponent("collection.sqlite") }
+    /// Written once a collection has been published; afterwards a missing
+    /// `Collection` directory is an error, never a new store.
+    var initializedMarkerURL: URL { root.appendingPathComponent("collection-initialized") }
 
     /// `~/Library/Application Support/com.beamseree.hana/`, resolved through the
     /// user's Application Support directory. Nothing here creates it.

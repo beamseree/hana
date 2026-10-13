@@ -131,6 +131,7 @@ final class CollectionStore: Sendable {
     private let faults: Faults
     private struct State {
         var owner: OwnerLock?
+        var lingeringOwner: OwnerLock?
         var observers: [UUID: @Sendable (any Error) -> Void] = [:]
     }
     private let observationQueue = DispatchQueue(label: "Hana.Collection.observation")
@@ -152,13 +153,18 @@ final class CollectionStore: Sendable {
         if !location.isFixture, !fileManager.fileExists(atPath: location.root.path) {
             guard mkdir(location.root.path, 0o700) == 0 || errno == EEXIST else { throw CollectionStoreError.insecureStorage }
         }
-        try requireOwnerOnlyDirectory(location.root)
+        try requireOwnerOnly(location.root, type: S_IFDIR)
         if !fileManager.fileExists(atPath: location.collectionDirectory.path) {
+            // A root that once held a collection is never new again.
+            guard !fileManager.fileExists(atPath: location.initializedMarkerURL.path) else { throw CollectionStoreError.missingCollection }
             try CollectionSchema.initialize(location, now: milliseconds(clock()))
         }
-        try requireOwnerOnlyDirectory(location.collectionDirectory)
+        try requireOwnerOnly(location.collectionDirectory, type: S_IFDIR)
         let owner = try OwnerLock(directory: location.collectionDirectory)
+        if fileManager.fileExists(atPath: location.databaseURL.path) { try requireOwnerOnly(location.databaseURL, type: S_IFREG) }
         try CollectionSchema.validate(location.databaseURL)
+        // Also completes an initialization interrupted after its publishing rename.
+        try CollectionSchema.recordInitialized(location)
         do {
             let pool = try CollectionSchema.openPool(location.databaseURL)
             return CollectionStore(location: location, pool: pool, owner: owner, clock: clock, faults: faults)
@@ -206,8 +212,9 @@ final class CollectionStore: Sendable {
             let foreignKeys: Int
             let walAutocheckpoint: Int
             let isReadOnly: Bool
-            /// Result code of a passive checkpoint attempted on this connection.
-            let checkpointResult: Int32
+            /// Result code of a passive checkpoint attempted on a pool reader;
+            /// not probed on the writer.
+            let checkpointResult: Int32?
         }
         let sqliteVersion: String
         let sqliteSourceID: String
@@ -216,7 +223,7 @@ final class CollectionStore: Sendable {
     }
 
     func runtimeReport() async throws -> RuntimeReport {
-        @Sendable func settings(_ db: Database) throws -> RuntimeReport.Settings {
+        @Sendable func settings(_ db: Database, probeCheckpoint: Bool) throws -> RuntimeReport.Settings {
             let connection = db.sqliteConnection
             func pragma(_ name: String) throws -> Int { try Int.fetchOne(db, sql: "PRAGMA \(name)") ?? -1 }
             return RuntimeReport.Settings(
@@ -225,11 +232,11 @@ final class CollectionStore: Sendable {
                 checkpointFullfsync: try pragma("checkpoint_fullfsync"), foreignKeys: try pragma("foreign_keys"),
                 walAutocheckpoint: try pragma("wal_autocheckpoint"),
                 isReadOnly: sqlite3_db_readonly(connection, "main") == 1,
-                checkpointResult: sqlite3_wal_checkpoint_v2(connection, "main", SQLITE_CHECKPOINT_PASSIVE, nil, nil))
+                checkpointResult: probeCheckpoint ? sqlite3_wal_checkpoint_v2(connection, "main", SQLITE_CHECKPOINT_PASSIVE, nil, nil) : nil)
         }
         do {
-            let writer = try await pool.writeWithoutTransaction(settings)
-            let reader = try await pool.unsafeRead(settings)
+            let writer = try await pool.writeWithoutTransaction { try settings($0, probeCheckpoint: false) }
+            let reader = try await pool.unsafeRead { try settings($0, probeCheckpoint: true) }
             return RuntimeReport(sqliteVersion: String(cString: sqlite3_libversion()),
                                  sqliteSourceID: String(cString: sqlite3_sourceid()), writer: writer, reader: reader)
         } catch {
@@ -253,14 +260,17 @@ final class CollectionStore: Sendable {
             output.finish(throwing: error)
             return values
         }
-        let cancellable = ValueObservation.tracking { db in try query.fetch(db) }
-            .start(in: pool, scheduling: .async(onQueue: observationQueue),
-                   onError: { output.finish(throwing: CollectionStoreError.mapped($0)) },
-                   onChange: { output.yield($0) })
+        // Installed before starting, so a close that finishes the stream in
+        // between still cancels the database observation.
+        let cancellation = ObservationCancellation()
         output.onTermination = { [weak self] _ in
-            cancellable.cancel()
+            cancellation.cancel()
             _ = self?.state.withLock { $0.observers.removeValue(forKey: key) }
         }
+        cancellation.attach(ValueObservation.tracking { db in try query.fetch(db) }
+            .start(in: pool, scheduling: .async(onQueue: observationQueue),
+                   onError: { output.finish(throwing: CollectionStoreError.mapped($0)) },
+                   onChange: { output.yield($0) }))
         return values
     }
 
@@ -274,8 +284,13 @@ final class CollectionStore: Sendable {
         guard let owner else { return }
         for finish in observers.values { finish(CollectionStoreError.closed) }
         _ = try? await pool.writeWithoutTransaction { try $0.checkpoint(.truncate) }
-        try? pool.close()
-        withExtendedLifetime(owner) {}
+        do {
+            try pool.close()
+        } catch {
+            // Connections may still be open: keep ownership until this store is
+            // deallocated rather than let a second writer in alongside them.
+            state.withLock { $0.lingeringOwner = owner }
+        }
     }
 
     private func requireCurrent(_ generation: StoreGeneration) throws {
@@ -286,9 +301,9 @@ final class CollectionStore: Sendable {
     static func milliseconds(_ date: Date) -> Int64 { Int64((date.timeIntervalSince1970 * 1000).rounded()) }
     static func date(_ milliseconds: Int64) -> Date { Date(timeIntervalSince1970: Double(milliseconds) / 1000) }
 
-    private static func requireOwnerOnlyDirectory(_ url: URL) throws {
+    private static func requireOwnerOnly(_ url: URL, type: mode_t) throws {
         var info = stat()
-        guard lstat(url.path, &info) == 0, info.st_mode & S_IFMT == S_IFDIR, info.st_uid == geteuid(),
+        guard lstat(url.path, &info) == 0, info.st_mode & S_IFMT == type, info.st_uid == geteuid(),
               info.st_mode & 0o077 == 0
         else { throw CollectionStoreError.insecureStorage }
     }
@@ -310,7 +325,8 @@ private enum NoteRow {
             SELECT id, CAST(body AS BLOB) AS body, created_at, content_edited_at, updated_at, revision, pinned, archived_at
             FROM note WHERE \(condition) ORDER BY \(order)
             """, arguments: arguments).map { row in
-            Note(id: UUID(uuidString: row["id"])!,
+            guard let id = UUID(uuidString: row["id"]) else { throw CollectionStoreError.unreadableCollection }
+            return Note(id: id,
                  body: String(decoding: row["body"] as Data? ?? Data(), as: UTF8.self),
                  createdAt: CollectionStore.date(row["created_at"]),
                  contentEditedAt: CollectionStore.date(row["content_edited_at"]),
@@ -319,6 +335,28 @@ private enum NoteRow {
                  isPinned: row["pinned"],
                  archivedAt: (row["archived_at"] as Int64?).map(CollectionStore.date))
         }
+    }
+}
+
+private final class ObservationCancellation: @unchecked Sendable {
+    private let lock = NSLock()
+    private var cancellable: AnyDatabaseCancellable?
+    private var isCancelled = false
+
+    func attach(_ cancellable: AnyDatabaseCancellable) {
+        let cancelNow = lock.withLock {
+            self.cancellable = cancellable
+            return isCancelled
+        }
+        if cancelNow { cancellable.cancel() }
+    }
+
+    func cancel() {
+        let cancellable = lock.withLock {
+            isCancelled = true
+            return self.cancellable
+        }
+        cancellable?.cancel()
     }
 }
 

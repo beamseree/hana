@@ -49,8 +49,31 @@ struct CollectionStoreOpeningTests {
             #expect(mode == (isDirectory ? 0o700 : 0o600), "\(path) has mode \(String(mode, radix: 8))")
         }
         await store.close()
-        #expect(chmod(fixture.location.root.path, 0o755) == 0)
-        await #expect(throws: CollectionStoreError.insecureStorage) { _ = try await CollectionStore.open(fixture.location) }
+        for (url, widened, restored) in [(fixture.location.root, 0o755, 0o700), (fixture.location.collectionDirectory, 0o750, 0o700),
+                                         (fixture.location.databaseURL, 0o644, 0o600)] as [(URL, mode_t, mode_t)] {
+            #expect(chmod(url.path, widened) == 0)
+            await #expect(throws: CollectionStoreError.insecureStorage) { _ = try await CollectionStore.open(fixture.location) }
+            #expect(chmod(url.path, restored) == 0)
+        }
+        await (try CollectionStore.open(fixture.location)).close()
+    }
+
+    @Test func aReadOnlyDatabaseFailsWritesWithoutLosingCommittedNotes() async throws {
+        let fixture = try TemporaryFixture()
+        let store = try await CollectionStore.open(fixture.location)
+        let kept = try await store.perform(.createNote(operation: UUID(), body: "Kept"), in: store.generation)
+        await store.close()
+        #expect(chmod(fixture.location.databaseURL.path, 0o400) == 0)
+        // A real SQLite I/O refusal, either at open or at the write.
+        await #expect(throws: CollectionStoreError.self) {
+            let readOnly = try await CollectionStore.open(fixture.location)
+            defer { Task { await readOnly.close() } }
+            _ = try await readOnly.perform(.createNote(operation: UUID(), body: "Refused"), in: readOnly.generation)
+        }
+        #expect(chmod(fixture.location.databaseURL.path, 0o600) == 0)
+        let reopened = try await CollectionStore.open(fixture.location)
+        #expect(try await reopened.read(.notes, in: reopened.generation) == [kept])
+        await reopened.close()
     }
 
     @Test func fixtureRootsMustBeNewMarkedAndOutsideTheLiveRoot() throws {
@@ -105,6 +128,7 @@ extension CollectionStoreOpeningTests {
         // same file; pool readers can do neither.
         #expect(report.reader.isReadOnly == true)
         #expect(report.reader.checkpointResult == 8) // SQLITE_READONLY
+        #expect(report.writer.checkpointResult == nil)
         #expect(report.writer.walAutocheckpoint == 1000)
 
         let wal = fixture.location.databaseURL.path + "-wal"
@@ -118,11 +142,11 @@ extension CollectionStoreOpeningTests {
 }
 
 enum Tampering: CaseIterable, Sendable {
-    case missingDatabase, emptyCollectionDirectory, notADatabase, truncated, newerSchema, olderSchema, foreignDatabase
+    case missingDatabase, emptyCollectionDirectory, missingCollectionDirectory, notADatabase, truncated, newerSchema, olderSchema, foreignDatabase
 
     var expected: CollectionStoreError {
         switch self {
-        case .missingDatabase, .emptyCollectionDirectory: .missingCollection
+        case .missingDatabase, .emptyCollectionDirectory, .missingCollectionDirectory: .missingCollection
         case .notADatabase, .truncated: .unreadableCollection
         case .newerSchema: .unsupportedSchema(version: 2)
         case .olderSchema: .unsupportedSchema(version: 0)
@@ -138,6 +162,9 @@ enum Tampering: CaseIterable, Sendable {
             try Data("orphaned sidecar".utf8).write(to: URL(fileURLWithPath: database.path + "-wal"))
         case .emptyCollectionDirectory:
             try FileManager.default.removeItem(at: database)
+        case .missingCollectionDirectory:
+            // An established root whose collection went missing is not new.
+            try FileManager.default.removeItem(at: location.collectionDirectory)
         case .notADatabase:
             try Data(repeating: 0x5A, count: 8192).write(to: database)
         case .truncated:

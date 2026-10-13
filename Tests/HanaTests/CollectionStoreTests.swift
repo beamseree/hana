@@ -149,13 +149,53 @@ extension CollectionStoreTests {
     }
 }
 
+extension CollectionStoreTests {
+    @Test func workQueuedBeforeCloseIsRejectedWhenItExecutes() async throws {
+        let fixture = try TemporaryFixture()
+        let writerHeld = DispatchSemaphore(value: 0), release = DispatchSemaphore(value: 0)
+        let holdOnce = FailOnce()
+        let store = try await CollectionStore.open(fixture.location, faults: .init(beforeCommit: { _ in
+            if holdOnce.take() { writerHeld.signal(); release.wait() }
+        }))
+        let generation = store.generation
+        let first = Task { try await store.perform(.createNote(operation: UUID(), body: "First"), in: generation) }
+        await withCheckedContinuation { continuation in DispatchQueue.global().async { writerHeld.wait(); continuation.resume() } }
+        // Accepted at submission, then queued behind the held writer.
+        let queuedOperation = UUID()
+        let queued = Task { try await store.perform(.createNote(operation: queuedOperation, body: "Queued"), in: generation) }
+        try await Task.sleep(for: .milliseconds(100))
+        let closing = Task { await store.close() }
+        try await Task.sleep(for: .milliseconds(100))
+        release.signal()
+        let committed = try await first.value
+        await #expect(throws: CollectionStoreError.closed) { try await queued.value }
+        await closing.value
+
+        let reopened = try await CollectionStore.open(fixture.location)
+        #expect(try await reopened.read(.notes, in: reopened.generation) == [committed])
+        // No receipt was committed for the rejected work, so it can still run once.
+        let retried = try await reopened.perform(.createNote(operation: queuedOperation, body: "Queued"), in: reopened.generation)
+        #expect(try await reopened.read(.notes, in: reopened.generation).count == 2)
+        #expect(retried.body == "Queued")
+        await reopened.close()
+    }
+}
+
 struct InjectedFailure: Error {}
 
+/// Reports true once after each `set()`.
 final class Switch: @unchecked Sendable {
     private let lock = NSLock()
     private var isOn = false
     func set() { lock.withLock { isOn = true } }
     func take() -> Bool { lock.withLock { defer { isOn = false }; return isOn } }
+}
+
+/// Reports true on the first `take()` only.
+final class FailOnce: @unchecked Sendable {
+    private let lock = NSLock()
+    private var pending = true
+    func take() -> Bool { lock.withLock { defer { pending = false }; return pending } }
 }
 
 /// A new marked disposable root below a fresh temporary directory.

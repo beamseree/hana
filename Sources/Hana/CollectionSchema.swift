@@ -120,6 +120,16 @@ enum CollectionSchema {
         try synchronize(location.root)
     }
 
+    static func recordInitialized(_ location: CollectionLocation) throws {
+        let marker = location.initializedMarkerURL
+        guard !FileManager.default.fileExists(atPath: marker.path) else { return }
+        guard FileManager.default.createFile(atPath: marker.path, contents: Data("Hana collection published.\n".utf8),
+                                             attributes: [.posixPermissions: 0o600])
+        else { throw CollectionStoreError.insecureStorage }
+        try synchronize(marker)
+        try synchronize(location.root)
+    }
+
     /// Reads an existing store without writing to it. Anything other than a
     /// readable Hana collection at exactly the supported schema is refused.
     static func validate(_ database: URL) throws {
