@@ -21,13 +21,13 @@ The pre-agreed interface remains Mac Interaction for native runtime checks; no s
 
 ## Runtime matrix
 
-State traces corroborate lifecycle, never physical keyboard routing, Space transitions, or animation endpoints. User observations below will be recorded separately and literally enough to preserve their scope. Pending means not established in this build, even if prototype #1 or shell #3 passed it.
+The [content-free runtime capture](runtime.jsonl) records this build only. State traces corroborate lifecycle, never physical keyboard routing, Space transitions, or animation endpoints. User observations below will be recorded separately and literally enough to preserve their scope. Pending means not established in this build, even if prototype #1 or shell #3 passed it.
 
 | Case / procedure | Expected | Current evidence | Status |
 | --- | --- | --- | --- |
-| Main + two mock notes | Three independently identified ordinary windows; opening the same ID reuses it | Implemented menu controls and ⌘1/2/3; runtime inspection pending | Pending |
-| Mock boundary | Clear validation-only/no-saving labels; temporary probe is not note editing | Source labels; rendered inspection pending | Pending |
-| Registry / activation | Regular from first open until final close, including minimized windows | Startup accessory traced; transitions pending | Pending |
+| Main + two mock notes | Three independently identified ordinary windows; opening the same ID reuses it | Trace at 05:38:55 UTC contains IDs 1/2/3; repeated open events reuse them, never add a fourth | Runtime pass |
+| Mock boundary | Clear validation-only/no-saving labels; temporary probe is not note editing | Native accessibility tree and rendered Main window show validation-only/no-saving disclaimer and temporary probe label | Automated UI pass |
+| Registry / activation | Regular from first open until final close, including minimized windows | 05:38:47 regular with Main; 05:39:40 closes retain regular; 05:39:41 last close switches accessory; reopening switches regular | Partial runtime pass; minimized case pending |
 | Full-screen, all open | Physical Option+Space/type/Escape; no Space jump or unrelated-window raising; origin receives typing after Escape | Explicit physical procedure requested | Pending human check |
 | Full-screen, all minimized | Same invocation/typing behavior while all three remain minimized | Not yet observed | Pending human check |
 | Dock / Command-Tab | App remains reachable with open or minimized windows; Dock opens Main only | Not yet observed | Pending human check |
@@ -52,6 +52,18 @@ Read-only Git-object inspection of preserved [#1 matrix](https://github.com/beam
 The original sequential-bulk top-left animation report remains unexplained. The prototype's later single, bulk, and close-all/reopen/bulk observations all went toward the Dock, with unchanged native window behavior. That is neither a diagnosed cause nor a verified fix; current results must be recorded independently. No animation suppression, delay workaround, extreme panel level, helper, or global settings change was introduced. ADR 0005 remains **proposed**.
 
 Apple documentation checked during implementation: [reopen callback](https://developer.apple.com/documentation/appkit/nsapplicationdelegate/applicationshouldhandlereopen(_:hasvisiblewindows:)) allows custom reopen handling and explicitly counts minimized windows in its visibility flag; this app handles Main regardless of that flag and returns false to suppress default handling. [Policy change](https://developer.apple.com/documentation/appkit/nsapplication/setactivationpolicy(_:)) returns acceptance, and [miniaturize](https://developer.apple.com/documentation/appkit/nswindow/miniaturize(_:)) describes native Dock minimization. These individual API capabilities do not certify combined full-screen/focus/animation behavior.
+
+## Code review
+
+### Standards
+
+Independent standards review of `d71eee7...01673e6`: **0 findings**. Main-actor Mac Interaction ownership, AppKit controllers, typed validation destinations and evidence separation conform to the repository rules. No actionable baseline smell was reported.
+
+### Spec
+
+Independent spec review of the same diff: **0 code defects**, **0 scope-creep findings**, **1 acceptance-evidence gap**. The missing evidence is physical full-screen/open/minimized invocation, destination typing, Dock/Command-Tab, last-close/rapid transitions and animation endpoints. These remain explicit gates, not inferred passes.
+
+Review totals: Standards **0** (no worst issue); Spec **1** (core physical acceptance pending).
 
 ## Remaining limitations
 
