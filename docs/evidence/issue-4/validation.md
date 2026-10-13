@@ -6,7 +6,7 @@ Scope: [#4](https://github.com/beamseree/hana-searchbar/issues/4), under parent 
 
 - macOS 26.4.1 (25E253), Apple Silicon; startup reports two screens.
 - Selected `/Applications/Xcode-26.6.app/Contents/Developer`, Xcode 26.6 (17F113), Swift 6.3.3, macOS SDK 26.5; first-launch check succeeded.
-- Installed identity `com.beamseree.hana`, `~/Applications/Hana.app`, version 0.1.0 (1). Initial CDHash `87a413ad2bef32db0b35d553ff83a61cbbf35fa4`; subsequent diagnostic/final builds are identified by their startup timestamps below.
+- Installed identity `com.beamseree.hana`, `~/Applications/Hana.app`, version 0.1.0 (1). Initial CDHash `87a413ad2bef32db0b35d553ff83a61cbbf35fa4`; final CDHash `142b63469384a80ff87760d2d6cb027bf54ad642`. Diagnostic/final runs are also identified by their startup timestamps below.
 - Ad-hoc signature, no TeamIdentifier or valid signing certificate available. Existing unsandboxed identity retained; no new entitlements or privacy/shortcut/Spaces settings. Local signature success does not establish distribution readiness or permission continuity.
 - Release build, plist lint and strict bundle signature validation passed. Launch Services started the installed build with `--diagnostics`; startup at 05:37:14 UTC reports accessory activation, zero working windows, level 3, and shortcut registration OSStatus 0.
 - An early automation attachment launched the previous installed app during the build; that process was stopped and the new installed app was explicitly relaunched. This report includes diagnostic sessions from 05:37:14 UTC onward; it excludes earlier #3 runs. Final activation-fix candidate was installed and launched at 05:54:23 UTC.
@@ -21,22 +21,22 @@ The pre-agreed interface remains Mac Interaction for native runtime checks; no s
 
 ## Runtime matrix
 
-The [content-free runtime capture](runtime.jsonl) records the issue #4 initial, diagnostic and final runs. State traces corroborate lifecycle, never physical keyboard routing, Space transitions, or animation endpoints. User observations below will be recorded separately and literally enough to preserve their scope. Pending means not established in this build, even if prototype #1 or shell #3 passed it.
+The [content-free runtime capture](runtime.jsonl) records the issue #4 initial, diagnostic and final runs. State traces corroborate lifecycle, never physical keyboard routing, Space transitions, or animation endpoints. User observations below are recorded separately with their scope. Prior prototype #1 and shell #3 passes were not counted as current app acceptance.
 
 | Case / procedure | Expected | Current evidence | Status |
 | --- | --- | --- | --- |
 | Main + two mock notes | Three independently identified ordinary windows; opening the same ID reuses it | Trace at 05:38:55 UTC contains IDs 1/2/3; repeated open events reuse them, never add a fourth | Runtime pass |
 | Mock boundary | Clear validation-only/no-saving labels; temporary probe is not note editing | Native accessibility tree and rendered Main window show validation-only/no-saving disclaimer and temporary probe label | Automated UI pass |
-| Registry / activation | Regular from first open until final close, including minimized windows | 05:38:47 regular with Main; 05:39:40 closes retain regular; 05:39:41 last close switches accessory; reopening switches regular | Partial runtime pass; minimized case pending |
+| Registry / activation | Regular from first open until final close, including minimized windows | 05:38:47 regular with Main; 05:39:40 closes retain regular; 05:39:41 last close switches accessory; reopening switches regular. Final build at 05:58:28–30 has all three minimized while typing/Escape leaves policy regular | Runtime pass (including minimized windows) |
 | Full-screen, all open | Physical Option+Space/type/Escape; no Space jump or unrelated-window raising; origin receives typing after Escape | Beam confirmed the eight-step Notes full-screen procedure: “Yes, all worked” (hello in Hana, Escape then back in Notes, no Space jump or unrelated windows) | User-observed pass |
-| Full-screen, all minimized | Same invocation/typing behavior while all three remain minimized | Not yet observed | Pending human check |
-| Dock / Command-Tab | App remains reachable with open or minimized windows; Dock opens Main only | Not yet observed | Pending human check |
-| Destination from bar | ⌘2 opens/focuses Mock Note A; immediate physical typing reaches its probe without click or stale restoration | Original request failed; ordering-only candidate failed. Explicit activate(from:options:) passed: Beam confirmed automatic Space switch and typing into Note A; request allowed and key event traced at 05:53:45 UTC | User-observed pass after fix; final-build regression requested |
-| Owned-origin Escape | Invoke from a working-window probe; Escape returns typing to that same probe | Source restoration guarded by origin identity, visibility and minimization | Pending human check |
-| Last close / repeated transitions | Accessory only after last close; menu Search and global invoke/type/Escape still work; close/reopen and rapid Escape/reinvoke stay stable | No delayed restore callbacks; stale-session tests pass | Pending native/human checks |
-| Single yellow button | Native animation goes to Dock | No animation overrides; current run unobserved | Pending human check |
-| Bulk minimize | All three animate to Dock and stay registered | Native `miniaturize` calls; current run unobserved | Pending human check |
-| Close all → reopen three → bulk | Same Dock endpoints across policy transitions | Current run unobserved | Pending human check |
+| Full-screen, all minimized | Same invocation/typing behavior while all three remain minimized | Beam: “Yes, all passed” to minimized Command-Tab/full-screen invoke/type/Escape with no Space jump or window reappearance; trace corroborates three minimized IDs | User-observed + runtime pass |
+| Dock / Command-Tab | App remains reachable with open or minimized windows; Dock opens Main only | Beam confirmed minimized Command-Tab and “Yes, only Main returned” from Dock; 05:58:40 restores ID 1 only while IDs 2/3 remain minimized | User-observed + runtime pass |
+| Destination from bar | ⌘2 opens/focuses Mock Note A; immediate physical typing reaches its probe without click or stale restoration | Original request failed; ordering-only candidate failed. Explicit activate(from:options:) passed: Beam confirmed automatic Space switch and typing into Note A; request allowed and key event traced at 05:53:45 UTC | User-observed pass after fix and on final build |
+| Owned-origin Escape | Invoke from a working-window probe; Escape returns typing to that same probe | Final build: Beam answered “Yes, both passed” to destination typing followed by invoke/type/Escape and no-click typing back into the same probe | User-observed pass |
+| Last close / repeated transitions | Accessory only after last close; menu Search and global invoke/type/Escape still work; close/reopen and rapid Escape/reinvoke stay stable | Final build: Beam confirmed last-close global invoke/type/Escape and menu Search, rapid reopen/reinvoke, and outside-click typing; trace shows accessory with empty registry, new sessions and later regular on reopen | User-observed + runtime pass |
+| Single yellow button | Native animation goes to Dock | Final build: Beam reported “At the Dock” after clicking Main’s native yellow button | User-observed pass |
+| Bulk minimize | All three animate to Dock and stay registered | Beam: “Yes, all three” to bulk animation endpoints at Dock | User-observed pass |
+| Close all → reopen three → bulk | Same Dock endpoints across policy transitions | After clarification to use the normal desktop with all three visible, Beam: “Yes, both passed” for Command-Tab presence and every animation ending at the Dock | User-observed pass |
 
 ## Human observations
 
@@ -47,7 +47,15 @@ The [content-free runtime capture](runtime.jsonl) records the issue #4 initial, 
 
 No automated test was added to claim this native activation fix. The existing unit boundary cannot reproduce a foreign full-screen app or actual physical keyboard routing; an assertion on activation acknowledgment or responder flags would miss the reported bug. The checked-in human-assisted loop is the regression procedure. API semantics were checked against the current SDK and Apple’s [activate(from:options:) documentation](https://developer.apple.com/documentation/appkit/nsrunningapplication/activate(from:options:)); this evidence establishes the tested behavior, not a general WindowServer root cause.
 
-## Physical continuation procedure
+- Final candidate (startup 05:54:23 UTC, CDHash above): Beam repeated full-screen Notes → ⌘2 → immediate destination typing, then invoked from Note A’s probe, typed, escaped, and typed back in the same probe without clicking. Response: **“Yes, both passed.”** Beam then clicked Main’s yellow button and reported its animation ended **“At the Dock.”**
+
+- Minimized-window final-build checks: Beam confirmed **“Yes, all three”** animations went to the Dock; **“Yes, all passed”** for Command-Tab presence and full-screen invoke/type/Escape with no Space switch or window reappearance; and **“Yes, only Main returned”** after clicking the Hana Dock icon. Traces at 05:58:28–30 UTC show typing and Escape with all three minimized and policy regular. At 05:58:40 UTC, only Main is deminiaturized and both note IDs remain minimized.
+
+- Final last-close/rapid checks: Beam answered **“Yes, all worked”** to global invocation, immediate typing/Escape return and menu Search after closing all windows, and separately **“Yes, all worked”** to rapid fresh reopen/same-session reinvocation and outside-click typing in Notes. At 06:01:25–26 UTC the trace shows invocation/outside-click with an empty registry and accessory policy; at 06:01:40 UTC Main reopening restores regular policy.
+
+- Final close-all/reopen/bulk check: after closing all, reopening Main/A/B, and returning to the normal desktop with all three visible, Beam confirmed **“Yes, both passed”** for Hana appearing in Command-Tab and all three animations ending at the Dock. This completes the third animation procedure separately from the earlier single and bulk observations. No top-left endpoint recurred in this build; the earlier prototype report remains unexplained.
+
+## Reproduction procedure
 
 1. Open all three through Hana menu; repeat Open Mock Note A and verify no duplicate. In a foreign app's native full-screen Space, invoke/type/Escape and type back in the original field. Check Dock and Command-Tab access, no unexpected Space switch, and no unrelated-window raising.
 2. Invoke there again, press ⌘2, immediately type into Mock Note A's probe without clicking. This intentional destination Space change is distinct from an unwanted invocation jump. Invoke from that probe and Escape; type again to check owned-origin restoration.
@@ -66,14 +74,14 @@ Apple documentation checked during implementation: [reopen callback](https://dev
 
 ### Standards
 
-Independent standards review of `d71eee7...01673e6`: **0 findings**. Main-actor Mac Interaction ownership, AppKit controllers, typed validation destinations and evidence separation conform to the repository rules. No actionable baseline smell was reported.
+Independent standards review, repeated through `d71eee7...2a56ceb`: **0 findings**. Main-actor Mac Interaction ownership, AppKit controllers, typed validation destinations and evidence separation conform to the repository rules. No actionable baseline smell was reported.
 
 ### Spec
 
-Independent spec review of the same diff: **0 code defects**, **0 scope-creep findings**, **1 acceptance-evidence gap**. The missing evidence is physical full-screen/open/minimized invocation, destination typing, Dock/Command-Tab, last-close/rapid transitions and animation endpoints. These remain explicit gates, not inferred passes.
+Independent spec review, repeated through `d71eee7...2a56ceb`: **0 code defects**, **0 scope-creep findings**, **1 acceptance-evidence gap**. At the time of review, the finding covered the still-pending physical checks. The final-build human observations and runtime matrix above now complete those gates; no passing conclusion is inferred from state flags.
 
-Review totals: Standards **0** (no worst issue); Spec **1** (core physical acceptance pending).
+Review totals: Standards **0** findings; Spec **1 acceptance-evidence finding resolved** by the completed physical checks. No remaining implementation or scope finding.
 
 ## Remaining limitations
 
-The destination failure has a user-observed passing fix; final-build owned-origin and other core checks remain pending, so the PR must remain draft. Candidate-based IME testing remains explicitly deferred for current English/Thai use. Focused-window AX placement, display disconnect, lock/sleep, Stage Manager and other full-screen apps are unverified. No persistence, real note editing, organizer or search results were added. Builds, screenshots, launch acknowledgment and responder flags are not focus proof.
+All scoped #4 core acceptance checks are complete on the tested Mac, including final-build destination focus. PR #12 can be ready for review; it is not merged. This does not complete parent milestone #2. Candidate-based IME testing remains explicitly deferred for current English/Thai use. Focused-window AX placement, display disconnect, lock/sleep, Stage Manager and other full-screen apps are unverified. No persistence, real note editing, organizer or search results were added. Builds, screenshots, launch acknowledgment and responder flags are not focus proof.
