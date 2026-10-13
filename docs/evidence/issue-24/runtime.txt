@@ -1,5 +1,5 @@
-# Runtime identity for #24 — 2026-10-13T15:49:44Z
-source: 66ea56fd033fb8de1d607894ec6ade76e24cf601 + uncommitted #24 working tree
+# Runtime identity for #24 — 2026-10-13T15:55:42Z
+source: aa42d8cd42c2f20544bebfd46a20fa48ef483a24 (clean tree), built with ./scripts/build
 ProductName:		macOS
 ProductVersion:		26.4.1
 BuildVersion:		25E253
@@ -17,18 +17,19 @@ TeamIdentifier=not set
 
 $ Hana --collection-fixture create-root <scratch root> && Hana --collection-fixture runtime-report <scratch root>
 {"event":"fixture.root-created"}
-{"event":"runtime-report","report":{"reader":{"checkpointFullfsync":1,"checkpointResult":8,"foreignKeys":1,"fullfsync":1,"isReadOnly":true,"journalMode":"wal","synchronous":2,"walAutocheckpoint":1000},"sqliteSourceID":"2025-06-12 13:14:41 f0ca7bba1c5e232e5d279fad6338121ab55af0c8c68c84cdfb18ba5114dcaapl","sqliteVersion":"3.51.0","writer":{"checkpointFullfsync":1,"checkpointResult":0,"foreignKeys":1,"fullfsync":1,"isReadOnly":false,"journalMode":"wal","synchronous":2,"walAutocheckpoint":1000}}}
+{"event":"runtime-report","report":{"reader":{"checkpointFullfsync":1,"checkpointResult":8,"foreignKeys":1,"fullfsync":1,"isReadOnly":true,"journalMode":"wal","synchronous":2,"walAutocheckpoint":1000},"sqliteSourceID":"2025-06-12 13:14:41 f0ca7bba1c5e232e5d279fad6338121ab55af0c8c68c84cdfb18ba5114dcaapl","sqliteVersion":"3.51.0","writer":{"checkpointFullfsync":1,"foreignKeys":1,"fullfsync":1,"isReadOnly":false,"journalMode":"wal","synchronous":2,"walAutocheckpoint":1000}}}
 
 Files after report (mode, size, name):
 <scratch root>:
-drwx------@ 4 beamsereeyothin  wheel  128 Oct 13 22:49 .
-drwx------@ 9 beamsereeyothin  wheel  288 Oct 13 22:49 ..
-drwx------@ 5 beamsereeyothin  wheel  160 Oct 13 22:49 Collection
--rw-------@ 1 beamsereeyothin  wheel   36 Oct 13 22:49 HANA-DISPOSABLE-FIXTURE
+drwx------@  5 beamsereeyothin  wheel  160 Oct 13 22:55 .
+drwx------@ 10 beamsereeyothin  wheel  320 Oct 13 22:55 ..
+drwx------@  5 beamsereeyothin  wheel  160 Oct 13 22:55 Collection
+-rw-------@  1 beamsereeyothin  wheel   36 Oct 13 22:55 HANA-DISPOSABLE-FIXTURE
+-rw-------@  1 beamsereeyothin  wheel   27 Oct 13 22:55 collection-initialized
 
 <scratch root>/Collection:
-drwx------@ 5 beamsereeyothin  wheel    160 Oct 13 22:49 .
-drwx------@ 4 beamsereeyothin  wheel    128 Oct 13 22:49 ..
--rw-------@ 1 beamsereeyothin  wheel  57344 Oct 13 22:49 collection.sqlite
--rw-------@ 1 beamsereeyothin  wheel  32768 Oct 13 22:49 collection.sqlite-shm
--rw-------@ 1 beamsereeyothin  wheel      0 Oct 13 22:49 collection.sqlite-wal
+drwx------@ 5 beamsereeyothin  wheel    160 Oct 13 22:55 .
+drwx------@ 5 beamsereeyothin  wheel    160 Oct 13 22:55 ..
+-rw-------@ 1 beamsereeyothin  wheel  57344 Oct 13 22:55 collection.sqlite
+-rw-------@ 1 beamsereeyothin  wheel  32768 Oct 13 22:55 collection.sqlite-shm
+-rw-------@ 1 beamsereeyothin  wheel      0 Oct 13 22:55 collection.sqlite-wal

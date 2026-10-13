@@ -20,7 +20,8 @@ macOS 26.4.1 (25E253), arm64, Apple Swift 6.3.3, GRDB.swift 7.11.1 (`b83108d`, M
 
 ## Test runs
 
-- Full deterministic suite, `xcrun swift test --no-parallel`: 64 tests in 9 suites passed (49 existing + 15 new), 6.7 s. [Output](full-tests.txt).
+- Source for all recorded runs: `aa42d8c` (clean tree).
+- Full deterministic suite, `xcrun swift test --no-parallel`: 66 tests in 9 suites passed (49 existing + 17 new), 6.7 s. [Output](full-tests.txt).
 - Harness suite against the signed release binary (`HANA_EXECUTABLE=build/Hana.app/Contents/MacOS/Hana`): 5 tests passed. [Output](signed-harness-tests.txt).
 - A default parallel `swift test` run hung in the existing `NativeEditingTests.lateResultsPreserveEditorSelectionUndoAndInputPosition` (spinning in `CatalogFeed.send`), consistent with the [#10 record](../issue-10/parallel-suite-invalid.txt) that parallel runs are invalid for this suite. It was terminated; no new test was involved in the sampled stacks.
 
