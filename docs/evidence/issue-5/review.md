@@ -21,6 +21,6 @@ Initial totals: Standards 0; Spec 1 correctness finding (P1) and 1 evidence gap.
 
 **Standards:** No actionable findings in the correction. The exact-instance activation effect remains within Mac Interaction, on the main actor, after invocation/query guards without suspension. Environment dismissal is preserved.
 
-**Spec:** No remaining actionable code findings. Native opening requests no activation; only a current acknowledgment can dismiss and activate the exact returned instance. Tests cover stale/new-query completion and ordinary Space dismissal. Recorded evidence covers distinct installations, failure recovery, English/Thai input and initial timings. The final revised activation path still requires the requested physical recheck; earlier physical results predate that correction.
+**Spec:** No remaining actionable code findings. Native opening requests no activation; only a current acknowledgment can dismiss and activate the exact returned instance. Tests cover stale/new-query completion and ordinary Space dismissal. Recorded evidence covers distinct installations, failure recovery, English/Thai input and initial timings. At review time the final revised activation path still required a physical recheck; Beam subsequently confirmed the exact requested sequence on the reviewed build, as recorded in validation.md.
 
-Final code-review totals: Standards 0; Spec 0 code findings. Final physical recheck is tracked in validation.md.
+Final code-review totals: Standards 0; Spec 0 code findings. The final physical recheck passed by explicit user confirmation; no #5 acceptance step remains pending. See validation.md for observations and preserved limitations.

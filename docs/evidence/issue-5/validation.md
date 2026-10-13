@@ -68,7 +68,7 @@ Independent Standards review found zero actionable findings. Spec review found t
 
 Final correction: background native opening, followed by exact-instance activation only after both invocation and query-generation guards, with no await between guard and effects. Boundary tests now assert that obsolete completion and changed-query completion never invoke activation, current opening targets the selected installation, and ordinary Space changes still dismiss. `launch.acknowledged`, `launch.activation-request` and physical destination focus are separate evidence. The original intermittent full-screen typing report has no established cause and is not attributed to this race.
 
-Final automated suite: 18 tests passed, including existing shell lifecycle tests. See [test output](tests.txt). The final activation path receives a focused physical recheck after installation below.
+Final automated suite: 18 tests passed, including existing shell lifecycle tests. See [test output](tests.txt). The final activation path passed the focused physical recheck recorded below.
 
 
 ## Build identity and primary API checks
@@ -86,3 +86,12 @@ Apple's [native application-opening documentation](https://developer.apple.com/d
 | Revalidation, native exact open, failure and obsolete completion | Native missing-path test, controlled failure/delay tests, real broken fixture, guarded exact-instance activation |
 | Automated seam coverage | 18 passing tests; [output](tests.txt), [review](review.md) |
 | Real invoke/query/select/launch, focus, failures and initial timings | Grouped human observations, [runtime trace](runtime.jsonl), measurements above; revised handoff recheck below |
+
+
+## Final activation-path acceptance — 2026-10-13
+
+Beam explicitly confirmed **yes** to the focused recheck on the reviewed build (`aed41f9`, installed CDHash above): from native full-screen Notes, invoke Search and launch TextEdit with destination focus; select installation Two while One remains running and confirm Two receives typing; return to full-screen Notes and invoke/type again. This completes the remaining #5 physical acceptance step.
+
+The [final handoff trace](final-handoff-runtime.jsonl) independently records Notes-origin invocation at 14:04:15 ICT, background-open acknowledgment and accepted activation request at 14:04:21, subsequent TextEdit/fixture-origin invocations and accepted activation requests, and another Notes-origin invocation with editor changes at 14:05:47. The acknowledgment and activation-request events still report the old foreground bundle in some cases; neither is presented as physical destination-focus proof. The exact installation and typing outcome come from Beam's explicit confirmation.
+
+All seven issue #5 acceptance criteria now have the scoped evidence listed above. The PR is ready for review; no merge or issue closure was performed. The earlier unexplained full-screen failure, broader untested compatibility cases, and preliminary timing limitations remain documented rather than being claimed resolved by this acceptance.
