@@ -58,9 +58,9 @@ The trace independently corroborates full-screen-origin search/text/selection, n
 
 ## Initial timings (not final performance acceptance)
 
-Instrumentation enabled, one available display, same running process/catalog, ordinary manual typing. In the 06:42:46Z build run: 16 synchronous presentation samples, 5.26 / 7.49 / 33.08 ms min/median/max. The first presentation after this process launch was 33.08 ms (one sample); this is not an OS-cold benchmark. Sixty nonempty-query batch samples were 106.19 / 119.15 / 139.65 ms min/median/max including the nominal 100 ms debounce, ranking, result delivery and rendering/diagnostic work. Catalog initialization had already occurred before these manual queries.
+Instrumentation enabled, three displays reported, same running process/catalog, ordinary manual typing. Placement samples span the primary display and a display with negative horizontal coordinates. In the 06:42:46Z build run: 16 synchronous presentation samples, 5.26 / 7.49 / 33.08 ms min/median/max. The first presentation after this process launch was 33.08 ms (one sample); this is not an OS-cold benchmark. Sixty nonempty-query batch samples were 106.19 / 119.15 / 139.65 ms min/median/max including the nominal 100 ms debounce, ranking, result delivery and rendering/diagnostic work. Catalog initialization had already occurred before these manual queries.
 
-These samples do not measure physical hotkey-to-typing readiness, cold filesystem cache cost, a statistically reliable p95, or worst input stalls. No final engineering target is claimed. Unavailable multi-display/negative-coordinate, permission revocation and candidate-IME cases remain untested; IME is explicitly deferred by the parent. File permissions/Spotlight coverage belong to subsequent tickets.
+These samples do not measure physical hotkey-to-typing readiness, cold filesystem cache cost, a statistically reliable p95, or worst input stalls. No final engineering target is claimed. The trace shows placement on multiple displays including negative coordinates, but no isolated physical multi-display acceptance or disconnect check was requested. Permission revocation and candidate-IME cases remain untested; IME is explicitly deferred by the parent. File permissions/Spotlight coverage belong to subsequent tickets.
 
 ## Review correction
 
