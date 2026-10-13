@@ -1,0 +1,47 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.15s)
+Test Suite 'Selected tests' started at 2026-10-13 15:32:54.629.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 15:32:54.630.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 15:32:54.630.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 15:32:54.630.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchTests started.
+􀟈  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() started.
+􀟈  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() started.
+􀟈  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() started.
+􀟈  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() started.
+􀟈  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() started.
+􀟈  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() started.
+􀟈  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() started.
+􀙟  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() skipped.
+􀟈  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() started.
+􀟈  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() started.
+􀟈  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() started.
+􀟈  Test failedSourceStatusStillDeliversAvailableMatches() started.
+􀟈  Test exactPrefixAndSubstringHaveDeterministicOrder() started.
+􀟈  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() started.
+􀟈  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() started.
+􀟈  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() started.
+􁁛  Test failedSourceStatusStillDeliversAvailableMatches() passed after 0.006 seconds.
+􁁛  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() passed after 0.006 seconds.
+􁁛  Test exactPrefixAndSubstringHaveDeterministicOrder() passed after 0.006 seconds.
+􁁛  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() passed after 0.007 seconds.
+􁁛  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() passed after 0.007 seconds.
+􁁛  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() passed after 0.007 seconds.
+􁁛  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() passed after 0.008 seconds.
+􁁛  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() passed after 0.010 seconds.
+􁁛  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() passed after 0.010 seconds.
+􁁛  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() passed after 0.011 seconds.
+􁁛  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() passed after 0.011 seconds.
+􁁛  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() passed after 0.019 seconds.
+􁁛  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() passed after 0.030 seconds.
+􁁛  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() passed after 0.039 seconds.
+􁁛  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() passed after 2.157 seconds.
+􁁛  Suite SearchTests passed after 2.157 seconds.
+􁁛  Test run with 16 tests in 1 suite passed after 2.157 seconds.

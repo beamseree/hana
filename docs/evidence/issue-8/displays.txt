@@ -1,0 +1,3 @@
+display=0 name=Built-in Retina Display frame={{0, 0}, {1512, 982}} visible={{0, 0}, {1512, 949}} scale=2.0
+display=1 name=Mi Monitor (2) frame={{753, 982}, {2560, 1440}} visible={{753, 982}, {2560, 1440}} scale=1.0
+display=2 name=Mi Monitor (1) frame={{-1807, 982}, {2560, 1440}} visible={{-1807, 982}, {2560, 1440}} scale=1.0
