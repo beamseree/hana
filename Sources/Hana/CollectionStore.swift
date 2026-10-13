@@ -230,6 +230,32 @@ extension CollectionQuery where Value == [TaskItem] {
     }
 }
 
+/// Every committed domain fact, read in one transaction: a single coherent
+/// committed state even while later writes commit. Notes and tasks by ID.
+struct CollectionContents: Equatable, Sendable {
+    let collectionID: UUID
+    let schemaVersion: Int
+    let notes: [Note]
+    let tasks: [TaskItem]
+
+    /// The latest updated time of any item; nil for an empty collection.
+    var latestUpdatedAt: Date? {
+        (notes.map(\.updatedAt) + tasks.map(\.updatedAt)).max()
+    }
+}
+
+extension CollectionQuery where Value == CollectionContents {
+    static var contents: Self {
+        Self { db in
+            guard let id = try String.fetchOne(db, sql: "SELECT id FROM collection WHERE singleton = 1").flatMap(UUID.init(uuidString:))
+            else { throw CollectionStoreError.unreadableCollection }
+            return CollectionContents(collectionID: id, schemaVersion: CollectionSchema.version,
+                                      notes: try NoteRow.fetch(db, where: "1", []),
+                                      tasks: try TaskRow.fetch(db, where: "1", []))
+        }
+    }
+}
+
 struct CollectionCommand<Result: Sendable>: Sendable {
     struct Context { let now: Int64 }
     fileprivate let apply: @Sendable (Database, Context) throws -> Result

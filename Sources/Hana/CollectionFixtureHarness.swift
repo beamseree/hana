@@ -27,6 +27,9 @@ import Foundation
 ///   move the task to position `i` of the list last read as `--order`.
 /// - `read-tasks <root> [--view inbox|today|completed|archive|all]`: summarize
 ///   one task view (Inbox by default).
+/// - `export <root> --destination <dir> [--fail-write <package path> --errno <n>] [--fail-publish true]`:
+///   full export into a new package below `dir`.
+/// - `verify-export <package>`: read back and validate a package.
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
 ///
 /// Faults on every command: `--pause before-commit|after-commit` and `--fail before-commit`.
@@ -134,6 +137,32 @@ enum CollectionFixtureHarness {
                 let notes = try await store.read(query, in: store.generation)
                 await store.close()
                 emit("notes", ["count": notes.count, "notes": notes.map(summary)])
+            case "export":
+                guard let destination = options["--destination"].map({ URL(fileURLWithPath: $0, isDirectory: true) })
+                else { throw Usage() }
+                let failPath = options["--fail-write"]
+                let failCode = options["--errno"].flatMap({ Int32($0) }) ?? EIO
+                let failPublish = options["--fail-publish"] == "true"
+                let faults = CollectionRecovery.Faults(
+                    failWrite: { path in path == failPath ? failCode : nil },
+                    beforePublish: { if failPublish { throw InjectedFailure() } })
+                let store = try await CollectionStore.open(try CollectionLocation.fixture(root))
+                let result: CollectionRecovery.ExportResult
+                do {
+                    result = try await CollectionRecovery.export(store, in: store.generation, to: destination, faults: faults)
+                } catch {
+                    await store.close()
+                    throw error
+                }
+                await store.close()
+                emit("export.published", ["package": result.package.lastPathComponent, "notes": result.noteCount,
+                                          "tasks": result.taskCount, "manifestSHA256": result.manifestSHA256,
+                                          "collectionID": result.collectionID.uuidString,
+                                          "exportedAt": CollectionStore.milliseconds(result.exportedAt)])
+            case "verify-export":
+                let exported = try CollectionRecovery.readExport(root)
+                emit("export.verified", ["notes": exported.notes.count, "tasks": exported.tasks.count,
+                                         "collectionID": exported.collectionID.uuidString])
             case "runtime-report":
                 let store = try await CollectionStore.open(try CollectionLocation.fixture(root))
                 let report = try await store.runtimeReport()
@@ -210,6 +239,14 @@ enum CollectionFixtureHarness {
             if case .unsupportedSchema(let version) = error { return "unsupportedSchema(\(version))" }
             if case .storageFailure(let code) = error { return "storageFailure(\(code))" }
             return "\(error)"
+        case let error as CollectionRecoveryError:
+            switch error {
+            case .writeFailed(let code): return "writeFailed(\(code))"
+            case .publicationFailed(let code): return "publicationFailed(\(code))"
+            case .unsupportedFormat(let version): return "unsupportedFormat(\(version))"
+            case .invalidPackage(let reason): return "invalidPackage(\(reason.rawValue))"
+            default: return "\(error)"
+            }
         case is InjectedFailure: return "injectedFailure"
         case is Usage: return "usage"
         default: return "unexpected"
