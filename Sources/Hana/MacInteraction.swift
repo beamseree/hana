@@ -335,7 +335,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
         globalMouse = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] _ in
             MainActor.assumeIsolated {
-                guard let self, self.menuDepth == 0 else { return }
+                // Global monitors exclude this app's events. A click delivered
+                // by another app is outside even if our menu-end notice is late.
+                guard let self else { return }
                 self.dismiss(invocation, reason: .outsideClick)
             }
         }

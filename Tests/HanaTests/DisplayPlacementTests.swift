@@ -62,8 +62,11 @@ struct DisplayPlacementTests {
         let start = clock.now
         let late = await MacInteraction.focusedWindowWithinDeadline {
             // Deliberately ignores cancellation, like a foreign IPC request.
-            try? await Task.sleep(for: .seconds(2))
-            return CGRect(x: 100, y: 100, width: 800, height: 600)
+            await withCheckedContinuation { continuation in
+                DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+                    continuation.resume(returning: CGRect(x: 100, y: 100, width: 800, height: 600))
+                }
+            }
         }
         #expect(late == nil)
         #expect(start.duration(to: clock.now) < .seconds(1))
