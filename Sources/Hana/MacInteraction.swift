@@ -22,10 +22,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     private(set) var currentInvocation: Invocation?
     private let panel = SearchPanel(
-        contentRect: NSRect(x: 0, y: 0, width: 660, height: 64),
+        contentRect: NSRect(x: 0, y: 0, width: BarStyle.width, height: BarStyle.collapsedHeight),
         styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false
     )
     private let editor = SearchEditor(frame: .zero)
+    /// Shows the current mode; the Hana logo is Search's icon.
+    private let modeIcon = NSImageView()
     private let search: Search
     private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
     private let openFile: @MainActor (URL) async throws -> OpenedApplication
@@ -253,18 +255,43 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         panel.hidesOnDeactivate = false
         panel.isFloatingPanel = true
         panel.becomesKeyOnlyIfNeeded = false
-        // Only the pixels outside the rounded surface are transparent.
+        // Only the pixels outside the rounded bezel are transparent. The bar is
+        // always light, so Dark Mode must not darken the material or colors.
         panel.backgroundColor = .clear
         panel.isOpaque = false
         panel.hasShadow = true
-        let surface = NSView(frame: panel.contentView!.bounds)
-        surface.wantsLayer = true
-        surface.layer?.backgroundColor = NSColor.white.cgColor
-        surface.layer?.cornerRadius = 16
-        surface.layer?.masksToBounds = true
-        panel.contentView = surface
+        panel.appearance = NSAppearance(named: .aqua)
+        let bezel = NSVisualEffectView(frame: panel.contentView!.bounds)
+        bezel.material = .popover
+        bezel.blendingMode = .behindWindow
+        // The panel never activates Hana, so following window state would render it inactive.
+        bezel.state = .active
+        bezel.maskImage = .roundedMask(radius: BarStyle.bezelRadius)
+        panel.contentView = bezel
+        let tint = NSView(frame: bezel.bounds)
+        tint.autoresizingMask = [.width, .height]
+        tint.wantsLayer = true
+        tint.layer?.backgroundColor = NSColor.white.withAlphaComponent(0.72).cgColor
+        tint.layer?.borderColor = NSColor.black.withAlphaComponent(0.08).cgColor
+        tint.layer?.borderWidth = 1
+        tint.layer?.cornerRadius = BarStyle.bezelRadius
+        bezel.addSubview(tint)
 
-        let scroll = NSScrollView(frame: NSRect(x: 18, y: 12, width: 624, height: 40))
+        // One card holds the input and, below it, the results. It grows with the
+        // panel while the input stays pinned to its top.
+        let card = NSView.card(frame: NSRect(
+            x: BarStyle.inset, y: BarStyle.inset,
+            width: BarStyle.width - 2 * BarStyle.inset, height: BarStyle.inputHeight))
+        card.autoresizingMask = [.width, .height]
+        bezel.addSubview(card)
+        modeIcon.frame = NSRect(x: 16, y: 16, width: 28, height: 28)
+        modeIcon.autoresizingMask = [.minYMargin]
+        modeIcon.image = NSImage.hanaLogo
+        modeIcon.contentTintColor = BarStyle.iconColor
+        modeIcon.setAccessibilityElement(false)
+        card.addSubview(modeIcon)
+
+        let scroll = NSScrollView(frame: NSRect(x: 54, y: 10, width: card.frame.width - 54 - 16, height: 40))
         scroll.autoresizingMask = [.width, .minYMargin]
         scroll.drawsBackground = false
         scroll.hasHorizontalScroller = false
@@ -276,10 +303,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.isHorizontallyResizable = false
         editor.autoresizingMask = [.width]
         editor.textContainer?.widthTracksTextView = true
-        editor.textContainerInset = NSSize(width: 0, height: 7)
-        editor.font = .systemFont(ofSize: 22)
-        editor.textColor = .black
-        editor.insertionPointColor = .black
+        editor.textContainer?.lineFragmentPadding = 0
+        editor.textContainerInset = NSSize(width: 0, height: 4)
+        editor.font = BarStyle.font
+        editor.textColor = BarStyle.textColor
+        editor.typingAttributes = BarStyle.textAttributes
+        editor.insertionPointColor = BarStyle.textColor
         editor.backgroundColor = .white
         editor.isRichText = false
         editor.importsGraphics = false
@@ -289,22 +318,26 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.isAutomaticTextReplacementEnabled = false
         editor.isAutomaticSpellingCorrectionEnabled = false
         editor.setAccessibilityLabel("Search")
+        editor.setAccessibilityPlaceholderValue("Search")
         editor.delegate = self
         editor.escape = { [weak self] in
             guard let self, let invocation = self.currentInvocation else { return }
             self.dismiss(invocation, reason: .escape)
         }
         scroll.documentView = editor
-        surface.addSubview(scroll)
+        card.addSubview(scroll)
+
         let results = NSHostingView(rootView: SearchResultsView())
         results.frame = .zero
-        surface.addSubview(results)
+        results.isHidden = true
+        card.addSubview(results)
         resultSurface = results
     }
 
     private func clearEditor() {
         editor.unmarkText()
         editor.string = ""
+        editor.typingAttributes = BarStyle.textAttributes
         editor.setSelectedRange(NSRange(location: 0, length: 0))
         editor.undoManager?.removeAllActions()
     }
@@ -312,7 +345,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private func applyPlacement(displays: [Display], pointer: CGPoint, focus: WindowFocus) {
         currentPlacement = Self.placement(displays: displays, pointer: pointer, focus: focus)
         guard let placement = currentPlacement else { return }
-        panel.setFrame(placement.frame(height: 64), display: false)
+        panel.setFrame(placement.frame(height: BarStyle.collapsedHeight), display: false)
         renderResults()
         record("placement.\(placement.source)", extra: ["visibleFrame": NSStringFromRect(placement.visibleFrame)])
     }
@@ -615,12 +648,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         else if sourceStatus == .loading || fileStatus == .loading { status = results.isEmpty ? "Searching apps and indexed filenames…" : "Partial results — still searching indexed filenames…" }
         else if fileStatus == .partial { status = "Partial indexed results — refine your query for more specific matches." }
         else { status = results.isEmpty ? "No matches returned. Indexing and access can limit results." : nil }
-        let extra = hasQuery ? min(360, CGFloat(results.count) * 56) + (status == nil ? 0 : 60) : 0
-        let frame = currentPlacement?.frame(height: 64 + extra) ?? panel.frame
+        // Results extend the card downward below the input row, so the input
+        // position never moves while expanding.
+        let content = hasQuery ? SearchResultsView.height(rowCount: results.count, hasStatus: status != nil) : 0
+        let frame = currentPlacement?.frame(
+            height: BarStyle.collapsedHeight + (content > 0 ? BarStyle.cardPadding + content : 0)) ?? panel.frame
         let height = frame.height
         panel.setFrame(frame, display: true)
-        resultSurface?.frame = NSRect(x: 12, y: 8, width: max(0, frame.width - 24), height: max(0, height - 72))
-        resultSurface?.isHidden = !hasQuery
+        panel.invalidateShadow()
+        resultSurface?.frame = NSRect(x: BarStyle.cardPadding, y: BarStyle.cardPadding,
+                                      width: max(0, frame.width - 2 * (BarStyle.inset + BarStyle.cardPadding)),
+                                      height: max(0, height - BarStyle.collapsedHeight - BarStyle.cardPadding))
+        resultSurface?.isHidden = content == 0
         resultSurface?.rootView = SearchResultsView(results: results, selectedID: selectedID, status: status) { [weak self] id in
             guard let self, self.results.contains(where: { $0.id == id }) else { return }
             self.selectedID = id
@@ -684,5 +723,33 @@ private final class SearchEditor: NSTextView {
             return
         }
         super.keyDown(with: event)
+    }
+
+    // NSTextView has no public placeholder. Hide it during composition too,
+    // because marked text is not yet part of `string`.
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+        guard string.isEmpty, !hasMarkedText() else { return }
+        NSAttributedString(string: "Search", attributes: BarStyle.placeholderAttributes)
+            .draw(at: textContainerOrigin)
+    }
+
+    override var string: String {
+        didSet { needsDisplay = true }
+    }
+
+    override func didChangeText() {
+        super.didChangeText()
+        needsDisplay = true
+    }
+
+    override func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
+        super.setMarkedText(string, selectedRange: selectedRange, replacementRange: replacementRange)
+        needsDisplay = true
+    }
+
+    override func unmarkText() {
+        super.unmarkText()
+        needsDisplay = true
     }
 }
