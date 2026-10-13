@@ -9,7 +9,7 @@ This is an AppKit experiment, not the production app. All writing is disposable 
 On the verified Apple Silicon Mac, with Xcode 26.6 selected:
 
 ```sh
-cd /Users/beamsereeyothin/Documents/Projects/macos-shapeshifting-searchbar
+cd /Users/beamsereeyothin/Documents/Projects/hana
 ./prototypes/window-focus/run.sh
 ```
 
