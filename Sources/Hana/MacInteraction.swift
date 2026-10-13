@@ -3,13 +3,13 @@ import AppKit
 /// Owns the native Search lifetime. Callers carry Invocation into any delayed
 /// completion so an obsolete operation cannot dismiss a newer session.
 @MainActor
-final class MacInteraction: NSObject, NSTextViewDelegate {
+final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     struct Invocation: Equatable {
         fileprivate let id = UUID()
     }
 
     enum DismissalReason: String {
-        case escape, outsideClick, appSwitch, environmentChange
+        case escape, outsideClick, appSwitch, environmentChange, destination
     }
 
     private(set) var currentInvocation: Invocation?
@@ -20,6 +20,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate {
     private let editor = SearchEditor(frame: .zero)
     private let diagnostics: Diagnostics
     private var origin: NSRunningApplication?
+    private weak var originWindow: NSWindow?
+    private weak var originResponder: NSResponder?
+    // Membership ends on close, never on minimize or temporary invisibility.
+    private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
     private var localMouse: Any?
     private var globalMouse: Any?
     private var menuDepth = 0
@@ -65,6 +69,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate {
         let invocation = currentInvocation ?? Invocation()
         if !existing {
             origin = NSWorkspace.shared.frontmostApplication
+            originWindow = NSApp.keyWindow
+            originResponder = originWindow?.firstResponder
             currentInvocation = invocation
             clearEditor()
             placeOnPointerDisplay()
@@ -94,10 +100,85 @@ final class MacInteraction: NSObject, NSTextViewDelegate {
         // The foreign origin normally never lost activation. Ordering out the
         // nonactivating panel releases its key focus. Never activate an old app
         // over a subsequent user choice, even for Escape. Restoration is best effort.
+        if reason == .escape,
+           origin?.processIdentifier == ProcessInfo.processInfo.processIdentifier,
+           NSWorkspace.shared.frontmostApplication?.processIdentifier == origin?.processIdentifier,
+           let originWindow, originWindow.isVisible, !originWindow.isMiniaturized {
+            originWindow.makeKey()
+            if let originResponder { originWindow.makeFirstResponder(originResponder) }
+        }
         origin = nil
+        originWindow = nil
+        originResponder = nil
+    }
+
+    /// An invocation-bound destination must not steal focus from a newer session.
+    @discardableResult
+    func open(_ destination: WorkingWindow, from invocation: Invocation? = nil) -> Bool {
+        if let invocation, currentInvocation != invocation {
+            record("destination.stale-ignored")
+            return false
+        }
+        if let currentInvocation { dismiss(currentInvocation, reason: .destination) }
+        if workingWindows[destination] == nil {
+            let controller = WorkingWindowController(destination: destination)
+            controller.window?.delegate = self
+            workingWindows[destination] = controller
+        }
+        updateActivationPolicy()
+        guard let controller = workingWindows[destination], let window = controller.window else { return false }
+        if window.isMiniaturized { window.deminiaturize(nil) }
+        // Only explicit destination opening activates the process. Ordinary bar
+        // invocation never orders unrelated working windows or changes policy.
+        NSApp.activate()
+        window.makeKeyAndOrderFront(nil)
+        window.makeFirstResponder(controller.focusProbe)
+        record("working.open", extra: ["destination": destination.rawValue])
+        return true
+    }
+
+    private func updateActivationPolicy() {
+        let desired: NSApplication.ActivationPolicy = workingWindows.isEmpty ? .accessory : .regular
+        guard NSApp.activationPolicy() != desired else { return }
+        let accepted = NSApp.setActivationPolicy(desired)
+        record("policy.changed", extra: ["accepted": accepted])
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow,
+              let destination = workingWindows.first(where: { $0.value.window === window })?.key else { return }
+        workingWindows.removeValue(forKey: destination)
+        if originWindow === window { originWindow = nil; originResponder = nil }
+        updateActivationPolicy()
+        record("working.closed", extra: ["destination": destination.rawValue])
+    }
+
+    func windowDidMiniaturize(_ notification: Notification) { record("working.minimized") }
+    func windowDidDeminiaturize(_ notification: Notification) { record("working.deminiaturized") }
+    func windowDidBecomeKey(_ notification: Notification) { record("working.becameKey") }
+
+    @objc private func openWorkingWindow(_ sender: NSMenuItem) {
+        guard let destination = WorkingWindow(rawValue: sender.tag) else { return }
+        open(destination, from: currentInvocation)
+    }
+
+    @objc private func minimizeAll() {
+        for destination in WorkingWindow.allCases {
+            if let window = workingWindows[destination]?.window, !window.isMiniaturized { window.miniaturize(nil) }
+        }
+        record("working.minimize-all")
+    }
+
+    @objc private func closeAll() {
+        for controller in Array(workingWindows.values) { controller.close() }
+        record("working.close-all")
     }
 
     private func configurePanel() {
+        panel.openDestination = { [weak self] destination in
+            guard let self, let invocation = self.currentInvocation else { return }
+            self.open(destination, from: invocation)
+        }
         panel.title = "Hana Search"
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .canJoinAllApplications]
@@ -241,6 +322,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate {
         shortcutStatus = availability
         menu.addItem(availability)
         menu.addItem(.separator())
+        addWorkingWindowControls(to: menu, shortcuts: false)
+        menu.addItem(.separator())
         let quit = NSMenuItem(title: "Quit Hana", action: #selector(quit), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
@@ -261,7 +344,34 @@ final class MacInteraction: NSObject, NSTextViewDelegate {
             edit.submenu?.addItem(NSMenuItem(title: title, action: Selector(action), keyEquivalent: key))
         }
         main.addItem(edit)
+        let windows = NSMenu(title: "Window")
+        addWorkingWindowControls(to: windows, shortcuts: true)
+        windows.addItem(.separator())
+        windows.addItem(NSMenuItem(title: "Minimize", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m"))
+        windows.addItem(NSMenuItem(title: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w"))
+        let windowItem = NSMenuItem(title: "Window", action: nil, keyEquivalent: "")
+        windowItem.submenu = windows
+        main.addItem(windowItem)
+        NSApp.windowsMenu = windows
         NSApp.mainMenu = main
+    }
+
+    private func addWorkingWindowControls(to menu: NSMenu, shortcuts: Bool) {
+        for destination in WorkingWindow.allCases {
+            let item = NSMenuItem(title: "Open \(destination.title) — validation only",
+                                  action: #selector(openWorkingWindow(_:)),
+                                  keyEquivalent: shortcuts ? String(destination.rawValue) : "")
+            item.tag = destination.rawValue
+            item.target = self
+            menu.addItem(item)
+        }
+        menu.addItem(.separator())
+        for (title, action) in [("Minimize all working windows", #selector(minimizeAll)),
+                                ("Close all working windows", #selector(closeAll))] {
+            let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
+            item.target = self
+            menu.addItem(item)
+        }
     }
 
     func textDidChange(_ notification: Notification) { record("editor.changed") }
@@ -269,8 +379,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate {
     private func record(_ event: String, extra: [String: Any] = [:]) {
         guard diagnostics.isEnabled else { return }
         var state: [String: Any] = [
+            "working": WorkingWindow.allCases.compactMap { destination -> [String: Any]? in
+                guard let window = workingWindows[destination]?.window else { return nil }
+                return ["id": destination.rawValue, "minimized": window.isMiniaturized,
+                        "visible": window.isVisible, "key": window.isKeyWindow,
+                        "onActiveSpace": window.isOnActiveSpace]
+            },
             "session": currentInvocation?.id.uuidString ?? "none",
-            "policy": NSApp.activationPolicy() == .accessory ? "accessory" : "other",
+            "policy": NSApp.activationPolicy() == .accessory ? "accessory" : NSApp.activationPolicy() == .regular ? "regular" : "prohibited",
             "barVisible": panel.isVisible, "barKey": panel.isKeyWindow,
             "editorResponder": panel.firstResponder === editor,
             "barOnActiveSpace": panel.isOnActiveSpace, "barLevel": panel.level.rawValue,
@@ -286,6 +402,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate {
 
 @MainActor
 private final class SearchPanel: NSPanel {
+    var openDestination: ((WorkingWindow) -> Void)?
+
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+           let key = event.charactersIgnoringModifiers, let value = Int(key),
+           let destination = WorkingWindow(rawValue: value) {
+            openDestination?(destination)
+            return true
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 }

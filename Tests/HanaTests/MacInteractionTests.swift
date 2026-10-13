@@ -27,4 +27,15 @@ struct MacInteractionTests {
         interaction.dismiss(old, reason: .escape)
         #expect(interaction.currentInvocation == fresh)
     }
+    @Test func oldDestinationCannotCloseAReopenedBar() {
+        _ = NSApplication.shared
+        let interaction = MacInteraction()
+        let old = interaction.presentBar()
+        interaction.dismiss(old, reason: .escape)
+        let fresh = interaction.presentBar()
+        defer { interaction.dismiss(fresh, reason: .outsideClick) }
+        #expect(!interaction.open(.mockNoteA, from: old))
+        #expect(interaction.currentInvocation == fresh)
+    }
+
 }
