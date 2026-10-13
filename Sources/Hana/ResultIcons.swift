@@ -64,10 +64,15 @@ actor ResultIcons {
         guard pixels > 0, let space = CGColorSpace(name: CGColorSpace.sRGB),
               let context = CGContext(data: nil, width: pixels, height: pixels, bitsPerComponent: 8, bytesPerRow: 0,
                                       space: space, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
+        // macOS draws app artwork in the central 824 of its 1024-point canvas.
+        // Trim that margin so the artwork spans 26 of 28 points, the Hana
+        // logo's extent, within the unchanged frame.
+        let edge = CGFloat(pixels) * (26.0 / 28.0) / (824.0 / 1024.0)
+        let offset = (CGFloat(pixels) - edge) / 2
         // NSGraphicsContext.current is per-thread, so drawing here stays off the main actor.
         NSGraphicsContext.saveGraphicsState()
         NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
-        source.draw(in: NSRect(x: 0, y: 0, width: pixels, height: pixels))
+        source.draw(in: NSRect(x: offset, y: offset, width: edge, height: edge))
         NSGraphicsContext.restoreGraphicsState()
         return context.makeImage().map { ResultIcon(image: $0, scale: scale) }
     }
