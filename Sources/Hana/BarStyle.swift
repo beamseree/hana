@@ -1,7 +1,7 @@
 import AppKit
 
 /// Search bar appearance from the Figma "hana" page (Port 2025, node 470:2289;
-/// expanded state "Expanded — Redesigned", 470:2488): a translucent bezel around
+/// expanded state "Expanded — Redesigned #2", 470:2532): a translucent bezel around
 /// one opaque white card, always light.
 @MainActor
 enum BarStyle {

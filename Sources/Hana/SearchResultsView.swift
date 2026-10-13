@@ -6,7 +6,7 @@ struct SearchResultsView: View {
     var status: String?
     var select: (SearchResult.ID) -> Void = { _ in }
 
-    static let rowHeight: CGFloat = 52
+    static let rowHeight: CGFloat = 56
     static let statusHeight: CGFloat = 44
     static let maxVisibleRows = 7
 
@@ -54,14 +54,14 @@ struct SearchResultsView: View {
                 .font(.system(size: 18))
                 .foregroundStyle(Color(nsColor: BarStyle.iconColor))
                 .frame(width: 28, height: 28)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(result.name).font(.system(size: 15, weight: .medium)).lineLimit(1)
-                Text(result.subtitle).font(.system(size: 11))
+            VStack(alignment: .leading, spacing: 4) {
+                Text(result.name).font(.system(size: 16)).tracking(-0.16).lineLimit(1)
+                Text(result.subtitle).font(.system(size: 12))
                     .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
                     .lineLimit(1).truncationMode(.middle)
             }
             Spacer(minLength: 8)
-            Text(result.typeLabel).font(.system(size: 11))
+            Text(result.typeLabel).font(.system(size: 12))
                 .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
         }
         .padding(.horizontal, 8).frame(height: Self.rowHeight)
