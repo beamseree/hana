@@ -58,3 +58,8 @@ Pending final-build human checks: normal/full-screen invocation and immediate ty
 ## Review correction
 
 Both independent review axes found the same pre-match deduplication bug: a catalog alias without `.app` could hide the metadata filename match. The failing regression now passes after merging all names by destination before scoring, retaining catalog display names. A stronger metadata alias also improves its tier without replacing presentation. See [two-axis review](review.md).
+
+
+## Final automated/build checks
+
+After the review correction, all **28 tests** passed, including the opt-in live fixture test, in the complete suite. See [test output](tests.txt). Release build/plist/strict signature checks passed; [build output](build.txt). The installed binary for the physical request has CDHash `5dac79e8e5e56e30f5d5e5c4453c5c81ed2f9406`, no TeamIdentifier and no entitlements. Both reviewers rechecked the correction with zero remaining actionable findings in each axis.

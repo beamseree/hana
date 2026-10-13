@@ -16,4 +16,14 @@ Initial finding: **P2 — valid filename matches supplied by Spotlight were drop
 
 Separate acceptance gap: physical keyboard/focus/full-screen checks were still pending during review; the runtime acknowledgment alone did not close that gap.
 
-Initial totals: Standards 1 (worst P2); Spec 1 (worst P2). Final correction recheck pending.
+Initial totals: Standards 1 (worst P2); Spec 1 (worst P2).
+
+## Final Standards recheck
+
+The independent reviewer rechecked `eff9b53`: no remaining actionable findings; the P2 was resolved. No additional documented-standard violation or actionable baseline smell was found.
+
+## Final Spec recheck
+
+The independent reviewer rechecked `eff9b53`: no remaining actionable findings; the new tests cover metadata-only filename matching and stronger metadata tiers. Physical acceptance was still pending when reviewed.
+
+Final totals: Standards 0 remaining; Spec 0 remaining. Both original P2 findings resolved.
