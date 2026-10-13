@@ -130,7 +130,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         if window.isMiniaturized { window.deminiaturize(nil) }
         // Only explicit destination opening activates the process. Ordinary bar
         // invocation never orders unrelated working windows or changes policy.
-        NSApp.activate()
+        // Name the app we are transferring activation from. Plain NSApp.activate()
+        // left foreign full-screen Notes active in the physical destination check.
+        // This remains a request; its acknowledgment is not typing-focus proof.
+        if let source = NSWorkspace.shared.frontmostApplication {
+            let allowed = NSRunningApplication.current.activate(from: source, options: [])
+            record("working.activation-request", extra: ["allowed": allowed])
+        } else {
+            NSApp.activate()
+        }
         window.makeKeyAndOrderFront(nil)
         window.makeFirstResponder(controller.focusProbe)
         record("working.open", extra: ["destination": destination.rawValue])
