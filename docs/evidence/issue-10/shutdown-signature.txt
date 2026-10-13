@@ -1,0 +1,38 @@
+Final read-only verification; production source remains ac4138a52750c97bcec74803fb08fce566ba4a28.
+2026-10-13T11:20:03.525902+00:00
+$ git rev-parse HEAD
+c186fde2305314a0332089c93ee1f431826ee54c
+
+exit=0
+$ shasum -a 256 build/Hana.app/Contents/MacOS/Hana /Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana
+e8b842e5e8129a9cd78c76b664bfeef177c57904747ffe4c3faf8c33bf0141c7  build/Hana.app/Contents/MacOS/Hana
+cc19d09a7d6d0a72cbc03ff402f3bc69dec98ef79df511493e75c13ffa46571b  /Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana
+
+exit=0
+$ codesign --verify --deep --strict --verbose=2 /Users/beamsereeyothin/Applications/Hana.app
+/Users/beamsereeyothin/Applications/Hana.app: valid on disk
+/Users/beamsereeyothin/Applications/Hana.app: satisfies its Designated Requirement
+
+exit=0
+$ codesign -dvvv /Users/beamsereeyothin/Applications/Hana.app
+Executable=/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana
+Identifier=com.beamseree.hana
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20400 size=2251 flags=0x2(adhoc) hashes=64+3 location=embedded
+Hash type=sha256 size=32
+CandidateCDHash sha256=8312e1bd0214499046b279a2d22ef0df8d3b271e
+CandidateCDHashFull sha256=8312e1bd0214499046b279a2d22ef0df8d3b271e9939ba685e10a8d1046d7056
+Hash choices=sha256
+CMSDigest=8312e1bd0214499046b279a2d22ef0df8d3b271e9939ba685e10a8d1046d7056
+CMSDigestType=2
+CDHash=8312e1bd0214499046b279a2d22ef0df8d3b271e
+Signature=adhoc
+Info.plist entries=10
+TeamIdentifier=not set
+Sealed Resources version=2 rules=13 files=1
+Internal requirements count=0 size=12
+
+exit=0
+$ pgrep -fl Hana.app/Contents/MacOS/Hana|Hana Search Fixture.app/Contents/MacOS/Fixture|hana10-shortcut-release
+
+exit=1

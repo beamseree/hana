@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""One synthetic public-home file for app/file late-batch selection checks."""
+from pathlib import Path
+
+root = Path.home() / 'Hana Issue 10 Validation'
+root.mkdir(exist_ok=True)
+fixture = root / 'Hana Search Fixture.txt'
+contents = 'HANA10-LATE-BATCH\nSynthetic integrated selection destination.\n'
+if fixture.exists():
+    if fixture.read_text() != contents:
+        raise SystemExit('Existing fixture was modified; refusing to overwrite it.')
+else:
+    fixture.write_text(contents)
+print(fixture)

@@ -1,0 +1,91 @@
+{
+  "finished_runs": 1,
+  "complete_uninterrupted_runs": 1,
+  "excluded_incomplete_runs": [],
+  "units": "milliseconds",
+  "groups": {
+    "performance.integrated.cold": {
+      "attempts": 1,
+      "invalid_contexts": 0,
+      "presentationCallMilliseconds": {
+        "n": 1,
+        "median": 27.723457664251328,
+        "p95_nearest_rank": 27.723457664251328,
+        "max": 27.723457664251328
+      },
+      "nativeInsertionCallMilliseconds": {
+        "n": 1,
+        "median": 13.974916189908981,
+        "p95_nearest_rank": 13.974916189908981,
+        "max": 13.974916189908981
+      },
+      "firstAppObservedMilliseconds": {
+        "n": 1,
+        "median": 196.90266624093056,
+        "p95_nearest_rank": 196.90266624093056,
+        "max": 196.90266624093056
+      },
+      "firstFileObservedMilliseconds": {
+        "n": 1,
+        "median": 196.90266624093056,
+        "p95_nearest_rank": 196.90266624093056,
+        "max": 196.90266624093056
+      }
+    },
+    "performance.integrated.warm": {
+      "attempts": 30,
+      "invalid_contexts": 0,
+      "presentationCallMilliseconds": {
+        "n": 30,
+        "median": 7.547103799879551,
+        "p95_nearest_rank": 12.851791456341743,
+        "max": 13.625333085656166
+      },
+      "nativeInsertionCallMilliseconds": {
+        "n": 30,
+        "median": 1.7193546518683434,
+        "p95_nearest_rank": 2.370081841945648,
+        "max": 8.322665467858315
+      },
+      "firstAppObservedMilliseconds": {
+        "n": 30,
+        "median": 175.73958355933428,
+        "p95_nearest_rank": 193.25333461165428,
+        "max": 199.09687526524067
+      },
+      "firstFileObservedMilliseconds": {
+        "n": 30,
+        "median": 228.13564632087946,
+        "p95_nearest_rank": 272.8868741542101,
+        "max": 312.22045980393887
+      }
+    },
+    "performance.local.cold": {
+      "attempts": 1,
+      "invalid_contexts": 0,
+      "milliseconds": {
+        "n": 1,
+        "median": 1322.5002493709326,
+        "p95_nearest_rank": 1322.5002493709326,
+        "max": 1322.5002493709326
+      }
+    },
+    "performance.local.warm": {
+      "attempts": 30,
+      "invalid_contexts": 0,
+      "milliseconds": {
+        "n": 30,
+        "median": 40.90218711644411,
+        "p95_nearest_rank": 46.048667281866074,
+        "max": 46.675875782966614
+      }
+    }
+  },
+  "scheduling_excess": {
+    "n": 5871,
+    "median": 1.0560833662748337,
+    "p95_nearest_rank": 3.557083085179329,
+    "max": 28.782249316573143,
+    "over_50ms": 0
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "issues": [
+    {
+      "closedAt": null,
+      "number": 10,
+      "state": "OPEN",
+      "title": "Validate the integrated search journey and record milestone evidence"
+    },
+    {
+      "closedAt": "2026-10-13T10:07:27Z",
+      "number": 9,
+      "state": "CLOSED",
+      "title": "Establish signed-app file coverage and permission failure behavior"
+    },
+    {
+      "closedAt": "2026-10-13T09:29:28Z",
+      "number": 8,
+      "state": "CLOSED",
+      "title": "Preserve native editing and working-display placement as results resize"
+    },
+    {
+      "closedAt": "2026-10-13T09:31:17Z",
+      "number": 7,
+      "state": "CLOSED",
+      "title": "Preserve relevant results and safe selection during asynchronous search"
+    },
+    {
+      "closedAt": "2026-10-13T06:08:37Z",
+      "number": 4,
+      "state": "CLOSED",
+      "title": "Keep working windows reachable through the Dock and Command-Tab"
+    },
+    {
+      "closedAt": null,
+      "number": 2,
+      "state": "OPEN",
+      "title": "Native app shell and app/file search: implementation and permission validation"
+    }
+  ],
+  "ancestry": {
+    "#4": {
+      "merge": "c7abb2e8dfe12eb469b66db29b3dd89a136aa8c0",
+      "included": true
+    },
+    "#7": {
+      "merge": "2e623e048a6c1e1f296e5aae0823162df79c937c",
+      "included": true
+    },
+    "#8": {
+      "merge": "a4d3fef7abf8101bfef59e961dafe02997779c22",
+      "included": true
+    },
+    "#9": {
+      "merge": "20e67f87355d6c8d6c3d72adc8129b692e5be29d",
+      "included": true
+    },
+    "PR #17": {
+      "merge": "f51f6eeced6abe1fd0b52b2c6b70806e978668c4",
+      "included": true
+    }
+  }
+}
