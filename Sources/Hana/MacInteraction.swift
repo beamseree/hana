@@ -581,12 +581,27 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 guard currentInvocation == invocation, pendingLaunch == operation else { return }
                 pendingLaunch = nil
                 if request?.generation == generation {
-                    openFailure = "Couldn’t open this destination. It may have moved or become unavailable. Check it in Finder, then select a result and press Return to retry."
+                    openFailure = Self.openFailureMessage(error)
                 }
                 renderResults()
-                record("launch.failed")
+                // Numeric classification only; localized errors may expose paths.
+                let failure = error as NSError
+                record("launch.failed", extra: ["errorDomain": failure.domain, "errorCode": failure.code])
             }
         }
+    }
+
+    private static func openFailureMessage(_ error: Error) -> String {
+        let error = error as NSError
+        if (error.domain == NSCocoaErrorDomain && error.code == NSFileReadNoPermissionError)
+            || (error.domain == NSPOSIXErrorDomain && [Int(EACCES), Int(EPERM)].contains(error.code)) {
+            return "Access was denied. Check this destination’s permissions in Finder, then retry."
+        }
+        if (error.domain == NSCocoaErrorDomain && [NSFileNoSuchFileError, NSFileReadNoSuchFileError].contains(error.code))
+            || (error.domain == NSPOSIXErrorDomain && error.code == Int(ENOENT)) {
+            return "This destination is no longer available at this location. Check it in Finder, then search again."
+        }
+        return "macOS couldn’t open this destination. Check it in Finder and its default app, then retry."
     }
 
     private static func launch(_ url: URL) async throws -> OpenedApplication {
@@ -608,11 +623,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     private static func openFileDestination(_ url: URL) async throws -> OpenedApplication {
         // Revalidate off the input actor: a disconnected volume must not block typing.
-        let available = await Task.detached(priority: .userInitiated) {
-            Search.eligible(url) && FileManager.default.fileExists(atPath: url.path)
-                && FileManager.default.isReadableFile(atPath: url.path)
+        try await Task.detached(priority: .userInitiated) {
+            guard Search.eligible(url) else { throw CocoaError(.fileReadUnknown) }
+            // Keep filesystem errors intact. Boolean existence/readability checks
+            // erase the distinction between missing resources and access denial.
+            _ = try FileManager.default.attributesOfItem(atPath: url.path)
         }.value
-        guard available else { throw CocoaError(.fileReadNoSuchFile) }
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.activates = false
         configuration.promptsUserIfNeeded = false

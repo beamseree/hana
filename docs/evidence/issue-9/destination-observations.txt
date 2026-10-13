@@ -1,0 +1,20 @@
+2026-10-13, final installed executable SHA-256 13eaea4b6d61a81a1101fc4b4372ec1698159a32fdbb3260aa764480bc7f78fe.
+
+Native accessibility observations after real app opening:
+- Installation One: window title Hana Search Fixture — One; label Installation: One.
+- Installation Two: window title Hana Search Fixture — Two; label Installation: Two.
+- Inventory reported two running synthetic fixture applications with their shared bundle identifier.
+These are destination-window observations, not physical typing proof.
+
+Beam reported “all pass” for:
+1. Physical Option+Space, query Hana9 Desktop.txt, Return; TextEdit shows HANA9-DESKTOP; typing reaches it without a click; undo test typing.
+2. Query Hana Search Fixture, select Two path, Return; Two window receives physical typing without a click.
+3. From a native full-screen origin, query Hana9 Documents Folder, Return; Finder displays the exact folder and does not return to origin.
+
+Beam later confirmed all three Hana9 Duplicate results appear, then confirmed the Downloads result opens with marker HANA9-DUPLICATE-DOWNLOADS and Hana was quit.
+
+Beam explicitly reported macOS file-access prompts appeared during automated native testing and he allowed each. He thought Desktop/Documents/Downloads were named but could not recall exactly. Exact grant inventory/sequence remains uncertain. No agent accepted a permission prompt or changed privacy settings.
+
+Normal-mode runtime contains four launch requests/acknowledgments with accepted activation requests at 16:54:09, 16:54:29, 16:55:00 and 16:57:21 ICT. Its shutdown is 16:58:42 ICT. These corroborate the human observations without logging query text or personal filenames.
+
+After the final isolated test suite, both owned synthetic application windows were closed via native UI; each fixture exits when its last window closes. Process inspection found neither Hana nor those fixture processes. Native testing slot released; no relaunch after release.

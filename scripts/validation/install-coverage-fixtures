@@ -1,0 +1,31 @@
+#!/bin/bash
+# Synthetic destinations only. No imports, exclusions, or permission changes.
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+python3 - <<'PY'
+from pathlib import Path
+import tempfile
+home = Path.home()
+roots = [home / folder / 'Hana9 Coverage' for folder in ('Desktop', 'Documents', 'Downloads')]
+roots += [Path(tempfile.gettempdir()) / 'Hana9 Coverage']
+if any(root.exists() for root in roots):
+    raise SystemExit('Coverage fixtures already exist; refusing replacement.')
+for root in roots:
+    root.mkdir(parents=True)
+for folder in ('Desktop', 'Documents', 'Downloads'):
+    root = home / folder / 'Hana9 Coverage'
+    (root / f'Hana9 {folder}.txt').write_text(f'HANA9-{folder.upper()}\nSynthetic destination; no personal data.\n')
+    (root / 'Hana9 Duplicate.txt').write_text(f'HANA9-DUPLICATE-{folder.upper()}\n')
+    (root / f'Hana9 {folder} Folder').mkdir()
+root = home / 'Documents' / 'Hana9 Coverage'
+(root / 'Hana9 Rename Before.txt').write_text('HANA9-RENAMED\n')
+(root / 'Hana9 Delete.txt').write_text('HANA9-DELETED\n')
+(root / 'Hana9 Ordinary.uncommon').write_text('HANA9-ORDINARY\n')
+(root / 'Hana9 Extensionless').write_text('HANA9-EXTENSIONLESS\n')
+(root / 'Control.txt').write_text('Hana9ContentToken\n')
+(root / 'Hana9PathToken').mkdir()
+(root / 'Hana9PathToken' / 'Neutral.txt').write_text('HANA9-PATH-CONTROL\n')
+(root / '.Hana9 Hidden.txt').write_text('HANA9-HIDDEN\n')
+(roots[-1] / 'Hana9 Temporary.txt').write_text('HANA9-TEMPORARY\n')
+print('Created synthetic coverage fixtures in Desktop, Documents, Downloads and the existing OS temporary directory.')
+PY

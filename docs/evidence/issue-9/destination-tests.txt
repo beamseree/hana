@@ -1,0 +1,77 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write sources
+[2/7] Write swift-version--112E4EF74740DA65.txt
+[4/9] Compiling Hana MacInteraction.swift
+[5/9] Emitting module Hana
+[5/10] Write Objects.LinkFileList
+[6/10] Linking Hana
+[7/10] Applying Hana
+[9/15] Compiling HanaTests SearchTests.swift
+[10/15] Compiling HanaTests NativeEditingTests.swift
+[11/15] Compiling HanaTests DisplayPlacementTests.swift
+[12/15] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/5602/hana/Tests/HanaTests/MacInteractionTests.swift:93:20: warning: 'shouldFail' mutated after capture by sendable closure
+ 77 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+ 78 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, debounce: .zero)
+ 79 |         var shouldFail = true
+    |             `- note: variable defined here
+ 80 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+ 81 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+ 82 |             return .init(activate: { true })
+ 83 |         })
+    :
+ 91 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+ 92 |         #expect(interaction.currentInvocation == invocation)
+ 93 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+ 94 |         await interaction.requestSelectedOpen()?.value
+ 95 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[13/15] Emitting module HanaTests
+[13/15] Write Objects.LinkFileList
+[14/15] Linking HanaPackageTests
+Build complete! (4.16s)
+Test Suite 'Selected tests' started at 2026-10-13 16:44:13.046.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 16:44:13.047.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 16:44:13.047.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 16:44:13.047.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite DestinationInteractionTests started.
+􀟈  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() started.
+􁁛  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() passed after 0.237 seconds.
+􀟈  Test onlyAcknowledgedOpeningImprovesSessionUsage() started.
+􁁛  Test onlyAcknowledgedOpeningImprovesSessionUsage() passed after 0.074 seconds.
+􀟈  Test navigatedFileSurvivesNewExactBatchAndRemovalRequiresExplicitSelection() started.
+􁁛  Test navigatedFileSurvivesNewExactBatchAndRemovalRequiresExplicitSelection() passed after 0.108 seconds.
+􀟈  Test rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() started.
+􁁛  Test rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() passed after 0.117 seconds.
+􀟈  Test delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() started.
+􁁛  Test delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() passed after 0.089 seconds.
+􀟈  Test deletedFileFailsNativeRevalidationWithoutLosingQuery() started.
+􁁛  Test deletedFileFailsNativeRevalidationWithoutLosingQuery() passed after 0.093 seconds.
+􀟈  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() started.
+􁁛  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() passed after 0.103 seconds.
+􀟈  Test failedFilesStillAllowAvailableApplicationOpening() started.
+􁁛  Test failedFilesStillAllowAvailableApplicationOpening() passed after 0.074 seconds.
+􀟈  Test missingFileExplainsUnavailableLocationAndRetainsSelection() started.
+􁁛  Test missingFileExplainsUnavailableLocationAndRetainsSelection() passed after 0.075 seconds.
+􀟈  Test changedQueryNeverActivatesAnOldAcknowledgment() started.
+􁁛  Test changedQueryNeverActivatesAnOldAcknowledgment() passed after 0.102 seconds.
+􀟈  Test unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() started.
+􁁛  Test unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() passed after 0.091 seconds.
+􀟈  Test enterCapturesTheVisibleDestinationBeforeAsynchronousWork() started.
+􁁛  Test enterCapturesTheVisibleDestinationBeforeAsynchronousWork() passed after 0.086 seconds.
+􀟈  Test failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() started.
+􁁛  Test failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() passed after 0.113 seconds.
+􀟈  Test obsoleteBatchesAndClearingCannotReplaceCurrentResults() started.
+􁁛  Test obsoleteBatchesAndClearingCannotReplaceCurrentResults() passed after 0.109 seconds.
+􀟈  Test selectionTracksIdentityAndVanishingNeverOpensANeighbor() started.
+􁁛  Test selectionTracksIdentityAndVanishingNeverOpensANeighbor() passed after 0.099 seconds.
+􁁛  Suite DestinationInteractionTests passed after 1.578 seconds.
+􁁛  Test run with 15 tests in 1 suite passed after 1.578 seconds.

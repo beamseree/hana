@@ -1,0 +1,30 @@
+12572b9deb792a34f7b2ca4f67362b7ee78c7a5f
+13eaea4b6d61a81a1101fc4b4372ec1698159a32fdbb3260aa764480bc7f78fe  /Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana
+/Users/beamsereeyothin/Applications/Hana.app: valid on disk
+/Users/beamsereeyothin/Applications/Hana.app: satisfies its Designated Requirement
+Executable=/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana
+Identifier=com.beamseree.hana
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20400 size=2123 flags=0x2(adhoc) hashes=60+3 location=embedded
+VersionPlatform=1
+VersionMin=1703936
+VersionSDK=1705216
+Hash type=sha256 size=32
+CandidateCDHash sha256=8245854a902f1536570c6262d6729bc5a1a71b69
+CandidateCDHashFull sha256=8245854a902f1536570c6262d6729bc5a1a71b698432ff4073097db4da74784c
+Hash choices=sha256
+CMSDigest=8245854a902f1536570c6262d6729bc5a1a71b698432ff4073097db4da74784c
+CMSDigestType=2
+Executable Segment base=0
+Executable Segment limit=507904
+Executable Segment flags=0x1
+Page size=16384
+CDHash=8245854a902f1536570c6262d6729bc5a1a71b69
+Signature=adhoc
+Info.plist entries=10
+TeamIdentifier=not set
+Sealed Resources version=2 rules=13 files=1
+Internal requirements count=0 size=12
+Executable=/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana
+Executable=/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana
+# designated => cdhash H"8245854a902f1536570c6262d6729bc5a1a71b69"
