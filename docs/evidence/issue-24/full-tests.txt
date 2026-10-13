@@ -1,0 +1,165 @@
+# source: aa42d8cd42c2f20544bebfd46a20fa48ef483a24 (clean tree), xcrun swift test --no-parallel
+Building for debugging...
+Build complete! (0.12s)
+Test Suite 'All tests' started at 2026-10-13 22:55:17.890.
+Test Suite 'All tests' passed at 2026-10-13 22:55:17.891.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CollectionFixtureHarnessTests started.
+􀟈  Test createReadObserveAndRetryAcrossFreshProcesses() started.
+􁁛  Test createReadObserveAndRetryAcrossFreshProcesses() passed after 0.152 seconds.
+􀟈  Test harnessRefusesTheLiveRootWithoutCreatingIt() started.
+􁁛  Test harnessRefusesTheLiveRootWithoutCreatingIt() passed after 0.039 seconds.
+􀟈  Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􀟈  Test case passing 1 argument point → "before-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􀟈  Test case passing 1 argument point → "after-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􁁛  Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) with 2 test cases passed after 0.228 seconds.
+􀟈  Test processDeathReleasesOwnership() started.
+􁁛  Test processDeathReleasesOwnership() passed after 0.145 seconds.
+􀟈  Test unsavedSentinelNeverReachesStorageOrDiagnostics() started.
+􁁛  Test unsavedSentinelNeverReachesStorageOrDiagnostics() passed after 0.115 seconds.
+􁁛  Suite CollectionFixtureHarnessTests passed after 0.682 seconds.
+􀟈  Suite CollectionStoreOpeningTests started.
+􀟈  Test refusedExistingStoresArePreservedByteForByte(_:) started.
+􀟈  Test case passing 1 argument tampering → .missingDatabase to refusedExistingStoresArePreservedByteForByte(_:) started.
+􀟈  Test case passing 1 argument tampering → .emptyCollectionDirectory to refusedExistingStoresArePreservedByteForByte(_:) started.
+􀟈  Test case passing 1 argument tampering → .missingCollectionDirectory to refusedExistingStoresArePreservedByteForByte(_:) started.
+􀟈  Test case passing 1 argument tampering → .notADatabase to refusedExistingStoresArePreservedByteForByte(_:) started.
+􀟈  Test case passing 1 argument tampering → .truncated to refusedExistingStoresArePreservedByteForByte(_:) started.
+􀟈  Test case passing 1 argument tampering → .newerSchema to refusedExistingStoresArePreservedByteForByte(_:) started.
+􀟈  Test case passing 1 argument tampering → .olderSchema to refusedExistingStoresArePreservedByteForByte(_:) started.
+􀟈  Test case passing 1 argument tampering → .foreignDatabase to refusedExistingStoresArePreservedByteForByte(_:) started.
+􁁛  Test refusedExistingStoresArePreservedByteForByte(_:) with 8 test cases passed after 0.308 seconds.
+􀟈  Test aSecondOwnerIsRefusedUntilTheFirstCloses() started.
+􁁛  Test aSecondOwnerIsRefusedUntilTheFirstCloses() passed after 0.044 seconds.
+􀟈  Test storageIsOwnerOnlyWhileLiveAndRefusedWhenWidened() started.
+􁁛  Test storageIsOwnerOnlyWhileLiveAndRefusedWhenWidened() passed after 0.044 seconds.
+􀟈  Test aReadOnlyDatabaseFailsWritesWithoutLosingCommittedNotes() started.
+􁁛  Test aReadOnlyDatabaseFailsWritesWithoutLosingCommittedNotes() passed after 0.039 seconds.
+􀟈  Test fixtureRootsMustBeNewMarkedAndOutsideTheLiveRoot() started.
+􁁛  Test fixtureRootsMustBeNewMarkedAndOutsideTheLiveRoot() passed after 0.003 seconds.
+􀟈  Test linkedRuntimeUsesDurableSettingsAndOnlyTheWriterCanWriteOrCheckpoint() started.
+􁁛  Test linkedRuntimeUsesDurableSettingsAndOnlyTheWriterCanWriteOrCheckpoint() passed after 0.036 seconds.
+􁁛  Suite CollectionStoreOpeningTests passed after 0.477 seconds.
+􀟈  Suite CollectionStoreTests started.
+􀟈  Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() started.
+􁁛  Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() passed after 0.037 seconds.
+􀟈  Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() started.
+􁁛  Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() passed after 0.045 seconds.
+􀟈  Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() started.
+􁁛  Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() passed after 0.035 seconds.
+􀟈  Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() started.
+􁁛  Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() passed after 0.040 seconds.
+􀟈  Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() started.
+􁁛  Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() passed after 0.037 seconds.
+􀟈  Test workQueuedBeforeCloseIsRejectedWhenItExecutes() started.
+􁁛  Test workQueuedBeforeCloseIsRejectedWhenItExecutes() passed after 0.251 seconds.
+􁁛  Suite CollectionStoreTests passed after 0.448 seconds.
+􀟈  Suite DisplayPlacementTests started.
+􀟈  Test ownedFocusedWindowWinsOverPointerOnAnotherDisplay() started.
+􁁛  Test ownedFocusedWindowWinsOverPointerOnAnotherDisplay() passed after 0.001 seconds.
+􀟈  Test accessibilityCoordinatesMapAboveThePrimaryDisplay() started.
+􁁛  Test accessibilityCoordinatesMapAboveThePrimaryDisplay() passed after 0.001 seconds.
+􀟈  Test invalidFocusedGeometryFallsBackToCapturedPointer() started.
+􁁛  Test invalidFocusedGeometryFallsBackToCapturedPointer() passed after 0.001 seconds.
+􀟈  Test expansionAndContractionKeepInputTopUnlessVisibleBoundsRequireMovement() started.
+􁁛  Test expansionAndContractionKeepInputTopUnlessVisibleBoundsRequireMovement() passed after 0.001 seconds.
+􀟈  Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() started.
+􁁛  Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() passed after 0.062 seconds.
+􁁛  Suite DisplayPlacementTests passed after 0.064 seconds.
+􀟈  Suite MacInteractionTests started.
+􀟈  Test reinvocationKeepsTheCurrentSession() started.
+􁁛  Test reinvocationKeepsTheCurrentSession() passed after 0.214 seconds.
+􀟈  Test oldDismissalCannotCloseAReopenedBar() started.
+􁁛  Test oldDismissalCannotCloseAReopenedBar() passed after 0.012 seconds.
+􀟈  Test oldDestinationCannotCloseAReopenedBar() started.
+􁁛  Test oldDestinationCannotCloseAReopenedBar() passed after 0.010 seconds.
+􁁛  Suite MacInteractionTests passed after 0.238 seconds.
+􀟈  Suite DestinationInteractionTests started.
+􀟈  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() started.
+􁁛  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() passed after 0.100 seconds.
+􀟈  Test onlyAcknowledgedOpeningImprovesSessionUsage() started.
+􁁛  Test onlyAcknowledgedOpeningImprovesSessionUsage() passed after 0.058 seconds.
+􀟈  Test navigatedFileSurvivesNewExactBatchAndRemovalRequiresExplicitSelection() started.
+􁁛  Test navigatedFileSurvivesNewExactBatchAndRemovalRequiresExplicitSelection() passed after 0.108 seconds.
+􀟈  Test rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() started.
+􁁛  Test rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() passed after 0.126 seconds.
+􀟈  Test delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() started.
+􁁛  Test delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() passed after 0.066 seconds.
+􀟈  Test deletedFileFailsNativeRevalidationWithoutLosingQuery() started.
+􁁛  Test deletedFileFailsNativeRevalidationWithoutLosingQuery() passed after 0.066 seconds.
+􀟈  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() started.
+􁁛  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() passed after 0.085 seconds.
+􀟈  Test failedFilesStillAllowAvailableApplicationOpening() started.
+􁁛  Test failedFilesStillAllowAvailableApplicationOpening() passed after 0.100 seconds.
+􀟈  Test missingFileExplainsUnavailableLocationAndRetainsSelection() started.
+􁁛  Test missingFileExplainsUnavailableLocationAndRetainsSelection() passed after 0.085 seconds.
+􀟈  Test changedQueryNeverActivatesAnOldAcknowledgment() started.
+􁁛  Test changedQueryNeverActivatesAnOldAcknowledgment() passed after 0.084 seconds.
+􀟈  Test unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() started.
+􁁛  Test unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() passed after 0.095 seconds.
+􀟈  Test enterCapturesTheVisibleDestinationBeforeAsynchronousWork() started.
+􁁛  Test enterCapturesTheVisibleDestinationBeforeAsynchronousWork() passed after 0.094 seconds.
+􀟈  Test failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() started.
+􁁛  Test failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() passed after 0.121 seconds.
+􀟈  Test obsoleteBatchesAndClearingCannotReplaceCurrentResults() started.
+􁁛  Test obsoleteBatchesAndClearingCannotReplaceCurrentResults() passed after 0.095 seconds.
+􀟈  Test selectionTracksIdentityAndVanishingNeverOpensANeighbor() started.
+􁁛  Test selectionTracksIdentityAndVanishingNeverOpensANeighbor() passed after 0.108 seconds.
+􁁛  Suite DestinationInteractionTests passed after 1.400 seconds.
+􀟈  Suite NativeEditingTests started.
+􀟈  Test lateResultsPreserveEditorSelectionUndoAndInputPosition() started.
+􁁛  Test lateResultsPreserveEditorSelectionUndoAndInputPosition() passed after 0.091 seconds.
+􁁛  Suite NativeEditingTests passed after 0.091 seconds.
+􀟈  Suite SearchResponsivenessTests started.
+􀙟  Test liveIndexedSearchKeepsInputQueueResponsive() skipped.
+􁁛  Suite SearchResponsivenessTests passed after 0.001 seconds.
+􀟈  Suite SearchTests started.
+􀟈  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() started.
+􁁛  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() passed after 0.008 seconds.
+􀟈  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() started.
+􁁛  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() passed after 0.001 seconds.
+􀟈  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() started.
+􁁛  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() passed after 0.001 seconds.
+􀟈  Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() started.
+􁁛  Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() passed after 0.987 seconds.
+􀙟  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() skipped.
+􀙟  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() skipped.
+􀙟  Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() skipped.
+􀟈  Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() started.
+􁁛  Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() passed after 0.001 seconds.
+􀟈  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() started.
+􁁛  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() passed after 0.001 seconds.
+􀟈  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() started.
+􁁛  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() passed after 0.001 seconds.
+􀟈  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() started.
+􁁛  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() passed after 0.001 seconds.
+􀙟  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() skipped.
+􀟈  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() started.
+􁁛  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() passed after 0.006 seconds.
+􀟈  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() started.
+􁁛  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() passed after 0.004 seconds.
+􀟈  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() started.
+􁁛  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() passed after 0.001 seconds.
+􀟈  Test failedSourceStatusStillDeliversAvailableMatches() started.
+􁁛  Test failedSourceStatusStillDeliversAvailableMatches() passed after 0.001 seconds.
+􀟈  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() started.
+􁁛  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() passed after 0.021 seconds.
+􀟈  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() started.
+􁁛  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() passed after 0.006 seconds.
+􀟈  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() started.
+􁁛  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() passed after 2.154 seconds.
+􀟈  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() started.
+􁁛  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() passed after 0.018 seconds.
+􀟈  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() started.
+􁁛  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() passed after 0.035 seconds.
+􀟈  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() started.
+􁁛  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() passed after 0.001 seconds.
+􀟈  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() started.
+􁁛  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() passed after 0.003 seconds.
+􀟈  Test exactPrefixAndSubstringHaveDeterministicOrder() started.
+􁁛  Test exactPrefixAndSubstringHaveDeterministicOrder() passed after 0.001 seconds.
+􁁛  Suite SearchTests passed after 3.256 seconds.
+􁁛  Test run with 66 tests in 9 suites passed after 6.660 seconds.

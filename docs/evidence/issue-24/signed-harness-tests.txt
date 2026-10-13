@@ -1,0 +1,27 @@
+# source: aa42d8cd42c2f20544bebfd46a20fa48ef483a24 (clean tree); HANA_EXECUTABLE=build/Hana.app/Contents/MacOS/Hana xcrun swift test --no-parallel --filter CollectionFixtureHarness
+Building for debugging...
+Build complete! (0.27s)
+Test Suite 'Selected tests' started at 2026-10-13 22:55:44.427.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 22:55:44.428.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 22:55:44.428.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 22:55:44.428.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CollectionFixtureHarnessTests started.
+􀟈  Test createReadObserveAndRetryAcrossFreshProcesses() started.
+􁁛  Test createReadObserveAndRetryAcrossFreshProcesses() passed after 0.142 seconds.
+􀟈  Test harnessRefusesTheLiveRootWithoutCreatingIt() started.
+􁁛  Test harnessRefusesTheLiveRootWithoutCreatingIt() passed after 0.039 seconds.
+􀟈  Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􀟈  Test case passing 1 argument point → "before-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􀟈  Test case passing 1 argument point → "after-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􁁛  Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) with 2 test cases passed after 0.223 seconds.
+􀟈  Test processDeathReleasesOwnership() started.
+􁁛  Test processDeathReleasesOwnership() passed after 0.144 seconds.
+􀟈  Test unsavedSentinelNeverReachesStorageOrDiagnostics() started.
+􁁛  Test unsavedSentinelNeverReachesStorageOrDiagnostics() passed after 0.116 seconds.
+􁁛  Suite CollectionFixtureHarnessTests passed after 0.668 seconds.
+􁁛  Test run with 5 tests in 1 suite passed after 0.668 seconds.
