@@ -33,7 +33,7 @@ actor ResultIcons {
 
     /// The icon of the exact installation, never resolved by bundle identifier,
     /// or nil when none can be produced and the caller should fall back.
-    func icon(for application: URL, scale: CGFloat) -> ResultIcon? {
+    func icon(for application: URL, scale: CGFloat) async -> ResultIcon? {
         let key = Key(application: application.standardizedFileURL, scale: scale)
         let stamp = ApplicationCatalog.changeStamp(of: key.application)
         uses += 1
@@ -41,7 +41,11 @@ actor ResultIcons {
             entries[key]?.lastUse = uses
             return entry.icon
         }
-        guard let icon = Self.rasterise(key.application, pixels: Int((pointSize * scale).rounded()), scale: scale) else {
+        // Rasterise outside the actor so one slow bundle never holds back other rows.
+        let pixels = Int((pointSize * scale).rounded())
+        guard let icon = await Task.detached(priority: .userInitiated, operation: {
+            Self.rasterise(key.application, pixels: pixels, scale: scale)
+        }).value else {
             entries[key] = nil
             return nil
         }
@@ -52,7 +56,7 @@ actor ResultIcons {
         return icon
     }
 
-    private static func rasterise(_ application: URL, pixels: Int, scale: CGFloat) -> ResultIcon? {
+    private nonisolated static func rasterise(_ application: URL, pixels: Int, scale: CGFloat) -> ResultIcon? {
         // The workspace answers even for a missing or locked path, with a
         // generic image. Those fall back to the row's own symbol instead.
         guard access(application.path, R_OK | X_OK) == 0 else { return nil }

@@ -19,6 +19,7 @@ struct SearchResponsivenessTests {
         // Real icon loading, as visible application rows request it.
         let icons = ResultIcons()
         var iconsLoaded = 0
+        var iconLoads: [Task<Void, Never>] = []
         var worstSleepExcess = 0.0
         var fileSeen = false
         var samples = 0
@@ -53,7 +54,7 @@ struct SearchResponsivenessTests {
                 for await batch in stream {
                     fileSeen = fileSeen || batch.results.contains { $0.kind != .application }
                     for result in batch.results.prefix(SearchResultsView.maxVisibleRows) where result.kind == .application {
-                        Task { if await icons.icon(for: result.url, scale: 2) != nil { iconsLoaded += 1 } }
+                        iconLoads.append(Task { if await icons.icon(for: result.url, scale: 2) != nil { iconsLoaded += 1 } })
                     }
                 }
             }
@@ -62,6 +63,7 @@ struct SearchResponsivenessTests {
         }
         heartbeat.cancel()
         await heartbeat.value
+        for load in iconLoads { await load.value }
         // Cancel the producer and drain callbacks already submitted by it.
         await withCheckedContinuation { (finished: CheckedContinuation<Void, Never>) in
             producer.setCancelHandler { @Sendable in
