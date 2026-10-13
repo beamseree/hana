@@ -3,8 +3,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 xcrun swift build -c release
 app="$PWD/build/Hana.app"
-mkdir -p "$app/Contents/MacOS"
+mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp App/Info.plist "$app/Contents/Info.plist"
+cp App/Resources/* "$app/Contents/Resources/"
 cp "$(xcrun swift build -c release --show-bin-path)/Hana" "$app/Contents/MacOS/Hana"
 /usr/bin/plutil -lint "$app/Contents/Info.plist"
 /usr/bin/codesign --force --sign - --identifier com.beamseree.hana "$app"

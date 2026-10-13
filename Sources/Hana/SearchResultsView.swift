@@ -6,44 +6,77 @@ struct SearchResultsView: View {
     var status: String?
     var select: (SearchResult.ID) -> Void = { _ in }
 
+    static let rowHeight: CGFloat = 52
+    static let statusHeight: CGFloat = 44
+    static let maxVisibleRows = 7
+
+    /// The content height, so the panel and the view agree on geometry. The
+    /// card around it supplies the padding.
+    static func height(rowCount: Int, hasStatus: Bool) -> CGFloat {
+        CGFloat(min(rowCount, maxVisibleRows)) * rowHeight + (hasStatus ? statusHeight : 0)
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 0) {
             if !results.isEmpty {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             ForEach(results) { result in
-                                Button { select(result.id) } label: {
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        HStack {
-                                            Text(result.name).font(.system(size: 15, weight: .medium)).lineLimit(1)
-                                            Spacer()
-                                            Text(result.typeLabel).font(.system(size: 11)).foregroundStyle(.secondary)
-                                        }
-                                        Text(result.subtitle).font(.system(size: 11)).foregroundStyle(.secondary)
-                                            .lineLimit(1).truncationMode(.middle)
-                                    }
-                                    .padding(.horizontal, 10).frame(height: 56)
-                                    .background(selectedID == result.id ? Color.black.opacity(0.08) : Color.clear)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                    .contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
-                                .accessibilityLabel("\(result.name), \(result.typeLabel), \(result.subtitle)")
-                                .accessibilityAddTraits(selectedID == result.id ? .isSelected : [])
-                                .id(result.id)
+                                Button { select(result.id) } label: { row(result) }
+                                    .buttonStyle(.plain)
+                                    .accessibilityLabel("\(result.name), \(result.typeLabel), \(result.subtitle)")
+                                    .accessibilityAddTraits(selectedID == result.id ? .isSelected : [])
+                                    .id(result.id)
                             }
                         }
                     }
+                    .scrollIndicators(.never)
+                    .frame(height: CGFloat(min(results.count, Self.maxVisibleRows)) * Self.rowHeight)
                     .onChange(of: selectedID) { _, id in if let id { proxy.scrollTo(id) } }
                 }
             }
             if let status {
-                Text(status).font(.system(size: 12)).foregroundStyle(.secondary)
-                    .padding(.horizontal, 10).frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+                Text(status).font(.system(size: 12)).foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
+                    .lineLimit(2)
+                    .padding(.horizontal, 8).frame(maxWidth: .infinity, minHeight: Self.statusHeight, alignment: .leading)
             }
         }
-        .foregroundStyle(.black)
+        .frame(maxHeight: .infinity, alignment: .top)
+        .foregroundStyle(Color(nsColor: BarStyle.textColor))
         .environment(\.colorScheme, .light)
+    }
+
+    // Icon and name columns line up with the mode icon and query text above.
+    private func row(_ result: SearchResult) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: result.symbolName)
+                .font(.system(size: 18))
+                .foregroundStyle(Color(nsColor: BarStyle.iconColor))
+                .frame(width: 28, height: 28)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(result.name).font(.system(size: 15, weight: .medium)).lineLimit(1)
+                Text(result.subtitle).font(.system(size: 11))
+                    .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
+                    .lineLimit(1).truncationMode(.middle)
+            }
+            Spacer(minLength: 8)
+            Text(result.typeLabel).font(.system(size: 11))
+                .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
+        }
+        .padding(.horizontal, 8).frame(height: Self.rowHeight)
+        .background(selectedID == result.id ? Color.black.opacity(0.06) : Color.clear)
+        .clipShape(RoundedRectangle(cornerRadius: BarStyle.cardRadius - BarStyle.cardPadding))
+        .contentShape(Rectangle())
+    }
+}
+
+private extension SearchResult {
+    var symbolName: String {
+        switch kind {
+        case .application: "app.dashed"
+        case .file: "doc"
+        case .folder: "folder"
+        }
     }
 }

@@ -25,8 +25,8 @@ Per Beam's answers on 2026-10-13:
 - Notes are separate items, not one continuous scratchpad.
 - Do not save unfinished captures as drafts for now. Escape or clicking outside discards unsaved quick captures without confirmation (accepted Q11). Existing notes autosave edits in working windows.
 - Initial task scope: inbox, Today view, completion, and moving tasks into/out of Today. Further scheduling/project features are outside the accepted initial scope.
-- Global invocation opens Search by default. The empty bar shows only the input, with no mode hints or results; this supersedes the earlier visible-shortcut-hints proposal (Q35). Mode switching retains typed text (accepted Q10 recommendation).
-- At the start of Search input, `-` switches to Note and `[` switches to Task. The prefix becomes a visible mode label rather than saved content. Prefixes are recognized only in Search; explicitly switching back to Search allows literal searches beginning with those symbols (accepted Q16, with Beam replacing the proposed `+` task prefix).
+- Global invocation opens Search by default. The empty bar shows the input with Search's mode icon (the Hana logo) and a "Search" placeholder, with no mode hints or results; this supersedes the earlier visible-shortcut-hints proposal (Q35) and, per Beam's Figma design on 2026-10-13, the earlier input-only empty bar. Mode switching retains typed text (accepted Q10 recommendation).
+- At the start of Search input, `-` switches to Note and `[` switches to Task. The prefix becomes a visible mode label rather than saved content. The leading mode icon shows the current mode; the Hana logo is the default (Search) icon (Beam, 2026-10-13). Prefixes are recognized only in Search; explicitly switching back to Search allows literal searches beginning with those symbols (accepted Q16, with Beam replacing the proposed `+` task prefix).
 - Note mode expands to a multiline writing surface. Task mode becomes compact task entry with an Inbox/Today selector.
 - In quick note capture, Enter saves and Shift+Enter inserts a newline, replacing Boji's earlier proposed Cmd+Enter save shortcut. Existing note windows use Enter for newlines and autosave. Task titles remain single-line (accepted Q23).
 - Successful capture shows brief confirmation, closes the bar, and returns focus to the prior app. Failed saves keep entered text available (accepted Q18).
@@ -45,7 +45,7 @@ Per Beam's answers on 2026-10-13:
 - Export individual Markdown files for notes and JSON for tasks, including task text, status, and timestamps.
 - Search prioritizes strong name/title matches, then uses recency/frequency for similar matches. Creation suggestions sit below actual matches (accepted Q31 recommendation).
 - Configurable global shortcut, starting with Option+Space, plus menu-bar access while working windows are closed. Invocation opens the bar on the working display with immediate typing focus (accepted Q32 recommendation).
-- Native macOS appearance with a solid white, opaque surface, rounded shape, and system typography. This replaces Boji's translucency proposal. Smooth shapeshifting preserves the input position, expanding around it, while typing remains responsive (accepted Q33 with correction).
+- Native macOS appearance: an opaque white content card (input, with results below it) inside a translucent, system-blurred rounded bezel, with the native window shadow and system typography. Beam chose this on 2026-10-13 from his Figma design (Port 2025, node 470:2289), superseding the earlier solid-white, non-translucent decision; text and controls stay on opaque white. Smooth shapeshifting preserves the input position, expanding around it, while typing remains responsive (accepted Q33 with correction).
 - Maintain recoverable automatic local backups in addition to export. Backups do not retain discarded unsaved captures.
 - Prefix recognition applies only to typing at the start of Search, never to pasted text; pasting retains the current mode.
 - Restoring an archived task preserves completion state. Unfinished tasks restore to Inbox, even if previously in Today; completed tasks restore to Completed. Notes restore to the notes collection.
@@ -66,7 +66,7 @@ Accepted Q44, 2026-10-13. Verify the complete loop on Beam's Mac:
 - Organize the saved items in the main window and edit a note in its separate window.
 - Reopen saved content through search.
 - Verify persistence across restart, full export, and backup restoration.
-- Verify smooth opaque-white shapeshifting and correct return to the prior app after capture.
+- Verify smooth shapeshifting (the white card growing inside the translucent bezel) and correct return to the prior app after capture.
 
 These are requirements, not verified implementation results.
 
@@ -116,3 +116,5 @@ The interview created no code. Subsequent work added an isolated native prototyp
 - 2026-10-13: Set up the private `beamseree/hana` GitHub repository and Issues tracker. Existing product scope is unchanged.
 
 - 2026-10-13: Renamed the GitHub repository to `beamseree/hana` and the local project folder to `hana`. A compatibility symlink at the former local path keeps existing chats usable. Product scope is unchanged.
+
+- 2026-10-13: Beam supplied a Figma design for the collapsed bar (Port 2025, node 470:2289) and chose: 660-point width, native window shadow, a translucent system-blurred bezel around an opaque white card (superseding solid white, non-translucent), and a leading mode icon whose default is the Hana logo, plus a "Search" placeholder. Beam then redesigned the expanded state ("Expanded — Redesigned", node 470:2488): results extend the same white card below the input row rather than sitting in a separate card.
