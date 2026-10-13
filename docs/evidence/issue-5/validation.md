@@ -69,3 +69,20 @@ Independent Standards review found zero actionable findings. Spec review found t
 Final correction: background native opening, followed by exact-instance activation only after both invocation and query-generation guards, with no await between guard and effects. Boundary tests now assert that obsolete completion and changed-query completion never invoke activation, current opening targets the selected installation, and ordinary Space changes still dismiss. `launch.acknowledged`, `launch.activation-request` and physical destination focus are separate evidence. The original intermittent full-screen typing report has no established cause and is not attributed to this race.
 
 Final automated suite: 18 tests passed, including existing shell lifecycle tests. See [test output](tests.txt). The final activation path receives a focused physical recheck after installation below.
+
+
+## Build identity and primary API checks
+
+Final code revision `aed41f9`; release build, plist lint and strict ad-hoc signature verification passed. Installed CDHash: `8d405c2c7b6256fe1b76dc4e1f76ad22bda04627`. No TeamIdentifier or entitlements. The app still uses its original bundle identifier and installation path; no privacy/global settings changed.
+
+Apple's [native application-opening documentation](https://developer.apple.com/documentation/appkit/nsworkspace/openapplication(at:configuration:completionhandler:)) and selected SDK `NSWorkspace.h` were rechecked. The SDK explicitly documents disabling `allowsRunningApplicationSubstitution` for choosing an installation; `activates` controls foreground activation. The returned running instance is used for the guarded activation request. These are documented capabilities, separate from the observations above.
+
+| #5 acceptance | Evidence |
+| --- | --- |
+| Cached conventional-root catalog and refresh | Real temporary-directory tests through Search, installation/removal refresh, runtime fixture discovery |
+| Bounded typed results and distinct paths; empty input | Search tests, 20-row cap, physical same-name fixtures and clear-input check |
+| Deterministic name tiers, literal English/Thai, retained editor | Search tests, native editor unchanged during resizing, Beam's input/selection/paste/undo observation |
+| Selection identity, obsolete queries and vanished selection | Controlled batches, captured destination, explicit invalidation and no-neighbor-opening tests |
+| Revalidation, native exact open, failure and obsolete completion | Native missing-path test, controlled failure/delay tests, real broken fixture, guarded exact-instance activation |
+| Automated seam coverage | 18 passing tests; [output](tests.txt), [review](review.md) |
+| Real invoke/query/select/launch, focus, failures and initial timings | Grouped human observations, [runtime trace](runtime.jsonl), measurements above; revised handoff recheck below |
