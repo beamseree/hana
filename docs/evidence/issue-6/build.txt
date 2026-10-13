@@ -1,0 +1,4 @@
+[0/1] Planning build
+Building for production...
+[0/4] Write sources
+[1/4] Write swift-version--112E4EF74740DA65.txt

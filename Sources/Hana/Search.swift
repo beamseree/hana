@@ -183,9 +183,19 @@ final class Search {
             if lhs.name != rhs.name { return lhs.name < rhs.name }
             return lhs.app.url.path < rhs.app.url.path
         }
-        var seen = Set<SearchResult.ID>()
+        // Merge names before matching: an unmatched catalog display name must
+        // not consume the identity of a matching indexed filename. Keep the
+        // catalog's presentation while scoring all names for that destination.
+        var destinations: [SearchResult.ID: SearchResult] = [:]
+        for result in results where Self.eligible(result.url) {
+            if let existing = destinations[result.id] {
+                destinations[result.id] = SearchResult(name: existing.name, url: existing.url,
+                    alternateNames: Array(Set(existing.alternateNames + [result.name] + result.alternateNames)),
+                    kind: existing.kind)
+            } else { destinations[result.id] = result }
+        }
         var best: [Candidate] = []
-        for app in results where Self.eligible(app.url) && seen.insert(app.id).inserted {
+        for app in destinations.values {
             let name = normalized(app.name)
             let tiers = ([app.name] + app.alternateNames).compactMap { matchTier($0, query: query) }
             guard let tier = tiers.min() else { continue }

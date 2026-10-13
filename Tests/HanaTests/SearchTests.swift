@@ -5,6 +5,28 @@ import Testing
 @Suite(.timeLimit(.minutes(1)))
 @MainActor
 struct SearchTests {
+    @Test func strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() async {
+        let chosen = SearchResult(name: "Friendly Name", url: URL(fileURLWithPath: "/Applications/Target.app"), alternateNames: ["My Target"])
+        let indexed = SearchResult(name: "Target", url: chosen.url)
+        let weak = app("Target Extra", "/Applications/Target Extra.app")
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [chosen, weak], status: .ready)); $0.finish() } },
+                            files: { _ in AsyncStream { $0.yield(.init(results: [indexed], status: .ready)); $0.finish() } }, debounce: .zero)
+        var last: Search.Batch?
+        for await batch in search.search(.init(text: "Target")) { last = batch }
+        #expect(last?.results.map(\.name) == ["Friendly Name", "Target Extra"])
+    }
+
+    @Test func unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() async {
+        let url = URL(fileURLWithPath: "/Applications/Notes.app")
+        let catalog = SearchResult(name: "Notes", url: url)
+        let indexed = SearchResult(name: "Notes", url: url, alternateNames: ["Notes.app"])
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [catalog], status: .ready)); $0.finish() } },
+                            files: { _ in AsyncStream { $0.yield(.init(results: [indexed], status: .ready)); $0.finish() } }, debounce: .zero)
+        var last: Search.Batch?
+        for await batch in search.search(.init(text: "Notes.app")) { last = batch }
+        #expect(last?.results.map(\.url) == [url])
+    }
+
     @Test func visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() async {
         let folder = SearchResult(name: "Notes", url: URL(fileURLWithPath: "/Users/test/Trash/Notes"), kind: .folder)
         let search = Search(source: { AsyncStream { $0.finish() } }, files: { _ in

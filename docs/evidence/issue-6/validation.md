@@ -54,3 +54,7 @@ Initial timings are small instrumented samples, not final p95 or typing-stall gu
 ## Physical acceptance
 
 Pending final-build human checks: normal/full-screen invocation and immediate typing; mixed keyboard selection/default opening with destination typing; Escape/outside-click return; reinvocation/rapid reopening; English/Thai paste/selection/undo; working windows open/minimized with no unexpected raising or Space jump. The existing window machinery is unchanged, but previous #5 observations alone do not establish #6 integration. Candidate IME remains explicitly deferred.
+
+## Review correction
+
+Both independent review axes found the same pre-match deduplication bug: a catalog alias without `.app` could hide the metadata filename match. The failing regression now passes after merging all names by destination before scoring, retaining catalog display names. A stronger metadata alias also improves its tier without replacing presentation. See [two-axis review](review.md).
