@@ -105,3 +105,10 @@ Working-window diagnostics add numeric validation IDs (1 Main, 2 Mock Note A, 3 
 Type an application name, move with ↑/↓, and press Return to open the selected path. Rows show Application and the full installation path; two installations remain separate. Empty Search has no results or hints. A selected result that disappears leaves no selection until you navigate again. Failed opening retains text and explains recovery. Successful native acknowledgment dismisses without restoring the invocation origin.
 
 The retained native editor stays above the expanding results surface. Catalog scans and ranking run off its main actor. Search starts after approximately 100 ms debounce and returns at most 20 rows. The catalog refreshes at launch and when a one-second directory/metadata stamp check detects changes inside conventional application roots. See [coverage, test procedures, timings and acceptance limits](evidence/issue-5/validation.md).
+
+
+## Mixed filename Search — issue #6
+
+Ordinary Search now merges applications with indexed filename results and visible folders. Rows include their type and exact location. All query tokens are literal filename matches; source status distinguishes gathering, partial coverage, and observed failure. An empty completed response does not diagnose permissions. Return opens the selected file in its default app; failure retains context.
+
+The metadata adapter owns query lifecycle on the main run loop and sends value snapshots to background eligibility work. See [implementation, API checks and signed-app evidence](evidence/issue-6/validation.md) for bounds, the local-computer scope observation, and acceptance limits. `scripts/validation/install-file-search-fixtures` creates only named synthetic fixtures. `--validate-mixed-search` exercises their discovery/opening through Mac Interaction; `--validation-file-delay` adds five seconds to the file source for validation only. Both flags are opt-in. Broader coverage remains #9.

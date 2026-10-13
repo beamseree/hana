@@ -5,8 +5,91 @@ import Testing
 @Suite(.timeLimit(.minutes(1)))
 @MainActor
 struct SearchTests {
-    @Test func failedCatalogStatusStillDeliversAvailableMatches() async {
-        let search = Search(source: { AsyncStream { $0.yield(.init(applications: [app("Notes", "/Applications/Notes.app")], status: .failed)); $0.finish() } }, debounce: .zero)
+    @Test func visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() async {
+        let folder = SearchResult(name: "Notes", url: URL(fileURLWithPath: "/Users/test/Trash/Notes"), kind: .folder)
+        let search = Search(source: { AsyncStream { $0.finish() } }, files: { _ in
+            AsyncStream { $0.yield(.init(results: [folder], status: .ready)); $0.finish() }
+        }, debounce: .zero)
+        var last: Search.Batch?
+        for await batch in search.search(.init(text: "notes")) { last = batch }
+        #expect(last?.results == [folder])
+        #expect(last?.results.first?.typeLabel == "Folder")
+    }
+
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["HANA_INDEXED_FIXTURE"] != nil))
+    func liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() async throws {
+        let path = try #require(ProcessInfo.processInfo.environment["HANA_INDEXED_FIXTURE"])
+        let fixture = URL(fileURLWithPath: path)
+        let search = Search(roots: [], indexedFiles: true, debounce: .zero)
+        // Single-token gathering also guards the native one-child compound
+        // predicate exception. Multiword and symbol cases exercise translation.
+        for text in [fixture.lastPathComponent, "TextEdit", "ทึก [*]", "[*]", "Hana TextEdit"] {
+            var found = false
+            for await batch in search.search(.init(text: text)) {
+                if batch.results.contains(where: { $0.url == fixture }) { found = true; break }
+                if batch.fileStatus == .ready || batch.fileStatus == .failed { break }
+            }
+            #expect(found, "Indexed synthetic fixture was not returned by live Search")
+        }
+    }
+
+    @Test func replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() async throws {
+        let old = CatalogFeed(), fresh = CatalogFeed()
+        let search = Search(source: { AsyncStream { $0.finish() } }, files: { text in
+            text == "old" ? old.stream() : fresh.stream()
+        }, debounce: .zero)
+        let obsolete = search.search(.init(text: "old"))
+        let consuming = Task { for await _ in obsolete {} }
+        try await eventually { old.subscriptionCount == 1 }
+        let request = Search.Request(text: "fresh")
+        var iterator = search.search(request).makeAsyncIterator()
+        await fresh.send([app("fresh", "/Applications/fresh.app")])
+        await old.send([app("old", "/Applications/old.app")])
+        let batch = await iterator.next()
+        #expect(batch?.generation == request.generation)
+        #expect(batch?.results.map(\.name) == ["fresh"])
+        await consuming.value
+        try await eventually { old.cancellationCount == 1 }
+        for await batch in search.search(.init(text: "")) { #expect(batch.results.isEmpty) }
+        try await eventually { fresh.cancellationCount == 1 }
+    }
+
+    @Test func filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() async {
+        let same = app("Notes", "/Applications/Notes.app")
+        let file = SearchResult(name: "Notes [*] บันทึก.txt", url: URL(fileURLWithPath: "/Users/test/Documents/Notes [*] บันทึก.txt"), kind: .file)
+        let hidden = SearchResult(name: "Notes [*] บันทึก.txt", url: URL(fileURLWithPath: "/Users/test/.hidden/Notes [*] บันทึก.txt"), kind: .file)
+        let privateFile = SearchResult(name: "Notes [*] บันทึก.txt", url: FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/com.beamseree.hana/Notes [*] บันทึก.txt"), kind: .file)
+        let others = ["/Users/test/.Trash/Notes.txt", "/Applications/X.app/Contents/Notes.txt", "/Users/test/Notes/other.txt"].map {
+            SearchResult(name: URL(fileURLWithPath: $0).lastPathComponent, url: URL(fileURLWithPath: $0), kind: .file)
+        }
+        let metadata = Array(repeating: hidden, count: 40) + [privateFile, same, app("Notes", "/Other/Notes.app"), file] + others
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [same], status: .ready)); $0.finish() } },
+                            files: { _ in AsyncStream { $0.yield(.init(results: metadata, status: .ready)); $0.finish() } }, debounce: .zero)
+        var last: Search.Batch?
+        for await batch in search.search(.init(text: "notes")) { last = batch }
+        #expect(last?.results.map(\.url.path) == ["/Applications/Notes.app", "/Other/Notes.app", file.url.path])
+        for await batch in search.search(.init(text: "ทึก [*]")) { last = batch }
+        #expect(last?.results == [file])
+        #expect(last?.results.first?.typeLabel == "File")
+    }
+
+    @Test func mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() async throws {
+        let files = AsyncStream<SourceSnapshot>.makeStream()
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [app("Notes", "/Applications/Notes.app")], status: .ready)); $0.finish() } },
+                            files: { _ in files.stream }, debounce: .zero)
+        var iterator = search.search(.init(text: "notes")).makeAsyncIterator()
+        var batch = await iterator.next()
+        while batch?.results.isEmpty == true { batch = await iterator.next() }
+        #expect(batch?.results.map(\.name) == ["Notes"])
+        #expect(batch?.fileStatus == .loading)
+        files.continuation.yield(.init(results: [], status: .failed))
+        while batch?.fileStatus != .failed { batch = await iterator.next() }
+        #expect(batch?.results.map(\.name) == ["Notes"])
+        files.continuation.finish()
+    }
+
+    @Test func failedSourceStatusStillDeliversAvailableMatches() async {
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [app("Notes", "/Applications/Notes.app")], status: .failed)); $0.finish() } }, debounce: .zero)
         for await batch in search.search(.init(text: "notes")) {
             #expect(batch.status == .failed)
             #expect(batch.results.map(\.name) == ["Notes"])
@@ -61,7 +144,7 @@ struct SearchTests {
         let exact = app("App", "/Applications/App.app")
         let preferred = app("App Z", "/Applications/App Z.app")
         let apps = (0..<100).map { app("App \($0)", "/Applications/App \($0).app") } + [preferred, exact]
-        let search = Search(source: { AsyncStream { $0.yield(.init(applications: apps, status: .ready)); $0.finish() } }, debounce: .zero)
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: apps, status: .ready)); $0.finish() } }, debounce: .zero)
         search.recordOpened(preferred.id)
         var last: Search.Batch?
         for await batch in search.search(.init(text: "app")) { last = batch }
@@ -85,7 +168,7 @@ struct SearchTests {
     @Test func literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() async {
         let apps = [app("Notes Pro", "/Applications/Notes Pro.app"), app("บันทึก [*]", "/Applications/Thai.app"), app("Café", "/Applications/Cafe.app")]
         for (query, expected) in [("pro NOTES", "Notes Pro"), ("ทึก [*]", "บันทึก [*]"), ("CAFE\u{301}", "Café")] {
-            let search = Search(source: { AsyncStream { $0.yield(.init(applications: apps, status: .ready)); $0.finish() } }, debounce: .zero)
+            let search = Search(source: { AsyncStream { $0.yield(.init(results: apps, status: .ready)); $0.finish() } }, debounce: .zero)
             let request = Search.Request(text: query)
             var last: Search.Batch?
             for await batch in search.search(request) { last = batch }
@@ -98,7 +181,7 @@ struct SearchTests {
         let same = app("Notes", "/Applications/Notes.app")
         let other = app("Notes", "/Users/test/Applications/Notes.app")
         let apps = Array(repeating: same, count: 30) + [other]
-        let search = Search(source: { AsyncStream { $0.yield(.init(applications: apps, status: .ready)); $0.finish() } }, debounce: .zero)
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: apps, status: .ready)); $0.finish() } }, debounce: .zero)
         var last: Search.Batch?
         for await batch in search.search(.init(text: "Notes")) { last = batch }
         #expect(last?.results.map(\.url.path) == ["/Applications/Notes.app", "/Users/test/Applications/Notes.app"])
@@ -108,13 +191,13 @@ struct SearchTests {
         let apps = [app("My Notes", "/Applications/My Notes.app"),
                     app("Notes Pro", "/Applications/Notes Pro.app"),
                     app("Notes", "/Applications/Notes.app")]
-        let search = Search(source: { AsyncStream { $0.yield(.init(applications: apps, status: .ready)); $0.finish() } }, debounce: .zero)
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: apps, status: .ready)); $0.finish() } }, debounce: .zero)
         var last: Search.Batch?
         for await batch in search.search(.init(text: "notes")) { last = batch }
         #expect(last?.results.map(\.name) == ["Notes", "Notes Pro", "My Notes"])
     }
 }
 
-func app(_ name: String, _ path: String) -> ApplicationResult {
-    ApplicationResult(name: name, url: URL(fileURLWithPath: path))
+func app(_ name: String, _ path: String) -> SearchResult {
+    SearchResult(name: name, url: URL(fileURLWithPath: path))
 }

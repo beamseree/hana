@@ -1,0 +1,21 @@
+#!/bin/bash
+# Only synthetic, visible fixtures; no index import or privacy/settings changes.
+set -euo pipefail
+python3 - <<'PY'
+from pathlib import Path
+root = Path.home() / 'Hana Mixed Search Validation'
+root.mkdir(exist_ok=True)
+fixtures = {
+    'TextEdit Hana [*] บันทึก.txt': 'HANA-6-20261013',
+    '''TextEdit Hana 'quote' "double" \\ ?.txt''': 'HANA-6-PUNCTUATION',
+}
+for name, marker in fixtures.items():
+    path = root / name
+    content = f'Hana issue 6 indexed fixture.\nExact destination marker: {marker}\nThis disposable file contains no personal data.\n'
+    if path.exists():
+        if path.read_text() != content:
+            raise SystemExit(f'Refusing to overwrite modified fixture: {path}')
+    else:
+        path.write_text(content)
+print(root)
+PY

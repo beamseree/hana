@@ -16,9 +16,14 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let diagnostics = Diagnostics(enabled: CommandLine.arguments.contains("--diagnostics"))
-        let interaction = MacInteraction(diagnostics: diagnostics)
+        let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true,
+                            fileDelay: CommandLine.arguments.contains("--validation-file-delay") ? .seconds(5) : .zero)
+        let interaction = MacInteraction(diagnostics: diagnostics, search: search)
         self.interaction = interaction
         interaction.start()
+        if CommandLine.arguments.contains("--validate-mixed-search") {
+            Task { await validateMixedSearch(interaction, diagnostics: diagnostics) }
+        }
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {

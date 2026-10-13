@@ -1,10 +1,10 @@
 import SwiftUI
 
-struct ApplicationResultsView: View {
-    var results: [ApplicationResult] = []
-    var selectedID: ApplicationResult.ID?
+struct SearchResultsView: View {
+    var results: [SearchResult] = []
+    var selectedID: SearchResult.ID?
     var status: String?
-    var select: (ApplicationResult.ID) -> Void = { _ in }
+    var select: (SearchResult.ID) -> Void = { _ in }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -29,7 +29,7 @@ struct ApplicationResultsView: View {
                                     .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
-                                .accessibilityLabel("\(result.name), Application, \(result.subtitle)")
+                                .accessibilityLabel("\(result.name), \(result.typeLabel), \(result.subtitle)")
                                 .accessibilityAddTraits(selectedID == result.id ? .isSelected : [])
                                 .id(result.id)
                             }

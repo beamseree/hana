@@ -1,22 +1,30 @@
 import Foundation
 
-struct ApplicationResult: Identifiable, Equatable, Sendable {
-    struct ID: Hashable, Sendable { let installation: URL }
+struct SearchResult: Identifiable, Equatable, Sendable {
+    struct ID: Hashable, Sendable { let destination: URL }
     let name: String
     let url: URL
-    var alternateNames: [String] = []
-    var id: ID { ID(installation: url.standardizedFileURL) }
+    let alternateNames: [String]
+    enum Kind: String, Sendable { case application = "Application", file = "File", folder = "Folder" }
+    let kind: Kind
+    init(name: String, url: URL, alternateNames: [String] = [], kind: Kind = .application) {
+        self.name = name
+        self.url = url
+        self.alternateNames = alternateNames
+        self.kind = kind
+    }
+    var id: ID { ID(destination: url.standardizedFileURL) }
     var subtitle: String { url.path }
-    var typeLabel: String { "Application" }
+    var typeLabel: String { kind.rawValue }
 }
 
-enum CatalogStatus: Equatable, Sendable {
-    case loading, ready, failed
+enum SourceStatus: String, Equatable, Sendable {
+    case loading, partial, ready, failed
 }
 
-struct CatalogSnapshot: Sendable {
-    let applications: [ApplicationResult]
-    let status: CatalogStatus
+struct SourceSnapshot: Sendable {
+    let results: [SearchResult]
+    let status: SourceStatus
 }
 
 /// Query-to-batches boundary. The source is an internal adapter, never a UI API.
@@ -28,33 +36,60 @@ final class Search {
     }
     struct Batch: Sendable {
         let generation: UUID
-        let results: [ApplicationResult]
-        let status: CatalogStatus
+        let results: [SearchResult]
+        let appStatus: SourceStatus
+        let fileStatus: SourceStatus
+        var status: SourceStatus {
+            if appStatus == .failed || fileStatus == .failed { return .failed }
+            if appStatus == .loading || fileStatus == .loading { return .loading }
+            if appStatus == .partial || fileStatus == .partial { return .partial }
+            return .ready
+        }
     }
-    private let source: () -> AsyncStream<CatalogSnapshot>
+    private final class SourceState {
+        var apps = SourceSnapshot(results: [], status: .loading)
+        var files: SourceSnapshot
+        init(hasFiles: Bool) { files = SourceSnapshot(results: [], status: hasFiles ? .loading : .ready) }
+    }
+    private let source: () -> AsyncStream<SourceSnapshot>
+    private let files: ((String) -> AsyncStream<SourceSnapshot>)?
     private let debounce: Duration
     private var task: Task<Void, Never>?
     private var generation: UUID?
     private struct Usage: Sendable { var count = 0; var sequence = 0 }
-    private var usage: [ApplicationResult.ID: Usage] = [:]
+    private var usage: [SearchResult.ID: Usage] = [:]
     private var sequence = 0
 
     deinit { task?.cancel() }
 
-    func recordOpened(_ id: ApplicationResult.ID) {
+    func recordOpened(_ id: SearchResult.ID) {
         sequence += 1
         usage[id, default: Usage()].count += 1
         usage[id]?.sequence = sequence
     }
 
-    init(source: @escaping () -> AsyncStream<CatalogSnapshot>, debounce: Duration = .milliseconds(100)) {
+    init(source: @escaping () -> AsyncStream<SourceSnapshot>, files: ((String) -> AsyncStream<SourceSnapshot>)? = nil, debounce: Duration = .milliseconds(100)) {
+        self.files = files
         self.source = source
         self.debounce = debounce
     }
 
-    convenience init(roots: [URL] = ApplicationCatalog.conventionalRoots, debounce: Duration = .milliseconds(100)) {
+    convenience init(roots: [URL], indexedFiles: Bool = false, fileDelay: Duration = .zero, debounce: Duration = .milliseconds(100)) {
         let catalog = ApplicationCatalog(roots: roots)
-        self.init(source: { catalog.snapshots() }, debounce: debounce)
+        self.init(source: { catalog.snapshots() }, files: indexedFiles ? { text in
+            let (stream, continuation) = AsyncStream<SourceSnapshot>.makeStream(bufferingPolicy: .bufferingNewest(1))
+            let task = Task {
+                defer { continuation.finish() }
+                do { try await Task.sleep(for: fileDelay) } catch { return }
+                for await snapshot in SpotlightSource.snapshots(for: text) { continuation.yield(snapshot) }
+            }
+            continuation.onTermination = { _ in task.cancel() }
+            return stream
+        } : nil, debounce: debounce)
+    }
+
+    convenience init() {
+        self.init(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true)
     }
 
     func search(_ request: Request) -> AsyncStream<Batch> {
@@ -63,23 +98,41 @@ final class Search {
         let (stream, continuation) = AsyncStream<Batch>.makeStream(bufferingPolicy: .bufferingNewest(1))
         let query = Self.normalized(request.text).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else {
-            continuation.yield(Batch(generation: request.generation, results: [], status: .ready))
+            continuation.yield(Batch(generation: request.generation, results: [], appStatus: .ready, fileStatus: .ready))
             continuation.finish()
             return stream
         }
         let source = source
+        let files = files
         let debounce = debounce
         task = Task { [weak self] in
             defer { continuation.finish() }
             do { try await Task.sleep(for: debounce) } catch { return }
-            for await snapshot in source() {
+            // Each producer is independently consumed: slow metadata never blocks
+            // an available catalog snapshot. Only value snapshots enter the merger.
+            let state = SourceState(hasFiles: files != nil)
+            let (updates, sink) = AsyncStream<Void>.makeStream(bufferingPolicy: .bufferingNewest(1))
+            let apps = Task {
+                for await snapshot in source() { state.apps = snapshot; sink.yield(()) }
+            }
+            let metadata = Task {
+                if let files {
+                    for await snapshot in files(request.text) { state.files = snapshot; sink.yield(()) }
+                }
+            }
+            let completion = Task { await apps.value; await metadata.value; sink.finish() }
+            defer { apps.cancel(); metadata.cancel(); completion.cancel(); sink.finish() }
+            for await _ in updates {
                 guard !Task.isCancelled, self?.generation == request.generation else { return }
+                let appSnapshot = state.apps, fileSnapshot = state.files
                 let usage = self?.usage ?? [:]
+                let candidates = appSnapshot.results + fileSnapshot.results
                 let results = await Task.detached(priority: .userInitiated) {
-                    Self.rank(snapshot.applications, query: query, usage: usage)
+                    Self.rank(candidates, query: query, usage: usage)
                 }.value
                 guard !Task.isCancelled, self?.generation == request.generation else { return }
-                continuation.yield(Batch(generation: request.generation, results: results, status: snapshot.status))
+                continuation.yield(Batch(generation: request.generation, results: results,
+                                         appStatus: appSnapshot.status, fileStatus: fileSnapshot.status))
             }
         }
         continuation.onTermination = { [weak self] _ in
@@ -90,14 +143,35 @@ final class Search {
         return stream
     }
 
+    /// Shared eligibility is applied before merging/ranking and visible limits.
+    nonisolated static func eligible(_ url: URL) -> Bool {
+        let url = url.standardizedFileURL
+        let components = url.pathComponents
+        guard !components.contains(where: { $0.hasPrefix(".") }) else { return false }
+        let bundleExtensions: Set<String> = ["app", "bundle", "framework", "plugin", "appex"]
+        guard !components.dropLast().contains(where: { bundleExtensions.contains(($0 as NSString).pathExtension.lowercased()) }) else { return false }
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        let privateRoots = ["Library/Application Support/com.beamseree.hana", "Library/Caches/com.beamseree.hana", "Library/Logs/com.beamseree.hana", "Library/Logs/Hana", "Library/Application Support/Hana", "Library/Caches/Hana", "Library/Preferences/com.beamseree.hana.plist"]
+        return !privateRoots.contains { root in
+            let path = home.appendingPathComponent(root).path
+            return url.path == path || url.path.hasPrefix(path + "/")
+        }
+    }
+
     private nonisolated static func normalized(_ text: String) -> String {
         text.precomposedStringWithCanonicalMapping.folding(options: [.caseInsensitive], locale: Locale(identifier: "en_US_POSIX"))
     }
 
-    private nonisolated static func rank(_ applications: [ApplicationResult], query: String,
-                                         usage: [ApplicationResult.ID: Usage]) -> [ApplicationResult] {
+    nonisolated static func matchTier(_ name: String, query: String) -> Int? {
+        let value = normalized(name), query = normalized(query)
+        guard query.split(whereSeparator: \.isWhitespace).allSatisfy({ value.contains($0) }) else { return nil }
+        return value == query ? 0 : value.hasPrefix(query) ? 1 : 2
+    }
+
+    private nonisolated static func rank(_ results: [SearchResult], query: String,
+                                         usage: [SearchResult.ID: Usage]) -> [SearchResult] {
         struct Candidate {
-            let app: ApplicationResult
+            let app: SearchResult
             let tier: Int
             let name: String
             let usage: Usage
@@ -109,15 +183,11 @@ final class Search {
             if lhs.name != rhs.name { return lhs.name < rhs.name }
             return lhs.app.url.path < rhs.app.url.path
         }
-        var seen = Set<ApplicationResult.ID>()
+        var seen = Set<SearchResult.ID>()
         var best: [Candidate] = []
-        let tokens = query.split(whereSeparator: \.isWhitespace)
-        for app in applications where seen.insert(app.id).inserted {
+        for app in results where Self.eligible(app.url) && seen.insert(app.id).inserted {
             let name = normalized(app.name)
-            let tiers = ([app.name] + app.alternateNames).map(normalized).compactMap { value -> Int? in
-                guard tokens.allSatisfy({ value.contains($0) }) else { return nil }
-                return value == query ? 0 : value.hasPrefix(query) ? 1 : 2
-            }
+            let tiers = ([app.name] + app.alternateNames).compactMap { matchTier($0, query: query) }
             guard let tier = tiers.min() else { continue }
             let candidate = Candidate(app: app, tier: tier,
                                       name: name, usage: usage[app.id] ?? Usage())
