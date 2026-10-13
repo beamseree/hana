@@ -80,7 +80,7 @@ Independent standards review, repeated through `d71eee7...2a56ceb`: **0 findings
 
 Independent spec review, repeated through `d71eee7...2a56ceb`: **0 code defects**, **0 scope-creep findings**, **1 acceptance-evidence gap**. At the time of review, the finding covered the still-pending physical checks. The final-build human observations and runtime matrix above now complete those gates; no passing conclusion is inferred from state flags.
 
-Review totals: Standards **0** findings; Spec **1 acceptance-evidence finding resolved** by the completed physical checks. No remaining implementation or scope finding.
+Final independent evidence follow-up on `a1bc57d` confirmed all #4 criteria are covered with no material overclaim. Review totals: Standards **0** findings; Spec **0 open findings**, with **1 prior acceptance-evidence finding resolved** by the completed physical checks. No remaining implementation or scope finding.
 
 ## Remaining limitations
 
