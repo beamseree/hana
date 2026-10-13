@@ -4,7 +4,10 @@ struct SearchResultsView: View {
     var results: [SearchResult] = []
     var selectedID: SearchResult.ID?
     var status: String?
+    /// Values only: the view owns no cache and does no filesystem work.
+    var icons: [SearchResult.ID: ResultIcon] = [:]
     var select: (SearchResult.ID) -> Void = { _ in }
+    var rowAppeared: (SearchResult.ID) -> Void = { _ in }
 
     static let rowHeight: CGFloat = 56
     static let statusHeight: CGFloat = 44
@@ -28,6 +31,7 @@ struct SearchResultsView: View {
                                     .accessibilityLabel("\(result.name), \(result.typeLabel), \(result.subtitle)")
                                     .accessibilityAddTraits(selectedID == result.id ? .isSelected : [])
                                     .id(result.id)
+                                    .onAppear { rowAppeared(result.id) }
                             }
                         }
                     }
@@ -47,14 +51,18 @@ struct SearchResultsView: View {
         .environment(\.colorScheme, .light)
     }
 
-    // Icon and name columns line up with the mode icon and query text above.
+    // Icons share the mode icon's center line and names start with the query
+    // text. The surface sits cardPadding inside the card.
+    private static let iconLeading = BarStyle.resultIconInset
+    private static let nameLeading = BarStyle.textInset - BarStyle.cardPadding - iconLeading - BarStyle.resultIconSize
+
     private func row(_ result: SearchResult) -> some View {
-        HStack(spacing: 10) {
-            Image(systemName: result.symbolName)
-                .font(.system(size: 18))
-                .foregroundStyle(Color(nsColor: BarStyle.iconColor))
-                .frame(width: 28, height: 28)
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(spacing: Self.nameLeading) {
+            icon(result)
+                .frame(width: BarStyle.resultIconSize, height: BarStyle.resultIconSize)
+                // Arrival swaps the image in place, never animated.
+                .transaction { $0.animation = nil }
+            VStack(alignment: .leading, spacing: 1) {
                 Text(result.name).font(.system(size: 16)).tracking(-0.16).lineLimit(1)
                 Text(result.subtitle).font(.system(size: 12))
                     .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
@@ -64,10 +72,22 @@ struct SearchResultsView: View {
             Text(result.typeLabel).font(.system(size: 12))
                 .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
         }
-        .padding(.horizontal, 8).frame(height: Self.rowHeight)
+        .padding(.leading, Self.iconLeading).padding(.trailing, 8).frame(height: Self.rowHeight)
         .background(selectedID == result.id ? Color.black.opacity(0.06) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: BarStyle.cardRadius - BarStyle.cardPadding))
         .contentShape(Rectangle())
+    }
+
+    /// The generic symbol is both the loading placeholder and the fallback.
+    /// Application icons keep their own colours; other kinds stay monochrome.
+    @ViewBuilder private func icon(_ result: SearchResult) -> some View {
+        if let icon = icons[result.id] {
+            Image(decorative: icon.image, scale: icon.scale).resizable().interpolation(.high)
+        } else {
+            Image(systemName: result.symbolName)
+                .font(.system(size: 18))
+                .foregroundStyle(Color(nsColor: BarStyle.iconColor))
+        }
     }
 }
 
