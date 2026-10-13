@@ -5,6 +5,105 @@ import Testing
 @Suite(.timeLimit(.minutes(1)))
 @MainActor
 struct SearchTests {
+    @Test func closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() async {
+        let exact = app("App", "/Applications/exact.app")
+        let close = app("App Z", "/Applications/close.app")
+        let frequent = app("App Alphabet", "/Applications/frequent.app")
+        let recent = app("App Recently", "/Applications/recent.app")
+        let weak = app("My App", "/Applications/weak.app")
+        let values = [weak, frequent, recent, close, exact]
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: values, status: .ready)); $0.finish() } }, debounce: .zero)
+        for _ in 0..<100 { search.recordOpened(frequent.id); search.recordOpened(weak.id) }
+        search.recordOpened(recent.id)
+        var last: Search.Batch?
+        for await batch in search.search(.init(text: "app")) { last = batch }
+        #expect(last?.results.map(\.id) == [exact, close, recent, frequent, weak].map(\.id))
+        // A new Search instance has no durable successful-use history.
+        let fresh = Search(source: { AsyncStream { $0.yield(.init(results: values, status: .ready)); $0.finish() } }, debounce: .zero)
+        for await batch in fresh.search(.init(text: "app")) { last = batch }
+        #expect(last?.results.map(\.id) == [exact, close, frequent, recent, weak].map(\.id))
+    }
+
+    @Test func comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() async {
+        let literal = app("- [*?] \"Café\" บันทึก", "/Applications/literal.app")
+        let wrongMark = app("- [*?] \"Café\" บนทึก", "/Applications/wrong.app")
+        let values = [wrongMark, literal, app("Anything", "/Applications/other.app")]
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: values, status: .ready)); $0.finish() } }, debounce: .zero)
+        let text = "  -  [*?] \"CAFE\u{301}\"\tบันทึก  "
+        let request = Search.Request(text: text)
+        var last: Search.Batch?
+        for await batch in search.search(request) { last = batch }
+        #expect(last?.results == [literal])
+        #expect(request.text == text)
+        // Equal comparison names tie by stable destination, not input order.
+        let a = app("Notes Pro", "/Applications/Z.app")
+        let z = app("NOTES\tPRO", "/Applications/A.app")
+        let ties = Search(source: { AsyncStream { $0.yield(.init(results: [z, a], status: .ready)); $0.finish() } }, debounce: .zero)
+        for await batch in ties.search(.init(text: "notes pro")) { last = batch }
+        #expect(last?.results.map(\.id) == [z.id, a.id])
+    }
+
+    @Test func equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() async {
+        let first = app("App Z", "/Applications/A.app")
+        let second = app("App A", "/Applications/Z.app")
+        for values in [[second, first], [first, second]] {
+            let search = Search(source: { AsyncStream { $0.yield(.init(results: values, status: .ready)); $0.finish() } }, debounce: .zero)
+            var last: Search.Batch?
+            for await batch in search.search(.init(text: "app")) { last = batch }
+            #expect(last?.results == [first, second])
+        }
+    }
+
+    @Test func largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() async {
+        let exact = app("[*]", "/Applications/exact.app")
+        let prefix = SearchResult(name: "[*] file", url: URL(fileURLWithPath: "/fixture/prefix.txt"), kind: .file)
+        let hidden = app("[*]", "/fixture/.hidden/excluded.app")
+        let weak = (0..<6_000).map { app("Weak \($0) [*]", "/fixture/\($0).app") }
+        let values = Array(repeating: hidden, count: 3_000) + weak + Array(repeating: weak[0], count: 3_000) + [prefix, exact]
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: values, status: .ready)); $0.finish() } }, debounce: .zero)
+        for _ in 0..<100 { search.recordOpened(weak[0].id) }
+        var last: Search.Batch?
+        for await batch in search.search(.init(text: "[*]")) { last = batch }
+        #expect(last?.results.count == 20)
+        #expect(last?.results.prefix(2).map(\.id) == [exact.id, prefix.id])
+        #expect(Set(last?.results.map(\.id) ?? []).count == 20)
+    }
+
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["HANA_BOUNDED_FIXTURE"] != nil))
+    func indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() async throws {
+        let path = try #require(ProcessInfo.processInfo.environment["HANA_BOUNDED_FIXTURE"])
+        let fixture = URL(fileURLWithPath: path)
+        let search = Search(roots: [], indexedFiles: true, debounce: .zero)
+        var found = false
+        for await batch in search.search(.init(text: fixture.lastPathComponent)) {
+            if batch.results.contains(where: { $0.url == fixture }) { found = true; break }
+            if batch.fileStatus == .ready || batch.fileStatus == .failed || batch.fileStatus == .partial { break }
+        }
+        #expect(found)
+    }
+
+    @Test func lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() async throws {
+        let files = CatalogFeed()
+        let application = app("Notes", "/Applications/Notes.app")
+        let file = SearchResult(name: "Notes.txt", url: URL(fileURLWithPath: "/fixture/Notes.txt"), kind: .file)
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [application], status: .ready)); $0.finish() } },
+                            files: { _ in files.stream() }, debounce: .zero)
+        var iterator = search.search(.init(text: "Notes")).makeAsyncIterator()
+        var batch = await iterator.next()
+        while batch?.results.isEmpty == true { batch = await iterator.next() }
+        await files.send([file], status: .partial)
+        while batch?.fileStatus != .partial { batch = await iterator.next() }
+        #expect(batch?.results.map(\.id) == [application.id, file.id])
+        await files.send([], status: .failed)
+        while batch?.fileStatus != .failed { batch = await iterator.next() }
+        #expect(batch?.results.map(\.id) == [application.id])
+        await files.send([application, file], status: .ready)
+        while batch?.fileStatus != .ready { batch = await iterator.next() }
+        #expect(batch?.results.map(\.id) == [application.id, file.id])
+        for await _ in search.search(.init(text: "")) {}
+        try await eventually { files.cancellationCount == 1 }
+    }
+
     @Test func strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() async {
         let chosen = SearchResult(name: "Friendly Name", url: URL(fileURLWithPath: "/Applications/Target.app"), alternateNames: ["My Target"])
         let indexed = SearchResult(name: "Target", url: chosen.url)

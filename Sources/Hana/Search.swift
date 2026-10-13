@@ -64,7 +64,7 @@ final class Search {
 
     func recordOpened(_ id: SearchResult.ID) {
         sequence += 1
-        usage[id, default: Usage()].count += 1
+        usage[id, default: Usage()].count = min(10, usage[id, default: Usage()].count + 1)
         usage[id]?.sequence = sequence
     }
 
@@ -127,9 +127,10 @@ final class Search {
                 let appSnapshot = state.apps, fileSnapshot = state.files
                 let usage = self?.usage ?? [:]
                 let candidates = appSnapshot.results + fileSnapshot.results
-                let results = await Task.detached(priority: .userInitiated) {
-                    Self.rank(candidates, query: query, usage: usage)
-                }.value
+                let work = Task.detached(priority: .userInitiated) {
+                    await Self.rank(candidates, query: query, usage: usage)
+                }
+                let results = await withTaskCancellationHandler { await work.value } onCancel: { work.cancel() }
                 guard !Task.isCancelled, self?.generation == request.generation else { return }
                 continuation.yield(Batch(generation: request.generation, results: results,
                                          appStatus: appSnapshot.status, fileStatus: fileSnapshot.status))
@@ -160,6 +161,7 @@ final class Search {
 
     private nonisolated static func normalized(_ text: String) -> String {
         text.precomposedStringWithCanonicalMapping.folding(options: [.caseInsensitive], locale: Locale(identifier: "en_US_POSIX"))
+            .split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }
 
     nonisolated static func matchTier(_ name: String, query: String) -> Int? {
@@ -168,45 +170,67 @@ final class Search {
         return value == query ? 0 : value.hasPrefix(query) ? 1 : 2
     }
 
+    // Internal adapter compaction uses the same ordering as visible Search.
+    // The retained shortlist is bounded; scan work yields every 128 candidates.
+    nonisolated static func compactCandidates(_ results: [SearchResult], query: String, limit: Int) async -> [SearchResult] {
+        await rank(results, query: normalized(query), usage: [:], limit: limit)
+    }
+
     private nonisolated static func rank(_ results: [SearchResult], query: String,
-                                         usage: [SearchResult.ID: Usage]) -> [SearchResult] {
+                                         usage: [SearchResult.ID: Usage], limit: Int = 20) async -> [SearchResult] {
         struct Candidate {
-            let app: SearchResult
+            let id: SearchResult.ID
             let tier: Int
-            let name: String
+            let closeness: Int
             let usage: Usage
         }
         func precedes(_ lhs: Candidate, _ rhs: Candidate) -> Bool {
             if lhs.tier != rhs.tier { return lhs.tier < rhs.tier }
-            if lhs.usage.count != rhs.usage.count { return lhs.usage.count > rhs.usage.count }
+            if lhs.closeness != rhs.closeness { return lhs.closeness < rhs.closeness }
             if lhs.usage.sequence != rhs.usage.sequence { return lhs.usage.sequence > rhs.usage.sequence }
-            if lhs.name != rhs.name { return lhs.name < rhs.name }
-            return lhs.app.url.path < rhs.app.url.path
-        }
-        // Merge names before matching: an unmatched catalog display name must
-        // not consume the identity of a matching indexed filename. Keep the
-        // catalog's presentation while scoring all names for that destination.
-        var destinations: [SearchResult.ID: SearchResult] = [:]
-        for result in results where Self.eligible(result.url) {
-            if let existing = destinations[result.id] {
-                destinations[result.id] = SearchResult(name: existing.name, url: existing.url,
-                    alternateNames: Array(Set(existing.alternateNames + [result.name] + result.alternateNames)),
-                    kind: existing.kind)
-            } else { destinations[result.id] = result }
+            if lhs.usage.count != rhs.usage.count { return lhs.usage.count > rhs.usage.count }
+            return lhs.id.destination.path < rhs.id.destination.path
         }
         var best: [Candidate] = []
-        for app in destinations.values {
-            let name = normalized(app.name)
-            let tiers = ([app.name] + app.alternateNames).compactMap { matchTier($0, query: query) }
-            guard let tier = tiers.min() else { continue }
-            let candidate = Candidate(app: app, tier: tier,
-                                      name: name, usage: usage[app.id] ?? Usage())
+        for (offset, result) in results.enumerated() {
+            if offset.isMultiple(of: 128) {
+                if Task.isCancelled { return [] }
+                await Task.yield()
+            }
+            guard eligible(result.url) else { continue }
+            var candidate: Candidate?
+            for name in [result.name] + result.alternateNames {
+                guard let tier = matchTier(name, query: query) else { continue }
+                let scored = Candidate(id: result.id, tier: tier,
+                    closeness: max(0, normalized(name).count - query.count), usage: usage[result.id] ?? Usage())
+                if candidate == nil || precedes(scored, candidate!) { candidate = scored }
+            }
+            guard let candidate else { continue }
+            if let previous = best.firstIndex(where: { $0.id == candidate.id }) {
+                guard precedes(candidate, best[previous]) else { continue }
+                best.remove(at: previous)
+            }
             let index = best.firstIndex { precedes(candidate, $0) } ?? best.count
-            if index < 20 {
+            if index < limit {
                 best.insert(candidate, at: index)
-                if best.count > 20 { best.removeLast() }
+                if best.count > limit { best.removeLast() }
             }
         }
-        return best.map(\.app)
+        // Recover presentation only for retained identities. Catalog comes first
+        // in the merged input; unmatched catalog names must not hide file aliases.
+        let retained = Set(best.map(\.id))
+        var destinations: [SearchResult.ID: SearchResult] = [:]
+        for (offset, result) in results.enumerated() {
+            if offset.isMultiple(of: 128) {
+                if Task.isCancelled { return [] }
+                await Task.yield()
+            }
+            guard retained.contains(result.id) else { continue }
+            if let existing = destinations[result.id] {
+                destinations[result.id] = SearchResult(name: existing.name, url: existing.url,
+                    alternateNames: Array(Set(existing.alternateNames + [result.name] + result.alternateNames)).sorted(), kind: existing.kind)
+            } else { destinations[result.id] = result }
+        }
+        return best.compactMap { destinations[$0.id] }
     }
 }

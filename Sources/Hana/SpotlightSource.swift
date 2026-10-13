@@ -16,9 +16,9 @@ final class SpotlightSource: NSObject {
         let url: URL
         let kind: SearchResult.Kind
     }
-    // A scan budget is distinct from the eligible-result cap. Hitting either
-    // reports partial coverage; excluded entries never consume eligible slots.
-    private static let scanBudget = 2048
+    // Bound each main-actor copy, not a prefix of the result universe. Literal
+    // verification can reject thousands of conservative metadata matches.
+    private static let scanChunk = 128
     private nonisolated static let candidateLimit = 256
     private let text: String
     private let continuation: AsyncStream<SourceSnapshot>.Continuation
@@ -101,43 +101,53 @@ final class SpotlightSource: NSObject {
         guard !stopped, let query = notification.object as? NSMetadataQuery,
               let index = stages.firstIndex(where: { $0.query === query }) else { return }
         let complete = !query.isGathering
-        query.disableUpdates()
-        let count = query.resultCount
-        // Copy just bounded immutable values while updates are suspended. All
-        // filesystem I/O and eligibility checks happen away from the input actor.
-        let values: [Item] = (0..<min(count, Self.scanBudget)).compactMap { offset in
-            guard let item = query.result(at: offset) as? NSMetadataItem,
-                  let name = item.value(forAttribute: NSMetadataItemFSNameKey) as? String,
-                  let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return nil }
-            let types = item.value(forAttribute: NSMetadataItemContentTypeTreeKey) as? [String] ?? []
-            let kind: SearchResult.Kind = types.contains("com.apple.application-bundle") ? .application
-                : types.contains("public.folder") ? .folder : .file
-            return Item(name: name, url: URL(fileURLWithPath: path), kind: kind)
-        }
-        query.enableUpdates()
         stages[index].revision += 1
         let revision = stages[index].revision
         stages[index].processing?.cancel()
         let text = text
         stages[index].processing = Task { [weak self] in
-            let work = Task.detached(priority: .userInitiated) {
-                var results: [SearchResult] = []
-                for item in values {
-                    if Task.isCancelled { break }
-                    let name = item.kind == .application ? item.url.deletingPathExtension().lastPathComponent : item.name
-                    guard let tier = [name, item.name].compactMap({ Search.matchTier($0, query: text) }).min(),
-                          index == 2 || tier == index,
-                          Search.eligible(item.url), Self.visibleDestination(item.url) else { continue }
-                    results.append(SearchResult(name: name, url: item.url, alternateNames: item.kind == .application ? [item.name] : [], kind: item.kind))
-                    if results.count == Self.candidateLimit { break }
-                }
-                return results
+            guard let self, !self.stopped, self.stages[index].revision == revision else { return }
+            query.disableUpdates()
+            defer {
+                if !self.stopped, self.stages[index].revision == revision { query.enableUpdates() }
             }
-            let results = await withTaskCancellationHandler { await work.value } onCancel: { work.cancel() }
-            guard let self, !Task.isCancelled, !self.stopped, self.stages[index].revision == revision else { return }
-            self.stages[index].results = results
-            self.stages[index].status = !complete ? .loading
-                : count > Self.scanBudget || results.count == Self.candidateLimit ? .partial : .ready
+            let count = query.resultCount
+            var retained: [SearchResult] = []
+            for start in stride(from: 0, to: count, by: Self.scanChunk) {
+                guard !Task.isCancelled, !self.stopped, self.stages[index].revision == revision else { return }
+                let values: [Item] = (start..<min(count, start + Self.scanChunk)).compactMap { offset in
+                    guard let item = query.result(at: offset) as? NSMetadataItem,
+                          let name = item.value(forAttribute: NSMetadataItemFSNameKey) as? String,
+                          let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return nil }
+                    let types = item.value(forAttribute: NSMetadataItemContentTypeTreeKey) as? [String] ?? []
+                    let kind: SearchResult.Kind = types.contains("com.apple.application-bundle") ? .application
+                        : types.contains("public.folder") ? .folder : .file
+                    return Item(name: name, url: URL(fileURLWithPath: path), kind: kind)
+                }
+                let previous = retained
+                let work = Task.detached(priority: .userInitiated) {
+                    var results = previous
+                    for item in values {
+                        if Task.isCancelled { return previous }
+                        let name = item.kind == .application ? item.url.deletingPathExtension().lastPathComponent : item.name
+                        guard let tier = [name, item.name].compactMap({ Search.matchTier($0, query: text) }).min(),
+                              index == 2 || tier == index,
+                              Search.eligible(item.url), Self.visibleDestination(item.url) else { continue }
+                        results.append(SearchResult(name: name, url: item.url,
+                            alternateNames: item.kind == .application ? [item.name] : [], kind: item.kind))
+                    }
+                    return await Search.compactCandidates(results, query: text, limit: Self.candidateLimit)
+                }
+                retained = await withTaskCancellationHandler { await work.value } onCancel: { work.cancel() }
+                guard !Task.isCancelled, !self.stopped, self.stages[index].revision == revision else { return }
+                self.stages[index].results = retained
+                self.stages[index].status = .loading
+                self.publish()
+                await Task.yield()
+            }
+            guard !Task.isCancelled, !self.stopped, self.stages[index].revision == revision else { return }
+            self.stages[index].results = retained
+            self.stages[index].status = !complete ? .loading : retained.count == Self.candidateLimit ? .partial : .ready
             self.publish()
         }
         // Keep completed queries alive for updates. Start stronger gathering

@@ -436,6 +436,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         guard currentInvocation != nil else { return }
         if editor.string != text { editor.string = text }
         searchTask?.cancel()
+        // A new query owns a new open intent; an old acknowledgment cannot
+        // block Enter or report an error into this context.
+        pendingLaunch = nil
         let request = Search.Request(text: text)
         self.request = request
         results = []

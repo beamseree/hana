@@ -43,6 +43,130 @@ struct MacInteractionTests {
 @Suite(.serialized)
 @MainActor
 struct DestinationInteractionTests {
+    @Test func newQueryCanOpenWhileAnObsoleteOpenIsStillPending() async throws {
+        _ = NSApplication.shared
+        let feed = CatalogFeed()
+        var oldCompletion: CheckedContinuation<Void, Error>?
+        var activated: [URL] = []
+        let a = app("Alpha", "/Applications/A.app"), b = app("Beta", "/Applications/B.app")
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), launchApplication: { url in
+            if url == a.url { try await withCheckedThrowingContinuation { oldCompletion = $0 } }
+            return .init(activate: { activated.append(url); return true })
+        })
+        interaction.presentBar()
+        defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+        interaction.updateQuery("Alpha")
+        await feed.send([a, b])
+        try await eventually { interaction.selectedResult?.id == a.id }
+        let obsolete = interaction.requestSelectedOpen()
+        try await eventually { oldCompletion != nil }
+        interaction.updateQuery("Beta")
+        try await eventually { feed.subscriptionCount == 2 }
+        await feed.send([a, b])
+        try await eventually { interaction.selectedResult?.id == b.id }
+        await interaction.requestSelectedOpen()?.value
+        #expect(activated == [b.url])
+        oldCompletion?.resume(throwing: CocoaError(.fileReadNoPermission))
+        await obsolete?.value
+        #expect(activated == [b.url])
+        #expect(interaction.openFailure == nil)
+    }
+
+    @Test func onlyAcknowledgedOpeningImprovesSessionUsage() async throws {
+        _ = NSApplication.shared
+        let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, debounce: .zero)
+        var shouldFail = true
+        let interaction = MacInteraction(search: search, launchApplication: { _ in
+            if shouldFail { throw CocoaError(.fileReadNoPermission) }
+            return .init(activate: { true })
+        })
+        let invocation = interaction.presentBar()
+        interaction.updateQuery("App")
+        try await eventually { interaction.results.count == 2 }
+        interaction.moveSelection(by: 1)
+        await interaction.requestSelectedOpen()?.value
+        var last: Search.Batch?
+        for await batch in search.search(.init(text: "App")) { last = batch }
+        #expect(last?.results.map(\.id) == [a.id, b.id])
+        #expect(interaction.currentInvocation == invocation)
+        shouldFail = false
+        await interaction.requestSelectedOpen()?.value
+        for await batch in search.search(.init(text: "App")) { last = batch }
+        #expect(last?.results.map(\.id) == [b.id, a.id])
+        #expect(interaction.currentInvocation == nil)
+    }
+
+    @Test func navigatedFileSurvivesNewExactBatchAndRemovalRequiresExplicitSelection() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let a = app("Note A", "/Applications/A.app")
+        let chosen = SearchResult(name: "Note Z", url: URL(fileURLWithPath: "/fixture/Z.txt"), kind: .file)
+        let exact = app("Note", "/Applications/exact.app")
+        var opened: [URL] = []
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero),
+                                         openFile: { url in opened.append(url); return .init(activate: { true }) })
+        let invocation = interaction.presentBar()
+        defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+        interaction.updateQuery("Note")
+        await apps.send([a]); await files.send([chosen])
+        try await eventually { interaction.results.count == 2 }
+        interaction.moveSelection(by: 1)
+        #expect(interaction.selectedResult?.id == chosen.id)
+        await apps.send([exact, a])
+        try await eventually { interaction.results.first?.id == exact.id }
+        #expect(interaction.selectedResult?.id == chosen.id)
+        await files.send([])
+        try await eventually { interaction.results.count == 2 }
+        #expect(interaction.selectedResult == nil)
+        #expect(interaction.requestSelectedOpen() == nil)
+        await files.send([chosen])
+        try await eventually { interaction.results.count == 3 }
+        #expect(interaction.selectedResult == nil)
+        interaction.moveSelection(by: -1)
+        await interaction.requestSelectedOpen()?.value
+        #expect(opened == [chosen.url])
+        #expect(interaction.currentInvocation != invocation)
+    }
+
+    @Test func rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() async throws {
+        _ = NSApplication.shared
+        let oldFiles = CatalogFeed(), newFiles = CatalogFeed()
+        var completion: CheckedContinuation<Void, Error>?
+        let file = SearchResult(name: "Old", url: URL(fileURLWithPath: "/fixture/old.txt"), kind: .file)
+        let freshFile = SearchResult(name: "Fresh", url: URL(fileURLWithPath: "/fixture/fresh.txt"), kind: .file)
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { text in
+            text == "Old" ? oldFiles.stream() : newFiles.stream()
+        }, debounce: .zero), openFile: { _ in
+            try await withCheckedThrowingContinuation { completion = $0 }
+            return .init(activate: { Issue.record("Obsolete callback activated"); return false })
+        })
+        let old = interaction.presentBar()
+        interaction.updateQuery("Old")
+        await oldFiles.send([file])
+        try await eventually { interaction.selectedResult != nil }
+        let opening = interaction.requestSelectedOpen()
+        try await eventually { completion != nil }
+        interaction.dismiss(old, reason: .escape)
+        for _ in 0..<5 {
+            let transient = interaction.presentBar()
+            interaction.updateQuery("Fresh")
+            interaction.dismiss(transient, reason: .outsideClick)
+        }
+        let fresh = interaction.presentBar()
+        defer { interaction.dismiss(fresh, reason: .outsideClick) }
+        interaction.updateQuery("Fresh")
+        await newFiles.send([freshFile])
+        try await eventually { interaction.selectedResult?.id == freshFile.id }
+        await oldFiles.send([file], status: .failed)
+        completion?.resume(throwing: CocoaError(.fileReadNoPermission))
+        await opening?.value
+        #expect(interaction.currentInvocation == fresh)
+        #expect(interaction.query == "Fresh")
+        #expect(interaction.selectedResult?.id == freshFile.id)
+        #expect(interaction.openFailure == nil)
+    }
+
     @Test func delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() async throws {
         _ = NSApplication.shared
         let files = CatalogFeed()
