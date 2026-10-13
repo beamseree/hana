@@ -17,6 +17,14 @@ import Foundation
 /// - `archive-note|restore-note <root> --id <uuid> --revision <n> [faults]`.
 /// - `read <root> [--view notes|archive|all]`: summarize active Notes (default),
 ///   archived notes or every note record.
+/// - `create-task <root> --operation <uuid> [--placement inbox|today] [faults]`:
+///   save the task title read from standard input.
+/// - `edit-task <root> --id <uuid> --revision <n> [faults]`: replace the title
+///   with standard input.
+/// - `move-task <root> --id <uuid> --revision <n> --to inbox|today [faults]`.
+/// - `complete-task|reopen-task|archive-task|restore-task <root> --id <uuid> --revision <n> [faults]`.
+/// - `read-tasks <root> [--view inbox|today|completed|archive|all]`: summarize
+///   one task view (Inbox by default).
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
 ///
 /// Faults on every command: `--pause before-commit|after-commit` and `--fail before-commit`.
@@ -59,6 +67,51 @@ enum CollectionFixtureHarness {
                 let note = try await store.perform(command, in: store.generation)
                 await store.close()
                 emit("note.updated", summary(note))
+            case "create-task":
+                guard let operation = options["--operation"].flatMap(UUID.init(uuidString:)),
+                      let placement = TaskPlacement(rawValue: options["--placement"] ?? "inbox") else { throw Usage() }
+                let title = String(decoding: FileHandle.standardInput.readDataToEndOfFile(), as: UTF8.self)
+                let store = try await CollectionStore.open(try CollectionLocation.fixture(root),
+                                                           faults: faults(pause: options["--pause"], fail: options["--fail"]))
+                let task = try await store.perform(.createTask(operation: operation, title: title, placement: placement),
+                                                   in: store.generation)
+                await store.close()
+                emit("task.created", summary(task))
+            case "edit-task", "move-task", "complete-task", "reopen-task", "archive-task", "restore-task":
+                guard let id = options["--id"].flatMap(UUID.init(uuidString:)),
+                      let revision = options["--revision"].flatMap({ Int64($0) }) else { throw Usage() }
+                let command: CollectionCommand<TaskItem>
+                switch arguments[0] {
+                case "edit-task":
+                    let title = String(decoding: FileHandle.standardInput.readDataToEndOfFile(), as: UTF8.self)
+                    command = .editTaskTitle(id, expectedRevision: revision, title: title)
+                case "move-task":
+                    guard let placement = options["--to"].flatMap({ TaskPlacement(rawValue: $0) }) else { throw Usage() }
+                    command = .moveTask(id, to: placement, expectedRevision: revision)
+                case "complete-task": command = .completeTask(id, expectedRevision: revision)
+                case "reopen-task": command = .reopenTask(id, expectedRevision: revision)
+                case "archive-task": command = .archiveTask(id, expectedRevision: revision)
+                default: command = .restoreTask(id, expectedRevision: revision)
+                }
+                let store = try await CollectionStore.open(try CollectionLocation.fixture(root),
+                                                           faults: faults(pause: options["--pause"], fail: options["--fail"]))
+                let task = try await store.perform(command, in: store.generation)
+                await store.close()
+                emit("task.updated", summary(task))
+            case "read-tasks":
+                let query: CollectionQuery<[TaskItem]>
+                switch options["--view"] ?? "inbox" {
+                case "inbox": query = .inbox
+                case "today": query = .today
+                case "completed": query = .completedTasks
+                case "archive": query = .archivedTasks
+                case "all": query = .allTasks
+                default: throw Usage()
+                }
+                let store = try await CollectionStore.open(try CollectionLocation.fixture(root))
+                let tasks = try await store.read(query, in: store.generation)
+                await store.close()
+                emit("tasks", ["count": tasks.count, "tasks": tasks.map(summary)])
             case "read":
                 let query: CollectionQuery<[Note]>
                 switch options["--view"] ?? "notes" {
@@ -125,6 +178,19 @@ enum CollectionFixtureHarness {
                 "updatedAt": CollectionStore.milliseconds(note.updatedAt),
                 "pinned": note.isPinned, "archived": note.archivedAt != nil,
                 "archivedAt": note.archivedAt.map { CollectionStore.milliseconds($0) as Any } ?? NSNull()]
+    }
+
+    private static func summary(_ task: TaskItem) -> [String: Any] {
+        let title = Data(task.title.utf8)
+        func milliseconds(_ date: Date?) -> Any { date.map { CollectionStore.milliseconds($0) as Any } ?? NSNull() }
+        return ["id": task.id.uuidString, "revision": task.revision, "titleBytes": title.count,
+                "titleSHA256": SHA256.hash(data: title).map { String(format: "%02x", $0) }.joined(),
+                "createdAt": CollectionStore.milliseconds(task.createdAt),
+                "contentEditedAt": CollectionStore.milliseconds(task.contentEditedAt),
+                "updatedAt": CollectionStore.milliseconds(task.updatedAt),
+                "completedAt": milliseconds(task.completedAt), "archivedAt": milliseconds(task.archivedAt),
+                "placement": task.placement.map { $0.rawValue as Any } ?? NSNull(),
+                "orderKey": task.orderKey.map { $0 as Any } ?? NSNull()]
     }
 
     /// Error names only; never descriptions that could carry content or paths.

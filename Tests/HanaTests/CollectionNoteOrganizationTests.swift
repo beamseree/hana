@@ -286,7 +286,7 @@ struct CollectionNoteOrganizationTests {
 
         let defaults = try await store.read(.searchText(), in: g)
         #expect(defaults == [OwnedItemText(kind: .note, id: kept.id, title: "Groceries", text: kept.body,
-                                           isArchived: false, contentEditedAt: kept.contentEditedAt)])
+                                           isArchived: false, isCompleted: false, contentEditedAt: kept.contentEditedAt)])
         let everything = try await store.read(.searchText(SearchEligibility(includesArchived: true)), in: g)
         #expect(everything.map(\.id) == [archived.id, kept.id])
         #expect(everything.first?.isArchived == true && everything.first?.title == "Old plans")

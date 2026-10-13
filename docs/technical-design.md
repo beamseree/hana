@@ -430,3 +430,16 @@ The Store adds `editNote`, `setNotePinned`, `archiveNote` and `restoreNote`, eac
 - **Search projection.** `.searchText(SearchEligibility)` returns committed `OwnedItemText` values (kind, ID, derived title, text, archived flag, content-edited time), excluding archived notes unless `includesArchived` is set. Nothing in the Search bar reads it yet.
 
 The fixture harness adds `edit-note`, `pin-note`, `archive-note`, `restore-note` and `read --view notes|archive|all`, with the same `--pause`/`--fail` faults. [Validation record](evidence/issue-25/validation.md); this slice has not yet been compiled or run.
+
+## Tasks — issue #26
+
+Tasks are `TaskItem` values (named to avoid Swift's concurrency `Task`) with `TaskPlacement` `inbox`/`today`. Commands: `createTask(operation:title:placement:)` (Inbox by default) and the revision-checked `editTaskTitle`, `moveTask`, `completeTask`, `reopenTask`, `archiveTask`, `restoreTask`, following the operation table above. Queries: `.task(id)`, `.inbox`, `.today` (`.tasks(in:)`), `.completedTasks` (completion time descending, then ID), `.archivedTasks` (archive time descending, then ID) and `.allTasks`.
+
+- **Titles** must be nonblank and contain no line break of any kind (LF, CR, VT, FF, NEL, U+2028, U+2029), checked before any write; they are stored as exact bytes, never trimmed or flattened. The schema's CHECK covers LF, CR, NEL and U+2028/2029.
+- **Refusals.** Archived tasks refuse every change except restore (`archived`); moving a completed task fails with `completed` (reopen first). Completed tasks still allow title edits. Satisfied commands at the current revision are no-ops; stale revisions fail first, as for notes.
+- **Creation receipts** hash `task\0<placement>\0<title bytes>`, so a retry with a different placement is a reused operation. Receipts are shared with notes; an operation ID used for one kind is refused for the other.
+- **Order keys.** New, moved, reopened and restored-unfinished tasks get `min(key) − 1` in the destination (0 in an empty list). When the minimum is already `Int64.min`, the list is renumbered to `0, 2²⁰, 2·2²⁰, …` in its current order within the same transaction. Keys are list positions, not item facts: renumbering does not change other tasks' revisions or updated times, so it cannot invalidate a concurrent title edit.
+- **Today** is pure membership. Nothing in the Store reads a calendar or time zone.
+- **Search projection.** `.searchText` now merges notes and tasks by content-edited time, then ID; `SearchEligibility.includesCompleted` admits completed tasks.
+
+The harness adds `create-task`, `edit-task`, `move-task`, `complete-task`, `reopen-task`, `archive-task`, `restore-task` and `read-tasks --view inbox|today|completed|archive|all`. [Validation record](evidence/issue-26/validation.md); not yet compiled or run.
