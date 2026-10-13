@@ -229,7 +229,40 @@ struct DestinationInteractionTests {
         #expect(attempted == file.url)
         #expect(interaction.currentInvocation == invocation)
         #expect(interaction.query == "Notes")
-        #expect(interaction.openFailure != nil)
+        #expect(interaction.openFailure == "Access was denied. Check this destination’s permissions in Finder, then retry.")
+        #expect(interaction.selectedResult?.id == file.id)
+    }
+
+    @Test func failedFilesStillAllowAvailableApplicationOpening() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let destination = app("Hana9 App", "/Applications/Hana9.app")
+        var activated = false
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero),
+            launchApplication: { _ in .init(activate: { activated = true; return true }) })
+        interaction.presentBar()
+        interaction.updateQuery("Hana9")
+        await apps.send([destination]); await files.send([], status: .failed)
+        try await eventually { interaction.selectedResult?.id == destination.id }
+        #expect(interaction.query == "Hana9")
+        await interaction.requestSelectedOpen()?.value
+        #expect(activated)
+        #expect(interaction.currentInvocation == nil)
+    }
+
+    @Test func missingFileExplainsUnavailableLocationAndRetainsSelection() async throws {
+        _ = NSApplication.shared
+        let file = SearchResult(name: "Hana9 Missing", url: URL(fileURLWithPath: "/nonexistent-hana9/Missing.txt"), kind: .file)
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.yield(.init(results: [file], status: .ready)); $0.finish() } }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .escape) }
+        interaction.updateQuery("Hana9")
+        try await eventually { interaction.selectedResult?.id == file.id }
+        await interaction.requestSelectedOpen()?.value
+        #expect(interaction.openFailure == "This destination is no longer available at this location. Check it in Finder, then search again.")
+        #expect(interaction.query == "Hana9")
+        #expect(interaction.selectedResult?.id == file.id)
+        #expect(interaction.currentInvocation == invocation)
     }
 
     @Test func changedQueryNeverActivatesAnOldAcknowledgment() async throws {

@@ -1,0 +1,11 @@
+[0/1] Planning build
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/8] Emitting module Hana
+[4/8] Compiling Hana HanaApp.swift
+[5/8] Compiling Hana CoverageValidation.swift
+[5/8] Write Objects.LinkFileList
+[6/8] Linking Hana
+[7/8] Applying Hana
+Build complete! (1.15s)

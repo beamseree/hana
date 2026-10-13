@@ -1,0 +1,67 @@
+Building for debugging...
+[0/11] Write sources
+[2/11] Write Hana-entitlement.plist
+[3/11] /Users/beamsereeyothin/.codex/worktrees/5602/hana/.build/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[4/11] Write sources
+[5/11] Write swift-version--112E4EF74740DA65.txt
+[7/25] Compiling Hana SpotlightSource.swift
+[8/25] Compiling Hana SearchResultsView.swift
+[9/25] Compiling Hana SearchCorrectnessValidation.swift
+[10/25] Compiling Hana Search.swift
+[11/25] Compiling Hana HanaApp.swift
+[12/25] Compiling Hana MixedSearchValidation.swift
+[13/26] Compiling Hana GlobalShortcut.swift
+[14/26] Compiling Hana FocusedWindowGeometry.swift
+[15/26] Compiling Hana Diagnostics.swift
+[16/26] Compiling Hana DisplayPlacement.swift
+[17/26] Compiling Hana ApplicationCatalog.swift
+[18/26] Compiling Hana BarStyle.swift
+[19/26] Emitting module Hana
+[20/26] Compiling Hana MacInteraction.swift
+[21/26] Compiling Hana WorkingWindowController.swift
+[21/26] Write Objects.LinkFileList
+[22/26] Linking Hana
+[23/26] Applying Hana
+[25/31] Compiling HanaTests NativeEditingTests.swift
+[26/31] Compiling HanaTests SearchTests.swift
+[27/31] Emitting module HanaTests
+[28/31] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/5602/hana/Tests/HanaTests/MacInteractionTests.swift:93:20: warning: 'shouldFail' mutated after capture by sendable closure
+ 77 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+ 78 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, debounce: .zero)
+ 79 |         var shouldFail = true
+    |             `- note: variable defined here
+ 80 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+ 81 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+ 82 |             return .init(activate: { true })
+ 83 |         })
+    :
+ 91 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+ 92 |         #expect(interaction.currentInvocation == invocation)
+ 93 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+ 94 |         await interaction.requestSelectedOpen()?.value
+ 95 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[29/31] Compiling HanaTests DisplayPlacementTests.swift
+[30/33] Compiling HanaPackageTests runner.swift
+[31/33] Emitting module HanaPackageTests
+[31/33] Write Objects.LinkFileList
+[32/33] Linking HanaPackageTests
+Build complete! (15.21s)
+Test Suite 'Selected tests' started at 2026-10-13 16:41:28.779.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 16:41:28.780.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 16:41:28.780.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 16:41:28.780.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite DestinationInteractionTests started.
+􀟈  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() started.
+􀢄  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() recorded an issue at MacInteractionTests.swift:232:9: Expectation failed: (interaction.openFailure → "Couldn’t open this destination. It may have moved or become unavailable. Check it in Finder, then select a result and press Return to retry.") == "Access was denied. Check this destination’s permissions in Finder, then retry."
+􀢄  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() failed after 0.307 seconds with 1 issue.
+􀢄  Suite DestinationInteractionTests failed after 0.307 seconds with 1 issue.
+􀢄  Test run with 1 test in 1 suite failed after 0.307 seconds with 1 issue.
