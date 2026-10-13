@@ -52,11 +52,11 @@ final class Search {
         init(hasFiles: Bool) { files = SourceSnapshot(results: [], status: hasFiles ? .loading : .ready) }
     }
     private let source: () -> AsyncStream<SourceSnapshot>
-    private let files: ((String) -> AsyncStream<SourceSnapshot>)?
+    private var files: ((String) -> AsyncStream<SourceSnapshot>)?
     private let debounce: Duration
     private var task: Task<Void, Never>?
     private var generation: UUID?
-    private struct Usage: Sendable { var count = 0; var sequence = 0 }
+    struct Usage: Sendable { var count = 0; var sequence = 0 }
     private var usage: [SearchResult.ID: Usage] = [:]
     private var sequence = 0
 
@@ -76,16 +76,22 @@ final class Search {
 
     convenience init(roots: [URL], indexedFiles: Bool = false, fileDelay: Duration = .zero, debounce: Duration = .milliseconds(100)) {
         let catalog = ApplicationCatalog(roots: roots)
-        self.init(source: { catalog.snapshots() }, files: indexedFiles ? { text in
-            let (stream, continuation) = AsyncStream<SourceSnapshot>.makeStream(bufferingPolicy: .bufferingNewest(1))
-            let task = Task {
-                defer { continuation.finish() }
-                do { try await Task.sleep(for: fileDelay) } catch { return }
-                for await snapshot in SpotlightSource.snapshots(for: text) { continuation.yield(snapshot) }
+        self.init(source: { catalog.snapshots() }, debounce: debounce)
+        if indexedFiles {
+            self.files = { [weak self] text in
+                // Opening dismisses the query. Each subsequent query captures
+                // the latest acknowledged session usage before adapter limits.
+                let usage = self?.usage ?? [:]
+                let (stream, continuation) = AsyncStream<SourceSnapshot>.makeStream(bufferingPolicy: .bufferingNewest(1))
+                let task = Task {
+                    defer { continuation.finish() }
+                    do { try await Task.sleep(for: fileDelay) } catch { return }
+                    for await snapshot in SpotlightSource.snapshots(for: text, usage: usage) { continuation.yield(snapshot) }
+                }
+                continuation.onTermination = { _ in task.cancel() }
+                return stream
             }
-            continuation.onTermination = { _ in task.cancel() }
-            return stream
-        } : nil, debounce: debounce)
+        }
     }
 
     convenience init() {
@@ -172,8 +178,8 @@ final class Search {
 
     // Internal adapter compaction uses the same ordering as visible Search.
     // The retained shortlist is bounded; scan work yields every 128 candidates.
-    nonisolated static func compactCandidates(_ results: [SearchResult], query: String, limit: Int) async -> [SearchResult] {
-        await rank(results, query: normalized(query), usage: [:], limit: limit)
+    nonisolated static func compactCandidates(_ results: [SearchResult], query: String, limit: Int, usage: [SearchResult.ID: Usage] = [:]) async -> [SearchResult] {
+        await rank(results, query: normalized(query), usage: usage, limit: limit)
     }
 
     private nonisolated static func rank(_ results: [SearchResult], query: String,

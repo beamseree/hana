@@ -1,115 +1,105 @@
-[0/1] Planning build
 Building for debugging...
-[0/5] Write swift-version--112E4EF74740DA65.txt
-[2/6] Compiling HanaTests MacInteractionTests.swift
-/Users/beamsereeyothin/.codex/worktrees/5f27/hana/Tests/HanaTests/MacInteractionTests.swift:93:20: warning: 'shouldFail' mutated after capture by sendable closure
- 77 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
- 78 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, debounce: .zero)
- 79 |         var shouldFail = true
-    |             `- note: variable defined here
- 80 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
-    |                                                                             `- note: variable captured by sendable closure
- 81 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
-    |                `- note: capturing use
- 82 |             return .init(activate: { true })
- 83 |         })
-    :
- 91 |         #expect(last?.results.map(\.id) == [a.id, b.id])
- 92 |         #expect(interaction.currentInvocation == invocation)
- 93 |         shouldFail = false
-    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
- 94 |         await interaction.requestSelectedOpen()?.value
- 95 |         for await batch in search.search(.init(text: "App")) { last = batch }
-[3/6] Compiling HanaTests SearchTests.swift
-[4/6] Emitting module HanaTests
-[4/6] Write Objects.LinkFileList
-[5/6] Linking HanaPackageTests
-Build complete! (1.89s)
-Test Suite 'All tests' started at 2026-10-13 15:38:04.121.
-Test Suite 'All tests' passed at 2026-10-13 15:38:04.122.
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/7] Compiling Hana SearchCorrectnessValidation.swift
+[4/7] Emitting module Hana
+[5/8] Compiling Hana HanaApp.swift
+[5/10] Write Objects.LinkFileList
+[6/10] Linking Hana
+[7/10] Applying Hana
+[9/11] Emitting module HanaTests
+[9/11] Write Objects.LinkFileList
+[10/11] Linking HanaPackageTests
+Build complete! (1.95s)
+Test Suite 'All tests' started at 2026-10-13 15:46:23.702.
+Test Suite 'All tests' passed at 2026-10-13 15:46:23.703.
 	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
 􀟈  Test run started.
 􀄵  Testing Library Version: 1902
 􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite DestinationInteractionTests started.
 􀟈  Suite SearchTests started.
 􀟈  Suite MacInteractionTests started.
-􀟈  Suite DestinationInteractionTests started.
+􀟈  Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() started.
+􀟈  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() started.
 􀟈  Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() started.
-􀟈  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() started.
-􀟈  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() started.
-􀟈  Test failedSourceStatusStillDeliversAvailableMatches() started.
 􀟈  Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() started.
 􀟈  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() started.
-􀟈  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() started.
-􀟈  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() started.
-􀟈  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() started.
-􀟈  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() started.
-􀟈  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() started.
-􀟈  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() started.
-􀟈  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() started.
-􀟈  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() started.
-􀟈  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() started.
-􀙟  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() skipped.
+􀟈  Test failedSourceStatusStillDeliversAvailableMatches() started.
 􀟈  Test exactPrefixAndSubstringHaveDeterministicOrder() started.
-􀟈  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() started.
-􀟈  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() started.
-􀟈  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() started.
+􀟈  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() started.
+􀟈  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() started.
+􀟈  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() started.
+􀟈  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() started.
 􀟈  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() started.
-􀟈  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() started.
+􀟈  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() started.
+􀟈  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() started.
+􀟈  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() started.
+􀟈  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() started.
+􀟈  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() started.
 􀟈  Test reinvocationKeepsTheCurrentSession() started.
+􀟈  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() started.
+􀟈  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() started.
 􀟈  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() started.
-􁁛  Test reinvocationKeepsTheCurrentSession() passed after 0.224 seconds.
+􀟈  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() started.
+􀙟  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() skipped.
+􀟈  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() started.
+􀟈  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() started.
+􀟈  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() started.
+􁁛  Test reinvocationKeepsTheCurrentSession() passed after 0.251 seconds.
 􀟈  Test oldDismissalCannotCloseAReopenedBar() started.
-􁁛  Test oldDismissalCannotCloseAReopenedBar() passed after 0.083 seconds.
+􁁛  Test oldDismissalCannotCloseAReopenedBar() passed after 0.074 seconds.
 􀟈  Test oldDestinationCannotCloseAReopenedBar() started.
-􁁛  Test failedSourceStatusStillDeliversAvailableMatches() passed after 0.321 seconds.
-􁁛  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() passed after 0.320 seconds.
-􁁛  Test exactPrefixAndSubstringHaveDeterministicOrder() passed after 0.320 seconds.
-􁁛  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() passed after 0.321 seconds.
-􁁛  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() passed after 0.321 seconds.
-􁁛  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() passed after 0.321 seconds.
-􁁛  Test oldDestinationCannotCloseAReopenedBar() passed after 0.037 seconds.
-􁁛  Suite MacInteractionTests passed after 0.346 seconds.
-􁁛  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() passed after 0.364 seconds.
-􁁛  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() passed after 0.365 seconds.
-􁁛  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() passed after 0.365 seconds.
-􁁛  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() passed after 0.365 seconds.
-􁁛  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() passed after 0.371 seconds.
-􁁛  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() passed after 0.371 seconds.
-􁁛  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() passed after 0.371 seconds.
-􁁛  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() passed after 0.371 seconds.
-􁁛  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() passed after 0.372 seconds.
-􁁛  Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() passed after 0.372 seconds.
-􁁛  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() passed after 0.372 seconds.
-􁁛  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() passed after 0.373 seconds.
-􁁛  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() passed after 0.389 seconds.
-􁁛  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() passed after 0.391 seconds.
+􁁛  Test exactPrefixAndSubstringHaveDeterministicOrder() passed after 0.408 seconds.
+􁁛  Test failedSourceStatusStillDeliversAvailableMatches() passed after 0.408 seconds.
+􁁛  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() passed after 0.409 seconds.
+􁁛  Test oldDestinationCannotCloseAReopenedBar() passed after 0.084 seconds.
+􁁛  Suite MacInteractionTests passed after 0.411 seconds.
+􁁛  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() passed after 0.411 seconds.
+􁁛  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() passed after 0.411 seconds.
+􁁛  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() passed after 0.416 seconds.
+􁁛  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() passed after 0.484 seconds.
+􁁛  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() passed after 0.491 seconds.
+􁁛  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() passed after 0.491 seconds.
+􁁛  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() passed after 0.566 seconds.
+􁁛  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() passed after 0.586 seconds.
+􁁛  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() passed after 1.646 seconds.
+􁁛  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() passed after 1.755 seconds.
+􁁛  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() passed after 1.756 seconds.
+􁁛  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() passed after 1.756 seconds.
+􁁛  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() passed after 2.076 seconds.
+􁁛  Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() passed after 2.113 seconds.
+􁁛  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() passed after 2.894 seconds.
 􀟈  Test onlyAcknowledgedOpeningImprovesSessionUsage() started.
-􁁛  Test onlyAcknowledgedOpeningImprovesSessionUsage() passed after 0.059 seconds.
+􁁛  Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() passed after 3.367 seconds.
+􁁛  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() passed after 3.458 seconds.
+􁁛  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() passed after 3.634 seconds.
+􁁛  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() passed after 6.394 seconds.
+􁁛  Test onlyAcknowledgedOpeningImprovesSessionUsage() passed after 4.569 seconds.
 􀟈  Test navigatedFileSurvivesNewExactBatchAndRemovalRequiresExplicitSelection() started.
-􁁛  Test navigatedFileSurvivesNewExactBatchAndRemovalRequiresExplicitSelection() passed after 0.091 seconds.
+􁁛  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() passed after 8.751 seconds.
+􁁛  Test navigatedFileSurvivesNewExactBatchAndRemovalRequiresExplicitSelection() passed after 1.493 seconds.
 􀟈  Test rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() started.
-􁁛  Test rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() passed after 0.155 seconds.
+􁁛  Test rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() passed after 0.110 seconds.
 􀟈  Test delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() started.
-􁁛  Test delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() passed after 0.083 seconds.
+􁁛  Test delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() passed after 0.074 seconds.
 􀟈  Test deletedFileFailsNativeRevalidationWithoutLosingQuery() started.
-􁁛  Test deletedFileFailsNativeRevalidationWithoutLosingQuery() passed after 0.072 seconds.
+􁁛  Test deletedFileFailsNativeRevalidationWithoutLosingQuery() passed after 0.042 seconds.
 􀟈  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() started.
-􁁛  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() passed after 0.068 seconds.
+􁁛  Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() passed after 0.063 seconds.
 􀟈  Test changedQueryNeverActivatesAnOldAcknowledgment() started.
-􁁛  Test changedQueryNeverActivatesAnOldAcknowledgment() passed after 0.073 seconds.
+􁁛  Test changedQueryNeverActivatesAnOldAcknowledgment() passed after 0.054 seconds.
 􀟈  Test unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() started.
-􁁛  Test unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() passed after 0.063 seconds.
+􁁛  Test unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() passed after 0.057 seconds.
 􀟈  Test enterCapturesTheVisibleDestinationBeforeAsynchronousWork() started.
-􁁛  Test enterCapturesTheVisibleDestinationBeforeAsynchronousWork() passed after 0.069 seconds.
+􁁛  Test enterCapturesTheVisibleDestinationBeforeAsynchronousWork() passed after 0.326 seconds.
 􀟈  Test failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() started.
-􁁛  Test failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() passed after 0.071 seconds.
+􁁛  Test failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() passed after 1.700 seconds.
 􀟈  Test obsoleteBatchesAndClearingCannotReplaceCurrentResults() started.
-􁁛  Test obsoleteBatchesAndClearingCannotReplaceCurrentResults() passed after 0.069 seconds.
+􁁛  Test obsoleteBatchesAndClearingCannotReplaceCurrentResults() passed after 1.401 seconds.
 􀟈  Test selectionTracksIdentityAndVanishingNeverOpensANeighbor() started.
-􁁛  Test selectionTracksIdentityAndVanishingNeverOpensANeighbor() passed after 0.066 seconds.
-􁁛  Suite DestinationInteractionTests passed after 1.338 seconds.
-􁁛  Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() passed after 1.362 seconds.
-􁁛  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() passed after 2.316 seconds.
-􁁛  Suite SearchTests passed after 2.316 seconds.
-􁁛  Test run with 38 tests in 3 suites passed after 2.316 seconds.
+􁁛  Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() passed after 13.906 seconds.
+􁁛  Suite SearchTests passed after 13.906 seconds.
+􁁛  Test selectionTracksIdentityAndVanishingNeverOpensANeighbor() passed after 1.136 seconds.
+􁁛  Suite DestinationInteractionTests passed after 13.928 seconds.
+􁁛  Test run with 40 tests in 3 suites passed after 13.928 seconds.

@@ -4,17 +4,13 @@ import AppKit
 /// sources change batches; destinations still use the real workspace adapters.
 @MainActor
 final class SearchCorrectnessValidation {
-    private var controlled = true
     private var apps: AsyncStream<SourceSnapshot>.Continuation?
     private var files: AsyncStream<SourceSnapshot>.Continuation?
-    private let catalog = ApplicationCatalog(roots: ApplicationCatalog.conventionalRoots)
 
     func makeSearch() -> Search {
         Search(source: { [self] in
-            if !controlled { return catalog.snapshots() }
             return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { apps = $0 }
-        }, files: { [self] text in
-            if !controlled { return SpotlightSource.snapshots(for: text) }
+        }, files: { [self] _ in
             return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { files = $0 }
         }, debounce: .milliseconds(100))
     }
@@ -71,9 +67,8 @@ final class SearchCorrectnessValidation {
         await pause()
         await interaction.requestSelectedOpen()?.value
         diagnostics.record("validation7.real-app", state: ["acknowledged": interaction.currentInvocation == nil && interaction.openFailure == nil])
-        controlled = false
         apps?.finish(); files?.finish()
-        diagnostics.record("validation7.complete", state: ["normalSourcesRestored": true])
+        diagnostics.record("validation7.complete", state: ["controlledRunFinished": true])
     }
 
     private func wait(_ condition: () -> Bool) async -> Bool {

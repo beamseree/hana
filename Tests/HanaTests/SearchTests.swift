@@ -82,6 +82,48 @@ struct SearchTests {
         #expect(found)
     }
 
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["HANA_BOUNDED_FIXTURE"] != nil))
+    func indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() async throws {
+        let root = URL(fileURLWithPath: try #require(ProcessInfo.processInfo.environment["HANA_BOUNDED_FIXTURE"])).deletingLastPathComponent()
+        let chosen = root.appendingPathComponent("Usage/0299/Hana7Use.txt")
+        let search = Search(roots: [], indexedFiles: true, debounce: .zero)
+        search.recordOpened(.init(destination: chosen))
+        var last: Search.Batch?
+        for await batch in search.search(.init(text: "Hana7Use.txt")) {
+            last = batch
+            if batch.fileStatus == .ready || batch.fileStatus == .partial || batch.fileStatus == .failed { break }
+        }
+        #expect(last?.results.first?.url == chosen)
+    }
+
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["HANA_BOUNDED_FIXTURE"] != nil))
+    func indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() async throws {
+        let fixture = URL(fileURLWithPath: try #require(ProcessInfo.processInfo.environment["HANA_BOUNDED_FIXTURE"]))
+        let search = Search(roots: [], indexedFiles: true, debounce: .zero)
+        var iterator = search.search(.init(text: fixture.lastPathComponent)).makeAsyncIterator()
+        while let batch = await iterator.next() {
+            if batch.fileStatus == .ready { #expect(batch.results.contains { $0.url == fixture }); break }
+        }
+        let addition = fixture.deletingLastPathComponent().appendingPathComponent("[ 0000 Hana7 new *].txt")
+        try Data("Synthetic update fixture".utf8).write(to: addition)
+        defer { try? FileManager.default.removeItem(at: addition) }
+        try await Task.detached {
+            let importer = Process()
+            importer.executableURL = URL(fileURLWithPath: "/usr/bin/mdimport")
+            importer.arguments = [addition.path]
+            try importer.run(); importer.waitUntilExit()
+        }.value
+        // Every batch during replacement must retain the still-existing exact
+        // identity; Mac Interaction would otherwise invalidate its selection.
+        var observedUpdate = false
+        while let batch = await iterator.next() {
+            observedUpdate = true
+            #expect(batch.results.contains { $0.url == fixture })
+            if batch.fileStatus == .ready { break }
+        }
+        #expect(observedUpdate)
+    }
+
     @Test func lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() async throws {
         let files = CatalogFeed()
         let application = app("Notes", "/Applications/Notes.app")

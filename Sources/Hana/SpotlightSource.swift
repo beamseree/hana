@@ -20,22 +20,24 @@ final class SpotlightSource: NSObject {
     // verification can reject thousands of conservative metadata matches.
     private static let scanChunk = 128
     private nonisolated static let candidateLimit = 256
+    private let usage: [SearchResult.ID: Search.Usage]
     private let text: String
     private let continuation: AsyncStream<SourceSnapshot>.Continuation
     private var stages: [Stage] = []
     private var stopped = false
 
-    static func snapshots(for text: String) -> AsyncStream<SourceSnapshot> {
+    static func snapshots(for text: String, usage: [SearchResult.ID: Search.Usage] = [:]) -> AsyncStream<SourceSnapshot> {
         let (stream, continuation) = AsyncStream<SourceSnapshot>.makeStream(bufferingPolicy: .bufferingNewest(1))
-        let source = SpotlightSource(text: text, continuation: continuation)
+        let source = SpotlightSource(text: text, usage: usage, continuation: continuation)
         continuation.onTermination = { _ in Task { @MainActor in source.stop() } }
         source.startStage()
         return stream
     }
 
-    private init(text: String, continuation: AsyncStream<SourceSnapshot>.Continuation) {
+    private init(text: String, usage: [SearchResult.ID: Search.Usage], continuation: AsyncStream<SourceSnapshot>.Continuation) {
         self.text = text.precomposedStringWithCanonicalMapping.trimmingCharacters(in: .whitespacesAndNewlines)
         self.continuation = continuation
+        self.usage = usage
     }
 
     private func startStage() {
@@ -104,18 +106,20 @@ final class SpotlightSource: NSObject {
         stages[index].revision += 1
         let revision = stages[index].revision
         stages[index].processing?.cancel()
-        let text = text
+        // Keep the previous complete snapshot while replacing it. Publishing
+        // partial prefixes here would invalidate a still-existing selection.
+        stages[index].status = .loading
+        publish()
+        let text = text, usage = usage
         stages[index].processing = Task { [weak self] in
             guard let self, !self.stopped, self.stages[index].revision == revision else { return }
-            query.disableUpdates()
-            defer {
-                if !self.stopped, self.stages[index].revision == revision { query.enableUpdates() }
-            }
             let count = query.resultCount
             var retained: [SearchResult] = []
             for start in stride(from: 0, to: count, by: Self.scanChunk) {
                 guard !Task.isCancelled, !self.stopped, self.stages[index].revision == revision else { return }
-                let values: [Item] = (start..<min(count, start + Self.scanChunk)).compactMap { offset in
+                query.disableUpdates()
+                let end = min(query.resultCount, start + Self.scanChunk)
+                let values: [Item] = (min(start, end)..<end).compactMap { offset in
                     guard let item = query.result(at: offset) as? NSMetadataItem,
                           let name = item.value(forAttribute: NSMetadataItemFSNameKey) as? String,
                           let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return nil }
@@ -124,6 +128,9 @@ final class SpotlightSource: NSObject {
                         : types.contains("public.folder") ? .folder : .file
                     return Item(name: name, url: URL(fileURLWithPath: path), kind: kind)
                 }
+                // Never suspend native updates during filesystem work. A live
+                // notification increments revision and cancels this replacement.
+                query.enableUpdates()
                 let previous = retained
                 let work = Task.detached(priority: .userInitiated) {
                     var results = previous
@@ -136,13 +143,10 @@ final class SpotlightSource: NSObject {
                         results.append(SearchResult(name: name, url: item.url,
                             alternateNames: item.kind == .application ? [item.name] : [], kind: item.kind))
                     }
-                    return await Search.compactCandidates(results, query: text, limit: Self.candidateLimit)
+                    return await Search.compactCandidates(results, query: text, limit: Self.candidateLimit, usage: usage)
                 }
                 retained = await withTaskCancellationHandler { await work.value } onCancel: { work.cancel() }
                 guard !Task.isCancelled, !self.stopped, self.stages[index].revision == revision else { return }
-                self.stages[index].results = retained
-                self.stages[index].status = .loading
-                self.publish()
                 await Task.yield()
             }
             guard !Task.isCancelled, !self.stopped, self.stages[index].revision == revision else { return }
