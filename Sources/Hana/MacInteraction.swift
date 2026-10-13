@@ -1,4 +1,5 @@
 import AppKit
+import SwiftUI
 
 /// Owns the native Search lifetime. Callers carry Invocation into any delayed
 /// completion so an obsolete operation cannot dismiss a newer session.
@@ -6,6 +7,12 @@ import AppKit
 final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     struct Invocation: Equatable {
         fileprivate let id = UUID()
+    }
+
+    /// The native open acknowledgment contains the exact running instance's
+    /// activation effect. Issuing that effect is fenced by invocation/query.
+    struct OpenedApplication {
+        let activate: @MainActor () -> Bool
     }
 
     enum DismissalReason: String {
@@ -18,6 +25,19 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false
     )
     private let editor = SearchEditor(frame: .zero)
+    private let search: Search
+    private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
+    private var searchTask: Task<Void, Never>?
+    private var request: Search.Request?
+    private var selectedID: ApplicationResult.ID?
+    private var didSelectInitialResult = false
+    private var resultSurface: NSHostingView<ApplicationResultsView>?
+    private var sourceStatus: CatalogStatus = .ready
+    private var pendingLaunch: UUID?
+    private(set) var results: [ApplicationResult] = []
+    private(set) var launchFailure: String?
+    var query: String { editor.string }
+    var selectedResult: ApplicationResult? { results.first { $0.id == selectedID } }
     private let diagnostics: Diagnostics
     private var origin: NSRunningApplication?
     private weak var originWindow: NSWindow?
@@ -31,8 +51,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var shortcutStatus: NSMenuItem?
     private var hotKey: GlobalShortcut?
 
-    init(diagnostics: Diagnostics = Diagnostics()) {
+    init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
+         launchApplication: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.launch) {
         self.diagnostics = diagnostics
+        self.search = search
+        self.launchApplication = launchApplication
         super.init()
         configurePanel()
     }
@@ -97,6 +120,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         removeSessionObservers()
         panel.orderOut(nil)
         clearEditor()
+        resetSearch()
         // The foreign origin normally never lost activation. Ordering out the
         // nonactivating panel releases its key focus. Never activate an old app
         // over a subsequent user choice, even for Escape. Restoration is best effort.
@@ -206,7 +230,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         panel.contentView = surface
 
         let scroll = NSScrollView(frame: NSRect(x: 18, y: 12, width: 624, height: 40))
-        scroll.autoresizingMask = [.width, .height]
+        scroll.autoresizingMask = [.width, .minYMargin]
         scroll.drawsBackground = false
         scroll.hasHorizontalScroller = false
         scroll.hasVerticalScroller = false
@@ -237,6 +261,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
         scroll.documentView = editor
         surface.addSubview(scroll)
+        let results = NSHostingView(rootView: ApplicationResultsView())
+        results.frame = .zero
+        surface.addSubview(results)
+        resultSurface = results
     }
 
     private func clearEditor() {
@@ -276,11 +304,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
         let workspace = NSWorkspace.shared.notificationCenter
         workspace.addObserver(self, selector: #selector(appChanged(_:)), name: NSWorkspace.didActivateApplicationNotification, object: nil)
-        workspace.addObserver(self, selector: #selector(environmentChanged), name: NSWorkspace.activeSpaceDidChangeNotification, object: nil)
-        workspace.addObserver(self, selector: #selector(environmentChanged), name: NSWorkspace.willSleepNotification, object: nil)
-        workspace.addObserver(self, selector: #selector(environmentChanged), name: NSWorkspace.screensDidSleepNotification, object: nil)
+        workspace.addObserver(self, selector: #selector(environmentChanged(_:)), name: NSWorkspace.activeSpaceDidChangeNotification, object: nil)
+        workspace.addObserver(self, selector: #selector(environmentChanged(_:)), name: NSWorkspace.willSleepNotification, object: nil)
+        workspace.addObserver(self, selector: #selector(environmentChanged(_:)), name: NSWorkspace.screensDidSleepNotification, object: nil)
         let center = NotificationCenter.default
-        center.addObserver(self, selector: #selector(environmentChanged), name: NSApplication.didChangeScreenParametersNotification, object: nil)
+        center.addObserver(self, selector: #selector(environmentChanged(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
         center.addObserver(self, selector: #selector(menuBegan), name: NSMenu.didBeginTrackingNotification, object: nil)
         center.addObserver(self, selector: #selector(menuEnded), name: NSMenu.didEndTrackingNotification, object: nil)
     }
@@ -300,7 +328,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         menuDepth = 0
     }
 
-    @objc private func environmentChanged() {
+    @objc private func environmentChanged(_ notification: Notification) {
         if let invocation = currentInvocation { dismiss(invocation, reason: .environmentChange) }
     }
 
@@ -382,11 +410,167 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
     }
 
-    func textDidChange(_ notification: Notification) { record("editor.changed") }
+    func textDidChange(_ notification: Notification) {
+        record("editor.changed")
+        updateQuery(editor.string)
+    }
+
+    func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+        guard !textView.hasMarkedText() else { return false }
+        switch commandSelector {
+        case #selector(NSResponder.moveDown(_:)): moveSelection(by: 1)
+        case #selector(NSResponder.moveUp(_:)): moveSelection(by: -1)
+        case #selector(NSResponder.insertNewline(_:)):
+            requestSelectedApplicationOpen()
+        default: return false
+        }
+        return true
+    }
+
+    /// Native editor changes and callers use the same query-to-batches path.
+    func updateQuery(_ text: String) {
+        guard currentInvocation != nil else { return }
+        if editor.string != text { editor.string = text }
+        searchTask?.cancel()
+        let request = Search.Request(text: text)
+        self.request = request
+        results = []
+        selectedID = nil
+        didSelectInitialResult = false
+        launchFailure = nil
+        sourceStatus = text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .ready : .loading
+        renderResults()
+        let started = ProcessInfo.processInfo.systemUptime
+        let stream = search.search(request)
+        searchTask = Task { [weak self] in
+            for await batch in stream {
+                guard let self, self.request?.generation == batch.generation,
+                      self.currentInvocation != nil, !Task.isCancelled else { continue }
+                self.results = batch.results
+                self.sourceStatus = batch.status
+                if let selectedID = self.selectedID, !batch.results.contains(where: { $0.id == selectedID }) {
+                    self.selectedID = nil
+                } else if !self.didSelectInitialResult, let first = batch.results.first {
+                    self.selectedID = first.id
+                    self.didSelectInitialResult = true
+                }
+                self.renderResults()
+                self.record("search.batch", extra: ["resultCount": batch.results.count,
+                    "elapsedMilliseconds": (ProcessInfo.processInfo.systemUptime - started) * 1000])
+            }
+        }
+    }
+
+    func moveSelection(by offset: Int) {
+        guard !results.isEmpty else { return }
+        let index = selectedID.flatMap { id in results.firstIndex { $0.id == id } }
+        let next = index.map { min(results.count - 1, max(0, $0 + offset)) } ?? (offset < 0 ? results.count - 1 : 0)
+        selectedID = results[next].id
+        didSelectInitialResult = true
+        renderResults()
+        record("search.selection", extra: ["index": next])
+    }
+
+    @discardableResult
+    func requestSelectedApplicationOpen() -> Task<Void, Never>? {
+        guard let invocation = currentInvocation, let destination = selectedResult, pendingLaunch == nil else { return nil }
+        let operation = UUID()
+        pendingLaunch = operation
+        let generation = request?.generation
+        launchFailure = nil
+        renderResults()
+        record("launch.request")
+        return Task {
+            guard currentInvocation == invocation, pendingLaunch == operation else { return }
+            do {
+                let opened = try await launchApplication(destination.url)
+                guard currentInvocation == invocation, pendingLaunch == operation else {
+                    record("launch.stale-acknowledgment")
+                    return
+                }
+                pendingLaunch = nil
+                search.recordOpened(destination.id)
+                record("launch.acknowledged")
+                guard request?.generation == generation else { renderResults(); return }
+                // No await between the fence, dismissal, and activation. The
+                // workspace open itself requested no activation, so an obsolete
+                // completion cannot initiate a late focus/Space transfer.
+                dismiss(invocation, reason: .destination)
+                let accepted = opened.activate()
+                record("launch.activation-request", extra: ["accepted": accepted])
+            } catch {
+                guard currentInvocation == invocation, pendingLaunch == operation else { return }
+                pendingLaunch = nil
+                if request?.generation == generation {
+                    launchFailure = "Couldn’t open this installation. It may have moved or become unavailable. Check it in Finder, then select a result and press Return to retry."
+                }
+                renderResults()
+                record("launch.failed")
+            }
+        }
+    }
+
+    private static func launch(_ url: URL) async throws -> OpenedApplication {
+        guard FileManager.default.fileExists(atPath: url.path),
+              let bundle = Bundle(url: url), let executable = bundle.executableURL,
+              FileManager.default.isExecutableFile(atPath: executable.path) else {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = false
+        configuration.allowsRunningApplicationSubstitution = false
+        configuration.promptsUserIfNeeded = false
+        let application = try await NSWorkspace.shared.openApplication(at: url, configuration: configuration)
+        return OpenedApplication {
+            guard let source = NSWorkspace.shared.frontmostApplication else { return application.activate(options: []) }
+            return application.activate(from: source, options: [])
+        }
+    }
+
+    private func resetSearch() {
+        searchTask?.cancel()
+        searchTask = nil
+        request = nil
+        // Invalidate an already-issued native open; it cannot be recalled, but
+        // its acknowledgment must never close a subsequent invocation.
+        pendingLaunch = nil
+        results = []
+        selectedID = nil
+        launchFailure = nil
+        sourceStatus = .ready
+        renderResults()
+    }
+
+    private func renderResults() {
+        let hasQuery = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let status: String?
+        if !hasQuery { status = nil }
+        else if let launchFailure { status = launchFailure }
+        else if pendingLaunch != nil { status = "Opening selected application…" }
+        else if sourceStatus == .loading { status = "Loading applications…" }
+        else if sourceStatus == .failed { status = "Some application locations are unavailable. Available results are shown; check access in Finder." }
+        else { status = results.isEmpty ? "No matching applications" : nil }
+        let extra = hasQuery ? min(360, CGFloat(results.count) * 56) + (status == nil ? 0 : 60) : 0
+        let top = panel.frame.maxY
+        let bounds = panel.screen?.visibleFrame ?? panel.frame
+        let height = min(64 + extra, bounds.height)
+        let frame = NSRect(x: panel.frame.minX, y: max(bounds.minY, top - height), width: panel.frame.width, height: height)
+        panel.setFrame(frame, display: true)
+        resultSurface?.frame = NSRect(x: 12, y: 8, width: max(0, frame.width - 24), height: max(0, height - 72))
+        resultSurface?.isHidden = !hasQuery
+        resultSurface?.rootView = ApplicationResultsView(results: results, selectedID: selectedID, status: status) { [weak self] id in
+            guard let self, self.results.contains(where: { $0.id == id }) else { return }
+            self.selectedID = id
+            self.didSelectInitialResult = true
+            self.renderResults()
+            self.panel.makeFirstResponder(self.editor)
+        }
+    }
 
     private func record(_ event: String, extra: [String: Any] = [:]) {
         guard diagnostics.isEnabled else { return }
         var state: [String: Any] = [
+            "panelStyle": panel.styleMask.rawValue,
             "working": WorkingWindow.allCases.compactMap { destination -> [String: Any]? in
                 guard let window = workingWindows[destination]?.window else { return nil }
                 return ["id": destination.rawValue, "minimized": window.isMiniaturized,

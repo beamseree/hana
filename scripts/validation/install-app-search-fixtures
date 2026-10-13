@@ -1,0 +1,31 @@
+#!/bin/bash
+# Creates only disposable, ad-hoc-signed fixtures under this named test folder.
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+fixture_root="$HOME/Applications/Hana Search Validation"
+if [[ -e "$fixture_root" ]]; then
+    echo 'Fixture folder already exists; refusing to overwrite it.' >&2
+    exit 1
+fi
+fixture_binary=$(mktemp -t hana-search-fixture)
+trap 'rm -f "$fixture_binary"' EXIT
+xcrun swiftc -swift-version 6 scripts/validation/application-fixture.swift -o "$fixture_binary"
+for installation in One Two; do
+    fixture_app="$fixture_root/$installation/Hana Search Fixture.app"
+    mkdir -p "$fixture_app/Contents/MacOS"
+    cp "$fixture_binary" "$fixture_app/Contents/MacOS/Fixture"
+    cat > "$fixture_app/Contents/Info.plist" <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>CFBundleIdentifier</key><string>com.beamseree.hana.searchfixture</string>
+<key>CFBundleName</key><string>Hana Search Fixture</string>
+<key>CFBundleExecutable</key><string>Fixture</string>
+<key>CFBundlePackageType</key><string>APPL</string>
+</dict></plist>
+PLIST
+    codesign --force --sign - "$fixture_app"
+done
+# Real availability-validation failure: named bundle without an executable.
+mkdir -p "$fixture_root/Hana Broken Fixture.app/Contents"
+printf '%s\n' 'Fixtures installed. Query Hana Search Fixture (One and Two), then Hana Broken Fixture.'
