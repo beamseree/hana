@@ -45,7 +45,7 @@ At 14:33 ICT:
 
 1. **Discovery:** a ready TextEdit application result was available around 964 ms after query start, while file status was loading. File gathering deliberately waited five seconds. A mixed batch containing the exact fixture arrived around 5,283 ms; `validation.mixed-discovery` records both booleans.
 2. **Request acknowledgment:** the harness selected the exact fixture, `launch.request` recorded File, followed by `launch.acknowledged`, destination dismissal, and an accepted activation request. The origin was Finder. The acknowledgment still reported Finder as workspace-frontmost and is not presented as focus proof.
-3. **Observed destination:** a separate TextEdit accessibility observation showed the exact percent-encoded home-folder fixture URL, document title, complete three-line fixture text and `HANA-6-20261013` marker. Its text view was the reported focused element. This establishes the actual document display; physical keyboard delivery still needs human observation.
+3. **Observed destination:** a separate TextEdit accessibility observation showed the exact percent-encoded home-folder fixture URL, document title, complete three-line fixture text and `HANA-6-20261013` marker. Its text view was the reported focused element. This establishes the actual document display; physical keyboard delivery was separately confirmed in the final human acceptance below.
 
 Earlier, a Documents copy was indexed/discovered in terminal tests but not returned in the signed-app query. A home-folder copy appeared through the still-running query after creation, giving live-update evidence. No permission-denial diagnosis is inferred; broader protected-location investigation belongs to #9. An initial automated row-click/Return produced acknowledgment without immediately observed document display; the explicit-identity harness above established the destination independently.
 
@@ -53,7 +53,15 @@ Initial timings are small instrumented samples, not final p95 or typing-stall gu
 
 ## Physical acceptance
 
-Pending final-build human checks: normal/full-screen invocation and immediate typing; mixed keyboard selection/default opening with destination typing; Escape/outside-click return; reinvocation/rapid reopening; English/Thai paste/selection/undo; working windows open/minimized with no unexpected raising or Space jump. The existing window machinery is unchanged, but previous #5 observations alone do not establish #6 integration. Candidate IME remains explicitly deferred.
+On 2026-10-13, Beam answered **“All checks pass”** to the final-build physical procedure:
+
+- From a normal app and native full-screen Notes: Option+Space, type `TextEdit`, select `TextEdit Hana [*] บันทึก.txt` (File under the home folder), and press Return; the exact document opens and receives typing without an extra click.
+- Escape/outside-click return, rapid reinvocation, and English/Thai paste/selection/undo.
+- Repeat with Hana's validation working windows open/minimized.
+
+This is grouped human confirmation of the requested checks, not isolated instrumented proof of every subcase. The installed CDHash was rechecked and still matched `5dac79e8e5e56e30f5d5e5c4453c5c81ed2f9406`; no implementation change occurred after the tested build.
+
+The [final-build runtime trace](physical-runtime.jsonl), spanning startup at 14:45:09 through 14:50:55 ICT, independently corroborates nine hotkey events, eight fresh invocations, one reinvocation, three Escape dismissals, native editing/search/selection, and five acknowledged destination opens. It does not provide isolated traces for outside clicks or working-window transitions in this run; those outcomes come from Beam's explicit response. Candidate IME remains explicitly deferred, and broader coverage/performance questions remain #9.
 
 ## Review correction
 
@@ -63,3 +71,18 @@ Both independent review axes found the same pre-match deduplication bug: a catal
 ## Final automated/build checks
 
 After the review correction, all **28 tests** passed, including the opt-in live fixture test, in the complete suite. See [test output](tests.txt). Release build/plist/strict signature checks passed; [build output](build.txt). The installed binary for the physical request has CDHash `5dac79e8e5e56e30f5d5e5c4453c5c81ed2f9406`, no TeamIdentifier and no entitlements. Both reviewers rechecked the correction with zero remaining actionable findings in each axis.
+
+
+## Issue #6 acceptance complete
+
+| Acceptance criterion | Scoped evidence |
+| --- | --- |
+| Live metadata adapter and lifecycle ownership | Main-run-loop query ownership, bounded immutable snapshots, revisions/cancellation, live fixture discovery |
+| Literal filename tokens and strong candidates before broad gathering | Search tests and live single-word/Thai/punctuation/multiword fixture checks; separate exact/prefix/broad stages |
+| Mixed types/locations, deduplication and exclusions | Search behavior tests, source-alias review regressions, signed mixed results |
+| Responsive independent app delivery and honest source status | Controlled delayed/failed sources, cancellation tests, signed five-second delay run |
+| Stable selection, exact revalidated file opening and failure context | Destination boundary tests, real default-handler fixture opening, human keyboard/focus confirmation |
+| Automated cases and current primary API verification | 28 passing tests; Apple documentation/SDK checks and recorded scope/translator observations |
+| Signed mixed discovery, actual opening and delayed-file demonstration | Separate discovery, acknowledgment and TextEdit document observation; final physical checks above |
+
+The scoped #6 acceptance evidence is complete and the PR is ready for review. No merge or issue closure was performed.

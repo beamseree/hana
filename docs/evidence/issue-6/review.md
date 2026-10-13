@@ -27,3 +27,8 @@ The independent reviewer rechecked `eff9b53`: no remaining actionable findings; 
 The independent reviewer rechecked `eff9b53`: no remaining actionable findings; the new tests cover metadata-only filename matching and stronger metadata tiers. Physical acceptance was still pending when reviewed.
 
 Final totals: Standards 0 remaining; Spec 0 remaining. Both original P2 findings resolved.
+
+
+## Physical acceptance follow-up — 2026-10-13
+
+Beam subsequently answered “All checks pass” to the final signed-build focus, keyboard, full-screen and working-window procedure. The prior acceptance gap is closed by that human observation, recorded separately from native acknowledgments in [validation](validation.md#physical-acceptance). No source changes followed the reviewed build; the two-axis totals remain Standards 0 and Spec 0.
