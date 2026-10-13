@@ -49,6 +49,9 @@ final class SpotlightSource: NSObject {
         query.predicate = predicate(for: stages.count)
         query.sortDescriptors = [NSSortDescriptor(key: NSMetadataItemFSNameKey, ascending: true),
                                  NSSortDescriptor(key: NSMetadataItemPathKey, ascending: true)]
+        // Request type values with the query. Per-item value(forAttribute:) can
+        // synchronously fetch uncached metadata from Spotlight on the input actor.
+        query.valueListAttributes = [NSMetadataItemContentTypeTreeKey]
         stages.append(Stage(query: query))
         for name in [NSNotification.Name.NSMetadataQueryDidFinishGathering, NSNotification.Name.NSMetadataQueryGatheringProgress, NSNotification.Name.NSMetadataQueryDidUpdate] {
             NotificationCenter.default.addObserver(self, selector: #selector(changed(_:)), name: name, object: query)
@@ -120,13 +123,15 @@ final class SpotlightSource: NSObject {
                 query.disableUpdates()
                 let end = min(query.resultCount, start + Self.scanChunk)
                 let values: [Item] = (min(start, end)..<end).compactMap { offset in
+                    // kMDItemPath is not supplied by query.value on the tested OS,
+                    // even as a sort key; keep the item's cheap path lookup.
                     guard let item = query.result(at: offset) as? NSMetadataItem,
-                          let name = item.value(forAttribute: NSMetadataItemFSNameKey) as? String,
+                          let name = query.value(ofAttribute: NSMetadataItemFSNameKey, forResultAt: offset) as? String,
                           let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return nil }
-                    let types = item.value(forAttribute: NSMetadataItemContentTypeTreeKey) as? [String] ?? []
+                    let types = query.value(ofAttribute: NSMetadataItemContentTypeTreeKey, forResultAt: offset) as? [String] ?? []
                     let kind: SearchResult.Kind = types.contains("com.apple.application-bundle") ? .application
                         : types.contains("public.folder") ? .folder : .file
-                    return Item(name: name, url: URL(fileURLWithPath: path), kind: kind)
+                    return Item(name: name, url: URL(fileURLWithPath: path, isDirectory: kind != .file), kind: kind)
                 }
                 // Never suspend native updates during filesystem work. A live
                 // notification increments revision and cancels this replacement.
