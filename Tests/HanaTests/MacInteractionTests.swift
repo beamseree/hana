@@ -43,6 +43,30 @@ struct MacInteractionTests {
 @Suite(.serialized)
 @MainActor
 struct ApplicationInteractionTests {
+    @Test func changedQueryNeverActivatesAnOldAcknowledgment() async throws {
+        _ = NSApplication.shared
+        let feed = CatalogFeed()
+        var completion: CheckedContinuation<Void, Error>?
+        var activated = false
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), launchApplication: { _ in
+            try await withCheckedThrowingContinuation { completion = $0 }
+            return .init(activate: { activated = true; return true })
+        })
+        let invocation = interaction.presentBar()
+        interaction.updateQuery("App")
+        await feed.send([app("App", "/Applications/App.app")])
+        try await eventually { interaction.selectedResult != nil }
+        let operation = interaction.requestSelectedApplicationOpen()
+        try await eventually { completion != nil }
+        interaction.updateQuery("new")
+        completion?.resume()
+        await operation?.value
+        #expect(!activated)
+        #expect(interaction.currentInvocation == invocation)
+        #expect(interaction.query == "new")
+        interaction.dismiss(invocation, reason: .outsideClick)
+    }
+
     @Test func unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
@@ -62,7 +86,7 @@ struct ApplicationInteractionTests {
         _ = NSApplication.shared
         let feed = CatalogFeed()
         var opened: [URL] = []
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), launchApplication: { opened.append($0) })
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), launchApplication: { url in .init(activate: { opened.append(url); return true }) })
         let invocation = interaction.presentBar()
         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
         interaction.updateQuery("App")
@@ -80,8 +104,10 @@ struct ApplicationInteractionTests {
         _ = NSApplication.shared
         let feed = CatalogFeed()
         var completion: CheckedContinuation<Void, Error>?
+        var activationRequests = 0
         let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), launchApplication: { _ in
             try await withCheckedThrowingContinuation { completion = $0 }
+            return .init(activate: { activationRequests += 1; return true })
         })
         let old = interaction.presentBar()
         interaction.updateQuery("App")
@@ -105,7 +131,11 @@ struct ApplicationInteractionTests {
         await delayed.value
         #expect(interaction.currentInvocation == fresh)
         #expect(interaction.query == "new")
-        interaction.dismiss(fresh, reason: .outsideClick)
+        #expect(activationRequests == 0)
+        // A real user Space change remains an ordinary dismissal, even after an
+        // old native operation has completed without requesting activation.
+        NSWorkspace.shared.notificationCenter.post(name: NSWorkspace.activeSpaceDidChangeNotification, object: nil)
+        #expect(interaction.currentInvocation == nil)
     }
 
     @Test func obsoleteBatchesAndClearingCannotReplaceCurrentResults() async throws {
@@ -134,7 +164,7 @@ struct ApplicationInteractionTests {
         let feed = CatalogFeed()
         let search = Search(source: { feed.stream() }, debounce: .zero)
         var opened: [URL] = []
-        let interaction = MacInteraction(search: search, launchApplication: { opened.append($0) })
+        let interaction = MacInteraction(search: search, launchApplication: { url in .init(activate: { opened.append(url); return true }) })
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")

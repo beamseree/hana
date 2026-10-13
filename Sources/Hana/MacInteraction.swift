@@ -9,6 +9,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         fileprivate let id = UUID()
     }
 
+    /// The native open acknowledgment contains the exact running instance's
+    /// activation effect. Issuing that effect is fenced by invocation/query.
+    struct OpenedApplication {
+        let activate: @MainActor () -> Bool
+    }
+
     enum DismissalReason: String {
         case escape, outsideClick, appSwitch, environmentChange, destination
     }
@@ -20,7 +26,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     )
     private let editor = SearchEditor(frame: .zero)
     private let search: Search
-    private let launchApplication: @MainActor (URL) async throws -> Void
+    private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
     private var searchTask: Task<Void, Never>?
     private var request: Search.Request?
     private var selectedID: ApplicationResult.ID?
@@ -28,7 +34,6 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var resultSurface: NSHostingView<ApplicationResultsView>?
     private var sourceStatus: CatalogStatus = .ready
     private var pendingLaunch: UUID?
-    private var pendingDestination: URL?
     private(set) var results: [ApplicationResult] = []
     private(set) var launchFailure: String?
     var query: String { editor.string }
@@ -47,7 +52,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var hotKey: GlobalShortcut?
 
     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
-         launchApplication: @escaping @MainActor (URL) async throws -> Void = MacInteraction.launch) {
+         launchApplication: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.launch) {
         self.diagnostics = diagnostics
         self.search = search
         self.launchApplication = launchApplication
@@ -324,9 +329,6 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     @objc private func environmentChanged(_ notification: Notification) {
-        // A chosen destination may intentionally switch Spaces before its open
-        // acknowledgment. Sleep/display changes retain their existing dismissal.
-        if notification.name == NSWorkspace.activeSpaceDidChangeNotification, pendingLaunch != nil { return }
         if let invocation = currentInvocation { dismiss(invocation, reason: .environmentChange) }
     }
 
@@ -336,7 +338,6 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
               app.processIdentifier != origin?.processIdentifier,
               app.processIdentifier != ProcessInfo.processInfo.processIdentifier,
               menuDepth == 0, !editor.hasMarkedText() else { return }
-        if pendingLaunch != nil, app.bundleURL?.standardizedFileURL == pendingDestination?.standardizedFileURL { return }
         dismiss(invocation, reason: .appSwitch)
     }
 
@@ -475,7 +476,6 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         guard let invocation = currentInvocation, let destination = selectedResult, pendingLaunch == nil else { return nil }
         let operation = UUID()
         pendingLaunch = operation
-        pendingDestination = destination.url
         let generation = request?.generation
         launchFailure = nil
         renderResults()
@@ -483,21 +483,24 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         return Task {
             guard currentInvocation == invocation, pendingLaunch == operation else { return }
             do {
-                try await launchApplication(destination.url)
+                let opened = try await launchApplication(destination.url)
                 guard currentInvocation == invocation, pendingLaunch == operation else {
                     record("launch.stale-acknowledgment")
                     return
                 }
                 pendingLaunch = nil
-                pendingDestination = nil
                 search.recordOpened(destination.id)
                 record("launch.acknowledged")
-                if request?.generation == generation { dismiss(invocation, reason: .destination) }
-                else { renderResults() }
+                guard request?.generation == generation else { renderResults(); return }
+                // No await between the fence, dismissal, and activation. The
+                // workspace open itself requested no activation, so an obsolete
+                // completion cannot initiate a late focus/Space transfer.
+                dismiss(invocation, reason: .destination)
+                let accepted = opened.activate()
+                record("launch.activation-request", extra: ["accepted": accepted])
             } catch {
                 guard currentInvocation == invocation, pendingLaunch == operation else { return }
                 pendingLaunch = nil
-                pendingDestination = nil
                 if request?.generation == generation {
                     launchFailure = "Couldn’t open this installation. It may have moved or become unavailable. Check it in Finder, then select a result and press Return to retry."
                 }
@@ -507,17 +510,21 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
     }
 
-    private static func launch(_ url: URL) async throws {
+    private static func launch(_ url: URL) async throws -> OpenedApplication {
         guard FileManager.default.fileExists(atPath: url.path),
               let bundle = Bundle(url: url), let executable = bundle.executableURL,
               FileManager.default.isExecutableFile(atPath: executable.path) else {
             throw CocoaError(.fileNoSuchFile)
         }
         let configuration = NSWorkspace.OpenConfiguration()
-        configuration.activates = true
+        configuration.activates = false
         configuration.allowsRunningApplicationSubstitution = false
         configuration.promptsUserIfNeeded = false
-        _ = try await NSWorkspace.shared.openApplication(at: url, configuration: configuration)
+        let application = try await NSWorkspace.shared.openApplication(at: url, configuration: configuration)
+        return OpenedApplication {
+            guard let source = NSWorkspace.shared.frontmostApplication else { return application.activate(options: []) }
+            return application.activate(from: source, options: [])
+        }
     }
 
     private func resetSearch() {
@@ -527,7 +534,6 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // Invalidate an already-issued native open; it cannot be recalled, but
         // its acknowledgment must never close a subsequent invocation.
         pendingLaunch = nil
-        pendingDestination = nil
         results = []
         selectedID = nil
         launchFailure = nil

@@ -16,7 +16,7 @@ Catalog roots: `/Applications`, `/System/Applications`, `/System/Library/CoreSer
 
 The catalog scans at launch off the main actor. Once per second it checks only previously discovered directory/bundle-metadata modification times, plus root parents to detect newly created roots. Changed stamps trigger a fresh bounded-root scan. It does not scan on each keystroke or crawl the disk. Missing optional roots are empty; observed read errors produce an unavailable-source status while retaining results from readable roots. The initial refresh test exposed cached URL resource values; direct filesystem attributes fixed refresh detection.
 
-Selection is held by identity across batches. Once a selected identity vanishes, no adjacent result is selected automatically. Return captures the currently visible destination synchronously. The native adapter revalidates the bundle/executable and calls `NSWorkspace.openApplication(at:configuration:)` with running-application substitution disabled. Acknowledgment closes that invocation without origin activation; reported failure preserves the query and gives recovery guidance. A generation and invocation fence prevent obsolete completion from dismissing new work. Native requests already issued to macOS cannot be recalled.
+Selection is held by identity across batches. Once a selected identity vanishes, no adjacent result is selected automatically. Return captures the currently visible destination synchronously. The native adapter revalidates the bundle/executable and calls `NSWorkspace.openApplication(at:configuration:)` with running-application substitution disabled. Acknowledgment closes that invocation without origin activation; reported failure preserves the query and gives recovery guidance. The native request uses `activates = false`; its acknowledgment carries the exact returned running instance. Only a current invocation and query can synchronously dismiss and request activation of that instance. Stale acknowledgment does neither. Ordinary app/Space changes still dismiss normally; no broad notification suppression is retained. Native launch requests already issued cannot be recalled, and a third-party application could independently activate itself despite a background launch request.
 
 ## Automated evidence
 
@@ -44,3 +44,28 @@ Pending acceptance items and final review results must remain explicit; no undoc
 Beam confirmed comparison B (hosting restored) accepts physical typing over full-screen Notes both before and after a TextEdit launch. Restart is a confounding factor: no hosting defect or root cause has been established, and no speculative focus workaround is retained. The diagnostic switch was removed; the reproduction loop remains. Final integrated repetition follows the completed automated tests so AppKit test processes do not overlap physical acceptance.
 
 The complete suite initially exposed a fixed-delay assumption in the controlled source fixture. The fixture now explicitly waits for the replacement subscription; it no longer relies on ten milliseconds being enough under concurrent suite load.
+
+
+## Integrated physical acceptance (2026-10-13, 13:43–13:46 ICT)
+
+Beam answered “everything seems to work as intended” to these three explicitly enumerated groups. This is broad human confirmation, not separate instrumented measurements of every subcase:
+
+1. Full-screen Notes: three invoke/type/Escape repetitions, TextEdit launch and return/reinvoke, and another repetition with Hana Main/Mock windows minimized; intended typing destination and no unwanted Space jump.
+2. Two same-name/same-bundle-ID fixtures: select installation One by its path and type without a click; leave One running, select installation Two, observe “Installation: Two” and immediate typing.
+3. Broken fixture: retain query with recovery guidance. English/Thai typing, selection, paste, undo during expansion, then empty input with no results.
+
+The trace independently corroborates full-screen-origin search/text/selection, native acknowledgments, and a failed launch retaining nine UTF-16 units. Bundle-ID traces cannot distinguish the two fixtures; their exact-installation result comes from the requested visible label and Beam's response. A native acknowledgment while Notes was still workspace-frontmost demonstrates why acknowledgment alone is not focus proof.
+
+## Initial timings (not final performance acceptance)
+
+Instrumentation enabled, one available display, same running process/catalog, ordinary manual typing. In the 06:42:46Z build run: 16 synchronous presentation samples, 5.26 / 7.49 / 33.08 ms min/median/max. The first presentation after this process launch was 33.08 ms (one sample); this is not an OS-cold benchmark. Sixty nonempty-query batch samples were 106.19 / 119.15 / 139.65 ms min/median/max including the nominal 100 ms debounce, ranking, result delivery and rendering/diagnostic work. Catalog initialization had already occurred before these manual queries.
+
+These samples do not measure physical hotkey-to-typing readiness, cold filesystem cache cost, a statistically reliable p95, or worst input stalls. No final engineering target is claimed. Unavailable multi-display/negative-coordinate, permission revocation and candidate-IME cases remain untested; IME is explicitly deferred by the parent. File permissions/Spotlight coverage belong to subsequent tickets.
+
+## Review correction
+
+Independent Standards review found zero actionable findings. Spec review found that guarding only the open completion did not prevent an already-issued activation from producing late workspace notifications. A controlled Space-notification test reproduced a cleared new invocation/query. The first proposed outstanding-operation map was rejected because it still depended on notification ordering and suppressed unrelated user Space changes.
+
+Final correction: background native opening, followed by exact-instance activation only after both invocation and query-generation guards, with no await between guard and effects. Boundary tests now assert that obsolete completion and changed-query completion never invoke activation, current opening targets the selected installation, and ordinary Space changes still dismiss. `launch.acknowledged`, `launch.activation-request` and physical destination focus are separate evidence. The original intermittent full-screen typing report has no established cause and is not attributed to this race.
+
+Final automated suite: 18 tests passed, including existing shell lifecycle tests. See [test output](tests.txt). The final activation path receives a focused physical recheck after installation below.
