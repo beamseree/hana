@@ -16,6 +16,9 @@ struct SearchResponsivenessTests {
         NSApp.setActivationPolicy(.accessory)
         defer { NSApp.setActivationPolicy(previousPolicy) }
         let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true, debounce: .zero)
+        // Real icon loading, as visible application rows request it.
+        let icons = ResultIcons()
+        var iconsLoaded = 0
         var worstSleepExcess = 0.0
         var fileSeen = false
         var samples = 0
@@ -49,6 +52,9 @@ struct SearchResponsivenessTests {
             let receiver = Task {
                 for await batch in stream {
                     fileSeen = fileSeen || batch.results.contains { $0.kind != .application }
+                    for result in batch.results.prefix(SearchResultsView.maxVisibleRows) where result.kind == .application {
+                        Task { if await icons.icon(for: result.url, scale: 2) != nil { iconsLoaded += 1 } }
+                    }
                 }
             }
             defer { receiver.cancel() }
@@ -65,7 +71,8 @@ struct SearchResponsivenessTests {
         }
         print("Sleep scheduling diagnostic: samples=\(samples), maximumExcessMs=\(worstSleepExcess)")
         #expect(fileSeen, "Requires existing indexed Hana fixtures")
-        print("Input-queue scheduling: samples=\(input.samples), maximumEnqueueDelayMs=\(input.worstDelay)")
+        print("Input-queue scheduling: samples=\(input.samples), maximumEnqueueDelayMs=\(input.worstDelay), iconsLoaded=\(iconsLoaded)")
+        #expect(iconsLoaded > 0, "Requires an installed application matching the query")
         #expect(input.samples > 50)
         #expect(input.worstDelay < 50, "Input queue enqueue-to-execution: \(input.worstDelay) ms")
     }

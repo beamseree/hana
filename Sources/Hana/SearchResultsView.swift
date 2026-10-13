@@ -4,7 +4,10 @@ struct SearchResultsView: View {
     var results: [SearchResult] = []
     var selectedID: SearchResult.ID?
     var status: String?
+    /// Values only: the view owns no cache and does no filesystem work.
+    var icons: [SearchResult.ID: ResultIcon] = [:]
     var select: (SearchResult.ID) -> Void = { _ in }
+    var rowAppeared: (SearchResult.ID) -> Void = { _ in }
 
     static let rowHeight: CGFloat = 56
     static let statusHeight: CGFloat = 44
@@ -28,6 +31,7 @@ struct SearchResultsView: View {
                                     .accessibilityLabel("\(result.name), \(result.typeLabel), \(result.subtitle)")
                                     .accessibilityAddTraits(selectedID == result.id ? .isSelected : [])
                                     .id(result.id)
+                                    .onAppear { rowAppeared(result.id) }
                             }
                         }
                     }
@@ -50,10 +54,10 @@ struct SearchResultsView: View {
     // Icon and name columns line up with the mode icon and query text above.
     private func row(_ result: SearchResult) -> some View {
         HStack(spacing: 10) {
-            Image(systemName: result.symbolName)
-                .font(.system(size: 18))
-                .foregroundStyle(Color(nsColor: BarStyle.iconColor))
+            icon(result)
                 .frame(width: 28, height: 28)
+                // Arrival swaps the image in place, never animated.
+                .transaction { $0.animation = nil }
             VStack(alignment: .leading, spacing: 4) {
                 Text(result.name).font(.system(size: 16)).tracking(-0.16).lineLimit(1)
                 Text(result.subtitle).font(.system(size: 12))
@@ -68,6 +72,18 @@ struct SearchResultsView: View {
         .background(selectedID == result.id ? Color.black.opacity(0.06) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: BarStyle.cardRadius - BarStyle.cardPadding))
         .contentShape(Rectangle())
+    }
+
+    /// The generic symbol is both the loading placeholder and the fallback.
+    /// Application icons keep their own colours; other kinds stay monochrome.
+    @ViewBuilder private func icon(_ result: SearchResult) -> some View {
+        if let icon = icons[result.id] {
+            Image(decorative: icon.image, scale: icon.scale).resizable().interpolation(.high)
+        } else {
+            Image(systemName: result.symbolName)
+                .font(.system(size: 18))
+                .foregroundStyle(Color(nsColor: BarStyle.iconColor))
+        }
     }
 }
 

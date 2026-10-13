@@ -61,6 +61,12 @@ final class ApplicationCatalog {
         (try? FileManager.default.attributesOfItem(atPath: url.path)[.modificationDate] as? Date) ?? .distantPast
     }
 
+    /// The same bundle and Info.plist stamps the catalog watches, so other
+    /// adapters notice an updated application without a second watcher.
+    nonisolated static func changeStamp(of application: URL) -> [Date] {
+        [stamp(application), stamp(application.appendingPathComponent("Contents/Info.plist"))]
+    }
+
     private nonisolated static func scan(_ roots: [URL]) -> Scan {
         let manager = FileManager.default
         var applications: [SearchResult] = []

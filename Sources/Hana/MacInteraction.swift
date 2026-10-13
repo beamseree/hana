@@ -31,6 +31,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private let search: Search
     private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
     private let openFile: @MainActor (URL) async throws -> OpenedApplication
+    private let loadIcon: @MainActor (URL, CGFloat) async -> ResultIcon?
+    private var iconRequests: Set<SearchResult.ID> = []
+    /// Icons for current results only; Result Icons owns the bounded cache.
+    private(set) var icons: [SearchResult.ID: ResultIcon] = [:]
     private var fileStatus: SourceStatus = .ready
     private var searchTask: Task<Void, Never>?
     private var request: Search.Request?
@@ -60,11 +64,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
          launchApplication: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.launch,
-         openFile: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.openFileDestination) {
+         openFile: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.openFileDestination,
+         loadIcon: (@MainActor (URL, CGFloat) async -> ResultIcon?)? = nil) {
         self.diagnostics = diagnostics
         self.search = search
         self.launchApplication = launchApplication
         self.openFile = openFile
+        let icons = ResultIcons()
+        self.loadIcon = loadIcon ?? { await icons.icon(for: $0, scale: $1) }
         super.init()
         configurePanel()
     }
@@ -521,6 +528,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 guard let self, self.request?.generation == batch.generation,
                       self.currentInvocation != nil, !Task.isCancelled else { continue }
                 self.results = batch.results
+                self.icons = self.icons.filter { id, _ in batch.results.contains { $0.id == id } }
                 self.sourceStatus = batch.appStatus
                 self.fileStatus = batch.fileStatus
                 if let selectedID = self.selectedID, !batch.results.contains(where: { $0.id == selectedID }) {
@@ -645,6 +653,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // its acknowledgment must never close a subsequent invocation.
         pendingLaunch = nil
         results = []
+        icons = [:]
         selectedID = nil
         openFailure = nil
         sourceStatus = .ready
@@ -674,12 +683,30 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                                       width: max(0, frame.width - 2 * (BarStyle.inset + BarStyle.cardPadding)),
                                       height: max(0, height - BarStyle.collapsedHeight - BarStyle.cardPadding))
         resultSurface?.isHidden = content == 0
-        resultSurface?.rootView = SearchResultsView(results: results, selectedID: selectedID, status: status) { [weak self] id in
-            guard let self, self.results.contains(where: { $0.id == id }) else { return }
-            self.selectedID = id
-            self.didSelectInitialResult = true
+        resultSurface?.rootView = SearchResultsView(results: results, selectedID: selectedID, status: status, icons: icons,
+            select: { [weak self] id in
+                guard let self, self.results.contains(where: { $0.id == id }) else { return }
+                self.selectedID = id
+                self.didSelectInitialResult = true
+                self.renderResults()
+                self.panel.makeFirstResponder(self.editor)
+            }, rowAppeared: { [weak self] id in self?.requestIcon(id) })
+    }
+
+    /// Called as a row is about to appear. A late icon only fills the cache:
+    /// it never changes results, selection, status or the batches.
+    private func requestIcon(_ id: SearchResult.ID) {
+        guard let result = results.first(where: { $0.id == id }), result.kind == .application,
+              icons[id] == nil, iconRequests.insert(id).inserted else { return }
+        let scale = panel.backingScaleFactor
+        Task { [weak self, loadIcon] in
+            let icon = await loadIcon(result.url, scale)
+            guard let self else { return }
+            self.iconRequests.remove(id)
+            guard self.results.contains(where: { $0.id == id }) else { return }
+            guard let icon else { self.record("search.icon-unavailable"); return }
+            self.icons[id] = icon
             self.renderResults()
-            self.panel.makeFirstResponder(self.editor)
         }
     }
 

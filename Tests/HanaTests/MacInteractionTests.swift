@@ -410,6 +410,77 @@ struct DestinationInteractionTests {
     }
 }
 
+@Suite(.serialized)
+@MainActor
+struct ResultIconInteractionTests {
+    @Test func neverCompletingIconsHoldBackNoBatchSelectionOrOpening() async throws {
+        _ = NSApplication.shared
+        let feed = CatalogFeed(), icons = IconFeed()
+        let a = app("Alpha", "/Applications/A.app"), b = app("Alpha Beta", "/Applications/B.app")
+        var launched: [URL] = []
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero),
+            launchApplication: { url in launched.append(url); return .init(activate: { true }) },
+            loadIcon: icons.load)
+        interaction.presentBar()
+        defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+        interaction.updateQuery("Alpha")
+        await feed.send([b, a])
+        try await eventually { interaction.results.map(\.id) == [a.id, b.id] }
+        #expect(interaction.selectedResult?.id == a.id)
+        try await eventually { !icons.requested.isEmpty }
+        interaction.moveSelection(by: 1)
+        await interaction.requestSelectedOpen()?.value
+        #expect(launched == [b.url])
+        #expect(interaction.currentInvocation == nil)
+    }
+
+    @Test func lateIconsNeverChangeResultsOrSelectionAndObsoleteOnesAreNotShown() async throws {
+        _ = NSApplication.shared
+        let feed = CatalogFeed(), icons = IconFeed()
+        let old = app("Old", "/Applications/Old.app")
+        let a = app("New", "/Applications/New.app"), b = app("New Beta", "/Applications/New Beta.app")
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), loadIcon: icons.load)
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        interaction.updateQuery("Old")
+        await feed.send([old])
+        try await eventually { icons.requested.contains(old.url) }
+        interaction.updateQuery("New")
+        try await eventually { feed.subscriptionCount == 2 }
+        await feed.send([a, b])
+        try await eventually { icons.requested.contains(a.url) && icons.requested.contains(b.url) }
+        interaction.moveSelection(by: 1)
+        icons.release(old.url, with: try solidIcon())
+        icons.release(b.url, with: try solidIcon())
+        icons.release(a.url, with: nil)
+        try await eventually { interaction.icons[b.id] != nil }
+        #expect(interaction.icons[old.id] == nil && interaction.icons[a.id] == nil)
+        #expect(interaction.results.map(\.id) == [a.id, b.id])
+        #expect(interaction.selectedResult?.id == b.id)
+        #expect(interaction.query == "New")
+    }
+}
+
+func solidIcon() throws -> ResultIcon {
+    let context = try #require(CGContext(data: nil, width: 2, height: 2, bitsPerComponent: 8, bytesPerRow: 0,
+        space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+    return ResultIcon(image: try #require(context.makeImage()), scale: 1)
+}
+
+/// Icons that arrive only when a test releases them.
+@MainActor
+final class IconFeed {
+    private var pending: [URL: [CheckedContinuation<ResultIcon?, Never>]] = [:]
+    private(set) var requested: [URL] = []
+    func load(_ url: URL, scale: CGFloat) async -> ResultIcon? {
+        requested.append(url)
+        return await withCheckedContinuation { pending[url, default: []].append($0) }
+    }
+    func release(_ url: URL, with icon: ResultIcon?) {
+        pending.removeValue(forKey: url)?.forEach { $0.resume(returning: icon) }
+    }
+}
+
 @MainActor
 final class CatalogFeed {
     private var continuations: [AsyncStream<SourceSnapshot>.Continuation] = []
