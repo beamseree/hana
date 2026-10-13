@@ -16,11 +16,13 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let diagnostics = Diagnostics(enabled: CommandLine.arguments.contains("--diagnostics"))
-        let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true,
+        let validation = CommandLine.arguments.contains("--validate-search-correctness") ? SearchCorrectnessValidation() : nil
+        let search = validation?.makeSearch() ?? Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true,
                             fileDelay: CommandLine.arguments.contains("--validation-file-delay") ? .seconds(5) : .zero)
         let interaction = MacInteraction(diagnostics: diagnostics, search: search)
         self.interaction = interaction
         interaction.start()
+        if let validation { Task { await validation.run(interaction, diagnostics: diagnostics) } }
         if CommandLine.arguments.contains("--validate-mixed-search") {
             Task { await validateMixedSearch(interaction, diagnostics: diagnostics) }
         }

@@ -1,0 +1,26 @@
+Source revision: d6aec50351f1aae634096186bcd294d566b9e0a4
+Installed path: /Users/beamsereeyothin/Applications/Hana.app
+Executable SHA-256: d01424c0497cc0491a6e26fb08e4e483fd44ae7d1bdf4a2a7ea86cdf8d2b1bc8
+Executable=/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana
+Identifier=com.beamseree.hana
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20400 size=1803 flags=0x2(adhoc) hashes=50+3 location=embedded
+VersionPlatform=1
+VersionMin=1703936
+VersionSDK=1705216
+Hash type=sha256 size=32
+CandidateCDHash sha256=66d45e99b417f9f9fe7e08f1a6072abd44a84e89
+CandidateCDHashFull sha256=66d45e99b417f9f9fe7e08f1a6072abd44a84e8923423f926da344f4b868ce4f
+Hash choices=sha256
+CMSDigest=66d45e99b417f9f9fe7e08f1a6072abd44a84e8923423f926da344f4b868ce4f
+CMSDigestType=2
+Executable Segment base=0
+Executable Segment limit=393216
+Executable Segment flags=0x1
+Page size=16384
+CDHash=66d45e99b417f9f9fe7e08f1a6072abd44a84e89
+Signature=adhoc
+Info.plist entries=10
+TeamIdentifier=not set
+Sealed Resources version=2 rules=13 files=0
+Internal requirements count=0 size=12

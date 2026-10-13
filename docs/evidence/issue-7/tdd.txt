@@ -1,0 +1,31 @@
+hana-7-red-ranking.txt
+􀢄  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() recorded an issue at SearchTests.swift:20:9: Expectation failed: (last?.results.map(\.id) → [Hana.SearchResult.ID(destination: file:///Applications/exact.app), Hana.SearchResult.ID(destination: file:///Applications/frequent.app), Hana.SearchResult.ID(destination: file:///Applications/recent.app), Hana.SearchResult.ID(destination: file:///Applications/close.app), Hana.SearchResult.ID(destination: file:///Applications/weak.app)]) == ([exact, close, recent, frequent, weak].map(\.id) → [Hana.SearchResult.ID(destination: file:///Applications/exact.app), Hana.SearchResult.ID(destination: file:///Applications/close.app), Hana.SearchResult.ID(destination: file:///Applications/recent.app), Hana.SearchResult.ID(destination: file:///Applications/frequent.app), Hana.SearchResult.ID(destination: file:///Applications/weak.app)])
+􀢄  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() recorded an issue at SearchTests.swift:24:9: Expectation failed: (last?.results.map(\.id) → [Hana.SearchResult.ID(destination: file:///Applications/exact.app), Hana.SearchResult.ID(destination: file:///Applications/frequent.app), Hana.SearchResult.ID(destination: file:///Applications/recent.app), Hana.SearchResult.ID(destination: file:///Applications/close.app), Hana.SearchResult.ID(destination: file:///Applications/weak.app)]) == ([exact, close, frequent, recent, weak].map(\.id) → [Hana.SearchResult.ID(destination: file:///Applications/exact.app), Hana.SearchResult.ID(destination: file:///Applications/close.app), Hana.SearchResult.ID(destination: file:///Applications/frequent.app), Hana.SearchResult.ID(destination: file:///Applications/recent.app), Hana.SearchResult.ID(destination: file:///Applications/weak.app)])
+􀢄  Test run with 1 test in 1 suite failed after 0.030 seconds with 2 issues.
+hana-7-red-normalization.txt
+􀢄  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() recorded an issue at SearchTests.swift:43:9: Expectation failed: (last?.results.map(\.id) → [Hana.SearchResult.ID(destination: file:///Applications/Z.app), Hana.SearchResult.ID(destination: file:///Applications/A.app)]) == ([z.id, a.id] → [Hana.SearchResult.ID(destination: file:///Applications/A.app), Hana.SearchResult.ID(destination: file:///Applications/Z.app)])
+􀢄  Test run with 1 test in 1 suite failed after 0.007 seconds with 1 issue.
+hana-7-red-identity.txt
+􀢄  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() recorded an issue at SearchTests.swift:53:13: Expectation failed: (last?.results → [Hana.SearchResult(name: "App A", url: file:///Applications/Z.app, alternateNames: [], kind: Hana.SearchResult.Kind.application), Hana.SearchResult(name: "App Z", url: file:///Applications/A.app, alternateNames: [], kind: Hana.SearchResult.Kind.application)]) == ([first, second] → [Hana.SearchResult(name: "App Z", url: file:///Applications/A.app, alternateNames: [], kind: Hana.SearchResult.Kind.application), Hana.SearchResult(name: "App A", url: file:///Applications/Z.app, alternateNames: [], kind: Hana.SearchResult.Kind.application)])
+􀢄  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() recorded an issue at SearchTests.swift:53:13: Expectation failed: (last?.results → [Hana.SearchResult(name: "App A", url: file:///Applications/Z.app, alternateNames: [], kind: Hana.SearchResult.Kind.application), Hana.SearchResult(name: "App Z", url: file:///Applications/A.app, alternateNames: [], kind: Hana.SearchResult.Kind.application)]) == ([first, second] → [Hana.SearchResult(name: "App Z", url: file:///Applications/A.app, alternateNames: [], kind: Hana.SearchResult.Kind.application), Hana.SearchResult(name: "App A", url: file:///Applications/Z.app, alternateNames: [], kind: Hana.SearchResult.Kind.application)])
+􀢄  Test run with 1 test in 1 suite failed after 0.010 seconds with 2 issues.
+hana-7-red-bounds.txt
+􀢄  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() recorded an issue at SearchTests.swift:82:9: Expectation failed: found
+􀢄  Test run with 1 test in 1 suite failed after 2.294 seconds with 1 issue.
+hana-7-red-open.txt
+􀢄  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() recorded an issue at MacInteractionTests.swift:68:9: Expectation failed: (activated → []) == ([b.url] → [file:///Applications/B.app])
+􀢄  Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() recorded an issue at MacInteractionTests.swift:71:9: Expectation failed: (activated → []) == ([b.url] → [file:///Applications/B.app])
+􀢄  Test run with 1 test in 1 suite failed after 0.355 seconds with 2 issues.
+hana-7-green-ranking.txt
+􁁛  Test run with 1 test in 1 suite passed after 0.005 seconds.
+hana-7-green-bounds.txt
+􁁛  Test run with 1 test in 1 suite passed after 6.362 seconds.
+hana-7-green-open.txt
+􁁛  Test run with 1 test in 1 suite passed after 0.299 seconds.
+
+hana-7-red-compaction.txt
+􀢄  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() recorded an issue at SearchTests.swift:96:9: Expectation failed: (last?.results.first?.url → file:///Users/beamsereeyothin/Hana%20Issue%207%20Validation/Usage/0000/Hana7Use.txt) == (chosen → file:///Users/beamsereeyothin/Hana%20Issue%207%20Validation/Usage/0299/Hana7Use.txt)
+􀢄  Test run with 1 test in 1 suite failed after 0.512 seconds with 1 issue.
+
+hana-7-green-compaction.txt
+􁁛  Test run with 1 test in 1 suite passed after 1.570 seconds.
