@@ -1,0 +1,14 @@
+Verified 2026-10-13; no DEVELOPER_DIR override or toolchain changes.
+xcode-select -p: /Applications/Xcode-26.6.app/Contents/Developer
+xcodebuild -version: Xcode 26.6, Build version 17F113
+xcodebuild -checkFirstLaunchStatus: exit 0
+xcrun swift --version: Swift 6.3.3, target arm64-apple-macosx26.0
+xcrun --sdk macosx --show-sdk-version: 26.5
+sw_vers: macOS 26.4.1, build 25E253
+uname -m: arm64
+build.sh: exit 0, Swift 6 compilation, local ad-hoc signature
+plutil -lint Info.plist: OK
+codesign --verify --strict: valid on disk; satisfies its Designated Requirement
+Swift 6 typecheck: exit 0
+No unit tests: throwaway native behavior experiment. See runtime log and user-observed matrix.
+Final diagnostic-only rebuild: exit 0; strict signature verification passed; runtime relaunched accessory at floating level 3 with exclusive hotkey registration status 0. Full interactive behavior was observed on the preceding build, whose window/focus implementation is unchanged.

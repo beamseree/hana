@@ -1,0 +1,22 @@
+/Users/beamsereeyothin/Documents/Projects/macos-shapeshifting-searchbar/prototypes/window-focus/evidence/20261013T041247Z-runtime.jsonl
+Events: 97
+Invocation sessions: []
+Policies: {'accessory': 19, 'regular': 78}
+Native marked-text events: 0
+2026-10-13T04:08:26Z policy.changed session 0 regular front com.figma.Desktop bar-key False length 0 working 1
+2026-10-13T04:08:26Z working.open.Main session 0 regular front com.figma.Desktop bar-key False length 0 working 1
+2026-10-13T04:08:57Z working.open.Main session 0 regular front local.prototype.window-focus bar-key False length 0 working 1
+2026-10-13T04:09:04Z working.open.Note A session 0 regular front local.prototype.window-focus bar-key False length 0 working 2
+2026-10-13T04:09:06Z working.open.Note B session 0 regular front local.prototype.window-focus bar-key False length 0 working 3
+2026-10-13T04:09:08Z working.minimize-all session 0 regular front local.prototype.window-focus bar-key False length 0 working 3
+2026-10-13T04:12:35Z working.closed session 0 regular front com.figma.Desktop bar-key False length 0 working 2
+2026-10-13T04:12:35Z working.closed session 0 regular front com.figma.Desktop bar-key False length 0 working 1
+2026-10-13T04:12:35Z policy.changed session 0 accessory front com.figma.Desktop bar-key False length 0 working 0
+2026-10-13T04:12:35Z working.closed session 0 accessory front com.figma.Desktop bar-key False length 0 working 0
+2026-10-13T04:12:35Z working.close-all session 0 accessory front com.figma.Desktop bar-key False length 0 working 0
+2026-10-13T04:12:36Z policy.changed session 0 regular front com.figma.Desktop bar-key False length 0 working 1
+2026-10-13T04:12:36Z working.open.Main session 0 regular front com.figma.Desktop bar-key False length 0 working 1
+2026-10-13T04:12:37Z working.open.Note A session 0 regular front com.figma.Desktop bar-key False length 0 working 2
+2026-10-13T04:12:38Z working.open.Note B session 0 regular front com.figma.Desktop bar-key False length 0 working 3
+2026-10-13T04:12:41Z working.open.Main session 0 regular front local.prototype.window-focus bar-key False length 0 working 3
+2026-10-13T04:12:47Z working.open.Main session 0 regular front com.figma.Desktop bar-key False length 0 working 3
