@@ -34,7 +34,7 @@ final class WorkingWindowController: NSWindowController {
         let title = NSTextField(labelWithString: "\(destination.title) · Validation only")
         title.font = .systemFont(ofSize: 22, weight: .semibold)
         let disclaimer = NSTextField(wrappingLabelWithString:
-            "Mock content. Nothing is saved. No note editing, organizer, or search results.")
+            "Mock content. Nothing is saved. No note editing or organizer.")
         let probeLabel = NSTextField(wrappingLabelWithString:
             "Keyboard focus probe — temporary text, discarded on close. This is not a note editor.")
         focusProbe.placeholderString = "Type here to check destination focus"

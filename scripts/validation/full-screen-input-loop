@@ -1,0 +1,11 @@
+#!/bin/bash
+# Human-assisted pass/fail signal: AppKit key/responder flags are insufficient.
+set -euo pipefail
+printf '%s\n' 'In native full-screen Notes, click a disposable text area.'
+printf '%s\n' 'Press Option+Space, then type abc WITHOUT clicking Hana.'
+printf '%s\n' 'PASS only if abc appears in Hana immediately and no Space jump occurs.'
+printf '%s\n' 'If it fails, click the bar once and report whether typing then works.'
+read -r -p 'Immediate typing (pass/fail/unclear): ' outcome
+read -r -p 'Typing after click (pass/fail/not-needed): ' after_click
+printf 'FULL_SCREEN_INPUT=%s\nAFTER_CLICK=%s\n' "$outcome" "$after_click"
+case "$outcome" in pass) exit 0 ;; fail) exit 1 ;; *) exit 2 ;; esac

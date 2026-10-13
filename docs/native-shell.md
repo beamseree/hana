@@ -1,6 +1,6 @@
-# Native Search shell and validation windows — issues #3–4
+# Native Search and validation windows — issues #3–5
 
-This implements [#3](https://github.com/beamseree/hana-searchbar/issues/3) and [#4](https://github.com/beamseree/hana-searchbar/issues/4), under [parent #2](https://github.com/beamseree/hana-searchbar/issues/2). Search is an empty native input shell. Three ordinary working windows contain clearly labeled validation content and temporary keyboard focus probes. There are no results, capture modes, real note editing, organizer, or saved notes; `-`, `[`, pasted punctuation and Thai remain ordinary editor content. Hana is a local development label, not a final product name.
+This implements [#3](https://github.com/beamseree/hana-searchbar/issues/3) and [#4](https://github.com/beamseree/hana-searchbar/issues/4), under [parent #2](https://github.com/beamseree/hana-searchbar/issues/2). Search finds installed applications from a cached catalog and launches the selected installation. Three ordinary working windows contain clearly labeled validation content and temporary keyboard focus probes. There are no file results, capture modes, real note editing, organizer, or saved notes; `-`, `[`, pasted punctuation and Thai remain ordinary editor content. Hana is a local development label, not a final product name.
 
 ## Build, test, install and run
 
@@ -52,7 +52,7 @@ Escape orders out the nonactivating panel, releasing keyboard control to the sti
 
 Diagnostics are off unless launched with `--diagnostics`. The append-only JSONL file is `~/Library/Logs/Hana/native-shell.jsonl`, created with mode 0600 inside a 0700 directory. It records session IDs, event names, app bundle IDs, text length, composition state, screen/panel rectangles and native state flags. It never records query text, typed key values, window titles, captured text or personal filenames. Use disposable synthetic text when collecting shared evidence.
 
-`presentationMilliseconds` measures synchronous presentation calls, including logging overhead; it does **not** measure physical invocation-to-typing readiness. A responder assignment, successful shortcut registration, build or screenshot does not establish keyboard focus. The behavior tests use real AppKit through Mac Interaction and verify session reuse and stale-dismissal rejection. There are no AppKit-call mocks or test-only public interfaces. Search behavior tests will belong to the later Search implementation.
+`presentationMilliseconds` measures synchronous presentation calls, including logging overhead; it does **not** measure physical invocation-to-typing readiness. A responder assignment, successful shortcut registration, build or screenshot does not establish keyboard focus. The behavior tests use real AppKit through Mac Interaction and verify session reuse and stale-dismissal rejection. There are no AppKit-call mocks or test-only public interfaces. Search behavior tests exercise the query-to-batches interface and filesystem adapter; application destination tests exercise Mac Interaction with controlled native-opening outcomes.
 
 Physical acceptance procedure (zero working windows):
 
@@ -98,3 +98,10 @@ From the bar, **⌘1**, **⌘2**, and **⌘3** open/focus Main, Mock Note A, and
 The registry is internal to Mac Interaction and owns retained AppKit window controllers keyed by three typed validation destinations. Only closing removes membership; minimizing does not. The app delegate routes Dock reopening to `open(.main)` and suppresses AppKit's default reopen handling. An invocation-bound `open(destination, from:)` ignores an obsolete session before touching any window or focus. No delayed activation/restore callback is scheduled.
 
 Working-window diagnostics add numeric validation IDs (1 Main, 2 Mock Note A, 3 Mock Note B), minimized/visible/key/active-Space state, open/close/minimize events, and activation-policy transition success. Probe contents are not logged. See the [issue #4 runtime matrix](evidence/issue-4/validation.md) for current evidence and the physical procedure. Prior #1/#3 observations are not automatically passes for this integration.
+
+
+## Application Search — issue #5
+
+Type an application name, move with ↑/↓, and press Return to open the selected path. Rows show Application and the full installation path; two installations remain separate. Empty Search has no results or hints. A selected result that disappears leaves no selection until you navigate again. Failed opening retains text and explains recovery. Successful native acknowledgment dismisses without restoring the invocation origin.
+
+The retained native editor stays above the expanding results surface. Catalog scans and ranking run off its main actor. Search starts after approximately 100 ms debounce and returns at most 20 rows. The catalog refreshes at launch and when a one-second directory/metadata stamp check detects changes inside conventional application roots. See [coverage, test procedures, timings and acceptance limits](evidence/issue-5/validation.md).
