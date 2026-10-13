@@ -73,7 +73,7 @@ Both independent review axes found the same pre-match deduplication bug: a catal
 After the review correction, all **28 tests** passed, including the opt-in live fixture test, in the complete suite. See [test output](tests.txt). Release build/plist/strict signature checks passed; [build output](build.txt). The installed binary for the physical request has CDHash `5dac79e8e5e56e30f5d5e5c4453c5c81ed2f9406`, no TeamIdentifier and no entitlements. Both reviewers rechecked the correction with zero remaining actionable findings in each axis.
 
 
-## Issue #6 acceptance complete
+## Issue #6 acceptance evidence — superseded by coverage finding below
 
 | Acceptance criterion | Scoped evidence |
 | --- | --- |
@@ -85,4 +85,21 @@ After the review correction, all **28 tests** passed, including the opt-in live 
 | Automated cases and current primary API verification | 28 passing tests; Apple documentation/SDK checks and recorded scope/translator observations |
 | Signed mixed discovery, actual opening and delayed-file demonstration | Separate discovery, acknowledgment and TextEdit document observation; final physical checks above |
 
-The scoped #6 acceptance evidence is complete and the PR is ready for review. No merge or issue closure was performed.
+The fixture and physical checks above passed. The later signed-app coverage finding below withdraws the readiness conclusion. No merge or issue closure was performed.
+
+
+## Follow-up: signed-app filename coverage gap — 2026-10-13
+
+A user-reported filename query exposed a material coverage gap after the fixture validation. Keep the PR draft pending resolution. This is a targeted #6 diagnosis, not the broader #9 coverage report. The earlier Documents-versus-home observation should have been investigated before declaring acceptance complete.
+
+A temporary opt-in launch harness queried the production Search boundary from the signed installed app. It asserted an ordinary indexed Downloads destination was returned. The normally launched app failed twice (`FAIL results=1 status=ready`); the query itself completed successfully. No file contents were read. Private filenames and paths are omitted from committed evidence.
+
+Three hypotheses were tested at the boundary: fewer metadata candidates delivered to the app; visibility filtering removing delivered candidates; matching/result limits removing them. Instrumentation showed the broad stage received **10 raw candidates**, before eligibility, matching or result limits. A terminal metadata query found **131** filename matches. Of those, **78** were under Downloads and **37** under Documents. The specific missing destination was absent from the app's raw snapshots.
+
+Launching the **identical signed executable** directly under the development environment instead of Launch Services yielded **131 raw candidates**, including the missing destination, and **20 displayed results**. The exact-destination assertion for the broad phrase still failed because its rank was outside the 20-row limit; that comparison is evidence of metadata delivery differences, not a passing exact-file regression or a production workaround. The normally launched app's 10-candidate count is below the scan budget, ruling out that budget for this symptom.
+
+System logs correlated the normal app with Documents/Downloads TCC preflight checks (`subject=com.beamseree.hana`, `authValue=1`, `authReason=0`); the directly launched executable had the development app as its responsible process. These internal numeric values are recorded without treating them as a documented public permission-status API. Together with the launch-context comparison, this strongly indicates an access-context difference. No permission was granted or changed, and the exact required permission change has not been validated.
+
+Apple documents [per-app protected-folder access](https://support.apple.com/guide/mac-help/control-access-to-files-and-folders-on-mac-mchld5a35146/mac) and [consent requirements for Documents, Downloads, Desktop and iCloud](https://support.apple.com/en-ie/guide/security/secddd1d86a6/web). Empty or reduced query output alone still does not establish permission denial. The source's ready status means gathering finished, not that all indexed locations were searchable.
+
+All temporary `[DEBUG-bemo]` instrumentation and launch harness changes were removed. The previously tested normal source/build was restored. No production behavior change or settings workaround was made, so the original coverage failure remains unresolved. The 28-test/physical-fixture results above remain valid within their stated scope; they do not validate ordinary protected-folder coverage.
