@@ -27,9 +27,9 @@ The indexed regression creates 2,100 synthetic `[ 0000 Hana7 *].txt`-style files
 
 ## Interactive evidence
 
-Pending at this commit. The opt-in `--validate-search-correctness --diagnostics` path demonstrates delayed exact ranking after navigation, removal requiring selection, failure/recovery, stale batches after dismissal/reopen, and real file/Calculator opening through the production Mac Interaction adapters. Quit and relaunch without that flag for physical checks with normal sources, within the same coordinated slot. Synthetic display labels identify controlled data; destinations remain exact real URLs. Physical focus, typing, and full-screen behavior must be separately observed.
+The opt-in `--validate-search-correctness --diagnostics` path demonstrates delayed exact ranking after navigation, removal requiring selection, failure/recovery, stale batches after dismissal/reopen, and real file/Calculator opening through the production Mac Interaction adapters. Quit and relaunch without that flag for physical checks with normal sources, within the same coordinated slot. Synthetic display labels identify controlled data; destinations remain exact real URLs. Physical focus, typing, and full-screen behavior were separately confirmed by Beam, as recorded below.
 
-Native slot belongs to #7 first. User quit the existing Hana process before installation. No unfamiliar process was terminated and no permissions, system shortcuts, Spaces settings, or other checkout were modified. Record revision, installed executable SHA-256, signature CDHash, observed outcomes and slot release below before readiness.
+Native slot belongs to #7 first. User quit the existing Hana process before installation. No unfamiliar process was terminated and no permissions, system shortcuts, Spaces settings, or other checkout were modified. The tested identity and observations follow.
 
 ## Review corrections
 
@@ -38,3 +38,21 @@ The two-axis review found one Standards issue (updates suspended across awaited 
 The opt-in 300-file equal-name fixture reproduced the usage-cap failure before correction and passed afterward. The adapter replacement regression passed both before and after; it is coverage, not claimed red/green reproduction of the scheduling-sensitive selection finding. The corrected code no longer publishes incomplete replacement prefixes.
 
 Reproduce fixtures with `./scripts/validation/install-search-correctness-fixtures`, then `HANA_BOUNDED_FIXTURE="$HOME/Hana Issue 7 Validation/[Hana7*].txt" xcrun swift test --scratch-path .build`. The live metadata tests require a logged-in macOS session and indexed fixtures; their absence is an explicit skip.
+
+## Installed build and native outcome — 2026-10-13
+
+- Exact tested source revision: `d6aec50351f1aae634096186bcd294d566b9e0a4`. Later commits contain evidence only.
+- Worktree-local outputs: `.build/` and `build/Hana.app`; install: `~/Applications/Hana.app`, bundle `com.beamseree.hana`, ad-hoc signed. Strict signature verification passed; no entitlements or signing/permission changes were introduced. Full details: `installed-build.txt`.
+- Installed executable SHA-256: `d01424c0497cc0491a6e26fb08e4e483fd44ae7d1bdf4a2a7ea86cdf8d2b1bc8`.
+- CDHash: `66d45e99b417f9f9fe7e08f1a6072abd44a84e89`.
+- Initial 15:48 Bangkok run was interrupted by physical input changing the controlled query. It is not a pass. After Beam confirmed a hands-off replay, the same installed build completed the controlled sequence at 15:49–15:50.
+- Runtime trace: `validation7.late-top.selectionPreserved=true`; removal `requiresSelection=true`; reopen `freshSession=true`, `resultsRetained=true`; real file and real application requests both acknowledged; `validation7.complete` recorded. This demonstrates controlled mixed batches in the running bar through production interfaces.
+- UI observation: Calculator's real window was present, and TextEdit displayed the exact `~/Hana Issue 7 Validation/Hana7 Note.txt` document and its synthetic content. Reading these windows is not itself proof of focus transfer; that came from the physical confirmation below.
+- Same build relaunched without the validation flag for normal indexed sources. Beam answered **“All five checks passed”** to: (1) physical Option+Space, `Hana7 Note`, arrow/Enter opening, and typing in TextEdit without a click; (2) exact `[Hana7*].txt` found; (3) rapid type/clear/Escape/reopen with empty fresh bar and no unintended opening; (4) full-screen invocation/type/Escape and outside-click typing without unwanted focus/Space changes; (5) English/Thai editing and paste/select/undo during results.
+- Final Quit via Hana's menu at 15:53 Bangkok. Runtime `shutdown` follows `MacInteraction.stop()` unregistering the shortcut. `pgrep -x Hana` confirmed no remaining process. **#7 native testing slot released.** No later installation or interactive launch was performed.
+
+The complete full suite passed **40 tests** (13.928 seconds in the final run), including three opt-in live-indexed regressions. The separate earlier punctuation fixture test remained skipped unless `HANA_INDEXED_FIXTURE` is supplied; punctuation is otherwise covered by controlled and bounded live-indexed tests plus the physical exact search. Native acceptance here is scoped to #7; this does not claim completion of all parent #2 coverage, permissions, display, performance, or working-window matrices. Candidate IME compatibility remains deferred per the parent. Broader locations, genuine permission denial/revocation, all-minimized working windows and display reconnection were not revalidated for this Search-only change.
+
+## Final readiness check
+
+After native slot release, fetched `origin` and checked #8 and PR #15 (`codex/issue-8-display-and-editing`): both remain open, with `mergedAt=null`. `origin/main` remains the #6 merge `b6399e1`; no #8 integration was applicable before this PR was marked ready. No other checkout was modified. The independent reviews have zero unresolved implementation findings; this ticket's core acceptance has automated, runtime and human evidence. No merge was performed.
