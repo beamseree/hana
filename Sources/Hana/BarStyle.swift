@@ -13,6 +13,10 @@ enum BarStyle {
     static let cardRadius = bezelRadius - inset
     /// Card padding around the input row and the results, and the gap between them.
     static let cardPadding: CGFloat = 8
+    /// Card height changes. Short because Search is invoked many times a day.
+    static let resizeDuration: TimeInterval = 0.15
+    /// Strong ease-out, cubic-bezier(0.23, 1, 0.32, 1).
+    static let easeOut = CAMediaTimingFunction(controlPoints: 0.23, 1, 0.32, 1)
     /// Larger than the mode icon so app artwork reads at a glance.
     nonisolated static let resultIconSize: CGFloat = 32
     /// Result icons sit this far inside the row highlight.

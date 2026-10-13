@@ -41,6 +41,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var selectedID: SearchResult.ID?
     private var didSelectInitialResult = false
     private var resultSurface: NSHostingView<SearchResultsView>?
+    private var resizeTarget: NSRect?
     private var sourceStatus: SourceStatus = .ready
     private var pendingLaunch: UUID?
     private(set) var results: [SearchResult] = []
@@ -334,6 +335,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
         let results = NSHostingView(rootView: SearchResultsView())
         results.frame = .zero
+        results.autoresizingMask = [.width, .minYMargin]
         results.isHidden = true
         card.addSubview(results)
         resultSurface = results
@@ -350,7 +352,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private func applyPlacement(displays: [Display], pointer: CGPoint, focus: WindowFocus) {
         currentPlacement = Self.placement(displays: displays, pointer: pointer, focus: focus)
         guard let placement = currentPlacement else { return }
-        panel.setFrame(placement.frame(height: BarStyle.collapsedHeight), display: false)
+        setPanelFrame(placement.frame(height: BarStyle.collapsedHeight), animated: false)
         renderResults()
         record("placement.\(placement.source)", extra: ["visibleFrame": NSStringFromRect(placement.visibleFrame)])
     }
@@ -661,6 +663,30 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         renderResults()
     }
 
+    /// Animates only while visible. Instant changes still go through the animator
+    /// to cancel an in-flight resize, but the animator applies them only later.
+    private func setPanelFrame(_ frame: NSRect, animated: Bool) {
+        let animates = animated && panel.isVisible && frame != panel.frame
+            && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+        // Re-renders that keep the target (icons, selection) must not restart the curve.
+        if animates, frame == resizeTarget { return }
+        resizeTarget = animates ? frame : nil
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = animates ? BarStyle.resizeDuration : 0
+            context.timingFunction = BarStyle.easeOut
+            context.allowsImplicitAnimation = true
+            panel.animator().setFrame(frame, display: true)
+        } completionHandler: { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                if self.resizeTarget == frame { self.resizeTarget = nil }
+                self.panel.invalidateShadow()
+            }
+        }
+        if !animates { panel.setFrame(frame, display: true) }
+        panel.invalidateShadow()
+    }
+
     private func renderResults() {
         let hasQuery = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let status: String?
@@ -676,13 +702,17 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let content = hasQuery ? SearchResultsView.height(rowCount: results.count, hasStatus: status != nil) : 0
         let frame = currentPlacement?.frame(
             height: BarStyle.collapsedHeight + (content > 0 ? BarStyle.cardPadding + content : 0)) ?? panel.frame
-        let height = frame.height
-        panel.setFrame(frame, display: true)
-        panel.invalidateShadow()
-        resultSurface?.frame = NSRect(x: BarStyle.cardPadding, y: BarStyle.cardPadding,
-                                      width: max(0, frame.width - 2 * (BarStyle.inset + BarStyle.cardPadding)),
-                                      height: max(0, height - BarStyle.collapsedHeight - BarStyle.cardPadding))
-        resultSurface?.isHidden = content == 0
+        setPanelFrame(frame, animated: true)
+        // Results are laid out at their final size, pinned under the input, so
+        // the card's clip reveals them as it grows instead of moving them.
+        if let resultSurface, let card = resultSurface.superview {
+            let height = max(0, frame.height - BarStyle.collapsedHeight - BarStyle.cardPadding)
+            resultSurface.frame = NSRect(x: BarStyle.cardPadding,
+                                         y: card.bounds.height - BarStyle.inputHeight - height,
+                                         width: max(0, frame.width - 2 * (BarStyle.inset + BarStyle.cardPadding)),
+                                         height: height)
+            resultSurface.isHidden = content == 0
+        }
         resultSurface?.rootView = SearchResultsView(results: results, selectedID: selectedID, status: status, icons: icons,
             select: { [weak self] id in
                 guard let self, self.results.contains(where: { $0.id == id }) else { return }
