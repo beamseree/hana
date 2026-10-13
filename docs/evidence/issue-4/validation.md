@@ -28,15 +28,22 @@ The [content-free runtime capture](runtime.jsonl) records this build only. State
 | Main + two mock notes | Three independently identified ordinary windows; opening the same ID reuses it | Trace at 05:38:55 UTC contains IDs 1/2/3; repeated open events reuse them, never add a fourth | Runtime pass |
 | Mock boundary | Clear validation-only/no-saving labels; temporary probe is not note editing | Native accessibility tree and rendered Main window show validation-only/no-saving disclaimer and temporary probe label | Automated UI pass |
 | Registry / activation | Regular from first open until final close, including minimized windows | 05:38:47 regular with Main; 05:39:40 closes retain regular; 05:39:41 last close switches accessory; reopening switches regular | Partial runtime pass; minimized case pending |
-| Full-screen, all open | Physical Option+Space/type/Escape; no Space jump or unrelated-window raising; origin receives typing after Escape | Explicit physical procedure requested | Pending human check |
+| Full-screen, all open | Physical Option+Space/type/Escape; no Space jump or unrelated-window raising; origin receives typing after Escape | Beam confirmed the eight-step Notes full-screen procedure: “Yes, all worked” (hello in Hana, Escape then back in Notes, no Space jump or unrelated windows) | User-observed pass |
 | Full-screen, all minimized | Same invocation/typing behavior while all three remain minimized | Not yet observed | Pending human check |
 | Dock / Command-Tab | App remains reachable with open or minimized windows; Dock opens Main only | Not yet observed | Pending human check |
-| Destination from bar | ⌘2 opens/focuses Mock Note A; immediate physical typing reaches its probe without click or stale restoration | Explicit physical procedure requested | Pending human check |
+| Destination from bar | ⌘2 opens/focuses Mock Note A; immediate physical typing reaches its probe without click or stale restoration | Beam answered “No — I’ll describe what happened” to the destination + owned-origin sequence; precise failing step pending. Two ⌘2 destination requests traced with no subsequent key event | Failed combined check; diagnosing |
 | Owned-origin Escape | Invoke from a working-window probe; Escape returns typing to that same probe | Source restoration guarded by origin identity, visibility and minimization | Pending human check |
 | Last close / repeated transitions | Accessory only after last close; menu Search and global invoke/type/Escape still work; close/reopen and rapid Escape/reinvoke stay stable | No delayed restore callbacks; stale-session tests pass | Pending native/human checks |
 | Single yellow button | Native animation goes to Dock | No animation overrides; current run unobserved | Pending human check |
 | Bulk minimize | All three animate to Dock and stay registered | Native `miniaturize` calls; current run unobserved | Pending human check |
 | Close all → reopen three → bulk | Same Dock endpoints across policy transitions | Current run unobserved | Pending human check |
+
+## Human observations
+
+- Open-windows full-screen check: Beam followed eight explicit steps opening Main/A/B, entering native full-screen Apple Notes, invoking Option+Space and typing `hello`, then Escape and typing `back` without clicking. Beam replied **“Yes, all worked”** to the question naming both typing destinations, no Space jump, and no unrelated Hana windows appearing. This is physical evidence; it does not yet cover minimized windows or destination opening.
+
+- Destination / owned-origin sequence: Beam answered **“No — I’ll describe what happened”** to the six-step physical check (Option+Space → ⌘2 → type into Mock Note A; then invoke/type/Escape → type back into its probe). The failing step and actual visible/typing destination have been requested but not yet supplied. Do not infer which half failed. At 05:43:14 and 05:43:48 UTC, the trace records `dismiss.destination` then `working.open` for ID 2 while Notes is still frontmost, with no subsequent `working.becameKey` event in that interval. These synchronous states narrow investigation but do not diagnose a cause.
+- A focused human-assisted reproduction command is available: `bash scripts/validation/destination-focus-loop`. It was started, then cancelled while awaiting a precise user observation; no pass/fail verdict is claimed for that script yet. No focus workaround has been made without a confirmed reproduction.
 
 ## Physical continuation procedure
 
@@ -67,4 +74,4 @@ Review totals: Standards **0** (no worst issue); Spec **1** (core physical accep
 
 ## Remaining limitations
 
-Core physical acceptance is pending, so the PR must remain draft until those checks are complete. Candidate-based IME testing remains explicitly deferred for current English/Thai use. Focused-window AX placement, display disconnect, lock/sleep, Stage Manager and other full-screen apps are unverified. No persistence, real note editing, organizer or search results were added. Builds, screenshots, launch acknowledgment and responder flags are not focus proof.
+The combined destination/owned-origin physical check was reported failed and needs a precise symptom/reproduction before a fix. Other core checks remain pending, so the PR must remain draft. Candidate-based IME testing remains explicitly deferred for current English/Thai use. Focused-window AX placement, display disconnect, lock/sleep, Stage Manager and other full-screen apps are unverified. No persistence, real note editing, organizer or search results were added. Builds, screenshots, launch acknowledgment and responder flags are not focus proof.
