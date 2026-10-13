@@ -15,10 +15,16 @@ enum CollectionRecoveryError: Error, Equatable, Sendable {
     case publicationFailed(code: Int32)
     /// The package's format version is not one this build reads.
     case unsupportedFormat(version: Int)
+    /// A snapshot database at a schema version this build does not read.
+    case unsupportedSchema(version: Int)
     case invalidPackage(InvalidPackage)
 
     enum InvalidPackage: String, Equatable, Sendable {
         case missingFile, unexpectedFile, hashMismatch, countMismatch, malformed, domainViolation, contentMismatch
+        /// A snapshot database that is not an intact Hana collection.
+        case corruptDatabase
+        /// A snapshot whose creation never finished.
+        case incomplete
     }
 
     static func writing(_ code: Int32) -> Self {
@@ -195,6 +201,241 @@ enum CollectionRecovery {
                                   exportedAt: CollectionStore.date(manifest.exportedAt),
                                   notes: notes.sorted { $0.id.uuidString < $1.id.uuidString },
                                   tasks: tasks.sorted { $0.id.uuidString < $1.id.uuidString })
+    }
+
+    // MARK: Snapshots
+
+    /// A validated, published snapshot.
+    struct SnapshotInfo: Equatable, Sendable {
+        let id: String
+        let capturedAt: Date
+        let collectionID: UUID
+        let schemaVersion: Int
+        let noteCount: Int
+        let taskCount: Int
+        /// The latest item update included; nil for an empty collection.
+        let latestUpdatedAt: Date?
+        let databaseBytes: Int
+        let databaseSHA256: String
+    }
+
+    /// One entry of the snapshot directory: usable only when it validated.
+    struct SnapshotListing: Equatable, Sendable {
+        let id: String
+        let result: Result<SnapshotInfo, CollectionRecoveryError>
+
+        var isUsable: Bool { (try? result.get()) != nil }
+    }
+
+    static let snapshotsDirectory = "Snapshots"
+    static let snapshotDatabaseName = "collection.sqlite"
+    static let snapshotManifestName = "snapshot.json"
+    private static let snapshotStagingPrefix = ".staging-"
+
+    /// `<root>/Snapshots`, beside — never inside — the replaceable
+    /// `Collection` directory.
+    static func snapshotsURL(_ location: CollectionLocation) -> URL {
+        location.root.appendingPathComponent(snapshotsDirectory, isDirectory: true)
+    }
+
+    /// Creates one snapshot of the committed collection with SQLite's online
+    /// backup from a single Store read transaction (the capture point), off
+    /// the main actor. The staged copy is closed, synchronized, reopened
+    /// read-only and checked (schema, full integrity, foreign keys, domain
+    /// invariants and equality with the captured contents) before its
+    /// manifest is written and the directory is published under a new ID.
+    /// Failures publish nothing and remove staging; existing snapshots and
+    /// the live store are never modified. Retry is explicit.
+    ///
+    /// Fault names for `failWrite`: `collection.sqlite` (before the backup),
+    /// `close` (after it), `snapshot.json`.
+    static func createSnapshot(_ store: CollectionStore, in generation: StoreGeneration,
+                               clock: @Sendable () -> Date = { Date() }, faults: Faults = Faults()) async throws -> SnapshotInfo {
+        let directory = snapshotsURL(store.location)
+        if mkdir(directory.path, 0o700) != 0, errno != EEXIST { throw CollectionRecoveryError.writing(errno) }
+        var info = stat()
+        guard lstat(directory.path, &info) == 0, info.st_mode & S_IFMT == S_IFDIR, info.st_mode & 0o077 == 0
+        else { throw CollectionRecoveryError.destinationUnavailable }
+
+        let staging = directory.appendingPathComponent("\(snapshotStagingPrefix)\(UUID().uuidString)", isDirectory: true)
+        try makeDirectory(staging)
+        var published = false
+        defer { if !published { try? FileManager.default.removeItem(at: staging) } }
+        let database = staging.appendingPathComponent(snapshotDatabaseName)
+        if let code = faults.failWrite?(snapshotDatabaseName) { throw CollectionRecoveryError.writing(code) }
+        try writeFile(Data(), to: database)
+        let captured: CollectionContents
+        do {
+            captured = try await store.backup(to: database, in: generation)
+        } catch let error as CollectionStoreError {
+            switch error {
+            case .staleGeneration, .closed: throw error
+            case .storageFailure(let code) where code == 13: throw CollectionRecoveryError.insufficientSpace  // SQLITE_FULL
+            default: throw CollectionRecoveryError.writeFailed(code: EIO)
+            }
+        }
+        let capturedAt = CollectionStore.milliseconds(clock())
+        if let code = faults.failWrite?("close") { throw CollectionRecoveryError.writing(code) }
+        try synchronize(database)
+
+        let reread = try readSnapshotDatabase(database)
+        guard reread == captured else { throw CollectionRecoveryError.invalidPackage(.contentMismatch) }
+        let (bytes, digest) = try fileDigest(database)
+        let id = snapshotID(capturedAt)
+        let manifest = SnapshotManifest(
+            format: SnapshotManifest.format, formatVersion: SnapshotManifest.formatVersion, id: id,
+            capturedAt: capturedAt, capture: SnapshotManifest.captureMethod,
+            collectionID: captured.collectionID.uuidString, schemaVersion: captured.schemaVersion,
+            latestUpdatedAt: captured.latestUpdatedAt.map(CollectionStore.milliseconds),
+            counts: .init(notes: captured.notes.count, tasks: captured.tasks.count),
+            database: .init(name: snapshotDatabaseName, bytes: bytes, sha256: digest))
+        if let code = faults.failWrite?(snapshotManifestName) { throw CollectionRecoveryError.writing(code) }
+        try writeFile(try encoder.encode(manifest), to: staging.appendingPathComponent(snapshotManifestName))
+        try synchronize(staging)
+
+        let destination = directory.appendingPathComponent(id, isDirectory: true)
+        try faults.beforePublish?()
+        guard renamex_np(staging.path, destination.path, UInt32(RENAME_EXCL)) == 0
+        else { throw CollectionRecoveryError.publicationFailed(code: errno) }
+        published = true
+        try synchronize(directory)
+        return try inspectSnapshot(store.location, id: id)
+    }
+
+    /// Every entry in the snapshot directory, by name, each validated afresh.
+    /// Unfinished or invalid candidates are listed as unusable, with the reason.
+    static func listSnapshots(_ location: CollectionLocation) -> [SnapshotListing] {
+        let directory = snapshotsURL(location)
+        guard let names = try? FileManager.default.contentsOfDirectory(atPath: directory.path) else { return [] }
+        return names.sorted().map { name in
+            if name.hasPrefix(snapshotStagingPrefix) {
+                return SnapshotListing(id: name, result: .failure(.invalidPackage(.incomplete)))
+            }
+            do {
+                return SnapshotListing(id: name, result: .success(try inspectSnapshot(location, id: name)))
+            } catch let error as CollectionRecoveryError {
+                return SnapshotListing(id: name, result: .failure(error))
+            } catch {
+                return SnapshotListing(id: name, result: .failure(.invalidPackage(.malformed)))
+            }
+        }
+    }
+
+    /// Fully revalidates one snapshot, read-only: exactly the manifest and
+    /// database, manifest format and ID, database size and hash, schema,
+    /// integrity, foreign keys, counts and domain invariants.
+    static func inspectSnapshot(_ location: CollectionLocation, id: String) throws -> SnapshotInfo {
+        guard !id.isEmpty, !id.contains("/"), !id.hasPrefix(".") else { throw CollectionRecoveryError.invalidPackage(.malformed) }
+        let directory = snapshotsURL(location).appendingPathComponent(id, isDirectory: true)
+        var info = stat()
+        guard lstat(directory.path, &info) == 0 else { throw CollectionRecoveryError.invalidPackage(.missingFile) }
+        guard info.st_mode & S_IFMT == S_IFDIR else { throw CollectionRecoveryError.invalidPackage(.unexpectedFile) }
+        let found = try packageEntries(directory)
+        guard found.directories.isEmpty, found.others.isEmpty,
+              found.files.isSubset(of: [snapshotManifestName, snapshotDatabaseName])
+        else { throw CollectionRecoveryError.invalidPackage(.unexpectedFile) }
+        guard found.files.contains(snapshotManifestName) else { throw CollectionRecoveryError.invalidPackage(.incomplete) }
+        guard found.files.contains(snapshotDatabaseName) else { throw CollectionRecoveryError.invalidPackage(.missingFile) }
+
+        let manifest: SnapshotManifest = try decode(try readFile(directory.appendingPathComponent(snapshotManifestName)),
+                                                    format: SnapshotManifest.format)
+        guard manifest.id == id, manifest.database.name == snapshotDatabaseName,
+              let collectionID = UUID(uuidString: manifest.collectionID)
+        else { throw CollectionRecoveryError.invalidPackage(.malformed) }
+        let database = directory.appendingPathComponent(snapshotDatabaseName)
+        let (bytes, digest) = try fileDigest(database)
+        guard bytes == manifest.database.bytes, digest == manifest.database.sha256
+        else { throw CollectionRecoveryError.invalidPackage(.hashMismatch) }
+        let contents = try readSnapshotDatabase(database)
+        guard contents.collectionID == collectionID, contents.schemaVersion == manifest.schemaVersion
+        else { throw CollectionRecoveryError.invalidPackage(.malformed) }
+        guard contents.notes.count == manifest.counts.notes, contents.tasks.count == manifest.counts.tasks
+        else { throw CollectionRecoveryError.invalidPackage(.countMismatch) }
+        return SnapshotInfo(id: id, capturedAt: CollectionStore.date(manifest.capturedAt), collectionID: collectionID,
+                            schemaVersion: manifest.schemaVersion, noteCount: manifest.counts.notes,
+                            taskCount: manifest.counts.tasks, latestUpdatedAt: manifest.latestUpdatedAt.map(CollectionStore.date),
+                            databaseBytes: bytes, databaseSHA256: digest)
+    }
+
+    /// Proves a snapshot usable without touching it: validates it, copies its
+    /// database into a brand-new marked disposable root (never the live root)
+    /// and opens that copy with a fresh Store, returning the copy's contents.
+    /// This is not a restore; nothing replaces any collection.
+    static func reopenSnapshotCopy(_ location: CollectionLocation, id: String, into disposableRoot: URL) async throws -> CollectionContents {
+        _ = try inspectSnapshot(location, id: id)
+        let target = try CollectionLocation.createFixtureRoot(at: disposableRoot)
+        try makeDirectory(target.collectionDirectory)
+        let source = snapshotsURL(location).appendingPathComponent(id).appendingPathComponent(snapshotDatabaseName)
+        try writeFile(try readFile(source), to: target.databaseURL)
+        let store = try await CollectionStore.open(target)
+        do {
+            let contents = try await store.read(.contents, in: store.generation)
+            await store.close()
+            return contents
+        } catch {
+            await store.close()
+            throw error
+        }
+    }
+
+    /// Opens a detached snapshot database read-only and checks its domain
+    /// invariants, mapping Store errors to Recovery errors.
+    private static func readSnapshotDatabase(_ database: URL) throws -> CollectionContents {
+        try requireRollbackJournalHeader(database)
+        let contents: CollectionContents
+        do {
+            contents = try CollectionStore.readDetachedCopy(database)
+        } catch CollectionStoreError.unsupportedSchema(let version) {
+            throw CollectionRecoveryError.unsupportedSchema(version: version)
+        } catch {
+            throw CollectionRecoveryError.invalidPackage(.corruptDatabase)
+        }
+        let notesValid = contents.notes.allSatisfy { Note.isNonblank($0.body) && $0.revision >= 1 }
+        let tasksValid = contents.tasks.allSatisfy { task in
+            TaskItem.isValidTitle(task.title) && task.revision >= 1
+                && (task.completedAt == nil && task.archivedAt == nil) == (task.placement != nil)
+                && (task.placement == nil) == (task.orderKey == nil)
+        }
+        guard notesValid, tasksValid else { throw CollectionRecoveryError.invalidPackage(.domainViolation) }
+        return contents
+    }
+
+    /// Snapshots are single rollback-journal files: header bytes 18 and 19
+    /// (file format write/read versions) are 1. A WAL-marked file is refused
+    /// before SQLite opens it, since opening one may create `-wal`/`-shm`
+    /// files beside the snapshot.
+    private static func requireRollbackJournalHeader(_ database: URL) throws {
+        guard let handle = try? FileHandle(forReadingFrom: database) else { throw CollectionRecoveryError.invalidPackage(.missingFile) }
+        defer { try? handle.close() }
+        guard let header = try? handle.read(upToCount: 20), header.count == 20,
+              header[header.startIndex + 18] == 1, header[header.startIndex + 19] == 1
+        else { throw CollectionRecoveryError.invalidPackage(.corruptDatabase) }
+    }
+
+    private static func snapshotID(_ capturedAt: Int64) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withYear, .withMonth, .withDay, .withTime, .withTimeZone]
+        return "\(formatter.string(from: CollectionStore.date(capturedAt)))-\(UUID().uuidString.prefix(8).lowercased())"
+    }
+
+    /// Size and SHA-256 of a file, read in chunks.
+    private static func fileDigest(_ url: URL) throws -> (bytes: Int, sha256: String) {
+        guard let handle = try? FileHandle(forReadingFrom: url) else { throw CollectionRecoveryError.invalidPackage(.missingFile) }
+        defer { try? handle.close() }
+        var hasher = SHA256()
+        var bytes = 0
+        while true {
+            let chunk: Data?
+            do {
+                chunk = try handle.read(upToCount: 1 << 20)
+            } catch {
+                throw CollectionRecoveryError.invalidPackage(.corruptDatabase)
+            }
+            guard let chunk, !chunk.isEmpty else { break }
+            hasher.update(data: chunk)
+            bytes += chunk.count
+        }
+        return (bytes, hex(hasher.finalize()))
     }
 
     // MARK: Encoding
@@ -409,6 +650,42 @@ private struct ExportManifest: Codable {
         try container.encode(counts, forKey: .counts)
         try container.encode(files, forKey: .files)
         try container.encode(notes, forKey: .notes)
+    }
+}
+
+private struct SnapshotManifest: Codable {
+    static let format = "hana.snapshot"
+    static let formatVersion = 1
+    static let captureMethod = "sqlite-online-backup from one Store read transaction"
+
+    struct Counts: Codable { let notes: Int; let tasks: Int }
+    struct DatabaseFile: Codable { let name: String; let bytes: Int; let sha256: String }
+
+    let format: String
+    let formatVersion: Int
+    let id: String
+    /// UTC milliseconds when the backup finished.
+    let capturedAt: Int64
+    let capture: String
+    let collectionID: String
+    let schemaVersion: Int
+    let latestUpdatedAt: Int64?
+    let counts: Counts
+    let database: DatabaseFile
+
+    /// Writes absent facts as explicit `null`.
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(format, forKey: .format)
+        try container.encode(formatVersion, forKey: .formatVersion)
+        try container.encode(id, forKey: .id)
+        try container.encode(capturedAt, forKey: .capturedAt)
+        try container.encode(capture, forKey: .capture)
+        try container.encode(collectionID, forKey: .collectionID)
+        try container.encode(schemaVersion, forKey: .schemaVersion)
+        try container.encode(latestUpdatedAt, forKey: .latestUpdatedAt)
+        try container.encode(counts, forKey: .counts)
+        try container.encode(database, forKey: .database)
     }
 }
 

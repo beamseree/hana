@@ -30,6 +30,10 @@ import Foundation
 /// - `export <root> --destination <dir> [--fail-write <package path> --errno <n>] [--fail-publish true]`:
 ///   full export into a new package below `dir`.
 /// - `verify-export <package>`: read back and validate a package.
+/// - `create-snapshot <root> [--fail-write collection.sqlite|close|snapshot.json --errno <n>] [--fail-publish true]`.
+/// - `list-snapshots <root>`: every snapshot candidate with its validation result.
+/// - `reopen-snapshot <root> --id <id> --into <new disposable root>`: open a copy
+///   in a fresh Store and summarize it.
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
 ///
 /// Faults on every command: `--pause before-commit|after-commit` and `--fail before-commit`.
@@ -163,6 +167,38 @@ enum CollectionFixtureHarness {
                 let exported = try CollectionRecovery.readExport(root)
                 emit("export.verified", ["notes": exported.notes.count, "tasks": exported.tasks.count,
                                          "collectionID": exported.collectionID.uuidString])
+            case "create-snapshot":
+                let failPath = options["--fail-write"]
+                let failCode = options["--errno"].flatMap({ Int32($0) }) ?? EIO
+                let failPublish = options["--fail-publish"] == "true"
+                let faults = CollectionRecovery.Faults(
+                    failWrite: { path in path == failPath ? failCode : nil },
+                    beforePublish: { if failPublish { throw InjectedFailure() } })
+                let store = try await CollectionStore.open(try CollectionLocation.fixture(root))
+                let info: CollectionRecovery.SnapshotInfo
+                do {
+                    info = try await CollectionRecovery.createSnapshot(store, in: store.generation, faults: faults)
+                } catch {
+                    await store.close()
+                    throw error
+                }
+                await store.close()
+                emit("snapshot.created", summary(info))
+            case "list-snapshots":
+                let location = try CollectionLocation.fixture(root)
+                let listings = CollectionRecovery.listSnapshots(location).map { listing -> [String: Any] in
+                    switch listing.result {
+                    case .success(let info): return summary(info).merging(["usable": true], uniquingKeysWith: { $1 })
+                    case .failure(let error): return ["id": listing.id, "usable": false, "error": describe(error)]
+                    }
+                }
+                emit("snapshots", ["count": listings.count, "snapshots": listings])
+            case "reopen-snapshot":
+                guard let id = options["--id"], let into = options["--into"] else { throw Usage() }
+                let contents = try await CollectionRecovery.reopenSnapshotCopy(try CollectionLocation.fixture(root), id: id,
+                                                                               into: URL(fileURLWithPath: into))
+                emit("snapshot.reopened", ["collectionID": contents.collectionID.uuidString, "notes": contents.notes.map(summary),
+                                           "tasks": contents.tasks.map(summary)])
             case "runtime-report":
                 let store = try await CollectionStore.open(try CollectionLocation.fixture(root))
                 let report = try await store.runtimeReport()
@@ -232,6 +268,12 @@ enum CollectionFixtureHarness {
                 "orderKey": task.orderKey.map { $0 as Any } ?? NSNull()]
     }
 
+    private static func summary(_ info: CollectionRecovery.SnapshotInfo) -> [String: Any] {
+        ["id": info.id, "capturedAt": CollectionStore.milliseconds(info.capturedAt), "collectionID": info.collectionID.uuidString,
+         "notes": info.noteCount, "tasks": info.taskCount, "databaseBytes": info.databaseBytes,
+         "databaseSHA256": info.databaseSHA256]
+    }
+
     /// Error names only; never descriptions that could carry content or paths.
     private static func describe(_ error: any Error) -> String {
         switch error {
@@ -244,6 +286,7 @@ enum CollectionFixtureHarness {
             case .writeFailed(let code): return "writeFailed(\(code))"
             case .publicationFailed(let code): return "publicationFailed(\(code))"
             case .unsupportedFormat(let version): return "unsupportedFormat(\(version))"
+            case .unsupportedSchema(let version): return "unsupportedSchema(\(version))"
             case .invalidPackage(let reason): return "invalidPackage(\(reason.rawValue))"
             default: return "\(error)"
             }

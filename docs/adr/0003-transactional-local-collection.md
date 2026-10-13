@@ -8,4 +8,4 @@ Selected on 2026-10-13 as an engineering decision within the authorized technica
 
 Markdown plus a metadata manifest and task JSON are portable exports, not a second live store. Use SQLite-consistent snapshots and a fresh safety snapshot before generation-based replacement; never copy a live main database file without accounting for WAL. Unsaved captures never enter persistent storage. See the [model and recovery design](../technical-design.md); no database has been created or recovery behavior verified yet.
 
-Implementation status, 2026-10-13: #24 created the first Collection Store (notes only) on GRDB 7.11.1 with the system SQLite; see the [Collection Store foundation section](../technical-design.md#collection-store-foundation--issue-24). Full export exists (#28); snapshots and restore remain unimplemented.
+Implementation status, 2026-10-13: #24 created the first Collection Store (notes only) on GRDB 7.11.1 with the system SQLite; see the [Collection Store foundation section](../technical-design.md#collection-store-foundation--issue-24). Full export (#28) and manual validated snapshots (#29) exist; scheduled backups, retention and restore remain unimplemented.

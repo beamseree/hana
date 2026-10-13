@@ -578,6 +578,71 @@ final class CollectionStore: Sendable {
         }
     }
 
+    /// Copies the committed database into a new file at `destination` with
+    /// SQLite's online backup, from one pool read transaction, and returns the
+    /// contents of that same transaction: the capture point. Concurrent
+    /// commits after the transaction began are not included. The copy is
+    /// left in rollback-journal mode and closed, so it is one self-contained
+    /// file. `destination` must be a new empty owner-only file. For
+    /// Collection Recovery only.
+    func backup(to destination: URL, in generation: StoreGeneration) async throws -> CollectionContents {
+        try requireCurrent(generation)
+        do {
+            let target = try DatabaseQueue(path: destination.path)
+            do {
+                let contents = try await pool.read { db in
+                    let contents = try CollectionQuery<CollectionContents>.contents.fetch(db)
+                    try target.writeWithoutTransaction { try db.backup(to: $0) }
+                    return contents
+                }
+                // The backup copied the source's header, which marks WAL mode.
+                // Reading it puts this connection into WAL mode, so switching to
+                // DELETE then rewrites the header and removes the WAL files.
+                try target.writeWithoutTransaction { db in
+                    _ = try Int.fetchOne(db, sql: "SELECT count(*) FROM sqlite_master")
+                    guard try String.fetchOne(db, sql: "PRAGMA journal_mode = DELETE")?.lowercased() == "delete"
+                    else { throw CollectionStoreError.storageFailure(code: ResultCode.SQLITE_MISUSE.rawValue) }
+                }
+                try target.close()
+                return contents
+            } catch {
+                try? target.close()
+                throw error
+            }
+        } catch {
+            throw CollectionStoreError.mapped(error)
+        }
+    }
+
+    /// Reads every domain fact from a detached database file (a snapshot or a
+    /// copy), read-only, after checking it is an intact Hana collection at the
+    /// supported schema: application ID, version and history, full integrity
+    /// check and foreign keys. Never writes to the file.
+    static func readDetachedCopy(_ database: URL) throws -> CollectionContents {
+        var configuration = Configuration()
+        configuration.readonly = true
+        do {
+            let queue = try DatabaseQueue(path: database.path, configuration: configuration)
+            defer { try? queue.close() }
+            return try queue.read { db in
+                guard try Int.fetchOne(db, sql: "PRAGMA application_id") == CollectionSchema.applicationID
+                else { throw CollectionStoreError.notHanaCollection }
+                let found = try Int.fetchOne(db, sql: "PRAGMA user_version") ?? 0
+                guard found == CollectionSchema.version,
+                      try Int.fetchAll(db, sql: "SELECT version FROM schema_history ORDER BY version") == [CollectionSchema.version]
+                else { throw CollectionStoreError.unsupportedSchema(version: found) }
+                guard try String.fetchAll(db, sql: "PRAGMA integrity_check") == ["ok"],
+                      try Row.fetchAll(db, sql: "PRAGMA foreign_key_check").isEmpty
+                else { throw CollectionStoreError.unreadableCollection }
+                return try CollectionQuery<CollectionContents>.contents.fetch(db)
+            }
+        } catch let error as CollectionStoreError {
+            throw error
+        } catch {
+            throw CollectionStoreError.unreadableCollection
+        }
+    }
+
     /// Identity and effective settings of the SQLite actually linked into
     /// this process, from the writer and from a pool reader.
     struct RuntimeReport: Codable, Sendable {
@@ -822,9 +887,9 @@ enum TaskOrder {
         let below: Int128? = try index + 1 < order.count ? existingKey(order[index + 1]) : nil
         let candidate: Int128?
         switch (above, below) {
-        case let (upper?, lower?): candidate = lower - upper >= 2 ? (upper + lower) / 2 : nil
-        case let (nil, lower?): candidate = lower - 1
-        case let (upper?, nil): candidate = upper + 1
+        case (let upper?, let lower?): candidate = lower - upper >= 2 ? (upper + lower) / 2 : nil
+        case (nil, let lower?): candidate = lower - 1
+        case (let upper?, nil): candidate = upper + 1
         case (nil, nil): candidate = 0
         }
         if let candidate, let key = Int64(exactly: candidate) { return key }
