@@ -12,13 +12,13 @@ No system settings or window/focus implementation were changed during these comp
 | --- | --- | --- | --- |
 | One ordinary window | `bash debug/minimize-loop.sh single`; open Main through WF, click yellow button | Beam: “Toward the Dock” | PASS, exit 0 |
 | Original bulk path | `bash debug/minimize-loop.sh bulk`; open Main, Note A, Note B, choose WF → Minimize all working windows | Beam: “No, all go toward the Dock” | PASS, exit 0 |
-| After closing last window / reopening | Close all; immediately reopen all three and bulk minimize | No response/action observed before this report; waiting script cancelled without supplying an endpoint | Untested |
+| After closing last window / reopening | Close all; immediately reopen all three and bulk minimize | Beam subsequently replied: “Yes, all go to the Dock” | PASS, user observation; reply arrived after waiting script was cancelled |
 
 Runtime logs corroborate the single-window minimizations and bulk operation. The bulk operation at 04:09:08 UTC is followed by Note A, Note B and Main becoming minimized through 04:09:10; activation policy stays regular. Human observation establishes the Dock endpoint. Neither screenshots nor state logs were substituted for that observation.
 
 ## Finding
 
-The original symptom has not reproduced in the completed controlled checks. Both the native yellow-button path and the unchanged bulk path currently animate toward the Dock. There is no established root cause and no verified fix. Without a failing reproduction, changing policy timing, adding delays, suppressing animation, restarting the Dock or splitting processes would be speculative. No such changes were made.
+The original symptom has not reproduced in the completed controlled checks. The native yellow-button path, unchanged bulk path, and close-all/reopen/bulk sequence all animated toward the Dock in the user-observed checks. There is no established root cause and no verified fix. Without a failing reproduction, changing policy timing, adding delays, suppressing animation, restarting the Dock or splitting processes would be speculative. No such changes were made.
 
 The original report remains a known intermittent observation. On recurrence, first capture the exact trigger, which display contains the window/Dock, whether the app just entered regular activation, and whether a single yellow-button minimize also fails. Repeat the same loop while the failing state still exists, before restarting the prototype. A short recording would help distinguish the animation endpoint from cross-display travel.
 
