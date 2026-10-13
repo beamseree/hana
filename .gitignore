@@ -1,0 +1,12 @@
+.DS_Store
+.build/
+build/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+.env
+.env.*
+!.env.example
+
+# Independent throwaway repository; published separately on prototype/window-focus.
+/prototypes/window-focus/

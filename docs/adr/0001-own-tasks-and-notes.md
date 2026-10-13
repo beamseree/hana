@@ -1,0 +1,3 @@
+# ADR 0001 — Own tasks and notes in the app
+
+Accepted by Beam on 2026-10-13 for [product specification](../product-spec.md). The app will own its tasks and notes, rather than act as a capture interface into existing task and note apps, because Beam wants to stop scattering these across different apps. This rejects Boji's initial recommendation to retain the existing task system; persistence, retrieval, and organization therefore belong within this product's scope. Storage technology and migration remain undecided. Subsequent interview decisions constrain v1 to local-only storage, complete Markdown/JSON export, and 30 days of local daily backup snapshots; synchronization is deferred.

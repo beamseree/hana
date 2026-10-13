@@ -1,0 +1,20 @@
+#!/usr/bin/env python3
+"""Run gh using the existing GitHub Git credential without persisting another token."""
+import os
+import shutil
+import subprocess
+import sys
+
+gh = shutil.which('gh') or '/opt/homebrew/bin/gh'
+env = os.environ.copy()
+if not (env.get('GH_TOKEN') or env.get('GITHUB_TOKEN')):
+    credential = subprocess.run(
+        ['git', 'credential', 'fill'], input='protocol=https\nhost=github.com\n\n',
+        text=True, capture_output=True, env={**env, 'GIT_TERMINAL_PROMPT': '0'}, check=False,
+    )
+    fields = dict(line.split('=', 1) for line in credential.stdout.splitlines() if '=' in line)
+    if credential.returncode or not fields.get('password'):
+        sys.exit('No existing GitHub HTTPS credential is available. Authenticate GitHub first.')
+    env['GH_TOKEN'] = fields['password']
+env['GH_HOST'] = 'github.com'
+sys.exit(subprocess.run([gh, *sys.argv[1:]], env=env).returncode)
