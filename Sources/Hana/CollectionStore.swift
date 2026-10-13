@@ -57,6 +57,12 @@ enum CollectionStoreError: Error, Equatable, Sendable {
     case closed
     case operationReused
     case blankNote
+    /// No item has this ID.
+    case notFound
+    /// The item changed since the caller read the revision it supplied.
+    case staleRevision
+    /// The item is archived; restore it before changing it.
+    case archived
     /// The primary SQLite result code of a failed storage operation.
     case storageFailure(code: Int32)
 }
@@ -77,6 +83,49 @@ extension CollectionQuery where Value == [Note] {
         Self { db in
             try NoteRow.fetch(db, where: "archived_at IS NULL", [],
                               order: "pinned DESC, content_edited_at DESC, id ASC")
+        }
+    }
+
+    /// Archived notes, most recently archived first, then stable ID.
+    static var archivedNotes: Self {
+        Self { db in
+            try NoteRow.fetch(db, where: "archived_at IS NOT NULL", [], order: "archived_at DESC, id ASC")
+        }
+    }
+
+    /// Every note record, active and archived, by ID.
+    static var allNotes: Self {
+        Self { db in try NoteRow.fetch(db, where: "1", []) }
+    }
+}
+
+/// The committed title and text of an owned item, for future Search. Nothing
+/// in the Search bar reads it yet.
+struct OwnedItemText: Equatable, Sendable {
+    enum Kind: String, Sendable { case note }
+    let kind: Kind
+    let id: UUID
+    let title: String
+    let text: String
+    let isArchived: Bool
+    let contentEditedAt: Date
+}
+
+/// Which owned items Search may see. Archived items are excluded unless
+/// explicitly included.
+struct SearchEligibility: Equatable, Sendable {
+    var includesArchived = false
+}
+
+extension CollectionQuery where Value == [OwnedItemText] {
+    /// Eligible items, most recently content-edited first, then stable ID.
+    static func searchText(_ eligibility: SearchEligibility = SearchEligibility()) -> Self {
+        Self { db in
+            try NoteRow.fetch(db, where: eligibility.includesArchived ? "1" : "archived_at IS NULL", [],
+                              order: "content_edited_at DESC, id ASC").map { note in
+                OwnedItemText(kind: .note, id: note.id, title: note.title ?? "", text: note.body,
+                              isArchived: note.archivedAt != nil, contentEditedAt: note.contentEditedAt)
+            }
         }
     }
 }
@@ -112,6 +161,60 @@ extension CollectionCommand where Result == Note {
                 VALUES (?, ?, NULL, ?, ?)
                 """, arguments: [operation.uuidString, id, digest, context.now])
             return try NoteRow.fetch(db, where: "id = ?", [id])[0]
+        }
+    }
+
+    /// Replaces the body. Changes content-edited and updated time and the
+    /// revision; an identical body is a no-op. Archived notes are refused.
+    static func editNote(_ id: UUID, expectedRevision: Int64, body: String) -> Self {
+        let payload = Data(body.utf8)
+        return Self { db, context in
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision)
+            guard note.archivedAt == nil else { throw CollectionStoreError.archived }
+            guard Note.isNonblank(body) else { throw CollectionStoreError.blankNote }
+            guard !note.body.utf8.elementsEqual(payload) else { return note }
+            try db.execute(sql: """
+                UPDATE note SET body = CAST(? AS TEXT), content_edited_at = ?, updated_at = ?, revision = revision + 1
+                WHERE id = ?
+                """, arguments: [payload, context.now, context.now, id.uuidString])
+            return try NoteRow.current(db, id, expectedRevision: expectedRevision + 1)
+        }
+    }
+
+    /// Pins or unpins without changing content-edited time. Archived notes are
+    /// refused; the current pin state is a no-op.
+    static func setNotePinned(_ id: UUID, _ isPinned: Bool, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision)
+            guard note.archivedAt == nil else { throw CollectionStoreError.archived }
+            guard note.isPinned != isPinned else { return note }
+            try db.execute(sql: "UPDATE note SET pinned = ?, updated_at = ?, revision = revision + 1 WHERE id = ?",
+                           arguments: [isPinned, context.now, id.uuidString])
+            return try NoteRow.current(db, id, expectedRevision: expectedRevision + 1)
+        }
+    }
+
+    /// Moves the note to Archive, preserving body, pin and content-edited
+    /// time. An archived note is a no-op.
+    static func archiveNote(_ id: UUID, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision)
+            guard note.archivedAt == nil else { return note }
+            try db.execute(sql: "UPDATE note SET archived_at = ?, updated_at = ?, revision = revision + 1 WHERE id = ?",
+                           arguments: [context.now, context.now, id.uuidString])
+            return try NoteRow.current(db, id, expectedRevision: expectedRevision + 1)
+        }
+    }
+
+    /// Returns an archived note to Notes, preserving body, pin and
+    /// content-edited time. An active note is a no-op.
+    static func restoreNote(_ id: UUID, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision)
+            guard note.archivedAt != nil else { return note }
+            try db.execute(sql: "UPDATE note SET archived_at = NULL, updated_at = ?, revision = revision + 1 WHERE id = ?",
+                           arguments: [context.now, id.uuidString])
+            return try NoteRow.current(db, id, expectedRevision: expectedRevision + 1)
         }
     }
 }
@@ -319,6 +422,15 @@ extension CollectionStoreError {
 }
 
 private enum NoteRow {
+    /// The note as committed, provided it is still at `expectedRevision`.
+    /// Checked inside the serialized write, so a competing command that
+    /// committed first makes this one fail rather than overwrite it.
+    static func current(_ db: Database, _ id: UUID, expectedRevision: Int64) throws -> Note {
+        guard let note = try fetch(db, where: "id = ?", [id.uuidString]).first else { throw CollectionStoreError.notFound }
+        guard note.revision == expectedRevision else { throw CollectionStoreError.staleRevision }
+        return note
+    }
+
     static func fetch(_ db: Database, where condition: String, _ arguments: StatementArguments,
                       order: String = "id ASC") throws -> [Note] {
         try Row.fetchAll(db, sql: """

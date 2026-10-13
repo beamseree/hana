@@ -11,8 +11,15 @@ import Foundation
 /// - `create-root <root>`: create a new marked disposable root.
 /// - `create-note <root> --operation <uuid> [--pause before-commit|after-commit] [--fail before-commit]`:
 ///   save the note body read from standard input while observing Notes.
-/// - `read <root>`: summarize active Notes.
+/// - `edit-note <root> --id <uuid> --revision <n> [faults]`: replace the body
+///   with standard input.
+/// - `pin-note <root> --id <uuid> --revision <n> --pinned true|false [faults]`.
+/// - `archive-note|restore-note <root> --id <uuid> --revision <n> [faults]`.
+/// - `read <root> [--view notes|archive|all]`: summarize active Notes (default),
+///   archived notes or every note record.
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
+///
+/// Faults on every command: `--pause before-commit|after-commit` and `--fail before-commit`.
 enum CollectionFixtureHarness {
     static let flag = "--collection-fixture"
 
@@ -33,9 +40,35 @@ enum CollectionFixtureHarness {
                 guard let operation = options["--operation"].flatMap(UUID.init(uuidString:)) else { throw Usage() }
                 try await createNote(at: try CollectionLocation.fixture(root), operation: operation,
                                      pause: options["--pause"], fail: options["--fail"])
+            case "edit-note", "pin-note", "archive-note", "restore-note":
+                guard let id = options["--id"].flatMap(UUID.init(uuidString:)),
+                      let revision = options["--revision"].flatMap({ Int64($0) }) else { throw Usage() }
+                let command: CollectionCommand<Note>
+                switch arguments[0] {
+                case "edit-note":
+                    let body = String(decoding: FileHandle.standardInput.readDataToEndOfFile(), as: UTF8.self)
+                    command = .editNote(id, expectedRevision: revision, body: body)
+                case "pin-note":
+                    guard let pinned = options["--pinned"].flatMap({ Bool($0) }) else { throw Usage() }
+                    command = .setNotePinned(id, pinned, expectedRevision: revision)
+                case "archive-note": command = .archiveNote(id, expectedRevision: revision)
+                default: command = .restoreNote(id, expectedRevision: revision)
+                }
+                let store = try await CollectionStore.open(try CollectionLocation.fixture(root),
+                                                           faults: faults(pause: options["--pause"], fail: options["--fail"]))
+                let note = try await store.perform(command, in: store.generation)
+                await store.close()
+                emit("note.updated", summary(note))
             case "read":
+                let query: CollectionQuery<[Note]>
+                switch options["--view"] ?? "notes" {
+                case "notes": query = .notes
+                case "archive": query = .archivedNotes
+                case "all": query = .allNotes
+                default: throw Usage()
+                }
                 let store = try await CollectionStore.open(try CollectionLocation.fixture(root))
-                let notes = try await store.read(.notes, in: store.generation)
+                let notes = try await store.read(query, in: store.generation)
                 await store.close()
                 emit("notes", ["count": notes.count, "notes": notes.map(summary)])
             case "runtime-report":
@@ -54,19 +87,23 @@ enum CollectionFixtureHarness {
         }
     }
 
-    private static func createNote(at location: CollectionLocation, operation: UUID, pause: String?, fail: String?) async throws {
-        let body = String(decoding: FileHandle.standardInput.readDataToEndOfFile(), as: UTF8.self)
+    /// Pauses forever (for an external kill) or fails at the named point.
+    private static func faults(pause: String?, fail: String?) -> CollectionStore.Faults {
         let holdForever: @Sendable (String) -> Void = { point in
             emit("paused", ["at": point])
             while true { sleep(60) }
         }
-        let faults = CollectionStore.Faults(
+        return CollectionStore.Faults(
             beforeCommit: { _ in
                 if pause == "before-commit" { holdForever("before-commit") }
                 if fail == "before-commit" { throw InjectedFailure() }
             },
             afterCommit: { if pause == "after-commit" { holdForever("after-commit") } })
-        let store = try await CollectionStore.open(location, faults: faults)
+    }
+
+    private static func createNote(at location: CollectionLocation, operation: UUID, pause: String?, fail: String?) async throws {
+        let body = String(decoding: FileHandle.standardInput.readDataToEndOfFile(), as: UTF8.self)
+        let store = try await CollectionStore.open(location, faults: faults(pause: pause, fail: fail))
         var observed = store.observe(.notes, in: store.generation).makeAsyncIterator()
         let before = try await observed.next() ?? []
         let note = try await store.perform(.createNote(operation: operation, body: body), in: store.generation)
@@ -86,7 +123,8 @@ enum CollectionFixtureHarness {
                 "createdAt": CollectionStore.milliseconds(note.createdAt),
                 "contentEditedAt": CollectionStore.milliseconds(note.contentEditedAt),
                 "updatedAt": CollectionStore.milliseconds(note.updatedAt),
-                "pinned": note.isPinned, "archived": note.archivedAt != nil]
+                "pinned": note.isPinned, "archived": note.archivedAt != nil,
+                "archivedAt": note.archivedAt.map { CollectionStore.milliseconds($0) as Any } ?? NSNull()]
     }
 
     /// Error names only; never descriptions that could carry content or paths.

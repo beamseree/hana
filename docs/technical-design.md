@@ -419,3 +419,14 @@ This excludes the documented trigger within Hana. It does not protect against ot
 **Generations and idempotence.** Every open rotates the in-memory `StoreGeneration`. Commands check it on submission and again inside the serialized write, before any receipt lookup; close ends observations with `.closed`. Creation commits the note and a receipt holding the operation UUID and SHA-256 of the exact payload bytes in one transaction. An identical retry (concurrent, after a lost acknowledgement or in a fresh process) returns the one created note in its current committed state; a different payload under the same operation fails with `operationReused`.
 
 **Fixture harness.** `Hana --collection-fixture create-root|create-note|read|runtime-report <root>` runs the production Store without AppKit. It accepts only marked disposable roots (`HANA-DISPOSABLE-FIXTURE`), refuses the live root, descendants, symlink aliases and case variants, and prints content-free JSON (IDs, revisions, timestamps, counts, SHA-256). Internal `Faults` hooks pause or fail before/after commit for kill and rollback tests. These establish restart and process-crash behavior, not power-loss durability.
+
+## Note organization — issue #25
+
+The Store adds `editNote`, `setNotePinned`, `archiveNote` and `restoreNote`, each taking the note ID and the revision the caller last read. Inside the serialized write each command reads the note, fails with `notFound` or `staleRevision`, then applies the domain rule; a stale revision fails even when the requested state already holds, so an obsolete caller learns it is out of date. Already-satisfied commands at the current revision return the note unchanged, without bumping its revision or updated time.
+
+- **Edit** replaces the body with the exact UTF-8 bytes, sets content-edited and updated time, and increments the revision. Byte-identical bodies are no-ops; canonically equal but byte-different bodies are edits. Blank bodies fail with `blankNote`.
+- **Pin, archive, restore** change only updated time and revision besides their own field; body, pin and content-edited time survive archive/restore.
+- **Archived notes** are readable by ID, listed in `.archivedNotes` (most recently archived first, then ID) and `.allNotes`, and refuse edit and pin with `archived` until restored. There is no delete.
+- **Search projection.** `.searchText(SearchEligibility)` returns committed `OwnedItemText` values (kind, ID, derived title, text, archived flag, content-edited time), excluding archived notes unless `includesArchived` is set. Nothing in the Search bar reads it yet.
+
+The fixture harness adds `edit-note`, `pin-note`, `archive-note`, `restore-note` and `read --view notes|archive|all`, with the same `--pause`/`--fail` faults. [Validation record](evidence/issue-25/validation.md); this slice has not yet been compiled or run.
