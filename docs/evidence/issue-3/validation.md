@@ -45,7 +45,9 @@ The UI automation tool initially timed out attaching to the app while no ordinar
 
 ## Final-build follow-up
 
-After the conflict fixture stopped, the installed reviewed build was relaunched with diagnostics and registration status 0. Beam was asked to recheck full-screen outside-click typing, pointer-display containment and physical Thai input. Result pending at the time of this draft.
+After the conflict fixture stopped, the installed reviewed build was relaunched with diagnostics and registration status 0. Beam was asked to recheck full-screen outside-click typing, pointer-display containment and physical Thai input. Beam replied: **“it works, when clicke outside unto app, itll focus where i clicked”**. This confirms the final-build full-screen outside-click/focus behavior; the combined procedure received a broad pass. Physical Thai-input-source behavior was not separately isolated in the reply and remains unverified beyond the native Thai paste/editing checks above.
+
+All scoped #3 core acceptance checks are complete on the available single-display Mac. PR #11 is ready for review; it has not been merged. The environmental/deferred limits below remain explicit and do not claim completion of parent milestone #2.
 
 ## Standards review
 
