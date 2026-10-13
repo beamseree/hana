@@ -1,0 +1,28 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[2/6] Write swift-version--112E4EF74740DA65.txt
+[4/8] Emitting module Hana
+[5/8] Compiling Hana SpotlightSource.swift
+[5/10] Write Objects.LinkFileList
+[6/10] Linking Hana
+[7/10] Applying Hana
+[9/12] Compiling HanaTests SearchTests.swift
+[10/12] Emitting module HanaTests
+[10/12] Write Objects.LinkFileList
+[11/12] Linking HanaPackageTests
+Build complete! (4.27s)
+Test Suite 'Selected tests' started at 2026-10-13 17:21:22.747.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 17:21:22.749.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 17:21:22.749.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 17:21:22.749.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchTests started.
+􀟈  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() started.
+􁁛  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() passed after 4.484 seconds.
+􁁛  Suite SearchTests passed after 4.484 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 4.484 seconds.

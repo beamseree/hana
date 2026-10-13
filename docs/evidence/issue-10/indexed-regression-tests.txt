@@ -1,0 +1,22 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.15s)
+Test Suite 'Selected tests' started at 2026-10-13 17:18:57.217.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 17:18:57.218.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 17:18:57.218.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 17:18:57.218.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchTests started.
+􀟈  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() started.
+􁁛  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() passed after 0.084 seconds.
+􀟈  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() started.
+􁁛  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() passed after 0.788 seconds.
+􀟈  Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() started.
+􁁛  Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() passed after 2.955 seconds.
+􁁛  Suite SearchTests passed after 3.829 seconds.
+􁁛  Test run with 3 tests in 1 suite passed after 3.829 seconds.

@@ -1,0 +1,24 @@
+Building for debugging...
+[0/6] Write sources
+[1/6] Write Hana-entitlement.plist
+[2/6] Write swift-version--112E4EF74740DA65.txt
+[4/21] Compiling Hana MixedSearchValidation.swift
+[5/21] Compiling Hana Search.swift
+[6/21] Compiling Hana SpotlightSource.swift
+[7/21] Compiling Hana SearchCorrectnessValidation.swift
+[8/21] Compiling Hana SearchResultsView.swift
+[9/22] Compiling Hana HanaApp.swift
+[10/22] Compiling Hana DisplayPlacement.swift
+[11/22] Compiling Hana FocusedWindowGeometry.swift
+[12/22] Compiling Hana GlobalShortcut.swift
+[13/22] Compiling Hana CoverageValidation.swift
+[14/22] Compiling Hana Diagnostics.swift
+[15/22] Compiling Hana ApplicationCatalog.swift
+[16/22] Compiling Hana BarStyle.swift
+[17/22] Emitting module Hana
+[18/22] Compiling Hana MacInteraction.swift
+[19/22] Compiling Hana WorkingWindowController.swift
+[19/22] Write Objects.LinkFileList
+[20/22] Linking Hana
+[21/22] Applying Hana
+Build complete! (7.66s)

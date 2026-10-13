@@ -1,6 +1,6 @@
-# Native Search and validation windows — issues #3–5
+# Native Search and validation windows — integrated milestone #2
 
-This implements [#3](https://github.com/beamseree/hana/issues/3) and [#4](https://github.com/beamseree/hana/issues/4), under [parent #2](https://github.com/beamseree/hana/issues/2). Search finds installed applications from a cached catalog and launches the selected installation. Three ordinary working windows contain clearly labeled validation content and temporary keyboard focus probes. There are no file results, capture modes, real note editing, organizer, or saved notes; `-`, `[`, pasted punctuation and Thai remain ordinary editor content. Hana is a local development label, not a final product name.
+The integrated app finds cached applications and indexed filenames, preserves keyboard selection during asynchronous batches, and opens the exact selected destination. Main and two mock note windows exercise native lifecycle and contain validation-only focus probes. There are no capture modes, organizer, persistence, or saved notes; `-`, `[`, punctuation and Thai remain literal Search text. PR #17 supplies the current blurred bezel, opaque card and native shadow. Hana is a local development label. See [integrated acceptance evidence](evidence/issue-10/validation.md) and [prior coverage/permission evidence](evidence/issue-9/validation.md).
 
 ## Build, test, install and run
 
@@ -16,12 +16,13 @@ xcrun --show-sdk-version
 # Compile/typecheck during development; run a focused behavior test.
 xcrun swift build
 xcrun swift test --filter MacInteractionTests.oldDismissalCannotCloseAReopenedBar
-# Complete suite.
-xcrun swift test
+# Complete suite; real AppKit suites must own windows sequentially.
+xcrun swift test --no-parallel
 
 # Bundle, lint and ad-hoc sign without installing.
 ./scripts/build
-# Quit any running Hana from its menu, and quit the old WF prototype first.
+# Confirm the shared native testing slot is free. Quit only your own test app.
+# Coordinate an existing Hana/prototype process with its owner before replacing it.
 # Rebuild, install to the fixed location and launch via Launch Services.
 ./scripts/run
 # Or opt in to content-free state/timing diagnostics for this process.
@@ -111,17 +112,14 @@ The retained native editor stays above the expanding results surface. Catalog sc
 
 Ordinary Search now merges applications with indexed filename results and visible folders. Rows include their type and exact location. All query tokens are literal filename matches; source status distinguishes gathering, partial coverage, and observed failure. An empty completed response does not diagnose permissions. Return opens the selected file in its default app; failure retains context.
 
-The metadata adapter owns query lifecycle on the main run loop and sends value snapshots to background eligibility work. See [implementation, API checks and signed-app evidence](evidence/issue-6/validation.md) for bounds, the local-computer scope observation, and acceptance limits. `scripts/validation/install-file-search-fixtures` creates only named synthetic fixtures. `--validate-mixed-search` exercises their discovery/opening through Mac Interaction; `--validation-file-delay` adds five seconds to the file source for validation only. Both flags are opt-in. Broader coverage remains #9.
+The metadata adapter owns query lifecycle on the main run loop and sends value snapshots to background eligibility work. See [implementation, API checks and signed-app evidence](evidence/issue-6/validation.md) for bounds, the local-computer scope observation, and acceptance limits. `scripts/validation/install-file-search-fixtures` creates only named synthetic fixtures. `--validate-mixed-search` exercises their discovery/opening through Mac Interaction; `--validation-file-delay` adds five seconds to the file source for validation only. Both flags are opt-in. Broader coverage is recorded in [#9](evidence/issue-9/validation.md).
 
 
 ### Filename search access on this Mac
 
-For the verified local build, enable **System Settings → Privacy & Security → Full Disk Access → Hana**, selecting `~/Applications/Hana.app`, then quit and reopen Hana. Beam performed this change explicitly; it made previously missing ordinary Documents and Downloads filename results appear in the normally launched app. This is broader access than filenames: macOS allows access to protected files and other apps' data. See [Apple's permission descriptions](https://support.apple.com/en-om/guide/mac-help/mchl211c911f/mac). No Spotlight reindex or folder-selection setup was needed.
+Permission evidence is build-specific. The [historical #6 run](evidence/issue-6/validation.md#resolution-user-granted-full-disk-access--2026-10-13) recorded Beam enabling Full Disk Access and subsequently seeing missing files. The later [#9 run](evidence/issue-9/validation.md) recorded successful Desktop/Documents/Downloads coverage after Beam allowed macOS prompts, with the exact prompt sequence uncertain. Neither run establishes a mandatory Full Disk Access setup or a diagnosis for every empty result set.
 
-Full Disk Access is verified sufficient for the reported case; narrower per-folder grants were not tested. A completed empty search is not proof of a missing grant, and Hana does not infer permission denial from it. Refine broad queries when the desired file falls outside the 20 displayed results.
-
-This app currently uses ad-hoc signing with a binary-specific designated requirement. After rebuilding, a previous Full Disk Access entry may no longer authorize the new binary; remove and re-add the installed app if necessary, then repeat the signed-app check. A stable certificate-backed signing identity remains a separate setup concern. See [permission and runtime evidence](evidence/issue-6/validation.md#resolution-user-granted-full-disk-access--2026-10-13).
-
+Start with existing permissions and record actual signed-app behavior. If a needed destination fails, preserve its observed error and discuss a concrete permission change with Beam before changing settings. Ad-hoc signing uses a binary-specific designated requirement, so the fixed bundle ID/path cannot promise permission continuity after rebuilding. An empty index response does not prove denial. Refine queries when a desired item falls outside the 20 visible results.
 
 ## Display and editing checks — issue #8
 
@@ -132,3 +130,21 @@ Run `xcrun swift test --filter DisplayPlacementTests` for geometry and bounded l
 See the [coverage/permission matrix](evidence/issue-9/validation.md) for tested identities, per-destination discovery/opening, user-approved privacy prompts, genuine denied/unavailable operations, deterministic failure checks and unavailable cases. Success in Desktop/Documents/Downloads was observed after Beam allowed macOS prompts; it is not a promise of prompt-free access or ad-hoc permission continuity.
 
 The optional one-shot synthetic run is `scripts/validation/install-coverage-fixtures`, then `scripts/run --diagnostics --validate-coverage` while holding the shared native testing slot. Reuse or install the existing `install-app-search-fixtures` destinations first. The installer refuses existing roots. The runner renames/deletes only two marker-checked synthetic fixtures, probes known resource metadata, and uses production Search/Mac Interaction. Leave keyboard/mouse alone during the run; interference aborts it. Do not treat its open acknowledgment as observed document/focus behavior. Quit and relaunch without the validation flag for physical checks. Do not reset permissions or indexing to repeat a run.
+
+
+## Integrated timing run — issue #10
+
+While holding the native testing slot, quit your test app and run `./scripts/run --diagnostics --validate-performance`. Leave keyboard/mouse alone until Hana exits (normally about 35 seconds). The run uses the synthetic query `Hana`, existing indexed fixtures and conventional application roots; it neither creates nor opens destinations. It records one first-process sample and 30 warm samples, then quits and releases Option+Space. Relaunch the installed app with the same arguments for additional independent process runs; no rebuild is needed. OS and Spotlight caches are not flushed, so “cold” means process-cold only.
+
+Integrated samples measure `presentBar()` call duration, native programmatic `insertText` call duration, and time from insertion start until app/file results are observable through Mac Interaction (2 ms polling, including the configured 100 ms debounce and rendering). Local-only samples separately use Search with zero debounce and no file adapter: delivery/ranking cost, excluding UI. A 5 ms cooperative heartbeat records excess main-actor scheduling delay, including system contention. These are proxies; none proves physical shortcut-to-typing p95 or absence of app-attributable physical typing stalls. Shared output contains timings/counts/display geometry, not query text or result paths. See the integrated report for sample counts, actual results and misses.
+
+For an integrated late-file selection check, `scripts/validation/install-integrated-fixture` creates one marker-checked file at `~/Hana Issue 10 Validation/Hana Search Fixture.txt`. Reuse the two existing synthetic application installations. With `--diagnostics --validation-file-delay`, query `Hana Search Fixture`: applications remain usable during the five-second artificial file delay, then the file joins the results. Select the exact Two app across the arriving batch, open it, then repeat and choose the exact file. Verify the `HANA10-LATE-BATCH` marker and physical typing focus. This public-home fixture does not substitute for Desktop/Documents/Downloads permission coverage.
+
+For the optional live-index queue regression (existing indexed Hana fixtures and the shared native testing slot required):
+
+```sh
+HANA_PERFORMANCE_CHECK=1 xcrun swift test --filter SearchResponsivenessTests
+HANA_PERFORMANCE_CHECK=1 xcrun swift test -c release --filter SearchResponsivenessTests
+```
+
+The test initializes AppKit and measures independently produced callbacks from main-queue enqueue to execution, keeping the 50 ms maximum bound. It also prints the previous cooperative `Task.sleep` excess separately as a scheduling diagnostic. A late timer or producer before enqueue is outside the queue metric. Neither measurement proves physical shortcut-to-typing latency, rendered response, or universal typing-stall attribution. See the [timing follow-up](evidence/issue-10/timing-followup/validation.md) for regression sensitivity, sample counts and the complete all-options command.

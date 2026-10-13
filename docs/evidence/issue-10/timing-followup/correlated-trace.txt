@@ -1,0 +1,46 @@
+Building for debugging...
+[0/6] Write sources
+[2/6] Write swift-version--112E4EF74740DA65.txt
+[4/8] Emitting module Hana
+[5/8] Compiling Hana SpotlightSource.swift
+[6/10] Compiling Hana Search.swift
+[7/10] Compiling Hana CoverageValidation.swift
+[7/12] Write Objects.LinkFileList
+[8/12] Linking Hana
+[9/12] Applying Hana
+[11/14] Emitting module HanaTests
+[12/14] Compiling HanaTests SearchResponsivenessTests.swift
+[12/14] Write Objects.LinkFileList
+[13/14] Linking HanaPackageTests
+Build complete! (2.90s)
+Test Suite 'Selected tests' started at 2026-10-13 20:52:31.696.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 20:52:31.697.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 20:52:31.697.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 20:52:31.697.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchResponsivenessTests started.
+􀟈  Test liveIndexedSearchLeavesInputActorResponsive() started.
+[DEBUG-hana10] startStage start=8868991.303864792 end=8868991.342359917 ms=38.495125249028206
+[DEBUG-hana10] copy start=8868991.55919721 end=8868991.571776418 ms=12.579208239912987
+[DEBUG-hana10] heartbeat start=8868991.658013834 end=8868991.745231876 ms=82.2180424630642
+[DEBUG-hana10] heartbeat start=8868992.519185375 end=8868992.579514543 ms=55.32916717231274
+[DEBUG-hana10] copy start=8868992.586770292 end=8868992.647654166 ms=60.88387407362461
+[DEBUG-hana10] heartbeat start=8868992.580279125 end=8868992.66045671 ms=75.17758466303349
+[DEBUG-hana10] heartbeat start=8868993.578960251 end=8868993.651525792 ms=67.56554067134857
+[DEBUG-hana10] heartbeat start=8868994.48935896 end=8868994.558115417 ms=63.756457418203354
+[DEBUG-hana10] heartbeat start=8868994.583691793 end=8868994.669724667 ms=81.03287488222122
+[DEBUG-hana10] heartbeat start=8868994.674791917 end=8868994.740349209 ms=60.557291731238365
+[DEBUG-hana10] heartbeat start=8868995.493358083 end=8868995.56404975 ms=65.69166749715805
+[DEBUG-hana10] copy start=8868995.571928792 end=8868995.588839542 ms=16.910750418901443
+[DEBUG-hana10] heartbeat start=8868995.672037626 end=8868995.744534751 ms=67.49712571501732
+􀢄  Test liveIndexedSearchLeavesInputActorResponsive() recorded an issue at SearchResponsivenessTests.swift:38:9: Expectation failed: (worstDelay → 92.99391776323318) < (50 → 50.0)
+􀄵  Main-actor scheduling excess: 92.99391776323318 ms
+􀢄  Test liveIndexedSearchLeavesInputActorResponsive() failed after 5.012 seconds with 1 issue.
+􀢄  Suite SearchResponsivenessTests failed after 5.012 seconds with 1 issue.
+􀄵  /// Live-index performance regression, opt-in because index/host load vary.
+􀄵  /// Requires existing indexed Hana fixtures; not permission or physical typing proof.
+􀢄  Test run with 1 test in 1 suite failed after 5.012 seconds with 1 issue.

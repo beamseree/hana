@@ -1,0 +1,24 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--112E4EF74740DA65.txt
+[3/6] Compiling HanaTests IdleTimingControlTests.swift
+[4/6] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.19s)
+Test Suite 'Selected tests' started at 2026-10-13 18:13:05.921.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 18:13:05.923.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 18:13:05.923.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 18:13:05.923.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite IdleTimingControlTests started.
+􀟈  Test idleHeartbeat() started.
+IDLE-CONTROL n=810 maxMs=4.307499974966049 above50=0
+􁁛  Test idleHeartbeat() passed after 5.004 seconds.
+􁁛  Suite IdleTimingControlTests passed after 5.005 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 5.005 seconds.

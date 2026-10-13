@@ -1,0 +1,19 @@
+[0/1] Planning build
+Test Suite 'Selected tests' started at 2026-10-13 17:57:46.841.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 17:57:46.843.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 17:57:46.843.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 17:57:46.843.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchResponsivenessTests started.
+􀟈  Test liveIndexedSearchLeavesInputActorResponsive() started.
+􀢄  Test liveIndexedSearchLeavesInputActorResponsive() recorded an issue at SearchResponsivenessTests.swift:36:9: Expectation failed: (worstDelay → 76.33654296398163) < (50 → 50.0)
+􀄵  Main-actor scheduling excess: 76.33654296398163 ms
+􀢄  Test liveIndexedSearchLeavesInputActorResponsive() failed after 5.015 seconds with 1 issue.
+􀢄  Suite SearchResponsivenessTests failed after 5.016 seconds with 1 issue.
+􀄵  /// Live-index performance regression, opt-in because index/host load vary.
+􀄵  /// Requires existing indexed Hana fixtures; not permission or physical typing proof.
+􀢄  Test run with 1 test in 1 suite failed after 5.016 seconds with 1 issue.

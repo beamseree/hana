@@ -4,7 +4,7 @@ Personal macOS app combining app/file search, quick note capture, and task manag
 
 ## Status
 
-Product scope confirmed by Beam on 2026-10-13 after a 44-question design interview. Technical design now recommends AppKit/SwiftUI and SQLite through GRDB, with native validation gates. An isolated throwaway AppKit window/focus prototype is now available. Issues #3–5 add an independent native shell, validation working windows, and cached application Search with exact-installation launching. See [build/run instructions](docs/native-shell.md) and [current Search validation evidence](docs/evidence/issue-5/validation.md). The private GitHub repository is [beamseree/hana](https://github.com/beamseree/hana). The prototype retains its independent local Git history and is published on `prototype/window-focus`.
+Product scope was confirmed on 2026-10-13. The current bounded milestone implements native invocation, mixed application/filename Search, exact-destination opening and three validation-only working windows. PR #17's visual design is retained. See [build/run/test instructions](docs/native-shell.md), [coverage and permissions](docs/evidence/issue-9/validation.md), and [integrated acceptance](docs/evidence/issue-10/validation.md). Capture, persistence and the organizer remain future work. The private repository is [beamseree/hana](https://github.com/beamseree/hana); the isolated prototype remains on `prototype/window-focus`.
 
 ## Start here
 
@@ -21,7 +21,7 @@ These project-local documents are the working source of truth from this handoff 
 
 The window/focus prototype supports continuing with a single-process design on the tested Mac. Full-screen invocation, Dock/Command-Tab access, minimized windows and three-display pointer placement have user-observed evidence. The reported minimize anomaly did not recur in three follow-up checks; its original cause remains unknown. Candidate-based IME testing is explicitly deferred for current English/Thai use.
 
-The bounded milestone is tracked in spec #2. The #3 shell uses a documented local ad-hoc identity; physical acceptance is recorded separately from builds. Issue #4 adds validation-only working windows; #5 adds application Search. File search and broader permission coverage remain later tickets. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
+The bounded milestone is tracked in spec #2. Issue #10 assesses the integrated native behavior and performance; its evidence distinguishes automated checks, runtime traces, physical observations and outstanding acceptance. Ad-hoc signing is local development evidence only. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
 
 ## Working-window validation
 

@@ -1,0 +1,68 @@
+Two-second sample of SwiftPM test helper; partial profile, not a timestamp-correlated stall trace.
+Analysis of sampling swiftpm-testing-helper (pid 28271) every 1 millisecond
+Process:         swiftpm-testing-helper [28271]
+Path:            /Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec/swift/pm/swiftpm-testing-helper
+Load Address:    0x100a44000
+Identifier:      swiftpm-testing-helper
+Version:         24907
+Build Info:      IDEApplication-24959000000000000~2 (17F113)
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  swift-package [28256]
+Target Type:     live task
+
+Date/Time:       2026-10-13 17:59:01.153 +0700
+Launch Time:     2026-10-13 17:59:00.202 +0700
+OS Version:      macOS 26.4.1 (25E253)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         34.8M
+Physical footprint (peak):  52.7M
+Idle exit:                  untracked
+----
+
+Call graph:
+    1511 Thread_230050904   DispatchQueue_1: com.apple.main-thread  (serial)
+    + 1445 start  (in dyld) + 6992  [0x187c07da4]
+    + ! 1445 ???  (in swiftpm-testing-helper)  load address 0x100a44000 + 0x748  [0x100a44748]
+    + !   1445 ???  (in swiftpm-testing-helper)  load address 0x100a44000 + 0x88c  [0x100a4488c]
+    + !     1445 main  (in HanaPackageTests) + 132  [0x105953860]  runner.swift:0
+    + !       1445 swift_task_asyncMainDrainQueue  (in libswift_Concurrency.dylib) + 92  [0x28c0922d8]
+    + !         1445 swift_task_asyncMainDrainQueueImpl  (in libswift_Concurrency.dylib) + 140  [0x28c0e7334]
+    + !           1445 protocol witness for RunLoopExecutor.run() in conformance DispatchMainExecutor  (in libswift_Concurrency.dylib) + 40  [0x28c0e6d08]
+    + !             1445 CFMainExecutor.run()  (in libswift_Concurrency.dylib) + 48  [0x28c0e6b04]
+    + !               1445 CFRunLoopRun  (in CoreFoundation) + 64  [0x1880f5524]
+    + !                 1445 _CFRunLoopRunSpecificWithOptions  (in CoreFoundation) + 532  [0x188151be0]
+    + !                   1403 __CFRunLoopRun  (in CoreFoundation) + 1188  [0x18807f654]
+    + !                   : 1403 __CFRunLoopServiceMachPort  (in CoreFoundation) + 160  [0x188080d68]
+    + !                   :   1403 mach_msg  (in libsystem_kernel.dylib) + 24  [0x187f7ffc0]
+    + !                   :     1403 mach_msg_overwrite  (in libsystem_kernel.dylib) + 480  [0x187f889c0]
+    + !                   :       1403 mach_msg2_internal  (in libsystem_kernel.dylib) + 76  [0x187f92574]
+    + !                   :         1403 mach_msg2_trap  (in libsystem_kernel.dylib) + 8  [0x187f7fc34]
+    + !                   31 __CFRunLoopRun  (in CoreFoundation) + 1944  [0x18807f948]
+    + !                   : 31 __CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__  (in CoreFoundation) + 16  [0x1880bd15c]
+    + !                   :   31 _dispatch_main_queue_callback_4CF  (in libdispatch.dylib) + 44  [0x187e17924]
+    + !                   :     31 _dispatch_main_queue_drain  (in libdispatch.dylib) + 176  [0x187e179e4]
+    +   :   | 41 closure #2 in SpotlightSource.changed(_:)  (in HanaPackageTests) + 2064  [0x10594a51c]  SpotlightSource.swift:125
+    +   :   | + 41 Sequence.compactMap<A>(_:)  (in libswiftCore.dylib) + 16  [0x19b676a14]
+    +   :   | +   41 Sequence._compactMap<A>(_:)  (in libswiftCore.dylib) + 1248  [0x19b9421f0]
+    +   :   | +     41 partial apply for closure #1 in closure #2 in SpotlightSource.changed(_:)  (in HanaPackageTests) + 24  [0x105950630]  /<compiler-generated>:0
+    +   :   | +       27 closure #1 in closure #2 in SpotlightSource.changed(_:)  (in HanaPackageTests) + 1048  [0x10594c81c]  SpotlightSource.swift:130
+    +   :   | +       ! 23 -[NSMetadataItem valueForAttribute:]  (in Foundation) + 168  [0x18995cdd8]
+    +   :   | +       ! : 23 MDItemCopyAttribute  (in Metadata) + 248  [0x191be8bc4]
+    +   :   | +       ! :   23 __newAttr  (in Metadata) + 112  [0x191be8c78]
+    +   :   | +       ! :     23 _MDCopyPath  (in Metadata) + 80  [0x191be91b0]
+    +   :   | +       ! :       19 _MDCopyPathSpotlightInternal  (in Metadata) + 100  [0x191be9318]
+    +   :   | +       ! :       | 18 _DeviceForStoreTokenAndOid  (in Metadata) + 100  [0x191c185c4]
+    +   :   | +       ! :       | + 18 _DeviceForStoreToken  (in Metadata) + 68  [0x191be956c]
+    +   :   | +       ! :       | +   18 _pthread_mutex_firstfit_lock_slow  (in libsystem_pthread.dylib) + 216  [0x187fbe8e0]
+    +   :   | +       ! :       | +     18 _pthread_mutex_firstfit_lock_wait  (in libsystem_pthread.dylib) + 84  [0x187fc0e9c]
+    +   :   | +       ! :       | +       18 __psynch_mutexwait  (in libsystem_kernel.dylib) + 8  [0x187f829dc]
+    +   :   | +       ! :       | 1 _DeviceForStoreTokenAndOid  (in Metadata) + 88  [0x191c185b8]
+    +   :   | +       ! :       |   1 _platform_memset  (in libsystem_platform.dylib) + 140  [0x187fcd17c]
+    +   :   | +       ! :       4 _MDCopyPathSpotlightInternal  (in Metadata) + 536  [0x191be94cc]
+    +   :   | +       ! :         4 fsgetpath  (in libsystem_kernel.dylib) + 8  [0x187f83754]
+    +   :   | +       ! 3 -[NSMetadataItem valueForAttribute:]  (in Foundation) + 56  [0x18995cd68]
+    +   :   | +       ! : 1 -[NSMetadataQuery _allAttributes]  (in Foundation) + 76  [0x18a314578]
+    +   :   | +       ! : | 1 -[NSMutableArray addObjectsFromArray:]  (in CoreFoundation) + 412  [0x18806e134]

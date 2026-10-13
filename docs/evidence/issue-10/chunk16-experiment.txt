@@ -1,0 +1,46 @@
+Building for production...
+[0/4] Write sources
+[1/4] Write swift-version--112E4EF74740DA65.txt
+[3/5] Compiling Hana ApplicationCatalog.swift
+[3/6] Write Objects.LinkFileList
+[4/6] Linking Hana
+[6/7] Compiling HanaTests DisplayPlacementTests.swift
+/Users/beamsereeyothin/.codex/worktrees/317b/hana/Tests/HanaTests/MacInteractionTests.swift:93:20: warning: 'shouldFail' mutated after capture by sendable closure
+ 77 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+ 78 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, debounce: .zero)
+ 79 |         var shouldFail = true
+    |             `- note: variable defined here
+ 80 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+ 81 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+ 82 |             return .init(activate: { true })
+ 83 |         })
+    :
+ 91 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+ 92 |         #expect(interaction.currentInvocation == invocation)
+ 93 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+ 94 |         await interaction.requestSelectedOpen()?.value
+ 95 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[6/8] Write Objects.LinkFileList
+[7/8] Linking HanaPackageTests
+Build complete! (17.66s)
+Test Suite 'Selected tests' started at 2026-10-13 18:15:29.342.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 18:15:29.345.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 18:15:29.345.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 18:15:29.345.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.003) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchResponsivenessTests started.
+􀟈  Test liveIndexedSearchLeavesInputActorResponsive() started.
+􀢄  Test liveIndexedSearchLeavesInputActorResponsive() recorded an issue at SearchResponsivenessTests.swift:36:9: Expectation failed: (worstDelay → 355.0199166685343) < (50 → 50.0)
+􀄵  Main-actor scheduling excess: 355.0199166685343 ms
+􀢄  Test liveIndexedSearchLeavesInputActorResponsive() failed after 5.034 seconds with 1 issue.
+􀢄  Suite SearchResponsivenessTests failed after 5.034 seconds with 1 issue.
+􀄵  /// Live-index performance regression, opt-in because index/host load vary.
+􀄵  /// Requires existing indexed Hana fixtures; not permission or physical typing proof.
+􀢄  Test run with 1 test in 1 suite failed after 5.035 seconds with 1 issue.

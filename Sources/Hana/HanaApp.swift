@@ -22,6 +22,10 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
         let interaction = MacInteraction(diagnostics: diagnostics, search: search)
         self.interaction = interaction
         interaction.start()
+        if CommandLine.arguments.contains("--validate-performance") {
+            Task { await validatePerformance(interaction, diagnostics: diagnostics) }
+            return
+        }
         if CommandLine.arguments.contains("--validate-coverage") {
             Task { await validateCoverage(interaction, diagnostics: diagnostics) }
         }
