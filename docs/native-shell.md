@@ -70,3 +70,20 @@ See [the evidence record](evidence/issue-3/validation.md) for this build's obser
 - [Nonactivating panels](https://developer.apple.com/documentation/appkit/nswindow/stylemask-swift.struct/nonactivatingpanel) and [full-screen eligibility](https://developer.apple.com/documentation/appkit/nswindow/collectionbehavior-swift.struct/canjoinallapplications): individual API capabilities, not proof of the combined behavior.
 - [Apple event monitoring guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/EventOverview/MonitoringEvents/MonitoringEvents.html): main-thread mouse monitors, separate local/global coverage, removal when finished.
 - Selected macOS 26.5 SDK `CarbonEvents.h`, `RegisterEventHotKey`: exclusive registration and `eventHotKeyExistsErr`. This app does not install a global keyboard monitor.
+
+## Reproduce the registration conflict
+
+Quit Hana and the WF prototype. In one terminal, reserve Option+Space using the small runtime fixture (a separate process, not a mock of Hana):
+
+```sh
+xcrun swiftc scripts/validation/hold-shortcut.swift -o /tmp/hana-hold-shortcut
+/tmp/hana-hold-shortcut
+```
+
+While it reports a successful reservation, launch the installed Hana app in another terminal:
+
+```sh
+open "$HOME/Applications/Hana.app" --args --diagnostics
+```
+
+Verify **Hana !**, the unavailable-shortcut menu message, and working **Search** menu invocation/typing. Stop the fixture with Control-C, quit Hana, and relaunch Hana. Startup should report registration status 0 and physical Option+Space should work again. This does not modify shortcut preferences or privacy settings.
