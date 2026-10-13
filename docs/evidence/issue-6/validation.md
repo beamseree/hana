@@ -90,7 +90,7 @@ The fixture and physical checks above passed. The later signed-app coverage find
 
 ## Follow-up: signed-app filename coverage gap — 2026-10-13
 
-A user-reported filename query exposed a material coverage gap after the fixture validation. Keep the PR draft pending resolution. This is a targeted #6 diagnosis, not the broader #9 coverage report. The earlier Documents-versus-home observation should have been investigated before declaring acceptance complete.
+A user-reported filename query exposed a material coverage gap after the fixture validation. The PR was returned to draft pending resolution; the resolution is recorded below. This is a targeted #6 diagnosis, not the broader #9 coverage report. The earlier Documents-versus-home observation should have been investigated before declaring acceptance complete.
 
 A temporary opt-in launch harness queried the production Search boundary from the signed installed app. It asserted an ordinary indexed Downloads destination was returned. The normally launched app failed twice (`FAIL results=1 status=ready`); the query itself completed successfully. No file contents were read. Private filenames and paths are omitted from committed evidence.
 
@@ -103,3 +103,17 @@ System logs correlated the normal app with Documents/Downloads TCC preflight che
 Apple documents [per-app protected-folder access](https://support.apple.com/guide/mac-help/control-access-to-files-and-folders-on-mac-mchld5a35146/mac) and [consent requirements for Documents, Downloads, Desktop and iCloud](https://support.apple.com/en-ie/guide/security/secddd1d86a6/web). Empty or reduced query output alone still does not establish permission denial. The source's ready status means gathering finished, not that all indexed locations were searchable.
 
 All temporary `[DEBUG-bemo]` instrumentation and launch harness changes were removed. The previously tested normal source/build was restored. No production behavior change or settings workaround was made, so the original coverage failure remains unresolved. The 28-test/physical-fixture results above remain valid within their stated scope; they do not validate ordinary protected-folder coverage.
+
+
+## Resolution: user-granted Full Disk Access — 2026-10-13
+
+The controlled settings change resolved the reported query in the normally launched app. Before the change, Hana was absent from Files & Folders. Alfred's Full Disk Access toggle was confirmed enabled. At the agent's explicit request, Beam added `~/Applications/Hana.app` to **System Settings → Privacy & Security → Full Disk Access**, enabled it, and relaunched. The agent independently observed Hana's toggle on. No indexing settings, folder-selection setup, or search implementation changes were made.
+
+The installed app's designated requirement remained `cdhash H"b28e4ce4c058947ef63a7976cc4c4632f412fd96"` across the before/after permission test, with strict signature verification passing. This is the restored production-source build after the diagnostic harness was removed, not the earlier physical-test binary's hash. The new normal Launch Services process started at 15:16:43 ICT; it was not launched as a terminal child for the passing test.
+
+- **Before:** the signed normal-app search received only 10 raw candidates and displayed one unrelated result for the user's phrase. The ordinary Downloads target was absent from its metadata snapshot.
+- **After:** Beam reported “Files appeared — results left open.” Independent native accessibility inspection showed the original phrase and numerous ordinary Downloads file rows. Narrowing the phrase showed ordinary Documents folders/files and Downloads files. Searching the exact previously missing PNG filename returned the expected Downloads destination. No personal file contents were opened or committed as evidence.
+- **Permission conclusion:** Full Disk Access is a verified sufficient permission for this installed build and the reported files. This experiment does not claim it is the minimum permission for each folder; individual Files & Folders grants were not tested. It does not claim all 131 raw index hits are eligible or visible simultaneously—the Search display remains bounded at 20 results.
+- **Identity limitation:** this development app is ad-hoc signed. Its designated requirement is tied to a particular binary; a later rebuilt version may need to be removed/re-added in Full Disk Access. Do not weaken the signing requirement or substitute terminal launch as a production workaround. Apple explains this in [TN3127](https://developer.apple.com/documentation/technotes/tn3127-inside-code-signing-requirements).
+
+The permission fix required no source-code patch, so there is no new unit-test regression pretending to model OS authorization. The before/after signed-app experiment is the regression evidence at the agreed native boundary. The existing 28 tests and two-axis code review still apply to the unchanged production source. The reported coverage blocker is resolved, and scoped #6 readiness is restored. The broader coverage report remains #9; no merge or next ticket was started.
