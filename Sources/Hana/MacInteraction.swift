@@ -271,9 +271,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let tint = NSView(frame: bezel.bounds)
         tint.autoresizingMask = [.width, .height]
         tint.wantsLayer = true
-        tint.layer?.backgroundColor = NSColor.white.withAlphaComponent(0.72).cgColor
-        tint.layer?.borderColor = NSColor.black.withAlphaComponent(0.08).cgColor
-        tint.layer?.borderWidth = 1
+        tint.layer?.backgroundColor = NSColor.white.withAlphaComponent(0.35).cgColor
         tint.layer?.cornerRadius = BarStyle.bezelRadius
         bezel.addSubview(tint)
 
