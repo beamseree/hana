@@ -10,13 +10,13 @@ final class ApplicationCatalog {
          FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Applications")]
     }
     private struct Scan: Sendable {
-        let snapshot: CatalogSnapshot
+        let snapshot: SourceSnapshot
         let stamps: [URL: Date]
     }
     private let roots: [URL]
-    private var cached = CatalogSnapshot(applications: [], status: .loading)
+    private var cached = SourceSnapshot(results: [], status: .loading)
     private var stamps: [URL: Date] = [:]
-    private var subscribers: [UUID: AsyncStream<CatalogSnapshot>.Continuation] = [:]
+    private var subscribers: [UUID: AsyncStream<SourceSnapshot>.Continuation] = [:]
     private var monitor: Task<Void, Never>?
 
     init(roots: [URL]) {
@@ -31,9 +31,9 @@ final class ApplicationCatalog {
     }
     deinit { monitor?.cancel() }
 
-    func snapshots() -> AsyncStream<CatalogSnapshot> {
+    func snapshots() -> AsyncStream<SourceSnapshot> {
         let id = UUID()
-        let (stream, continuation) = AsyncStream<CatalogSnapshot>.makeStream(bufferingPolicy: .bufferingNewest(1))
+        let (stream, continuation) = AsyncStream<SourceSnapshot>.makeStream(bufferingPolicy: .bufferingNewest(1))
         subscribers[id] = continuation
         continuation.yield(cached)
         continuation.onTermination = { [weak self] _ in
@@ -63,7 +63,7 @@ final class ApplicationCatalog {
 
     private nonisolated static func scan(_ roots: [URL]) -> Scan {
         let manager = FileManager.default
-        var applications: [ApplicationResult] = []
+        var applications: [SearchResult] = []
         var stamps: [URL: Date] = [:]
         var failed = false
         var visited = Set<URL>()
@@ -96,7 +96,7 @@ final class ApplicationCatalog {
                     let name = (info?["CFBundleDisplayName"] as? String) ?? (info?["CFBundleName"] as? String)
                         ?? child.deletingPathExtension().lastPathComponent
                     let localized = manager.displayName(atPath: child.path)
-                    applications.append(ApplicationResult(name: name, url: child.standardizedFileURL,
+                    applications.append(SearchResult(name: name, url: child.standardizedFileURL,
                         alternateNames: [child.deletingPathExtension().lastPathComponent,
                                          localized.hasSuffix(".app") ? String(localized.dropLast(4)) : localized]))
                 } else if !["bundle", "framework", "plugin", "appex"].contains(child.pathExtension.lowercased()) {
@@ -104,6 +104,6 @@ final class ApplicationCatalog {
                 }
             }
         }
-        return Scan(snapshot: CatalogSnapshot(applications: applications, status: failed ? .failed : .ready), stamps: stamps)
+        return Scan(snapshot: SourceSnapshot(results: applications, status: failed ? .failed : .ready), stamps: stamps)
     }
 }

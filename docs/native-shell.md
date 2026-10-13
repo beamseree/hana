@@ -105,3 +105,19 @@ Working-window diagnostics add numeric validation IDs (1 Main, 2 Mock Note A, 3 
 Type an application name, move with ↑/↓, and press Return to open the selected path. Rows show Application and the full installation path; two installations remain separate. Empty Search has no results or hints. A selected result that disappears leaves no selection until you navigate again. Failed opening retains text and explains recovery. Successful native acknowledgment dismisses without restoring the invocation origin.
 
 The retained native editor stays above the expanding results surface. Catalog scans and ranking run off its main actor. Search starts after approximately 100 ms debounce and returns at most 20 rows. The catalog refreshes at launch and when a one-second directory/metadata stamp check detects changes inside conventional application roots. See [coverage, test procedures, timings and acceptance limits](evidence/issue-5/validation.md).
+
+
+## Mixed filename Search — issue #6
+
+Ordinary Search now merges applications with indexed filename results and visible folders. Rows include their type and exact location. All query tokens are literal filename matches; source status distinguishes gathering, partial coverage, and observed failure. An empty completed response does not diagnose permissions. Return opens the selected file in its default app; failure retains context.
+
+The metadata adapter owns query lifecycle on the main run loop and sends value snapshots to background eligibility work. See [implementation, API checks and signed-app evidence](evidence/issue-6/validation.md) for bounds, the local-computer scope observation, and acceptance limits. `scripts/validation/install-file-search-fixtures` creates only named synthetic fixtures. `--validate-mixed-search` exercises their discovery/opening through Mac Interaction; `--validation-file-delay` adds five seconds to the file source for validation only. Both flags are opt-in. Broader coverage remains #9.
+
+
+### Filename search access on this Mac
+
+For the verified local build, enable **System Settings → Privacy & Security → Full Disk Access → Hana**, selecting `~/Applications/Hana.app`, then quit and reopen Hana. Beam performed this change explicitly; it made previously missing ordinary Documents and Downloads filename results appear in the normally launched app. This is broader access than filenames: macOS allows access to protected files and other apps' data. See [Apple's permission descriptions](https://support.apple.com/en-om/guide/mac-help/mchl211c911f/mac). No Spotlight reindex or folder-selection setup was needed.
+
+Full Disk Access is verified sufficient for the reported case; narrower per-folder grants were not tested. A completed empty search is not proof of a missing grant, and Hana does not infer permission denial from it. Refine broad queries when the desired file falls outside the 20 displayed results.
+
+This app currently uses ad-hoc signing with a binary-specific designated requirement. After rebuilding, a previous Full Disk Access entry may no longer authorize the new binary; remove and re-add the installed app if necessary, then repeat the signed-app check. A stable certificate-backed signing identity remains a separate setup concern. See [permission and runtime evidence](evidence/issue-6/validation.md#resolution-user-granted-full-disk-access--2026-10-13).

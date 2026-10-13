@@ -42,7 +42,72 @@ struct MacInteractionTests {
 
 @Suite(.serialized)
 @MainActor
-struct ApplicationInteractionTests {
+struct DestinationInteractionTests {
+    @Test func delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() async throws {
+        _ = NSApplication.shared
+        let files = CatalogFeed()
+        var completion: CheckedContinuation<Void, Error>?
+        var activated = false
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { _ in files.stream() }, debounce: .zero), openFile: { _ in
+            try await withCheckedThrowingContinuation { completion = $0 }
+            return .init(activate: { activated = true; return true })
+        })
+        let old = interaction.presentBar()
+        interaction.updateQuery("Notes")
+        await files.send([SearchResult(name: "Notes.txt", url: URL(fileURLWithPath: "/fixture/Notes.txt"), kind: .file)])
+        try await eventually { interaction.selectedResult != nil }
+        let opening = interaction.requestSelectedOpen()
+        try await eventually { completion != nil }
+        interaction.dismiss(old, reason: .escape)
+        let fresh = interaction.presentBar()
+        interaction.updateQuery("new context")
+        completion?.resume()
+        await opening?.value
+        #expect(!activated)
+        #expect(interaction.currentInvocation == fresh)
+        #expect(interaction.query == "new context")
+        interaction.dismiss(fresh, reason: .outsideClick)
+    }
+
+    @Test func deletedFileFailsNativeRevalidationWithoutLosingQuery() async throws {
+        _ = NSApplication.shared
+        let files = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { _ in files.stream() }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        interaction.updateQuery("Missing")
+        await files.send([SearchResult(name: "Missing.txt", url: URL(fileURLWithPath: "/nonexistent-hana-validation/Missing.txt"), kind: .file)])
+        try await eventually { interaction.selectedResult != nil }
+        await interaction.requestSelectedOpen()?.value
+        #expect(interaction.currentInvocation == invocation)
+        #expect(interaction.query == "Missing")
+        #expect(interaction.openFailure != nil)
+    }
+
+    @Test func selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() async throws {
+        _ = NSApplication.shared
+        let files = CatalogFeed(), apps = CatalogFeed()
+        var attempted: URL?
+        let file = SearchResult(name: "Notes.txt", url: URL(fileURLWithPath: "/missing/Notes.txt"), kind: .file)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero), openFile: { url in
+            attempted = url
+            throw CocoaError(.fileReadNoPermission)
+        })
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        interaction.updateQuery("Notes")
+        await files.send([file])
+        try await eventually { interaction.selectedResult?.id == file.id }
+        await apps.send([app("Notes", "/Applications/Notes.app")])
+        try await eventually { interaction.results.count == 2 }
+        #expect(interaction.selectedResult?.id == file.id)
+        await interaction.requestSelectedOpen()?.value
+        #expect(attempted == file.url)
+        #expect(interaction.currentInvocation == invocation)
+        #expect(interaction.query == "Notes")
+        #expect(interaction.openFailure != nil)
+    }
+
     @Test func changedQueryNeverActivatesAnOldAcknowledgment() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
@@ -56,7 +121,7 @@ struct ApplicationInteractionTests {
         interaction.updateQuery("App")
         await feed.send([app("App", "/Applications/App.app")])
         try await eventually { interaction.selectedResult != nil }
-        let operation = interaction.requestSelectedApplicationOpen()
+        let operation = interaction.requestSelectedOpen()
         try await eventually { completion != nil }
         interaction.updateQuery("new")
         completion?.resume()
@@ -76,10 +141,10 @@ struct ApplicationInteractionTests {
         interaction.updateQuery("Missing")
         await feed.send([app("Missing", "/nonexistent-hana-validation/Missing.app")])
         try await eventually { interaction.selectedResult != nil }
-        await interaction.requestSelectedApplicationOpen()?.value
+        await interaction.requestSelectedOpen()?.value
         #expect(interaction.currentInvocation == invocation)
         #expect(interaction.query == "Missing")
-        #expect(interaction.launchFailure != nil)
+        #expect(interaction.openFailure != nil)
     }
 
     @Test func enterCapturesTheVisibleDestinationBeforeAsynchronousWork() async throws {
@@ -93,7 +158,7 @@ struct ApplicationInteractionTests {
         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
         await feed.send([a, b])
         try await eventually { interaction.results.count == 2 }
-        let opening = interaction.requestSelectedApplicationOpen()
+        let opening = interaction.requestSelectedOpen()
         interaction.moveSelection(by: 1)
         await opening?.value
         #expect(opened == [a.url])
@@ -113,16 +178,16 @@ struct ApplicationInteractionTests {
         interaction.updateQuery("App")
         await feed.send([app("App", "/Applications/App.app")])
         try await eventually { interaction.selectedResult != nil }
-        let failed = Task { await interaction.requestSelectedApplicationOpen()?.value }
+        let failed = Task { await interaction.requestSelectedOpen()?.value }
         try await eventually { completion != nil }
         completion?.resume(throwing: CocoaError(.fileReadNoPermission))
         await failed.value
         #expect(interaction.query == "App")
         #expect(interaction.selectedResult?.name == "App")
-        #expect(interaction.launchFailure?.contains("retry") == true)
+        #expect(interaction.openFailure?.contains("retry") == true)
         #expect(interaction.currentInvocation == old)
         completion = nil
-        let delayed = Task { await interaction.requestSelectedApplicationOpen()?.value }
+        let delayed = Task { await interaction.requestSelectedOpen()?.value }
         try await eventually { completion != nil }
         interaction.dismiss(old, reason: .outsideClick)
         let fresh = interaction.presentBar()
@@ -179,10 +244,10 @@ struct ApplicationInteractionTests {
         await feed.send([a])
         try await eventually { interaction.results.first?.id == a.id }
         #expect(interaction.selectedResult == nil)
-        await interaction.requestSelectedApplicationOpen()?.value
+        await interaction.requestSelectedOpen()?.value
         #expect(opened.isEmpty)
         interaction.moveSelection(by: 1)
-        await interaction.requestSelectedApplicationOpen()?.value
+        await interaction.requestSelectedOpen()?.value
         #expect(opened == [a.url])
         #expect(interaction.currentInvocation == nil)
     }
@@ -190,14 +255,20 @@ struct ApplicationInteractionTests {
 
 @MainActor
 final class CatalogFeed {
-    private var continuations: [AsyncStream<CatalogSnapshot>.Continuation] = []
+    private var continuations: [AsyncStream<SourceSnapshot>.Continuation] = []
+    var cancellationCount = 0
     var subscriptionCount: Int { continuations.count }
-    func stream() -> AsyncStream<CatalogSnapshot> {
-        AsyncStream { continuations.append($0) }
+    func stream() -> AsyncStream<SourceSnapshot> {
+        AsyncStream { continuation in
+            continuations.append(continuation)
+            continuation.onTermination = { [weak self] _ in
+                Task { @MainActor in self?.cancellationCount += 1 }
+            }
+        }
     }
-    func send(_ apps: [ApplicationResult], status: CatalogStatus = .ready) async {
+    func send(_ apps: [SearchResult], status: SourceStatus = .ready) async {
         while continuations.isEmpty { await Task.yield() }
-        for continuation in continuations { continuation.yield(.init(applications: apps, status: status)) }
+        for continuation in continuations { continuation.yield(.init(results: apps, status: status)) }
     }
 }
 

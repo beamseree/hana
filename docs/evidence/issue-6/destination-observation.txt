@@ -1,0 +1,11 @@
+2026-10-13, separate Computer Use accessibility observation after signed-app open:
+Window: TextEdit Hana [*] บันทึก.txt
+URL: file:///Users/beamsereeyothin/Hana%20Mixed%20Search%20Validation/TextEdit%20Hana%20%5B*%5D%20%E0%B8%9A%E0%B8%B1%E0%B8%99%E0%B8%97%E0%B8%B6%E0%B8%81.txt
+Focused element reported: First Text View
+Content:
+Hana issue 6 indexed fixture.
+Exact destination marker: HANA-6-20261013
+This disposable file contains no personal data.
+
+This is observed destination content and accessibility focus state.
+It is not a physical-keystroke focus check.

@@ -27,17 +27,19 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private let editor = SearchEditor(frame: .zero)
     private let search: Search
     private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
+    private let openFile: @MainActor (URL) async throws -> OpenedApplication
+    private var fileStatus: SourceStatus = .ready
     private var searchTask: Task<Void, Never>?
     private var request: Search.Request?
-    private var selectedID: ApplicationResult.ID?
+    private var selectedID: SearchResult.ID?
     private var didSelectInitialResult = false
-    private var resultSurface: NSHostingView<ApplicationResultsView>?
-    private var sourceStatus: CatalogStatus = .ready
+    private var resultSurface: NSHostingView<SearchResultsView>?
+    private var sourceStatus: SourceStatus = .ready
     private var pendingLaunch: UUID?
-    private(set) var results: [ApplicationResult] = []
-    private(set) var launchFailure: String?
+    private(set) var results: [SearchResult] = []
+    private(set) var openFailure: String?
     var query: String { editor.string }
-    var selectedResult: ApplicationResult? { results.first { $0.id == selectedID } }
+    var selectedResult: SearchResult? { results.first { $0.id == selectedID } }
     private let diagnostics: Diagnostics
     private var origin: NSRunningApplication?
     private weak var originWindow: NSWindow?
@@ -52,10 +54,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var hotKey: GlobalShortcut?
 
     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
-         launchApplication: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.launch) {
+         launchApplication: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.launch,
+         openFile: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.openFileDestination) {
         self.diagnostics = diagnostics
         self.search = search
         self.launchApplication = launchApplication
+        self.openFile = openFile
         super.init()
         configurePanel()
     }
@@ -261,7 +265,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
         scroll.documentView = editor
         surface.addSubview(scroll)
-        let results = NSHostingView(rootView: ApplicationResultsView())
+        let results = NSHostingView(rootView: SearchResultsView())
         results.frame = .zero
         surface.addSubview(results)
         resultSurface = results
@@ -421,7 +425,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         case #selector(NSResponder.moveDown(_:)): moveSelection(by: 1)
         case #selector(NSResponder.moveUp(_:)): moveSelection(by: -1)
         case #selector(NSResponder.insertNewline(_:)):
-            requestSelectedApplicationOpen()
+            requestSelectedOpen()
         default: return false
         }
         return true
@@ -437,8 +441,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         results = []
         selectedID = nil
         didSelectInitialResult = false
-        launchFailure = nil
+        openFailure = nil
         sourceStatus = text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .ready : .loading
+        fileStatus = sourceStatus
         renderResults()
         let started = ProcessInfo.processInfo.systemUptime
         let stream = search.search(request)
@@ -447,7 +452,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 guard let self, self.request?.generation == batch.generation,
                       self.currentInvocation != nil, !Task.isCancelled else { continue }
                 self.results = batch.results
-                self.sourceStatus = batch.status
+                self.sourceStatus = batch.appStatus
+                self.fileStatus = batch.fileStatus
                 if let selectedID = self.selectedID, !batch.results.contains(where: { $0.id == selectedID }) {
                     self.selectedID = nil
                 } else if !self.didSelectInitialResult, let first = batch.results.first {
@@ -455,7 +461,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                     self.didSelectInitialResult = true
                 }
                 self.renderResults()
-                self.record("search.batch", extra: ["resultCount": batch.results.count,
+                self.record("search.batch", extra: ["resultCount": batch.results.count, "appStatus": batch.appStatus.rawValue, "fileStatus": batch.fileStatus.rawValue,
+                    "applicationCount": batch.results.filter { $0.kind == .application }.count,
+                    "fileCount": batch.results.filter { $0.kind != .application }.count,
                     "elapsedMilliseconds": (ProcessInfo.processInfo.systemUptime - started) * 1000])
             }
         }
@@ -472,18 +480,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     @discardableResult
-    func requestSelectedApplicationOpen() -> Task<Void, Never>? {
+    func requestSelectedOpen() -> Task<Void, Never>? {
         guard let invocation = currentInvocation, let destination = selectedResult, pendingLaunch == nil else { return nil }
         let operation = UUID()
         pendingLaunch = operation
         let generation = request?.generation
-        launchFailure = nil
+        openFailure = nil
         renderResults()
-        record("launch.request")
+        record("launch.request", extra: ["destinationKind": destination.typeLabel])
         return Task {
             guard currentInvocation == invocation, pendingLaunch == operation else { return }
             do {
-                let opened = try await launchApplication(destination.url)
+                let opened = try await (destination.kind == .application ? launchApplication(destination.url) : openFile(destination.url))
                 guard currentInvocation == invocation, pendingLaunch == operation else {
                     record("launch.stale-acknowledgment")
                     return
@@ -502,7 +510,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 guard currentInvocation == invocation, pendingLaunch == operation else { return }
                 pendingLaunch = nil
                 if request?.generation == generation {
-                    launchFailure = "Couldn’t open this installation. It may have moved or become unavailable. Check it in Finder, then select a result and press Return to retry."
+                    openFailure = "Couldn’t open this destination. It may have moved or become unavailable. Check it in Finder, then select a result and press Return to retry."
                 }
                 renderResults()
                 record("launch.failed")
@@ -527,6 +535,23 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
     }
 
+    private static func openFileDestination(_ url: URL) async throws -> OpenedApplication {
+        // Revalidate off the input actor: a disconnected volume must not block typing.
+        let available = await Task.detached(priority: .userInitiated) {
+            Search.eligible(url) && FileManager.default.fileExists(atPath: url.path)
+                && FileManager.default.isReadableFile(atPath: url.path)
+        }.value
+        guard available else { throw CocoaError(.fileReadNoSuchFile) }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = false
+        configuration.promptsUserIfNeeded = false
+        let application = try await NSWorkspace.shared.open(url, configuration: configuration)
+        return OpenedApplication {
+            guard let source = NSWorkspace.shared.frontmostApplication else { return application.activate(options: []) }
+            return application.activate(from: source, options: [])
+        }
+    }
+
     private func resetSearch() {
         searchTask?.cancel()
         searchTask = nil
@@ -536,8 +561,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         pendingLaunch = nil
         results = []
         selectedID = nil
-        launchFailure = nil
+        openFailure = nil
         sourceStatus = .ready
+        fileStatus = .ready
         renderResults()
     }
 
@@ -545,11 +571,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let hasQuery = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let status: String?
         if !hasQuery { status = nil }
-        else if let launchFailure { status = launchFailure }
-        else if pendingLaunch != nil { status = "Opening selected application…" }
-        else if sourceStatus == .loading { status = "Loading applications…" }
-        else if sourceStatus == .failed { status = "Some application locations are unavailable. Available results are shown; check access in Finder." }
-        else { status = results.isEmpty ? "No matching applications" : nil }
+        else if let openFailure { status = openFailure }
+        else if pendingLaunch != nil { status = "Opening selected destination…" }
+        else if sourceStatus == .failed || fileStatus == .failed { status = "A search source reported a failure. Available results are shown; retry the search." }
+        else if sourceStatus == .loading || fileStatus == .loading { status = results.isEmpty ? "Searching apps and indexed filenames…" : "Partial results — still searching indexed filenames…" }
+        else if fileStatus == .partial { status = "Partial indexed results — refine your query for more specific matches." }
+        else { status = results.isEmpty ? "No matches returned. Indexing and access can limit results." : nil }
         let extra = hasQuery ? min(360, CGFloat(results.count) * 56) + (status == nil ? 0 : 60) : 0
         let top = panel.frame.maxY
         let bounds = panel.screen?.visibleFrame ?? panel.frame
@@ -558,7 +585,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         panel.setFrame(frame, display: true)
         resultSurface?.frame = NSRect(x: 12, y: 8, width: max(0, frame.width - 24), height: max(0, height - 72))
         resultSurface?.isHidden = !hasQuery
-        resultSurface?.rootView = ApplicationResultsView(results: results, selectedID: selectedID, status: status) { [weak self] id in
+        resultSurface?.rootView = SearchResultsView(results: results, selectedID: selectedID, status: status) { [weak self] id in
             guard let self, self.results.contains(where: { $0.id == id }) else { return }
             self.selectedID = id
             self.didSelectInitialResult = true
