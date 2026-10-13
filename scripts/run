@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+app="$HOME/Applications/Hana.app"
+if pgrep -x Hana >/dev/null; then
+    echo 'Hana is already running. Quit it from its menu before replacing the local app.' >&2
+    exit 1
+fi
+./scripts/build
+mkdir -p "$HOME/Applications"
+/usr/bin/ditto build/Hana.app "$app"
+/usr/bin/codesign --verify --deep --strict --verbose=2 "$app"
+/usr/bin/open "$app" --args "$@"
