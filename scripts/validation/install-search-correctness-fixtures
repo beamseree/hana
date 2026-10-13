@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+# Only disposable synthetic files for the opt-in #7 Search regression/demo.
+python3 - <<'PY'
+from pathlib import Path
+root = Path.home() / 'Hana Issue 7 Validation'
+root.mkdir(exist_ok=True)
+fixtures = {f'[ {n:04} Hana7 *].txt': 'Synthetic issue 7 candidate.\n' for n in range(2100)}
+fixtures['[Hana7*].txt'] = 'Hana issue 7 exact destination.\n'
+fixtures['Hana7 Note.txt'] = 'Hana issue 7 native destination validation.\nType here to verify destination focus.\n'
+for n in range(300):
+    fixtures[f'Usage/{n:04}/Hana7Use.txt'] = 'Synthetic session usage fixture.\n'
+for name, contents in fixtures.items():
+    destination = root / name
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if not destination.exists():
+        destination.write_text(contents)
+print(root)
+PY
+mdimport "$HOME/Hana Issue 7 Validation"

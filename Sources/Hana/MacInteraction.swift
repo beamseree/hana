@@ -1,4 +1,5 @@
 import AppKit
+import ApplicationServices
 import SwiftUI
 
 /// Owns the native Search lifetime. Callers carry Invocation into any delayed
@@ -54,6 +55,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var statusItem: NSStatusItem?
     private var shortcutStatus: NSMenuItem?
     private var hotKey: GlobalShortcut?
+    private var placementTask: Task<Void, Never>?
+    private var currentPlacement: Placement?
 
     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
          launchApplication: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.launch,
@@ -98,13 +101,39 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let invocation = currentInvocation ?? Invocation()
         if !existing {
             origin = NSWorkspace.shared.frontmostApplication
-            originWindow = NSApp.keyWindow
+            originWindow = origin?.processIdentifier == ProcessInfo.processInfo.processIdentifier ? NSApp.keyWindow : nil
             originResponder = originWindow?.firstResponder
             currentInvocation = invocation
             clearEditor()
-            placeOnPointerDisplay()
             observeSession(invocation)
+            let pointer = NSEvent.mouseLocation
+            let displays = NSScreen.screens.map { Display(frame: $0.frame, visibleFrame: $0.visibleFrame) }
+            if let window = originWindow, window.isVisible, !window.isMiniaturized {
+                applyPlacement(displays: displays, pointer: pointer, focus: .owned(window.frame))
+            } else if let origin, origin.processIdentifier != ProcessInfo.processInfo.processIdentifier,
+                      AXIsProcessTrusted() {
+                let processID = origin.processIdentifier
+                placementTask = Task { [weak self] in
+                    let frame = await Self.focusedWindowWithinDeadline {
+                        FocusedWindowGeometry.read(processID: processID)
+                    }
+                    guard let self, self.currentInvocation == invocation, !Task.isCancelled else { return }
+                    self.placementTask = nil
+                    self.applyPlacement(displays: displays, pointer: pointer,
+                                        focus: frame.map(WindowFocus.accessibility) ?? .unavailable)
+                    self.showBar(existing: false, started: started)
+                }
+                return invocation
+            } else {
+                applyPlacement(displays: displays, pointer: pointer, focus: .unavailable)
+            }
         }
+        // A second invocation must not present at stale geometry while AX is pending.
+        if placementTask == nil { showBar(existing: existing, started: started) }
+        return invocation
+    }
+
+    private func showBar(existing: Bool, started: TimeInterval) {
         // Do not activate the process: the nonactivating panel takes key focus
         // while the foreign invocation origin keeps its ordinary activation.
         panel.makeKeyAndOrderFront(nil)
@@ -113,7 +142,6 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             "responderAccepted": accepted,
             "presentationMilliseconds": (ProcessInfo.processInfo.systemUptime - started) * 1000
         ])
-        return invocation
     }
 
     func dismiss(_ invocation: Invocation, reason: DismissalReason) {
@@ -123,10 +151,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
         record("dismiss.\(reason.rawValue)")
         currentInvocation = nil
+        placementTask?.cancel()
+        placementTask = nil
         removeSessionObservers()
         panel.orderOut(nil)
         clearEditor()
         resetSearch()
+        currentPlacement = nil
         // The foreign origin normally never lost activation. Ordering out the
         // nonactivating panel releases its key focus. Never activate an old app
         // over a subsequent user choice, even for Escape. Restoration is best effort.
@@ -311,23 +342,25 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.undoManager?.removeAllActions()
     }
 
-    private func placeOnPointerDisplay() {
-        let pointer = NSEvent.mouseLocation
-        guard let screen = NSScreen.screens.first(where: { $0.frame.contains(pointer) })
-            ?? NSScreen.screens.first else { return }
-        let bounds = screen.visibleFrame
-        let width = min(BarStyle.width, bounds.width)
-        let height = min(BarStyle.collapsedHeight, bounds.height)
-        let y = max(bounds.minY, min(bounds.maxY - height, bounds.maxY - 100 - height))
-        panel.setFrame(NSRect(x: bounds.midX - width / 2, y: y, width: width, height: height), display: false)
-        record("placement.pointer", extra: ["visibleFrame": NSStringFromRect(bounds)])
+    private func applyPlacement(displays: [Display], pointer: CGPoint, focus: WindowFocus) {
+        currentPlacement = Self.placement(displays: displays, pointer: pointer, focus: focus)
+        guard let placement = currentPlacement else { return }
+        panel.setFrame(placement.frame(height: BarStyle.collapsedHeight), display: false)
+        renderResults()
+        record("placement.\(placement.source)", extra: ["visibleFrame": NSStringFromRect(placement.visibleFrame)])
+    }
+
+    private func belongsToSearch(_ window: NSWindow?) -> Bool {
+        guard let window else { return false }
+        if window === panel { return true }
+        return belongsToSearch(window.parent) || belongsToSearch(window.sheetParent)
     }
 
     private func observeSession(_ invocation: Invocation) {
         let mask: NSEvent.EventTypeMask = [.leftMouseDown, .rightMouseDown, .otherMouseDown]
         localMouse = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
             MainActor.assumeIsolated {
-                if let self, event.window !== self.panel, self.menuDepth == 0 {
+                if let self, !self.belongsToSearch(event.window), self.menuDepth == 0 {
                     self.dismiss(invocation, reason: .outsideClick)
                 }
             }
@@ -335,7 +368,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
         globalMouse = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] _ in
             MainActor.assumeIsolated {
-                guard let self, self.menuDepth == 0, !self.editor.hasMarkedText() else { return }
+                // Global monitors exclude this app's events. A click delivered
+                // by another app is outside even if our menu-end notice is late.
+                guard let self else { return }
                 self.dismiss(invocation, reason: .outsideClick)
             }
         }
@@ -469,6 +504,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         guard currentInvocation != nil else { return }
         if editor.string != text { editor.string = text }
         searchTask?.cancel()
+        // A new query owns a new open intent; an old acknowledgment cannot
+        // block Enter or report an error into this context.
+        pendingLaunch = nil
         let request = Search.Request(text: text)
         self.request = request
         results = []
@@ -613,10 +651,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // Results extend the card downward below the input row, so the input
         // position never moves while expanding.
         let content = hasQuery ? SearchResultsView.height(rowCount: results.count, hasStatus: status != nil) : 0
-        let top = panel.frame.maxY
-        let bounds = panel.screen?.visibleFrame ?? panel.frame
-        let height = min(BarStyle.collapsedHeight + (content > 0 ? BarStyle.cardPadding + content : 0), bounds.height)
-        let frame = NSRect(x: panel.frame.minX, y: max(bounds.minY, top - height), width: panel.frame.width, height: height)
+        let frame = currentPlacement?.frame(
+            height: BarStyle.collapsedHeight + (content > 0 ? BarStyle.cardPadding + content : 0)) ?? panel.frame
+        let height = frame.height
         panel.setFrame(frame, display: true)
         panel.invalidateShadow()
         resultSurface?.frame = NSRect(x: BarStyle.cardPadding, y: BarStyle.cardPadding,
