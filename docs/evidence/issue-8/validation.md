@@ -33,3 +33,12 @@ These are API capabilities, not observations of trusted cross-app behavior.
 During an explicitly handed-over slot: record commit, installed binary SHA-256/CDHash, signature, OS and available displays; test live changing results, ordinary English/Thai insertion and paste, selection, undo/redo, literal punctuation, native context menus, owned result controls, reinvocation and outside-click typing. Check each available display, app-owned placement and trusted foreign placement only if already authorized. Unavailable trust/display cases must be identified explicitly.
 
 Candidate IME remains deferred. Display hot-plug, broad Stage Manager/sleep/lock hardening and privacy/Spaces/display setting changes remain outside scope. At the end, quit the test app and confirm process exit/shortcut release. Do not declare the PR ready until core native acceptance is complete and #7's merge state has been checked.
+
+
+## Local build checkpoint — no installation or native run
+
+Code revision: `bde8da0193c2a60bdf8b225b09f17c04d4e11e04`. macOS 26.4.1 (25E253), Xcode 26.6, Swift 6.3.3, arm64. Worktree-local `build/Hana.app`, bundle ID `com.beamseree.hana`, ad-hoc signature, no TeamIdentifier. Binary SHA-256 `6455668bc0f16349e8b702d0310304a55dbe1dfb6ef5edb1a4090a069dc3c769`; CDHash `2c62881f57911a310fd064f6c5facb53fb90f0ce`. This identifies the compiled candidate only, not an installed or native-tested build.
+
+Five geometry tests were rerun after strengthening the unresponsive-IPC fixture; debug and release builds passed after the outside-click correction. Search's sixteen isolated tests passed before that Mac Interaction-only correction. The complete suite and NativeEditingTests have not run because they present windows. Native installed-build identity and native tested revision: **none yet**. No testing slot was acquired, so no app shutdown or slot-release claim is made.
+
+[Independent code review](review.md): zero Standards findings; one Spec acceptance gap (pending native checks), no confirmed code defect. #7 remained OPEN when checked before opening the draft. Recheck and incorporate updated main if #7 merges before readiness; any later interactive rerun needs a coordinated slot.
