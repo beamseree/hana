@@ -443,3 +443,11 @@ Tasks are `TaskItem` values (named to avoid Swift's concurrency `Task`) with `Ta
 - **Search projection.** `.searchText` now merges notes and tasks by content-edited time, then ID; `SearchEligibility.includesCompleted` admits completed tasks.
 
 The harness adds `create-task`, `edit-task`, `move-task`, `complete-task`, `reopen-task`, `archive-task`, `restore-task` and `read-tasks --view inbox|today|completed|archive|all`. [Validation record](evidence/issue-26/validation.md); not yet compiled or run.
+
+## Manual order — issue #27
+
+`reorderTask(_:expectedRevision:in:expectedOrder:toIndex:)` moves one active unfinished task to a position in its list. The caller supplies the list's IDs exactly as it last read them; inside the serialized write the Store compares them with the current list and fails with `staleList` on any difference, so a reorder computed before a concurrent insertion, move, completion, archive or other reorder cannot drop or misplace that change. Other refusals: `staleRevision`, `archived`, `completed`, and `invalidPosition` for an index outside the list. The current position is a no-op.
+
+The moved task gets a key between its new neighbours (computed in `Int128`, so extreme keys cannot overflow): one less than the task below at the top, one more than the task above at the bottom, otherwise the midpoint. When the neighbours are adjacent, or the end key is `Int64.min`/`Int64.max`, the whole list is renumbered to `0, 2²⁰, …` in the requested order in the same transaction. Only the moved task's revision and updated time change; creation and content-edited times are preserved. Completed and Archive keep their timestamp/ID order.
+
+`OrganizedCollection` (test support) builds a synthetic collection covering pins, archived notes, duplicate and unsafe-looking titles, Unicode, manual order in both lists and every completion/archive combination, for the export and snapshot comparisons in #28/#29. The harness adds `reorder-task`. [Validation record](evidence/issue-27/validation.md); not yet compiled or run.

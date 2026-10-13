@@ -23,6 +23,8 @@ import Foundation
 ///   with standard input.
 /// - `move-task <root> --id <uuid> --revision <n> --to inbox|today [faults]`.
 /// - `complete-task|reopen-task|archive-task|restore-task <root> --id <uuid> --revision <n> [faults]`.
+/// - `reorder-task <root> --id <uuid> --revision <n> --placement inbox|today --order <uuid,…> --index <i> [faults]`:
+///   move the task to position `i` of the list last read as `--order`.
 /// - `read-tasks <root> [--view inbox|today|completed|archive|all]`: summarize
 ///   one task view (Inbox by default).
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
@@ -77,7 +79,7 @@ enum CollectionFixtureHarness {
                                                    in: store.generation)
                 await store.close()
                 emit("task.created", summary(task))
-            case "edit-task", "move-task", "complete-task", "reopen-task", "archive-task", "restore-task":
+            case "edit-task", "move-task", "reorder-task", "complete-task", "reopen-task", "archive-task", "restore-task":
                 guard let id = options["--id"].flatMap(UUID.init(uuidString:)),
                       let revision = options["--revision"].flatMap({ Int64($0) }) else { throw Usage() }
                 let command: CollectionCommand<TaskItem>
@@ -88,6 +90,14 @@ enum CollectionFixtureHarness {
                 case "move-task":
                     guard let placement = options["--to"].flatMap({ TaskPlacement(rawValue: $0) }) else { throw Usage() }
                     command = .moveTask(id, to: placement, expectedRevision: revision)
+                case "reorder-task":
+                    guard let placement = options["--placement"].flatMap({ TaskPlacement(rawValue: $0) }),
+                          let index = options["--index"].flatMap({ Int($0) }),
+                          let order = options["--order"].map({ $0.split(separator: ",").map { UUID(uuidString: String($0)) } }),
+                          !order.contains(nil)
+                    else { throw Usage() }
+                    command = .reorderTask(id, expectedRevision: revision, in: placement,
+                                           expectedOrder: order.compactMap { $0 }, toIndex: index)
                 case "complete-task": command = .completeTask(id, expectedRevision: revision)
                 case "reopen-task": command = .reopenTask(id, expectedRevision: revision)
                 case "archive-task": command = .archiveTask(id, expectedRevision: revision)

@@ -109,6 +109,10 @@ enum CollectionStoreError: Error, Equatable, Sendable {
     case completed
     /// A task title is blank or contains a line break.
     case invalidTitle
+    /// The list changed since the caller read the order it supplied.
+    case staleList
+    /// The requested position is outside the list.
+    case invalidPosition
     /// The primary SQLite result code of a failed storage operation.
     case storageFailure(code: Int32)
 }
@@ -373,6 +377,33 @@ extension CollectionCommand where Result == TaskItem {
             guard !task.isCompleted else { throw CollectionStoreError.completed }
             guard task.placement != placement else { return task }
             try TaskRow.place(db, id, placement, now: context.now)
+            return try TaskRow.current(db, id, expectedRevision: expectedRevision + 1)
+        }
+    }
+
+    /// Moves an active task to `index` (0 is the top) within `placement`,
+    /// given that list exactly as the caller last read it. Any concurrent
+    /// insertion, move, completion, archive or reorder in the list makes
+    /// `expectedOrder` obsolete and the command fails with `staleList` rather
+    /// than overwrite it. The current position is a no-op.
+    static func reorderTask(_ id: UUID, expectedRevision: Int64, in placement: TaskPlacement,
+                            expectedOrder: [UUID], toIndex index: Int) -> Self {
+        Self { db, context in
+            let task = try TaskRow.current(db, id, expectedRevision: expectedRevision)
+            guard task.archivedAt == nil else { throw CollectionStoreError.archived }
+            guard !task.isCompleted else { throw CollectionStoreError.completed }
+            let current = try TaskOrder.currentOrder(db, placement)
+            guard task.placement == placement, current == expectedOrder.map(\.uuidString),
+                  let from = current.firstIndex(of: id.uuidString)
+            else { throw CollectionStoreError.staleList }
+            guard current.indices.contains(index) else { throw CollectionStoreError.invalidPosition }
+            guard from != index else { return task }
+            var order = current
+            order.remove(at: from)
+            order.insert(id.uuidString, at: index)
+            let key = try TaskOrder.key(db, placement, at: index, in: order)
+            try db.execute(sql: "UPDATE task SET order_key = ?, updated_at = ?, revision = revision + 1 WHERE id = ?",
+                           arguments: [key, context.now, id.uuidString])
             return try TaskRow.current(db, id, expectedRevision: expectedRevision + 1)
         }
     }
@@ -747,6 +778,32 @@ enum TaskOrder {
             try db.execute(sql: "UPDATE task SET order_key = ? WHERE id = ? AND placement = ?",
                            arguments: [Int64(index) * spacing, id, placement.rawValue])
         }
+    }
+
+    /// A key for the task at `index` of the desired `order` that sorts it
+    /// between its new neighbours: just above the one below at the top, just
+    /// below the one above at the bottom, otherwise the midpoint. When the
+    /// neighbours leave no room, renumbers the whole list into `order` first
+    /// (which already places the task) and returns its new key.
+    static func key(_ db: Database, _ placement: TaskPlacement, at index: Int, in order: [String]) throws -> Int64 {
+        func existingKey(_ id: String) throws -> Int128 {
+            guard let key = try Int64.fetchOne(db, sql: "SELECT order_key FROM task WHERE id = ?", arguments: [id])
+            else { throw CollectionStoreError.unreadableCollection }
+            return Int128(key)
+        }
+        // Int128 so neighbour arithmetic cannot overflow.
+        let above: Int128? = try index > 0 ? existingKey(order[index - 1]) : nil
+        let below: Int128? = try index + 1 < order.count ? existingKey(order[index + 1]) : nil
+        let candidate: Int128?
+        switch (above, below) {
+        case let (upper?, lower?): candidate = lower - upper >= 2 ? (upper + lower) / 2 : nil
+        case let (nil, lower?): candidate = lower - 1
+        case let (upper?, nil): candidate = upper + 1
+        case (nil, nil): candidate = 0
+        }
+        if let candidate, let key = Int64(exactly: candidate) { return key }
+        try renumber(db, placement, order: order)
+        return Int64(index) * spacing
     }
 }
 
