@@ -1,0 +1,80 @@
+Building for debugging...
+[0/11] /Users/beamsereeyothin/.codex/worktrees/e97d/hana/.build/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[1/11] Write sources
+[1/11] Write Hana-entitlement.plist
+[4/11] Write sources
+[5/11] Write swift-version--112E4EF74740DA65.txt
+[7/22] Compiling Hana WorkingWindowController.swift
+[8/22] Compiling Hana Search.swift
+[9/22] Compiling Hana SpotlightSource.swift
+[10/22] Compiling Hana MixedSearchValidation.swift
+[11/22] Compiling Hana SearchResultsView.swift
+[12/22] Compiling Hana ApplicationCatalog.swift
+[13/22] Emitting module Hana
+[14/22] Compiling Hana HanaApp.swift
+[15/22] Compiling Hana Diagnostics.swift
+[16/22] Compiling Hana GlobalShortcut.swift
+[17/22] Compiling Hana MacInteraction.swift
+[17/22] Write Objects.LinkFileList
+[18/22] Linking Hana
+[19/22] Applying Hana
+error: emit-module command failed with exit code 1 (use -v to see invocation)
+[21/26] Emitting module HanaTests
+/Users/beamsereeyothin/.codex/worktrees/e97d/hana/Tests/HanaTests/DisplayPlacementTests.swift:8:34: error: 'Display' is not a member type of class 'Hana.MacInteraction'
+ 6 | // event monitors, or shortcut registration.
+ 7 | struct DisplayPlacementTests {
+ 8 |     let screens: [MacInteraction.Display] = [
+   |                                  `- error: 'Display' is not a member type of class 'Hana.MacInteraction'
+ 9 |         .init(frame: CGRect(x: 0, y: 0, width: 1440, height: 900),
+10 |               visibleFrame: CGRect(x: 0, y: 30, width: 1440, height: 845)),
+
+/Users/beamsereeyothin/.codex/worktrees/e97d/hana/Sources/Hana/MacInteraction.swift:7:13: note: 'MacInteraction' declared here
+  5 | /// completion so an obsolete operation cannot dismiss a newer session.
+  6 | @MainActor
+  7 | final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
+    |             `- note: 'MacInteraction' declared here
+  8 |     struct Invocation: Equatable {
+  9 |         fileprivate let id = UUID()
+[22/26] Compiling HanaTests SearchTests.swift
+[23/26] Compiling HanaTests MacInteractionTests.swift
+[24/26] Compiling HanaTests DisplayPlacementTests.swift
+/Users/beamsereeyothin/.codex/worktrees/e97d/hana/Tests/HanaTests/DisplayPlacementTests.swift:8:34: error: 'Display' is not a member type of class 'Hana.MacInteraction'
+ 6 | // event monitors, or shortcut registration.
+ 7 | struct DisplayPlacementTests {
+ 8 |     let screens: [MacInteraction.Display] = [
+   |                                  `- error: 'Display' is not a member type of class 'Hana.MacInteraction'
+ 9 |         .init(frame: CGRect(x: 0, y: 0, width: 1440, height: 900),
+10 |               visibleFrame: CGRect(x: 0, y: 30, width: 1440, height: 845)),
+
+/Users/beamsereeyothin/.codex/worktrees/e97d/hana/Sources/Hana/MacInteraction.swift:7:13: note: 'MacInteraction' declared here
+  5 | /// completion so an obsolete operation cannot dismiss a newer session.
+  6 | @MainActor
+  7 | final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
+    |             `- note: 'MacInteraction' declared here
+  8 |     struct Invocation: Equatable {
+  9 |         fileprivate let id = UUID()
+
+/Users/beamsereeyothin/.codex/worktrees/e97d/hana/Tests/HanaTests/DisplayPlacementTests.swift:16:53: error: type 'MacInteraction' has no member 'placement'
+14 | 
+15 |     @Test func ownedFocusedWindowWinsOverPointerOnAnotherDisplay() throws {
+16 |         let placement = try #require(MacInteraction.placement(
+   |                                                     `- error: type 'MacInteraction' has no member 'placement'
+17 |             displays: screens, pointer: CGPoint(x: 100, y: 100),
+18 |             focus: .owned(CGRect(x: -1500, y: 100, width: 800, height: 600))))
+
+/Users/beamsereeyothin/.codex/worktrees/e97d/hana/Tests/HanaTests/DisplayPlacementTests.swift:18:21: error: cannot infer contextual base in reference to member 'owned'
+16 |         let placement = try #require(MacInteraction.placement(
+17 |             displays: screens, pointer: CGPoint(x: 100, y: 100),
+18 |             focus: .owned(CGRect(x: -1500, y: 100, width: 800, height: 600))))
+   |                     `- error: cannot infer contextual base in reference to member 'owned'
+19 |         #expect(placement.source == "owned")
+20 |         #expect(placement.frame(height: 64) == CGRect(x: -1290, y: 891, width: 660, height: 64))
+
+/Users/beamsereeyothin/.codex/worktrees/e97d/hana/Tests/HanaTests/DisplayPlacementTests.swift:16:25: warning: no calls to throwing functions occur within 'try' expression
+14 | 
+15 |     @Test func ownedFocusedWindowWinsOverPointerOnAnotherDisplay() throws {
+16 |         let placement = try #require(MacInteraction.placement(
+   |                         `- warning: no calls to throwing functions occur within 'try' expression
+17 |             displays: screens, pointer: CGPoint(x: 100, y: 100),
+18 |             focus: .owned(CGRect(x: -1500, y: 100, width: 800, height: 600))))
+error: fatalError

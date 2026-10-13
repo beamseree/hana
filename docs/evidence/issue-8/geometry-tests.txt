@@ -1,0 +1,36 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write sources
+[2/7] Write swift-version--112E4EF74740DA65.txt
+[4/9] Emitting module Hana
+[5/9] Compiling Hana MacInteraction.swift
+[5/10] Write Objects.LinkFileList
+[6/10] Linking Hana
+[7/10] Applying Hana
+[9/12] Emitting module HanaTests
+[10/12] Compiling HanaTests NativeEditingTests.swift
+[10/12] Write Objects.LinkFileList
+[11/12] Linking HanaPackageTests
+Build complete! (2.61s)
+Test Suite 'Selected tests' started at 2026-10-13 15:34:16.192.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-13 15:34:16.193.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-13 15:34:16.193.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-13 15:34:16.193.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite DisplayPlacementTests started.
+􀟈  Test ownedFocusedWindowWinsOverPointerOnAnotherDisplay() started.
+􀟈  Test invalidFocusedGeometryFallsBackToCapturedPointer() started.
+􀟈  Test accessibilityCoordinatesMapAboveThePrimaryDisplay() started.
+􀟈  Test expansionAndContractionKeepInputTopUnlessVisibleBoundsRequireMovement() started.
+􀟈  Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() started.
+􁁛  Test ownedFocusedWindowWinsOverPointerOnAnotherDisplay() passed after 0.001 seconds.
+􁁛  Test expansionAndContractionKeepInputTopUnlessVisibleBoundsRequireMovement() passed after 0.001 seconds.
+􁁛  Test accessibilityCoordinatesMapAboveThePrimaryDisplay() passed after 0.001 seconds.
+􁁛  Test invalidFocusedGeometryFallsBackToCapturedPointer() passed after 0.001 seconds.
+􁁛  Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() passed after 0.065 seconds.
+􁁛  Suite DisplayPlacementTests passed after 0.065 seconds.
+􁁛  Test run with 5 tests in 1 suite passed after 0.065 seconds.
