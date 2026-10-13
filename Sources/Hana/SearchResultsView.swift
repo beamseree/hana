@@ -51,9 +51,9 @@ struct SearchResultsView: View {
         .environment(\.colorScheme, .light)
     }
 
-    // Icons center on the mode icon and names start with the query text. The
-    // surface sits cardPadding inside the card.
-    private static let iconLeading = BarStyle.modeIconFrame.midX - BarStyle.cardPadding - BarStyle.resultIconSize / 2
+    // Icons share the mode icon's center line and names start with the query
+    // text. The surface sits cardPadding inside the card.
+    private static let iconLeading = BarStyle.resultIconInset
     private static let nameLeading = BarStyle.textInset - BarStyle.cardPadding - iconLeading - BarStyle.resultIconSize
 
     private func row(_ result: SearchResult) -> some View {
