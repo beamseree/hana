@@ -31,4 +31,6 @@ No further product interview confirmation is pending. Model-assisted classificat
 
 ## Completion evidence
 
+[Issue #1](https://github.com/beamseree/hana-searchbar/issues/1) records the completed window/focus experiment, its artifacts and remaining limitations.
+
 The specification includes the accepted end-to-end verification loop. Source changes alone do not establish that keyboard focus, animations, file search, persistence, export, or recovery work on the target Mac.
