@@ -126,3 +126,9 @@ This app currently uses ad-hoc signing with a binary-specific designated require
 ## Display and editing checks — issue #8
 
 Run `xcrun swift test --filter DisplayPlacementTests` for geometry and bounded lookup behavior without presenting windows. `NativeEditingTests` and the existing Mac Interaction suites present real windows and require the coordinated native testing slot; run the complete suite with `xcrun swift test --no-parallel` to avoid concurrent window ownership between suites. Native menu, paste, physical typing and pointer placement checks remain separate from deterministic geometry. See [issue #8 evidence](evidence/issue-8/validation.md) for the exact revision/build and acceptance state.
+
+## Signed coverage and permissions — issue #9
+
+See the [coverage/permission matrix](evidence/issue-9/validation.md) for tested identities, per-destination discovery/opening, user-approved privacy prompts, genuine denied/unavailable operations, deterministic failure checks and unavailable cases. Success in Desktop/Documents/Downloads was observed after Beam allowed macOS prompts; it is not a promise of prompt-free access or ad-hoc permission continuity.
+
+The optional one-shot synthetic run is `scripts/validation/install-coverage-fixtures`, then `scripts/run --diagnostics --validate-coverage` while holding the shared native testing slot. Reuse or install the existing `install-app-search-fixtures` destinations first. The installer refuses existing roots. The runner renames/deletes only two marker-checked synthetic fixtures, probes known resource metadata, and uses production Search/Mac Interaction. Leave keyboard/mouse alone during the run; interference aborts it. Do not treat its open acknowledgment as observed document/focus behavior. Quit and relaunch without the validation flag for physical checks. Do not reset permissions or indexing to repeat a run.
