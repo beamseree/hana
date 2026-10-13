@@ -37,3 +37,7 @@ Valid correction to a narrower regression metric, with no substantiated attempt 
 Timing follow-up totals: Standards 0 findings; Spec 0 implementation findings, 2 acceptance limitations (physical latency/stall measurement and tentative late-batch app selection).
 
 Both reviewers then checked the final timing report/raw evidence and found no concrete inconsistencies. Subsequently Beam answered “yes” to the explicit Two-app late-batch/destination/physical typing procedure; that human acceptance limitation is now closed. Final totals: **Standards 0 findings; Spec 0 implementation findings, 1 remaining acceptance limitation (unmeasured physical latency/stall targets)**. The PR remains draft.
+
+## Readiness after user-approved deferral — 2026-10-13
+
+Beam explicitly deferred physical timing and authorized ready-for-review status if it was the only remaining blocker. It was the sole remaining draft gate in the final review assessment above. The exact Two-app functional check is confirmed, all 49 tests and build/signature checks passed, and no actionable implementation finding remains. Standards: 0 findings. Spec: 0 implementation findings; physical latency/stall measurement remains one documented, user-deferred limitation rather than a draft blocker. This is a documentation/readiness update, not a new code review or performance measurement. No source/test change or new native run occurred. PR #19 may be marked ready for review; #2 stays open. Historical assessments remain above.
