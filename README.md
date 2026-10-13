@@ -4,7 +4,7 @@ Personal macOS app combining app/file search, quick note capture, and task manag
 
 ## Status
 
-Product scope confirmed by Beam on 2026-10-13 after a 44-question design interview. Technical design now recommends AppKit/SwiftUI and SQLite through GRDB, with native validation gates. An isolated throwaway AppKit window/focus prototype is now available. There is no production app scaffold. The private GitHub repository is [beamseree/hana-searchbar](https://github.com/beamseree/hana-searchbar), a temporary repository name. The prototype retains its independent local Git history and is published on `prototype/window-focus`.
+Product scope confirmed by Beam on 2026-10-13 after a 44-question design interview. Technical design now recommends AppKit/SwiftUI and SQLite through GRDB, with native validation gates. An isolated throwaway AppKit window/focus prototype is now available. Issue #3 adds the first native empty Search shell, built independently of the preserved prototype. See [build/run instructions](docs/native-shell.md) and [current validation evidence](docs/evidence/issue-3/validation.md). The private GitHub repository is [beamseree/hana-searchbar](https://github.com/beamseree/hana-searchbar), a temporary repository name. The prototype retains its independent local Git history and is published on `prototype/window-focus`.
 
 ## Start here
 
@@ -21,7 +21,7 @@ These project-local documents are the working source of truth from this handoff 
 
 The window/focus prototype supports continuing with a single-process design on the tested Mac. Full-screen invocation, Dock/Command-Tab access, minimized windows and three-display pointer placement have user-observed evidence. The reported minimize anomaly did not recur in three follow-up checks; its original cause remains unknown. Candidate-based IME testing is explicitly deferred for current English/Thai use.
 
-Next: synthesize a bounded implementation spec for the native app shell and app/file search/permission proof. Stable app identity/signing and real search coverage remain unverified. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
+The bounded milestone is tracked in spec #2. The #3 shell uses a documented local ad-hoc identity; physical acceptance is recorded separately from builds. App/file search, working windows and permission coverage remain later tickets. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
 
 ## Tracker
 

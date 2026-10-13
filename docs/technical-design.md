@@ -1,6 +1,6 @@
 # Technical design
 
-2026-10-13. Architecture plus an isolated native window/focus experiment; no production app scaffold has been created. The [product specification](product-spec.md) is authoritative. [ADR 0001](adr/0001-own-tasks-and-notes.md) establishes ownership of notes and tasks; this document explains how to deliver that scope.
+2026-10-13. Architecture plus an isolated native window/focus experiment; issue #3 now adds an independently built native empty Search shell. The [product specification](product-spec.md) is authoritative. [ADR 0001](adr/0001-own-tasks-and-notes.md) establishes ownership of notes and tasks; this document explains how to deliver that scope.
 
 ## Recommendation and decision status
 
@@ -369,3 +369,10 @@ Beam uses English and Thai and explicitly deferred candidate-based IME testing. 
 ### Minimize follow-up — 2026-10-13
 
 The [controlled investigation](https://github.com/beamseree/hana-searchbar/blob/prototype/window-focus/prototypes/window-focus/debug/MINIMIZE-INVESTIGATION.md) compared Main's native yellow button, the original three-window bulk-minimize action and bulk minimization immediately after closing/reopening all working windows. Beam observed all three cases animate toward the Dock. The window implementation and system settings were unchanged. Runtime logs confirm minimized states and regular activation; the endpoint result comes from human observation. The original top-left report is not currently reproducible, and no root cause or fix has been established. Do not introduce timing workarounds or a helper based on this evidence. Retain the report and reproduction loop for recurrence.
+
+
+## Native shell follow-up — issue #3
+
+The first maintainable shell uses AppKit, one retained nonactivating panel/editor at `.floating`, accessory activation, exclusive Option+Space and menu invocation. It has no working windows, search results, collection, capture, or dependencies. The local identity is `com.beamseree.hana` at `~/Applications/Hana.app`, ad-hoc signed without entitlements; no certificate identity was available. See [reproducible commands](native-shell.md) and [current acceptance evidence](evidence/issue-3/validation.md).
+
+Beam confirmed physical invocation, immediate typing and Escape return over normal and native full-screen apps, plus reinvocation, fresh reopening and outside-click typing. A controlled exclusive-registration conflict produced a visible warning while menu invocation worked. These are current shell observations, separate from the preserved #1 prototype. Deterministic Mac Interaction session checks and native editor UI checks add narrower automated evidence. Only one display was available; the prior three-display experiment is not repeated evidence here. ADR 0005 remains proposed, and later working-window/search integration still needs its own acceptance checks.
