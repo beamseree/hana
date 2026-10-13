@@ -54,12 +54,30 @@ func validateCoverage(_ interaction: MacInteraction, diagnostics: Diagnostics) a
     cases.append(Case(id: "delete", query: "Hana9 Delete", url: documents.appendingPathComponent("Hana9 Delete.txt")))
 
     for item in cases {
+        var probe: [String: Any] = ["phase": "resource", "eligible": Search.eligible(item.url),
+                                     "visible": SpotlightSource.visibleDestination(item.url),
+                                     "metadataNameAvailable": NSMetadataItem(url: item.url)?.value(forAttribute: NSMetadataItemFSNameKey) != nil]
+        do {
+            _ = try FileManager.default.attributesOfItem(atPath: item.url.path)
+            probe["attributesReadable"] = true
+        } catch {
+            probe["attributesReadable"] = false
+            probe["errorDomain"] = (error as NSError).domain
+            probe["errorCode"] = (error as NSError).code
+        }
+        record(item.id, probe)
         let invocation = interaction.presentBar()
         interaction.updateQuery(item.query)
         let deadline = ContinuousClock.now + .seconds(item.excluded ? 4 : 12)
         while ContinuousClock.now < deadline {
             if !item.excluded, interaction.results.contains(where: { $0.url.standardizedFileURL == item.url.standardizedFileURL }) { break }
             try? await Task.sleep(for: .milliseconds(50))
+        }
+        guard interaction.currentInvocation == invocation, interaction.query == item.query else {
+            record(item.id, ["interrupted": true])
+            if interaction.currentInvocation == invocation { interaction.dismiss(invocation, reason: .escape) }
+            record("complete", ["finished": false])
+            return
         }
         let index = interaction.results.firstIndex { $0.url.standardizedFileURL == item.url.standardizedFileURL }
         record(item.id, ["phase": "discovery", "found": index != nil,
