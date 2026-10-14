@@ -30,6 +30,10 @@ import Foundation
 ///   summarize active Notes (default), note Archive, every record (notes and
 ///   tasks), the note Search projection, a task view, or the task Search
 ///   projection (`task-search-all` includes completed and archived tasks).
+/// - `snapshot-create <root> [--fail staging|capturing|closing|validating|writingManifest|publishing]`
+/// - `snapshot-list <root>`: list usable snapshots and diagnostic incomplete/invalid candidates.
+/// - `snapshot-inspect <root> --id <uuid>`: revalidate the selected published package.
+/// - `snapshot-reopen <root> --id <uuid> --destination <new-disposable-root>`: reopen a copy only.
 /// - `export <root> --destination <marked-disposable-root>`: publish a complete portable collection.
 /// - `validate-export <destination-root> --package <Hana-export-UUID>`: revalidate a published export.
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
@@ -85,6 +89,8 @@ enum CollectionFixtureHarness {
                 try await reorderTask(at: root, options)
             case "read":
                 try await withStore(try CollectionLocation.fixture(root)) { try await read(options["--query"] ?? "notes", from: $0) }
+            case "snapshot-create", "snapshot-list", "snapshot-inspect", "snapshot-reopen":
+                try await CollectionSnapshotFixture.run(arguments[0], root: root, options: options)
             case "export", "validate-export":
                 let result = try await CollectionExportFixture.run(arguments[0], root: root, options: options)
                 emit(arguments[0] == "export" ? "collection.exported" : "export.validated",
@@ -237,7 +243,7 @@ enum CollectionFixtureHarness {
         emit(event, fields)
     }
 
-    private static func read(_ query: String, from store: CollectionStore) async throws {
+    static func read(_ query: String, from store: CollectionStore) async throws {
         switch query {
         case "notes": emitNotes(try await store.read(.notes, in: store.generation))
         case "archive": emitNotes(try await store.read(.archivedNotes, in: store.generation))
@@ -304,6 +310,7 @@ enum CollectionFixtureHarness {
             if case .unsupportedSchema(let version) = error { return "unsupportedSchema(\(version))" }
             if case .storageFailure(let code) = error { return "storageFailure(\(code))" }
             return "\(error)"
+        case let error as CollectionRecovery.SnapshotError: return "\(error)"
         case let error as CollectionRecovery.ExportError: return "\(error)"
         case is CollectionExportFixture.Failure: return "usage"
         case is InjectedFailure: return "injectedFailure"
@@ -312,7 +319,7 @@ enum CollectionFixtureHarness {
         }
     }
 
-    private static func emit(_ event: String, _ fields: [String: Any]) {
+    static func emit(_ event: String, _ fields: [String: Any]) {
         var row = fields
         row["event"] = event
         guard let data = try? JSONSerialization.data(withJSONObject: row, options: [.sortedKeys]) else { return }

@@ -1,0 +1,54 @@
+snapshot-red-1.log
+/Users/beamsereeyothin/.codex/worktrees/bf24/hana/Tests/HanaTests/CollectionSnapshotTests.swift:14:34: error: cannot find 'CollectionRecovery' in scope
+   |                                  `- error: cannot find 'CollectionRecovery' in scope
+/Users/beamsereeyothin/.codex/worktrees/bf24/hana/Tests/HanaTests/CollectionSnapshotTests.swift:21:34: error: cannot find 'CollectionRecovery' in scope
+
+snapshot-red-5.log
+Build complete! (2.09s)
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "missing-table" at CollectionSnapshotTests.swift:86:9: Expectation failed: (inspection.isUsable → true) == ((damage == "valid") → false)
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "missing-table" at CollectionSnapshotTests.swift:87:9: Expectation failed: try await CollectionRecovery.listSnapshots(in: catalog).filter(\.isUsable).count == (damage == "valid" ? 1 : 0)
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "missing-table" at CollectionSnapshotTests.swift:89:19: Expectation failed: an error was expected but none was thrown and "Hana.CollectionStore" was returned
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "missing-table" at CollectionSnapshotTests.swift:92:13: Expectation failed: !((FileManager.default → <NSFileManager: 0x1047b4cd0>).fileExists(atPath: fixture.directory.appendingPathComponent("verification").path → "/var/folders/4n/ydpyp2b97mb8zn_7v0xpyd4r0000gn/T/hana-collection-tests-35D7A373-1885-488A-9AF8-1ECC3641297C/verification") → true)
+􀢄  Test run with 1 test in 1 suite failed after 0.584 seconds with 4 issues.
+
+snapshot-final-focused.log
+Build complete! (2.59s)
+􁁛  Test run with 7 tests in 2 suites passed after 1.295 seconds.
+
+non-native-regression.log
+Build complete! (0.14s)
+􀢄  Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() recorded an issue at DisplayPlacementTests.swift:71:9: Expectation failed: (late → (100.0, 100.0, 800.0, 600.0)) == nil
+􀢄  Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() recorded an issue at DisplayPlacementTests.swift:72:9: Expectation failed: (start.duration(to: clock.now) → 2.118846792 seconds) < (.seconds(1) → 1.0 seconds)
+􀢄  Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() recorded an issue at DisplayPlacementTests.swift:75:9: Expectation failed: (placement.frame(height: 64).minX → 390.0) == (-1290 → -1290.0)
+􀢄  Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() recorded an issue at CollectionStoreTests.swift:8:6: Caught error: .alreadyOwned
+􀢄  Test newTasksGoToTheTopOfInboxByDefaultAndSurviveReopen() recorded an issue at TaskLifecycleTests.swift:13:6: Caught error: .alreadyOwned
+􀢄  Test run with 97 tests in 12 suites failed after 5.529 seconds with 5 issues.
+
+non-native-regression-rerun.log
+Build complete! (0.31s)
+􀢄  Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() recorded an issue at DisplayPlacementTests.swift:72:9: Expectation failed: (start.duration(to: clock.now) → 1.610400542 seconds) < (.seconds(1) → 1.0 seconds)
+􀢄  Test run with 97 tests in 12 suites failed after 6.273 seconds with 1 issue.
+
+regression-failures-rerun.log
+Build complete! (0.13s)
+􁁛  Test run with 3 tests in 3 suites passed after 0.082 seconds.
+
+non-native-without-placement.log
+Build complete! (4.02s)
+􁁛  Test run with 92 tests in 11 suites passed after 6.116 seconds.
+
+non-native-placement.log
+Build complete! (0.13s)
+􁁛  Test run with 5 tests in 1 suite passed after 0.065 seconds.
+
+release-build-final.log
+Build complete! (10.87s)
+/Users/beamsereeyothin/.codex/worktrees/bf24/hana/build/Hana.app: valid on disk
+/Users/beamsereeyothin/.codex/worktrees/bf24/hana/build/Hana.app: satisfies its Designated Requirement
+
+signed-snapshot-harness-final.log
+Build complete! (1.30s)
+􁁛  Test run with 2 tests in 1 suite passed after 0.746 seconds.
+
+non-native-explicit-serial.log
+􁁛  Test run with 97 tests in 12 suites passed after 15.423 seconds.

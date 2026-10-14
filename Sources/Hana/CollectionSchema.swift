@@ -83,6 +83,14 @@ enum CollectionSchema {
         ) STRICT;
         """
 
+    /// Snapshots support exactly the initial schema, not a version number
+    /// pasted onto missing or altered tables. Check before typed decoding.
+    static func validateSnapshotStructure(_ db: Database) throws {
+        let expected = statements.split(separator: ";").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.sorted()
+        let actual = try String.fetchAll(db, sql: "SELECT sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' ORDER BY sql")
+        guard actual == expected else { throw CollectionStoreError.unreadableCollection }
+    }
+
     /// Builds a complete store in a private staging directory and publishes it
     /// by renaming that directory into place, so an interrupted initialization
     /// never leaves a half-made collection at the real path.

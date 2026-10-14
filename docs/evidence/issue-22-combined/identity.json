@@ -1,0 +1,136 @@
+{
+  "base": "210e9f34de86d751de6eb80a584cc41cde560ee3",
+  "featureCommits": [
+    "0592aab17803b2f1a0e5978af2f51aa4494a1bd8",
+    "57a756aad05549eb5207a34b00c3b75d1d5fd8d0"
+  ],
+  "exactFeatureSourceFilesVerified": [
+    "Sources/Hana/CollectionExport.swift",
+    "Sources/Hana/CollectionExportFixture.swift",
+    "Sources/Hana/CollectionRecovery.swift",
+    "Sources/Hana/CollectionSchema.swift",
+    "Sources/Hana/CollectionSnapshotFixture.swift",
+    "Sources/Hana/CollectionSnapshots.swift",
+    "Sources/Hana/CollectionStore.swift"
+  ],
+  "productionSourceFiles": [
+    {
+      "path": "Sources/Hana/ApplicationCatalog.swift",
+      "sha256": "906001060af7d22a2efc4662f5d4e08b58b4fab20cf0b017eb6536eef7264a63"
+    },
+    {
+      "path": "Sources/Hana/BarStyle.swift",
+      "sha256": "d3c0750b4a730cd9c365dcd96bc75281f8c4e2d6d5cfb60cb414aeec2db35601"
+    },
+    {
+      "path": "Sources/Hana/CollectionExport.swift",
+      "sha256": "3486a152e01aeeb390b515ffcef9a84a44e6662246bc65ba581513dc3eb359d2"
+    },
+    {
+      "path": "Sources/Hana/CollectionExportFixture.swift",
+      "sha256": "4b6c907430c06ebf44f69606a7a8a50da2491ae67ee711a30ec8f4cd827313f3"
+    },
+    {
+      "path": "Sources/Hana/CollectionFixtureHarness.swift",
+      "sha256": "b089bd3b5fcbd5916a06e67b9fedf6d4ee7a343079f93b7ef8f7921a47053baa"
+    },
+    {
+      "path": "Sources/Hana/CollectionLocation.swift",
+      "sha256": "e41c0128144a0db9b17648278b9c0d584accd792566afc5babaa560b3d5cbe30"
+    },
+    {
+      "path": "Sources/Hana/CollectionRecovery.swift",
+      "sha256": "a4c7649e7a0c73ec870ba081a03de19dc9f12c669c114c8d2bc285cbc08468bf"
+    },
+    {
+      "path": "Sources/Hana/CollectionSchema.swift",
+      "sha256": "eff5b9c06441755e868e72e383ec94d9a263fedc545c434c03bb1e708f565fb7"
+    },
+    {
+      "path": "Sources/Hana/CollectionSnapshotFixture.swift",
+      "sha256": "2852ec565283bf417a5145ef926a8b22e3a9db1e50b81dfdc22e0b6ea9289b58"
+    },
+    {
+      "path": "Sources/Hana/CollectionSnapshots.swift",
+      "sha256": "1a8096e15b510be1190bf563f625537861b4aa5fa9ff5c4b8bed8bdac12510fa"
+    },
+    {
+      "path": "Sources/Hana/CollectionStore.swift",
+      "sha256": "62fbd4ad7bfc3db5deb6ffc8a17831ef1eefcb92cdbb1eadc5095ee5f88fad0f"
+    },
+    {
+      "path": "Sources/Hana/CoverageValidation.swift",
+      "sha256": "1f030c74d09b5c383afd03c1f0f5e7f36e2907989e2367f0e4c2d517fe072f45"
+    },
+    {
+      "path": "Sources/Hana/Diagnostics.swift",
+      "sha256": "60cbe1d9a0abf3d08ff3959b3c1de56144d015e1b868381168eec50661f18e38"
+    },
+    {
+      "path": "Sources/Hana/DisplayPlacement.swift",
+      "sha256": "dc8bce3638a848e0d798ac1fe354960f3c96570639ec998f6efd890e3fdeebf5"
+    },
+    {
+      "path": "Sources/Hana/FocusedWindowGeometry.swift",
+      "sha256": "ccedd590287c70b2f7dab1574b385da481066b9c1d795bac99977167cf58a778"
+    },
+    {
+      "path": "Sources/Hana/GlobalShortcut.swift",
+      "sha256": "fef14a11a7bb1920f3a03e59e8ce5221731902c4c9116d2a184351582c149f15"
+    },
+    {
+      "path": "Sources/Hana/HanaApp.swift",
+      "sha256": "9e465a1ad5da0fce7abdafda1716af8d506b555e03eff89f329f9207a382989d"
+    },
+    {
+      "path": "Sources/Hana/MacInteraction.swift",
+      "sha256": "6194004c2bacbf19b6e20b305755c4e2a00a10e46ec3bc198099998297367b7a"
+    },
+    {
+      "path": "Sources/Hana/MixedSearchValidation.swift",
+      "sha256": "4bbf9d57ba4e4becd496e787dfe70f630662781de35d90e94b3dc7011ffb1099"
+    },
+    {
+      "path": "Sources/Hana/PerformanceValidation.swift",
+      "sha256": "d3060fb2af8dd34b7b78cd4bc2c3d9bcd5084a2db130a16221ec08d9bbb636a2"
+    },
+    {
+      "path": "Sources/Hana/ResultIcons.swift",
+      "sha256": "725db124561f8104f3e07290da640a7a5718dce9fe976096725b593dec2a6c85"
+    },
+    {
+      "path": "Sources/Hana/Search.swift",
+      "sha256": "45d866b2f0e75a75c1a81a79ebf96ae607e691718b59fdd592604f5e01c3e3f5"
+    },
+    {
+      "path": "Sources/Hana/SearchCorrectnessValidation.swift",
+      "sha256": "1fe42e3974b033d384acec9866a0f1c9098664552055fbcf9cc74643fa242b90"
+    },
+    {
+      "path": "Sources/Hana/SearchResultsView.swift",
+      "sha256": "7cae9b9863a8dd87e231a4e271590171e858a31dc957b2d56593f85beee885f3"
+    },
+    {
+      "path": "Sources/Hana/SpotlightSource.swift",
+      "sha256": "3ae819e45a6017c5eac9e289056a05f715b80addec3fdc2c0285c3f43999ecc2"
+    },
+    {
+      "path": "Sources/Hana/WorkingWindowController.swift",
+      "sha256": "948c3303ea57297486bf3428717ac3db1733fb3cabf76bef0dfa5f9992219976"
+    },
+    {
+      "path": "Package.swift",
+      "sha256": "9f3f11d721d4ce0ce125b335a60a5cbd1b3e8083625d1b070561c32a4604fedf"
+    },
+    {
+      "path": "Package.resolved",
+      "sha256": "456d03c5684fc8ce3c38a6eb88d4b2b49a3b62d242d48874a0b7bc3fc1c342e8"
+    }
+  ],
+  "productionTreeSHA256": "138b4d4eeef624aae785d304e0bee14629deb50810f2a89b2f6bc36e1d6b3494",
+  "binarySHA256": "cc02dbf318eebea39341ddd54c7f2e6cf18f5582b1a4763fa40e3a0d8cd16c06",
+  "worktree": "/Users/beamsereeyothin/.codex/worktrees/issue-22-combined-validation/hana",
+  "branch": "codex/issue-22-combined-validation",
+  "nativeTestsRun": false,
+  "localValidationCommit": "0af0197650323220b71af956da97b960d26059f2"
+}
