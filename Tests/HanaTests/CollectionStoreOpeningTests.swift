@@ -1,5 +1,6 @@
 import Foundation
 import GRDB
+import Synchronization
 import Testing
 @testable import Hana
 
@@ -38,6 +39,33 @@ struct CollectionStoreOpeningTests {
         await second.close()
     }
 
+    @Test func ownershipIsRetakenAtOnceWhileOtherCodeSpawnsProcesses() async throws {
+        // A child mid-spawn briefly shares a just-released lock's file
+        // description, even with close-on-exec. That must not refuse a reopen.
+        let fixture = try TemporaryFixture()
+        await (try CollectionStore.open(fixture.location)).close()
+        let stop = Atomic(false)
+        let spawners = (0..<4).map { _ in
+            Thread {
+                while !stop.load(ordering: .relaxed) {
+                    let child = Process()
+                    child.executableURL = URL(fileURLWithPath: "/usr/bin/true")
+                    try? child.run()
+                    child.waitUntilExit()
+                }
+            }
+        }
+        spawners.forEach { $0.start() }
+        defer { stop.store(true, ordering: .relaxed) }
+        let deadline = ContinuousClock.now + .milliseconds(500)
+        var reacquired = 0
+        while ContinuousClock.now < deadline {
+            _ = try OwnerLock(directory: fixture.location.collectionDirectory)
+            reacquired += 1
+        }
+        #expect(reacquired > 1000)
+    }
+
     @Test func storageIsOwnerOnlyWhileLiveAndRefusedWhenWidened() async throws {
         let fixture = try TemporaryFixture()
         let store = try await CollectionStore.open(fixture.location)
@@ -67,8 +95,13 @@ struct CollectionStoreOpeningTests {
         // A real SQLite I/O refusal, either at open or at the write.
         await #expect(throws: CollectionStoreError.self) {
             let readOnly = try await CollectionStore.open(fixture.location)
-            defer { Task { await readOnly.close() } }
-            _ = try await readOnly.perform(.createNote(operation: UUID(), body: "Refused"), in: readOnly.generation)
+            do {
+                _ = try await readOnly.perform(.createNote(operation: UUID(), body: "Refused"), in: readOnly.generation)
+            } catch {
+                await readOnly.close()
+                throw error
+            }
+            await readOnly.close()
         }
         #expect(chmod(fixture.location.databaseURL.path, 0o600) == 0)
         let reopened = try await CollectionStore.open(fixture.location)

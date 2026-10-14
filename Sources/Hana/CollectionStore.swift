@@ -921,14 +921,25 @@ private final class ObservationCancellation: @unchecked Sendable {
 
 /// Process-lifetime exclusive ownership of a collection directory. The kernel
 /// releases the lock when the descriptor closes, including on process death.
-private final class OwnerLock: Sendable {
+final class OwnerLock: Sendable {
     private let descriptor: Int32
+
+    /// How long a held lock may be retried before it counts as owned. A child
+    /// process mid-spawn shares every file description until its exec closes
+    /// close-on-exec ones, so a just-released lock can stay held for
+    /// milliseconds (up to ~2 ms measured). A real owner holds it far longer.
+    static let releaseGrace: Duration = .milliseconds(100)
 
     init(directory: URL) throws {
         let descriptor = Darwin.open(directory.path, O_RDONLY | O_DIRECTORY | O_CLOEXEC | O_NOFOLLOW)
         guard descriptor >= 0 else { throw CollectionStoreError.missingCollection }
-        guard flock(descriptor, LOCK_EX | LOCK_NB) == 0 else {
+        let deadline = ContinuousClock.now + Self.releaseGrace
+        while flock(descriptor, LOCK_EX | LOCK_NB) != 0 {
             let failure = errno
+            if failure == EWOULDBLOCK, ContinuousClock.now < deadline {
+                usleep(1000)
+                continue
+            }
             Darwin.close(descriptor)
             throw failure == EWOULDBLOCK ? CollectionStoreError.alreadyOwned : CollectionStoreError.storageFailure(code: ResultCode.SQLITE_CANTOPEN.rawValue)
         }
