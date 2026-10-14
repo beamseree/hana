@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+# Synthetic names exceed Spotlight's 256-candidate shortlist. No files open.
+python3 - <<'PY'
+from pathlib import Path
+root = Path.home() / 'Hana Issue 48 Validation'
+root.mkdir(exist_ok=True)
+names = [f'{n:04}.aifc' for n in range(300)]
+names += [f'xaifc-{n:04}.txt' for n in range(300)]
+names += ['aifc.txt', 'aifc-guide.txt', 'zzzz aifc best.txt']
+for name in names:
+    destination = root / name
+    if not destination.exists():
+        destination.write_text('Synthetic issue 48 Search ranking fixture.\n')
+print(root)
+PY
+mdimport "$HOME/Hana Issue 48 Validation"

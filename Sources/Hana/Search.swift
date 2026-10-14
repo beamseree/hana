@@ -4,18 +4,32 @@ struct SearchResult: Identifiable, Equatable, Sendable {
     struct ID: Hashable, Sendable { let destination: URL }
     let name: String
     let url: URL
-    let alternateNames: [String]
+    private(set) var alternateNames: [String]
     enum Kind: String, Sendable { case application = "Application", file = "File", folder = "Folder" }
+    // Slot 1 is reserved for owned notes/tasks; neither is searched yet.
+    var kindRank: Int { kind == .application ? 0 : 2 }
     let kind: Kind
+    private(set) var matchingNames: [SearchName]
     init(name: String, url: URL, alternateNames: [String] = [], kind: Kind = .application) {
         self.name = name
         self.url = url
         self.alternateNames = alternateNames
         self.kind = kind
+        matchingNames = ([name] + alternateNames).map { SearchName($0, stripExtension: kind == .file) }
     }
     var id: ID { ID(destination: url.standardizedFileURL) }
     var subtitle: String { url.path }
     var typeLabel: String { kind.rawValue }
+
+    func mergingNames(from other: SearchResult) -> SearchResult {
+        var merged = self
+        let aliases = Array(zip([name] + alternateNames, matchingNames))
+            + Array(zip([other.name] + other.alternateNames, other.matchingNames))
+        let prepared = Dictionary(aliases, uniquingKeysWith: { first, _ in first })
+        merged.alternateNames = Array(Set(alternateNames + [other.name] + other.alternateNames)).sorted()
+        merged.matchingNames = ([name] + merged.alternateNames).compactMap { prepared[$0] }
+        return merged
+    }
 }
 
 enum SourceStatus: String, Equatable, Sendable {
@@ -166,14 +180,11 @@ final class Search {
     }
 
     private nonisolated static func normalized(_ text: String) -> String {
-        text.precomposedStringWithCanonicalMapping.folding(options: [.caseInsensitive], locale: Locale(identifier: "en_US_POSIX"))
-            .split(whereSeparator: \.isWhitespace).joined(separator: " ")
+        SearchName.normalized(text)
     }
 
     nonisolated static func matchTier(_ name: String, query: String) -> Int? {
-        let value = normalized(name), query = normalized(query)
-        guard query.split(whereSeparator: \.isWhitespace).allSatisfy({ value.contains($0) }) else { return nil }
-        return value == query ? 0 : value.hasPrefix(query) ? 1 : 2
+        SearchName(name).tier(for: normalized(query))?.rawValue
     }
 
     // Internal adapter compaction uses the same ordering as visible Search.
@@ -186,13 +197,17 @@ final class Search {
                                          usage: [SearchResult.ID: Usage], limit: Int = 20) async -> [SearchResult] {
         struct Candidate {
             let id: SearchResult.ID
-            let tier: Int
+            let tier: SearchName.Tier
+            let kindRank: Int
             let closeness: Int
+            let wordsInOrder: Bool
             let usage: Usage
         }
         func precedes(_ lhs: Candidate, _ rhs: Candidate) -> Bool {
             if lhs.tier != rhs.tier { return lhs.tier < rhs.tier }
+            if lhs.kindRank != rhs.kindRank { return lhs.kindRank < rhs.kindRank }
             if lhs.closeness != rhs.closeness { return lhs.closeness < rhs.closeness }
+            if lhs.wordsInOrder != rhs.wordsInOrder { return lhs.wordsInOrder }
             if lhs.usage.sequence != rhs.usage.sequence { return lhs.usage.sequence > rhs.usage.sequence }
             if lhs.usage.count != rhs.usage.count { return lhs.usage.count > rhs.usage.count }
             return lhs.id.destination.path < rhs.id.destination.path
@@ -205,10 +220,11 @@ final class Search {
             }
             guard eligible(result.url) else { continue }
             var candidate: Candidate?
-            for name in [result.name] + result.alternateNames {
-                guard let tier = matchTier(name, query: query) else { continue }
-                let scored = Candidate(id: result.id, tier: tier,
-                    closeness: max(0, normalized(name).count - query.count), usage: usage[result.id] ?? Usage())
+            for name in result.matchingNames {
+                guard let tier = name.tier(for: query) else { continue }
+                let scored = Candidate(id: result.id, tier: tier, kindRank: result.kindRank,
+                    closeness: name.length - query.count, wordsInOrder: name.wordsInOrder(for: query, tier: tier),
+                    usage: usage[result.id] ?? Usage())
                 if candidate == nil || precedes(scored, candidate!) { candidate = scored }
             }
             guard let candidate else { continue }
@@ -233,8 +249,7 @@ final class Search {
             }
             guard retained.contains(result.id) else { continue }
             if let existing = destinations[result.id] {
-                destinations[result.id] = SearchResult(name: existing.name, url: existing.url,
-                    alternateNames: Array(Set(existing.alternateNames + [result.name] + result.alternateNames)).sorted(), kind: existing.kind)
+                destinations[result.id] = existing.mergingNames(from: result)
             } else { destinations[result.id] = result }
         }
         return best.compactMap { destinations[$0.id] }
