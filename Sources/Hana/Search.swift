@@ -39,9 +39,6 @@ final class Search {
         let results: [SearchResult]
         let appStatus: SourceStatus
         let fileStatus: SourceStatus
-        /// At least one visible match was supplied by a source for this
-        /// request, rather than surviving only in the previous-result cache.
-        let hasFreshResults: Bool
         var status: SourceStatus {
             if appStatus == .failed || fileStatus == .failed { return .failed }
             if appStatus == .loading || fileStatus == .loading { return .loading }
@@ -69,8 +66,6 @@ final class Search {
     private final class SourceState {
         var apps: SourceSnapshot
         var files: SourceSnapshot
-        var freshApps: [SearchResult] = []
-        var freshFiles: [SearchResult] = []
         var visibleIDs: Set<SearchResult.ID>
         init(apps: [SearchResult], files: [SearchResult], hasFiles: Bool) {
             self.apps = SourceSnapshot(results: apps, status: .loading)
@@ -144,7 +139,7 @@ final class Search {
         guard !query.isEmpty else {
             retainedApps = []
             retainedFiles = []
-            let initial = Batch(generation: request.generation, results: [], appStatus: .ready, fileStatus: .ready, hasFreshResults: false)
+            let initial = Batch(generation: request.generation, results: [], appStatus: .ready, fileStatus: .ready)
             continuation.finish()
             return Batches(initial: initial, updates: stream)
         }
@@ -156,7 +151,7 @@ final class Search {
         retain(initialResults, from: state)
         state.visibleIDs = Set(initialResults.map(\.id))
         let initial = Batch(generation: request.generation, results: initialResults,
-                            appStatus: state.apps.status, fileStatus: state.files.status, hasFreshResults: false)
+                            appStatus: state.apps.status, fileStatus: state.files.status)
         task = Task { [weak self] in
             defer { continuation.finish() }
             guard !Task.isCancelled, self?.generation == request.generation else { return }
@@ -165,7 +160,6 @@ final class Search {
             let (updates, sink) = AsyncStream<Void>.makeStream(bufferingPolicy: .bufferingNewest(1))
             let apps = Task {
                 for await snapshot in source() {
-                    state.freshApps = snapshot.results
                     state.receive(snapshot, for: \.apps)
                     sink.yield(())
                 }
@@ -174,7 +168,6 @@ final class Search {
                 if let files {
                     do { try await Task.sleep(for: debounce) } catch { return }
                     for await snapshot in files(request.text) {
-                        state.freshFiles = snapshot.results
                         state.receive(snapshot, for: \.files)
                         sink.yield(())
                     }
@@ -187,23 +180,15 @@ final class Search {
                 let appSnapshot = state.apps, fileSnapshot = state.files
                 let usage = self?.usage ?? [:]
                 let candidates = appSnapshot.results + fileSnapshot.results
-                let freshCandidates = state.freshApps + state.freshFiles
                 let work = Task.detached(priority: .userInitiated) {
-                    let results = Self.rank(candidates, query: query, usage: usage)
-                    let visible = Set(results.map(\.id))
-                    let hasFreshResults = freshCandidates.contains { result in
-                        visible.contains(result.id) && ([result.name] + result.alternateNames).contains {
-                            Self.matchTier($0, query: query) != nil
-                        }
-                    }
-                    return (results, hasFreshResults)
+                    Self.rank(candidates, query: query, usage: usage)
                 }
-                let (results, hasFreshResults) = await withTaskCancellationHandler { await work.value } onCancel: { work.cancel() }
+                let results = await withTaskCancellationHandler { await work.value } onCancel: { work.cancel() }
                 guard !Task.isCancelled, self?.generation == request.generation else { return }
                 state.visibleIDs = Set(results.map(\.id))
                 self?.retain(results, apps: appSnapshot.results, files: fileSnapshot.results)
                 continuation.yield(Batch(generation: request.generation, results: results,
-                                         appStatus: appSnapshot.status, fileStatus: fileSnapshot.status, hasFreshResults: hasFreshResults))
+                                         appStatus: appSnapshot.status, fileStatus: fileSnapshot.status))
             }
         }
         continuation.onTermination = { [weak self] _ in

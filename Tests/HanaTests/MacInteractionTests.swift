@@ -7,6 +7,38 @@ import Testing
 @Suite(.serialized)
 @MainActor
 struct MacInteractionTests {
+    @Test(arguments: [true, false])
+    func editingReplacesTheListOnlyAfterBothSourcesFinish(appsFinishFirst: Bool) async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let notes = app("Notes", "/fixture/Notes.app"), numbers = app("Numbers", "/fixture/Numbers.app")
+        let document = SearchResult(name: "Notes document", url: URL(fileURLWithPath: "/fixture/Notes.txt"), kind: .file)
+        interaction.updateQuery("N")
+        await apps.send([notes, numbers]); await files.send([])
+        try await eventually { interaction.results == [notes, numbers] && !interaction.isLoading }
+        interaction.updateQuery("No")
+        try await eventually { apps.subscriptionCount == 2 && files.subscriptionCount == 2 }
+        if appsFinishFirst {
+            await apps.send([notes], status: .partial)
+        } else {
+            await files.send([document], status: .partial)
+        }
+        try await eventually { interaction.statusMessage != nil }
+        #expect(interaction.results == [notes, numbers])
+        #expect(interaction.isLoading)
+        if appsFinishFirst {
+            await files.send([document])
+        } else {
+            await apps.send([notes])
+        }
+        try await eventually { !interaction.isLoading }
+        #expect(interaction.results == [notes, document])
+        #expect(interaction.selectedResult?.id == notes.id)
+    }
+
     @Test func emptySourceUpdateDoesNotReplaceRowsWithOnlyRecheckedMatches() async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
@@ -25,8 +57,11 @@ struct MacInteractionTests {
         try await eventually { interaction.statusMessage?.contains("failure") == true }
         #expect(interaction.results == [notes, numbers])
         await apps.send([notes], status: .loading)
-        try await eventually { interaction.results == [notes] }
+        try await Task.sleep(for: .milliseconds(180))
+        #expect(interaction.results == [notes, numbers])
         #expect(interaction.isLoading)
+        await apps.send([notes])
+        try await eventually { interaction.results == [notes] && !interaction.isLoading }
     }
 
     @Test func enterDuringRefreshOpensTheVisibleRetainedRow() async throws {
@@ -48,7 +83,7 @@ struct MacInteractionTests {
         #expect(interaction.currentInvocation == nil)
     }
 
-    @Test func editsKeepPreviousRowsUntilFreshMatchesArrive() async throws {
+    @Test func editsKeepPreviousRowsUntilBothSourcesFinish() async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
         let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
@@ -73,9 +108,12 @@ struct MacInteractionTests {
         #expect(interaction.results == [notes, numbers])
         #expect(interaction.isLoading)
         await files.send([safari], status: .loading)
-        try await eventually { interaction.results == [safari] }
-        #expect(interaction.selectedResult?.id == safari.id)
+        try await Task.sleep(for: .milliseconds(180))
+        #expect(interaction.results == [notes, numbers])
         #expect(interaction.isLoading)
+        await files.send([safari])
+        try await eventually { interaction.results == [safari] && !interaction.isLoading }
+        #expect(interaction.selectedResult?.id == safari.id)
         interaction.updateQuery("no-such-result")
         #expect(interaction.results == [safari])
         let subscriptions = files.subscriptionCount
@@ -159,7 +197,7 @@ struct MacInteractionTests {
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let values = (1...7).map { app("Notes \($0)", "/fixture/\($0).app") }
         interaction.updateQuery("N")
-        await apps.send(values)
+        await apps.send(values); await files.send([])
         try await eventually { interaction.results.count == 7 && interaction.contentHeight >= 468 }
         let expanded = interaction.contentHeight
         for (index, query) in ["No", "Not", "Note", "Notes"].enumerated() {
@@ -171,12 +209,12 @@ struct MacInteractionTests {
             #expect(interaction.contentHeight == expanded)
         }
         await apps.send([values[0]], status: .ready)
-        try await eventually { interaction.results.count == 1 }
         try await Task.sleep(for: .milliseconds(180))
+        #expect(interaction.results == values)
         #expect(interaction.contentHeight == expanded) // Files still loading.
         await files.send([], status: finishedStatus)
         let finishedHeight: CGFloat = finishedStatus == .ready ? 132 : 176
-        try await eventually { interaction.contentHeight == finishedHeight }
+        try await eventually { interaction.contentHeight == finishedHeight && interaction.results == [values[0]] }
         interaction.updateQuery("")
         try await eventually { interaction.contentHeight == 68 && interaction.results.isEmpty }
     }
@@ -308,7 +346,7 @@ struct DestinationInteractionTests {
         var completion: CheckedContinuation<Void, Error>?
         let file = SearchResult(name: "Old", url: URL(fileURLWithPath: "/fixture/old.txt"), kind: .file)
         let freshFile = SearchResult(name: "Fresh", url: URL(fileURLWithPath: "/fixture/fresh.txt"), kind: .file)
-        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { text in
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.yield(.init(results: [], status: .ready)); $0.finish() } }, files: { text in
             text == "Old" ? oldFiles.stream() : newFiles.stream()
         }, debounce: .zero), openFile: { _ in
             try await withCheckedThrowingContinuation { completion = $0 }
@@ -345,7 +383,7 @@ struct DestinationInteractionTests {
         let files = CatalogFeed()
         var completion: CheckedContinuation<Void, Error>?
         var activated = false
-        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { _ in files.stream() }, debounce: .zero), openFile: { _ in
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.yield(.init(results: [], status: .ready)); $0.finish() } }, files: { _ in files.stream() }, debounce: .zero), openFile: { _ in
             try await withCheckedThrowingContinuation { completion = $0 }
             return .init(activate: { activated = true; return true })
         })
@@ -369,7 +407,7 @@ struct DestinationInteractionTests {
     @Test func deletedFileFailsNativeRevalidationWithoutLosingQuery() async throws {
         _ = NSApplication.shared
         let files = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { _ in files.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.yield(.init(results: [], status: .ready)); $0.finish() } }, files: { _ in files.stream() }, debounce: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         interaction.updateQuery("Missing")
@@ -393,7 +431,7 @@ struct DestinationInteractionTests {
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         interaction.updateQuery("Notes")
-        await files.send([file])
+        await apps.send([]); await files.send([file])
         try await eventually { interaction.selectedResult?.id == file.id }
         interaction.moveSelection(by: 1)
         await apps.send([app("Notes", "/Applications/Notes.app")])

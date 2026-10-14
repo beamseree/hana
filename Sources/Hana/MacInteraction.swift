@@ -545,9 +545,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         userMovedSelection = false
         openFailure = nil
         let stream = search.search(request)
-        // Keep the displayed snapshot intact until a source delivers its
-        // replacement. An edit alone must not remove nonmatching rows.
-        if results.isEmpty || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        // Keep the displayed snapshot intact until both sources finish.
+        // An edit alone must not remove nonmatching rows.
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             results = stream.initial.results
         }
         selectedID = results.first?.id
@@ -565,9 +565,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                       self.currentInvocation != nil, !Task.isCancelled else { continue }
                 self.sourceStatus = batch.appStatus
                 self.fileStatus = batch.fileStatus
-                // Empty or cache-only intermediate batches are not a
-                // replacement: a source has yet to deliver fresh matches.
-                if batch.hasFreshResults || (batch.appStatus != .loading && batch.fileStatus != .loading) {
+                // Publish the completed mixed list together, without showing
+                // intermediate app-only or partially gathered file results.
+                if batch.appStatus != .loading && batch.fileStatus != .loading {
                     self.results = batch.results
                     self.icons = self.icons.filter { id, _ in batch.results.contains { $0.id == id } }
                     if !self.userMovedSelection || !batch.results.contains(where: { $0.id == self.selectedID }) {

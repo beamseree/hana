@@ -1,5 +1,15 @@
 # Issue #49 — steady Search while typing
 
+## Latest follow-up — publish the completed list together
+
+On 2026-10-14 Beam observed an intermediate list change followed by another change when files arrived, and requested a single replacement. This supersedes the first-fresh-result rule in the previous follow-up below.
+
+Mac Interaction now preserves the displayed rows while either source is loading, even when fresh matches arrive. Once both sources report ready, partial or failed, it publishes their combined ranked results together. An initial search stays empty until that point. Clearing remains immediate; Enter still captures the selected visible row. Later completed source updates continue to reflect live changes for the same query. Search's obsolete freshness flag and raw-snapshot tracking were removed.
+
+The new parameterized native regression failed for both source completion orders before the fix, then passed afterward. Existing typing/backspacing, cache-only update and height tests now expect terminal source completion; file-opening fixtures explicitly publish an empty ready application snapshot. Focused Search, Mac Interaction and destination checks passed: 57 tests in four suites, 11.965 seconds. Both independent standards and spec reviews reported no remaining findings. Final `xcrun swift test --no-parallel` passed: 147 tests in 21 suites, 27.547 seconds, with the same five environment-gated live-index tests skipped. `git diff --check` and `./scripts/build` passed.
+
+The user authorized the native testing slot and installation. The previous Hana process was quit before replacing `/Users/beamsereeyothin/Applications/Hana.app`; the installed signature passed strict validation. PID `38970`, launched at `2026-10-14 12:40:53 +0700`, loaded UUID `7650873A-88AA-3972-98DD-F3B989054813`, matching built and installed executables. Their SHA-256 is `ba5e0ace09577913e2128402a420230494d710c14b9a05b33457d781277c6159`. The slot was returned for the user's hands-on test. Automated native assertions and loaded-binary identity do not establish perceived motion or physical keyboard routing.
+
 ## Follow-up — retain displayed rows until fresh results
 
 On 2026-10-14 the user requested that typing and backspacing preserve even nonmatching displayed rows until replacements load. This supersedes the immediate-removal behavior in the original implementation record below.
