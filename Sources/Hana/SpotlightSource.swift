@@ -144,7 +144,7 @@ final class SpotlightSource: NSObject {
                         let name = item.kind == .application ? item.url.deletingPathExtension().lastPathComponent : item.name
                         guard let tier = [name, item.name].compactMap({ Search.matchTier($0, query: text) }).min(),
                               index == 2 || tier == index,
-                              Search.eligible(item.url), Self.visibleDestination(item.url) else { continue }
+                              Search.indexedEligible(item.url, kind: item.kind), Self.visibleDestination(item.url) else { continue }
                         results.append(SearchResult(name: name, url: item.url,
                             alternateNames: item.kind == .application ? [item.name] : [], kind: item.kind))
                     }

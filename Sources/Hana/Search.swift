@@ -200,10 +200,11 @@ final class Search {
                 guard !Task.isCancelled, self?.generation == request.generation else { return }
                 let appSnapshot = state.apps, fileSnapshot = state.files
                 let usage = self?.usage ?? [:]
-                let candidates = appSnapshot.results + fileSnapshot.results
+                let appResults = appSnapshot.results, fileResults = fileSnapshot.results
                 let freshCandidates = state.freshApps + state.freshFiles
                 let work = Task.detached(priority: .userInitiated) {
-                    let results = Self.rank(candidates, query: query, usage: usage)
+                    let files = fileResults.filter { Self.indexedEligible($0.url, kind: $0.kind) }
+                    let results = Self.rank(appResults + files, query: query, usage: usage)
                     let visible = Set(results.map(\.id))
                     let hasFreshResults = freshCandidates.contains { result in
                         visible.contains(result.id) && result.matchingNames.contains { $0.tier(for: query) != nil }
@@ -258,6 +259,32 @@ final class Search {
             let path = home.appendingPathComponent(root).path
             return url.path == path || url.path.hasPrefix(path + "/")
         }
+    }
+
+    private nonisolated static let dependencyFolders: Set<String> = ["node_modules", "pods", "deriveddata", ".build", "target", "vendor", "dist"]
+    private nonisolated static let systemRoots: Set<String> = ["system", "library"]
+    /// iCloud Drive and file-provider storage.
+    private nonisolated static let retainedLibraryFolders: Set<String> = ["mobile documents", "cloudstorage"]
+    private nonisolated static let userLibrary = FileManager.default.homeDirectoryForCurrentUser
+        .appendingPathComponent("Library").standardizedFileURL.pathComponents.map { $0.lowercased() }
+    /// Finder lives outside the catalog's roots; only the index supplies it.
+    private nonisolated static let applicationRoots = (ApplicationCatalog.conventionalRoots
+        + [URL(fileURLWithPath: "/System/Library/CoreServices/Finder.app")])
+        .map { $0.standardizedFileURL.pathComponents.map { $0.lowercased() } }
+
+    /// Shared eligibility for indexed results, applied before any candidate
+    /// limit: also omit dependency and build folders, `/System`, `/Library`
+    /// and `~/Library`. iCloud Drive and file-provider storage under
+    /// `~/Library` stay searchable apart from their dependency folders.
+    /// Applications in the catalog's conventional roots, and Finder, are never removed.
+    nonisolated static func indexedEligible(_ url: URL, kind: SearchResult.Kind) -> Bool {
+        guard eligible(url) else { return false }
+        let components = url.standardizedFileURL.pathComponents.map { $0.lowercased() }
+        if kind == .application, applicationRoots.contains(where: components.starts) { return true }
+        guard !components.contains(where: dependencyFolders.contains),
+              components.count < 2 || !systemRoots.contains(components[1]) else { return false }
+        guard components.starts(with: userLibrary) else { return true }
+        return components.count > userLibrary.count && retainedLibraryFolders.contains(components[userLibrary.count])
     }
 
     private nonisolated static func normalized(_ text: String) -> String {
