@@ -144,8 +144,8 @@ enum NoteIconMorph {
     static let cornerRadius = figma(112.5) - figma(12.5)
     static let topLine = (start: CGPoint(x: figma(133.5), y: figma(157)), end: CGPoint(x: figma(240.5), y: figma(157)))
     static let bottomLine = (start: CGPoint(x: figma(133.5), y: figma(217.5)), end: CGPoint(x: figma(187.5), y: figma(217.5)))
-    /// Figma's spokes start here, under the ring at rest.
-    private static let spokeStart = (14 - figma(156.5)) * Logo.root2
+    /// Figma's spokes start here, under the ring at rest. The Task morph shares it.
+    static let spokeStart = (14 - figma(156.5)) * Logo.root2
 
     /// The square sampled at the bloom's angles, so the two morph point for point.
     static let squarePoints: [CGPoint] = Logo.outlineAngles.map { angle in
@@ -200,6 +200,69 @@ enum NoteIconMorph {
     }
 }
 
+/// Task's mode icon, morphing from the logo. Tuned in prototypes/logo-task-morph
+/// ("Slide"): the bloom rounds into a circle, and the top spokes slide down and
+/// stretch into a checkmark's arms; they already run along the arms' diagonals, so
+/// they never turn. The ring drops into the check's corner as it shrinks away, and
+/// the bottom spokes retract into it. The outline springs more than the check.
+enum TaskIconMorph {
+    /// Drives the ring, spokes and checkmark.
+    static let spring = Spring(duration: 0.24, bounce: 0.25)
+    static let outlineSpring = Spring(duration: 0.24, bounce: 0.4)
+
+    private typealias Logo = LogoGeometry
+    /// The circle shares the bloom's extent, as the Note icon's square does.
+    static let circleRadius = Logo.lobeDistance / Logo.root2 + Logo.lobeRadius
+    /// The checkmark: a 4-point arm down-right into the corner, then an 8-point arm
+    /// up-right, with its bounding box centred on the icon.
+    static let check: (start: CGPoint, corner: CGPoint, end: CGPoint) = {
+        let short = 4 / Logo.root2, long = 8 / Logo.root2
+        let corner = CGPoint(x: Logo.centre - (short + long) / 2 + short, y: Logo.centre + long / 2)
+        return (CGPoint(x: corner.x - short, y: corner.y - short), corner, CGPoint(x: corner.x + long, y: corner.y - long))
+    }()
+
+    /// The circle sampled at the bloom's angles, so the two morph point for point.
+    static let circlePoints: [CGPoint] = Logo.outlineAngles.map {
+        CGPoint(x: Logo.centre + circleRadius * cos($0), y: Logo.centre + circleRadius * sin($0))
+    }
+
+    /// The icon with the centre at progress `p` and the outline at `outline`:
+    /// 0 is the logo, 1 the Task icon. Springs may overshoot either end; geometry
+    /// follows them, opacity is clamped.
+    static func shape(at p: CGFloat, outline: CGFloat) -> ModeIconShape {
+        let q = min(1, max(0, p)), overshoot = p - q
+        func progress(_ start: CGFloat, _ end: CGFloat) -> CGFloat { min(1, max(0, (q - start) / (end - start))) }
+        func window(_ start: CGFloat, _ end: CGFloat) -> CGFloat { progress(start, end) + overshoot }
+        func lerp(_ a: CGFloat, _ b: CGFloat, _ t: CGFloat) -> CGFloat { a + (b - a) * t }
+        func mix(_ a: CGPoint, _ b: CGPoint, _ t: CGFloat) -> CGPoint { CGPoint(x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t)) }
+
+        let bloom = zip(Logo.bloomPoints, circlePoints).map { mix($0, $1, outline) }
+
+        let spokeStart = NoteIconMorph.spokeStart
+        let retract = lerp(Logo.spokeEnd - spokeStart, 0, window(0, 0.45)), retractedOpacity = 1 - progress(0.1, 0.4)
+        let spokes = Logo.directions.enumerated().map { index, direction -> ModeIconShape.Part in
+            let inner = Logo.point(spokeStart, along: direction), cap = Logo.point(Logo.spokeEnd, along: direction)
+            // The top spokes' ends travel straight to the arms' ends.
+            switch index {
+            case 0:
+                return ModeIconShape.Part(path: Logo.line(mix(cap, check.start, p), mix(inner, check.corner, p)), opacity: 1)
+            case 1:
+                return ModeIconShape.Part(path: Logo.line(mix(inner, check.corner, p), mix(cap, check.end, p)), opacity: 1)
+            default:
+                return ModeIconShape.Part(path: Logo.line(inner, Logo.point(spokeStart + retract, along: direction)),
+                                          opacity: Float(retractedOpacity))
+            }
+        }
+
+        let drop = window(0, 0.5)
+        let radius = max(0.01, lerp(Logo.ringRadius, Logo.ringRadius * 0.3, drop))
+        let ring = mix(CGPoint(x: Logo.centre, y: Logo.centre), check.corner, drop)
+        return ModeIconShape(bloom: ModeIconShape.Part(path: Logo.polygon(bloom), opacity: 1),
+                             ring: ModeIconShape.Part(path: Logo.circle(ring, radius), opacity: Float(1 - progress(0, 0.45))),
+                             spokes: spokes)
+    }
+}
+
 /// A unit-mass spring in Apple's (duration, bounce) terms, as in
 /// `CASpringAnimation(perceptualDuration:bounce:)`. Solved analytically, so a
 /// retarget can start from the exact current displacement and velocity.
@@ -239,7 +302,7 @@ struct Spring {
 @MainActor
 final class ModeIconView: NSView {
     enum Glyph {
-        case logo, magnifier, note
+        case logo, magnifier, note, task
     }
 
     private(set) var glyph = Glyph.logo
@@ -255,12 +318,13 @@ final class ModeIconView: NSView {
 
     /// The morphs out of the logo: progress 0 is the logo in both.
     private enum Morph {
-        case search, note
+        case search, note, task
 
         var springs: (centre: Spring, outline: Spring) {
             switch self {
             case .search: (SearchIconMorph.spring, SearchIconMorph.spring)
             case .note: (NoteIconMorph.spring, NoteIconMorph.outlineSpring)
+            case .task: (TaskIconMorph.spring, TaskIconMorph.outlineSpring)
             }
         }
 
@@ -268,6 +332,7 @@ final class ModeIconView: NSView {
             switch self {
             case .search: SearchIconMorph.shape(at: centre)
             case .note: NoteIconMorph.shape(at: centre, outline: outline)
+            case .task: TaskIconMorph.shape(at: centre, outline: outline)
             }
         }
     }
@@ -328,8 +393,9 @@ final class ModeIconView: NSView {
     }
 
     /// Retargets from wherever the icon is, keeping its velocity, so deleting the
-    /// first character mid-morph reverses smoothly. The magnifier and the Note
-    /// icon only morph to and from the logo; between them the icon crossfades.
+    /// first character mid-morph reverses smoothly. The magnifier, the Note icon
+    /// and the Task icon only morph to and from the logo; between them the icon
+    /// crossfades.
     func setGlyph(_ next: Glyph, animated: Bool) {
         guard next != glyph else { return }
         let now = CACurrentMediaTime()
@@ -344,6 +410,7 @@ final class ModeIconView: NSView {
         let morph: Morph = switch next {
         case .magnifier: .search
         case .note: .note
+        case .task: .task
         case .logo: current.morph ?? .search
         }
         let target: Double = next == .logo ? 0 : 1
@@ -393,8 +460,8 @@ final class ModeIconView: NSView {
         apply(settled)
     }
 
-    /// At rest, the magnifier and the Note icon belong to their own morph; the
-    /// logo, at progress 0, belongs to either.
+    /// At rest, the magnifier, the Note icon and the Task icon belong to their own
+    /// morph; the logo, at progress 0, belongs to any.
     private func position(at now: CFTimeInterval) -> Position {
         if let motion, now - motion.start < motion.duration {
             let springs = motion.morph.springs, t = now - motion.start
@@ -408,6 +475,7 @@ final class ModeIconView: NSView {
         case .logo: Position(morph: nil, centre: (0, 0), outline: (0, 0))
         case .magnifier: Position(morph: .search, centre: (1, 0), outline: (1, 0))
         case .note: Position(morph: .note, centre: (1, 0), outline: (1, 0))
+        case .task: Position(morph: .task, centre: (1, 0), outline: (1, 0))
         }
     }
 

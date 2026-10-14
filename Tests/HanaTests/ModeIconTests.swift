@@ -130,6 +130,92 @@ struct NoteIconMorphTests {
     }
 }
 
+/// Geometry and timing of the logo-to-Task morph. Visual tuning lives in
+/// prototypes/logo-task-morph; the end state is a circle with a checkmark.
+struct TaskIconMorphTests {
+    /// A line path's two points, in drawing order.
+    private func ends(_ path: CGPath) -> [CGPoint] {
+        var points: [CGPoint] = []
+        path.applyWithBlock { points.append($0.pointee.points[0]) }
+        return points
+    }
+
+    @Test func restingShapeIsTheLogo() {
+        let task = TaskIconMorph.shape(at: 0, outline: 0), note = NoteIconMorph.shape(at: 0, outline: 0)
+        #expect(task.bloom.path.boundingBoxOfPath == note.bloom.path.boundingBoxOfPath)
+        #expect(task.ring.path.boundingBoxOfPath == note.ring.path.boundingBoxOfPath)
+        #expect(task.bloom.opacity == 1 && task.ring.opacity == 1 && task.spokes.allSatisfy { $0.opacity == 1 })
+        for (spoke, noteSpoke) in zip(task.spokes, note.spokes) {
+            #expect(spoke.path.boundingBoxOfPath == noteSpoke.path.boundingBoxOfPath)
+        }
+    }
+
+    @Test func settledShapeIsACircleWithACheckmark() {
+        let task = TaskIconMorph.shape(at: 1, outline: 1), check = TaskIconMorph.check
+        func runs(_ part: ModeIconShape.Part, _ from: CGPoint, _ to: CGPoint) -> Bool {
+            zip(ends(part.path), [from, to]).allSatisfy { hypot($0.x - $1.x, $0.y - $1.y) < 0.001 }
+        }
+        #expect(runs(task.spokes[0], check.start, check.corner))
+        #expect(runs(task.spokes[1], check.corner, check.end))
+        #expect(task.spokes[0].opacity == 1 && task.spokes[1].opacity == 1)
+        #expect(task.ring.opacity == 0 && task.spokes[2].opacity == 0 && task.spokes[3].opacity == 0)
+        // The arms run along the spoke diagonals, 4 and 8 points long, and the
+        // check's bounding box is centred on the icon.
+        let short = hypot(check.corner.x - check.start.x, check.corner.y - check.start.y)
+        let long = hypot(check.end.x - check.corner.x, check.end.y - check.corner.y)
+        #expect(abs(short - 4) < 0.001 && abs(long - 8) < 0.001)
+        #expect(abs((check.corner.x - check.start.x) - (check.corner.y - check.start.y)) < 0.001)
+        #expect(abs((check.end.x - check.corner.x) + (check.end.y - check.corner.y)) < 0.001)
+        #expect(abs((check.start.x + check.end.x) / 2 - 14) < 0.001)
+        #expect(abs((check.end.y + check.corner.y) / 2 - 14) < 0.001)
+        // The circle reaches the logo's edges, as the bloom's lobes do.
+        let circle = task.bloom.path.boundingBoxOfPath
+        #expect(task.bloom.opacity == 1)
+        #expect(abs(circle.minX - (8.4 - 7.467)) < 0.001 && abs(circle.maxY - (19.6 + 7.467)) < 0.001)
+        #expect(TaskIconMorph.circlePoints.allSatisfy { abs(hypot($0.x - 14, $0.y - 14) - TaskIconMorph.circleRadius) < 0.001 })
+    }
+
+    @Test func topSpokesSlideWithoutTurning() {
+        for p in stride(from: -0.1, through: 1.1, by: 0.1) {
+            let shape = TaskIconMorph.shape(at: p, outline: p)
+            for (index, sign) in [(0, CGFloat(1)), (1, -1)] {
+                let points = ends(shape.spokes[index].path)
+                let dx = points[1].x - points[0].x, dy = points[1].y - points[0].y
+                #expect(dx > 0 && abs(dy - sign * dx) < 0.001)
+            }
+        }
+    }
+
+    @Test func outlineFollowsItsOwnProgress() {
+        let shape = TaskIconMorph.shape(at: 0, outline: 1)
+        #expect(shape.bloom.path.boundingBoxOfPath == TaskIconMorph.shape(at: 1, outline: 1).bloom.path.boundingBoxOfPath)
+        #expect(shape.ring.opacity == 1 && shape.spokes.allSatisfy { $0.opacity == 1 })
+    }
+
+    @Test func everyFrameKeepsThePathStructure() {
+        func elements(_ path: CGPath) -> [CGPathElementType] {
+            var types: [CGPathElementType] = []
+            path.applyWithBlock { types.append($0.pointee.type) }
+            return types
+        }
+        func structure(_ shape: ModeIconShape) -> [[CGPathElementType]] {
+            ([shape.bloom, shape.ring] + shape.spokes).map { elements($0.path) }
+        }
+        let rest = structure(SearchIconMorph.shape(at: 0))
+        for p in stride(from: -0.1, through: 1.1, by: 0.1) {
+            #expect(structure(TaskIconMorph.shape(at: p, outline: p)) == rest)
+        }
+    }
+
+    @Test func outlineBouncesMoreThanTheCheck() {
+        func peak(_ spring: Spring) -> Double {
+            stride(from: 0.0, to: 1, by: 0.001).map { spring.state(x0: -1, v0: 0, t: $0).x }.max() ?? 0
+        }
+        let check = peak(TaskIconMorph.spring), outline = peak(TaskIconMorph.outlineSpring)
+        #expect(check > 0.01 && check < outline)
+    }
+}
+
 @Suite(.serialized)
 @MainActor
 struct ModeIconViewTests {
@@ -146,6 +232,26 @@ struct ModeIconViewTests {
         // No morph is designed between the Note icon and the magnifier.
         view.setGlyph(.magnifier, animated: true)
         #expect(view.glyph == .magnifier && view.showsQuery && !view.isMorphing)
+        view.setGlyph(.logo, animated: true)
+        #expect(view.glyph == .logo && view.isMorphing == morphs)
+    }
+
+    @Test func taskMorphsFromAndBackToTheLogoAndCrossfadesWithTheOtherGlyphs() {
+        let view = ModeIconView(frame: NSRect(x: 0, y: 0, width: 28, height: 28))
+        let morphs = !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+        view.setGlyph(.task, animated: true)
+        #expect(view.glyph == .task && view.isMorphing == morphs)
+        view.setGlyph(.logo, animated: true)
+        #expect(view.glyph == .logo && view.isMorphing == morphs)
+        view.setGlyph(.task, animated: false)
+        #expect(!view.isMorphing)
+        // No morph is designed between the Task icon and the other glyphs.
+        view.setGlyph(.note, animated: true)
+        #expect(view.glyph == .note && !view.isMorphing)
+        view.setGlyph(.task, animated: true)
+        #expect(view.glyph == .task && !view.isMorphing)
+        view.setGlyph(.magnifier, animated: true)
+        #expect(view.glyph == .magnifier && !view.isMorphing)
         view.setGlyph(.logo, animated: true)
         #expect(view.glyph == .logo && view.isMorphing == morphs)
     }
