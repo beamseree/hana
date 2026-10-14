@@ -16,7 +16,7 @@
 ## Test runs
 
 - Source for every recorded run: `a0ea196` (clean tree). [Build](build.txt): signed ad-hoc `com.beamseree.hana`.
-- Full deterministic suite, `xcrun swift test --no-parallel`: 85 tests in 12 suites passed (66 before this change, 19 new or extended), 10.2 s. [Output](full-tests.txt).
+- Full deterministic suite, `xcrun swift test --no-parallel`: 85 tests in 12 suites passed, including 12 new (9 in `NoteOrganizationTests`, 3 in the harness suite) and the extended live-root refusal test, 10.2 s. [Output](full-tests.txt).
 - Harness suite against the signed release binary: 8 tests passed, 13 cases with the kill matrix. [Output](signed-harness-tests.txt).
 - An earlier run on the uncommitted change, and again on an untouched checkout of `f4d7fd0`, failed only `NativeEditingTests.lateResultsPreserveEditorSelectionUndoAndInputPosition`: `NSApp.keyWindow` was nil because the test process couldn't take key focus in that desktop session. The recorded run above passed it. It is environmental and independent of this change.
 
