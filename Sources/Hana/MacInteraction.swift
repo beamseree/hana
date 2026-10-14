@@ -679,8 +679,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let height = frame.height
         panel.setFrame(frame, display: true)
         panel.invalidateShadow()
+        // The surface runs to the card's trailing edge so the scroll thumb can
+        // sit in the padding beside the rows.
         resultSurface?.frame = NSRect(x: BarStyle.cardPadding, y: BarStyle.cardPadding,
-                                      width: max(0, frame.width - 2 * (BarStyle.inset + BarStyle.cardPadding)),
+                                      width: max(0, frame.width - 2 * BarStyle.inset - BarStyle.cardPadding),
                                       height: max(0, height - BarStyle.collapsedHeight - BarStyle.cardPadding))
         resultSurface?.isHidden = content == 0
         resultSurface?.rootView = SearchResultsView(results: results, selectedID: selectedID, status: status, icons: icons,

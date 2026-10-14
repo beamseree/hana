@@ -9,6 +9,8 @@ struct SearchResultsView: View {
     var select: (SearchResult.ID) -> Void = { _ in }
     var rowAppeared: (SearchResult.ID) -> Void = { _ in }
 
+    @State private var scroll = ScrollMetrics()
+
     static let rowHeight: CGFloat = 56
     static let statusHeight: CGFloat = 44
     static let maxVisibleRows = 7
@@ -34,8 +36,13 @@ struct SearchResultsView: View {
                                     .onAppear { rowAppeared(result.id) }
                             }
                         }
+                        .padding(.trailing, BarStyle.cardPadding)
                     }
                     .scrollIndicators(.never)
+                    .onScrollGeometryChange(for: ScrollMetrics.self) {
+                        ScrollMetrics(offset: $0.contentOffset.y, content: $0.contentSize.height, visible: $0.containerSize.height)
+                    } action: { _, metrics in scroll = metrics }
+                    .overlay(alignment: .topTrailing) { scrollThumb }
                     .frame(height: CGFloat(min(results.count, Self.maxVisibleRows)) * Self.rowHeight)
                     .onChange(of: selectedID) { _, id in if let id { proxy.scrollTo(id) } }
                 }
@@ -44,6 +51,7 @@ struct SearchResultsView: View {
                 Text(status).font(.system(size: 12)).foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
                     .lineLimit(2)
                     .padding(.horizontal, 8).frame(maxWidth: .infinity, minHeight: Self.statusHeight, alignment: .leading)
+                    .padding(.trailing, BarStyle.cardPadding)
             }
         }
         .frame(maxHeight: .infinity, alignment: .top)
@@ -51,10 +59,34 @@ struct SearchResultsView: View {
         .environment(\.colorScheme, .light)
     }
 
+    /// A thin, always-visible thumb centred in the card's trailing padding,
+    /// clear of the row highlight, only when rows overflow. The system
+    /// scroller stays hidden: its legacy style would claim a wide opaque track.
+    @ViewBuilder private var scrollThumb: some View {
+        let track = scroll.visible
+        if scroll.content > scroll.visible + 0.5, track > 0 {
+            let height = max(Self.thumbMinHeight, track * scroll.visible / scroll.content)
+            let progress = min(max(scroll.offset / (scroll.content - scroll.visible), 0), 1)
+            Capsule()
+                .fill(Color.black.opacity(0.16))
+                .frame(width: Self.thumbWidth, height: height)
+                .offset(y: progress * (track - height))
+                .padding(.trailing, Self.thumbTrailing)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+        }
+    }
+
+    private static let thumbWidth: CGFloat = 3
+    private static let thumbMinHeight: CGFloat = 24
+    private static let thumbTrailing = (BarStyle.cardPadding - thumbWidth) / 2
+
     // Icons share the mode icon's center line and names start with the query
-    // text. The surface sits cardPadding inside the card.
-    private static let iconLeading = BarStyle.resultIconInset
-    private static let nameLeading = BarStyle.textInset - BarStyle.cardPadding - iconLeading - BarStyle.resultIconSize
+    // text. The surface sits cardPadding inside the card's leading edge and
+    // runs to its trailing edge; rows keep cardPadding clear on the right.
+    // Icons and type labels sit equally far inside the highlight.
+    private static let rowInset = BarStyle.resultIconInset
+    private static let nameLeading = BarStyle.textInset - BarStyle.cardPadding - rowInset - BarStyle.resultIconSize
 
     private func row(_ result: SearchResult) -> some View {
         HStack(spacing: Self.nameLeading) {
@@ -72,7 +104,7 @@ struct SearchResultsView: View {
             Text(result.typeLabel).font(.system(size: 12))
                 .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
         }
-        .padding(.leading, Self.iconLeading).padding(.trailing, 8).frame(height: Self.rowHeight)
+        .padding(.horizontal, Self.rowInset).frame(height: Self.rowHeight)
         .background(selectedID == result.id ? Color.black.opacity(0.06) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: BarStyle.cardRadius - BarStyle.cardPadding))
         .contentShape(Rectangle())
@@ -89,6 +121,12 @@ struct SearchResultsView: View {
                 .foregroundStyle(Color(nsColor: BarStyle.iconColor))
         }
     }
+}
+
+private struct ScrollMetrics: Equatable {
+    var offset: CGFloat = 0
+    var content: CGFloat = 0
+    var visible: CGFloat = 0
 }
 
 private extension SearchResult {
