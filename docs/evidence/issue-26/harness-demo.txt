@@ -1,0 +1,81 @@
+# source: 44da9636f9e23ee542d03d7a6ea1afc8d9cb4dc5 (clean tree); signed build/Hana.app; every command is a fresh process; <root> is a disposable fixture root
+$ Hana --collection-fixture create-root <root>
+{"event":"fixture.root-created"}
+# exit 0
+# stdin: ' ซื้อนม Thai é 🌸 '
+# env: TZ=Asia/Bangkok
+$ Hana --collection-fixture create-task <root> --operation 3B1F6A2C-7D4E-4A5B-9C8D-0E1F2A3B4C5D --placement today
+{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943833928,"createdAt":1791943833928,"event":"task.created","id":"1BAA134E-0B3C-4007-B575-9A039960F349","observedAfter":1,"observedBefore":0,"orderKey":0,"placement":"today","revision":1,"titleBytes":33,"titleSHA256":"d6593e4b5eae4be340beca25841e005c35bd64c2f2a1d5a206f1aa72b893bbe6","updatedAt":1791943833928}
+# exit 0
+# identical retry of the same operation returns the same task
+# stdin: ' ซื้อนม Thai é 🌸 '
+$ Hana --collection-fixture create-task <root> --operation 3B1F6A2C-7D4E-4A5B-9C8D-0E1F2A3B4C5D --placement today
+{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943833928,"createdAt":1791943833928,"event":"task.created","id":"1BAA134E-0B3C-4007-B575-9A039960F349","observedAfter":1,"observedBefore":1,"orderKey":0,"placement":"today","revision":1,"titleBytes":33,"titleSHA256":"d6593e4b5eae4be340beca25841e005c35bd64c2f2a1d5a206f1aa72b893bbe6","updatedAt":1791943833928}
+# exit 0
+# stdin: 'Inbox task'
+$ Hana --collection-fixture create-task <root> --operation 9A8B7C6D-5E4F-4321-8765-0FEDCBA98765
+{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943833961,"createdAt":1791943833961,"event":"task.created","id":"FFDCDA73-4683-46FF-B2A7-9E916D68F203","observedAfter":1,"observedBefore":0,"orderKey":0,"placement":"inbox","revision":1,"titleBytes":10,"titleSHA256":"c81dcff19be977b3e3b877dabf791ade85de278f804f15fb1abe932d1de44f92","updatedAt":1791943833961}
+# exit 0
+# refused whole; no text in the output
+# stdin: 'Two\nlines'
+$ Hana --collection-fixture create-task <root> --operation 11111111-2222-4333-8444-555555555555
+{"error":"multilineTaskTitle","event":"error"}
+# exit 1
+# env: TZ=America/New_York
+$ Hana --collection-fixture read <root> --query today
+{"count":1,"event":"tasks","tasks":[{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943833928,"createdAt":1791943833928,"id":"1BAA134E-0B3C-4007-B575-9A039960F349","orderKey":0,"placement":"today","revision":1,"titleBytes":33,"titleSHA256":"d6593e4b5eae4be340beca25841e005c35bd64c2f2a1d5a206f1aa72b893bbe6","updatedAt":1791943833928}]}
+# exit 0
+# env: TZ=Pacific/Kiritimati
+$ Hana --collection-fixture read <root> --query today
+{"count":1,"event":"tasks","tasks":[{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943833928,"createdAt":1791943833928,"id":"1BAA134E-0B3C-4007-B575-9A039960F349","orderKey":0,"placement":"today","revision":1,"titleBytes":33,"titleSHA256":"d6593e4b5eae4be340beca25841e005c35bd64c2f2a1d5a206f1aa72b893bbe6","updatedAt":1791943833928}]}
+# exit 0
+# stdin: 'Renamed'
+$ Hana --collection-fixture edit-task <root> --id 1BAA134E-0B3C-4007-B575-9A039960F349 --revision 1
+{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943834026,"createdAt":1791943833928,"event":"task.changed","id":"1BAA134E-0B3C-4007-B575-9A039960F349","observedAfterRevision":2,"observedBeforeRevision":1,"orderKey":0,"placement":"today","revision":2,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834026}
+# exit 0
+$ Hana --collection-fixture move-task <root> --id 1BAA134E-0B3C-4007-B575-9A039960F349 --revision 2 --to inbox
+{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943834026,"createdAt":1791943833928,"event":"task.changed","id":"1BAA134E-0B3C-4007-B575-9A039960F349","observedAfterRevision":3,"observedBeforeRevision":2,"orderKey":-1,"placement":"inbox","revision":3,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834042}
+# exit 0
+$ Hana --collection-fixture read <root> --query inbox
+{"count":2,"event":"tasks","tasks":[{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943834026,"createdAt":1791943833928,"id":"1BAA134E-0B3C-4007-B575-9A039960F349","orderKey":-1,"placement":"inbox","revision":3,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834042},{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943833961,"createdAt":1791943833961,"id":"FFDCDA73-4683-46FF-B2A7-9E916D68F203","orderKey":0,"placement":"inbox","revision":1,"titleBytes":10,"titleSHA256":"c81dcff19be977b3e3b877dabf791ade85de278f804f15fb1abe932d1de44f92","updatedAt":1791943833961}]}
+# exit 0
+$ Hana --collection-fixture complete-task <root> --id 1BAA134E-0B3C-4007-B575-9A039960F349 --revision 3
+{"archivedAt":null,"completedAt":1791943834074,"contentEditedAt":1791943834026,"createdAt":1791943833928,"event":"task.changed","id":"1BAA134E-0B3C-4007-B575-9A039960F349","observedAfterRevision":4,"observedBeforeRevision":3,"orderKey":null,"placement":null,"revision":4,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834074}
+# exit 0
+# completion is kept
+$ Hana --collection-fixture archive-task <root> --id 1BAA134E-0B3C-4007-B575-9A039960F349 --revision 4
+{"archivedAt":1791943834092,"completedAt":1791943834074,"contentEditedAt":1791943834026,"createdAt":1791943833928,"event":"task.changed","id":"1BAA134E-0B3C-4007-B575-9A039960F349","observedAfterRevision":5,"observedBeforeRevision":4,"orderKey":null,"placement":null,"revision":5,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834092}
+# exit 0
+# archived tasks must be restored first
+$ Hana --collection-fixture reopen-task <root> --id 1BAA134E-0B3C-4007-B575-9A039960F349 --revision 5
+{"error":"archivedTask","event":"error"}
+# exit 1
+$ Hana --collection-fixture read <root> --query archived-tasks
+{"count":1,"event":"tasks","tasks":[{"archivedAt":1791943834092,"completedAt":1791943834074,"contentEditedAt":1791943834026,"createdAt":1791943833928,"id":"1BAA134E-0B3C-4007-B575-9A039960F349","orderKey":null,"placement":null,"revision":5,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834092}]}
+# exit 0
+$ Hana --collection-fixture read <root> --query task-search
+{"count":1,"entries":[{"archived":false,"completed":false,"id":"FFDCDA73-4683-46FF-B2A7-9E916D68F203","titleSHA256":"c81dcff19be977b3e3b877dabf791ade85de278f804f15fb1abe932d1de44f92"}],"event":"task-search"}
+# exit 0
+$ Hana --collection-fixture read <root> --query task-search-all
+{"count":2,"entries":[{"archived":true,"completed":true,"id":"1BAA134E-0B3C-4007-B575-9A039960F349","titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a"},{"archived":false,"completed":false,"id":"FFDCDA73-4683-46FF-B2A7-9E916D68F203","titleSHA256":"c81dcff19be977b3e3b877dabf791ade85de278f804f15fb1abe932d1de44f92"}],"event":"task-search"}
+# exit 0
+# a completed task restores to Completed
+$ Hana --collection-fixture restore-task <root> --id 1BAA134E-0B3C-4007-B575-9A039960F349 --revision 5
+{"archivedAt":null,"completedAt":1791943834074,"contentEditedAt":1791943834026,"createdAt":1791943833928,"event":"task.changed","id":"1BAA134E-0B3C-4007-B575-9A039960F349","observedAfterRevision":6,"observedBeforeRevision":5,"orderKey":null,"placement":null,"revision":6,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834172}
+# exit 0
+$ Hana --collection-fixture read <root> --query completed
+{"count":1,"event":"tasks","tasks":[{"archivedAt":null,"completedAt":1791943834074,"contentEditedAt":1791943834026,"createdAt":1791943833928,"id":"1BAA134E-0B3C-4007-B575-9A039960F349","orderKey":null,"placement":null,"revision":6,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834172}]}
+# exit 0
+# reopen goes to the top of Inbox, not back to Today
+$ Hana --collection-fixture reopen-task <root> --id 1BAA134E-0B3C-4007-B575-9A039960F349 --revision 6
+{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943834026,"createdAt":1791943833928,"event":"task.changed","id":"1BAA134E-0B3C-4007-B575-9A039960F349","observedAfterRevision":7,"observedBeforeRevision":6,"orderKey":-1,"placement":"inbox","revision":7,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834202}
+# exit 0
+# retrying the original creation after those transitions returns the task as it stands
+# stdin: ' ซื้อนม Thai é 🌸 '
+$ Hana --collection-fixture create-task <root> --operation 3B1F6A2C-7D4E-4A5B-9C8D-0E1F2A3B4C5D --placement today
+{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943834026,"createdAt":1791943833928,"event":"task.created","id":"1BAA134E-0B3C-4007-B575-9A039960F349","observedAfter":0,"observedBefore":0,"orderKey":-1,"placement":"inbox","revision":7,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834202}
+# exit 0
+$ Hana --collection-fixture read <root> --query all
+{"count":0,"event":"notes","notes":[]}
+{"count":2,"event":"tasks","tasks":[{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943834026,"createdAt":1791943833928,"id":"1BAA134E-0B3C-4007-B575-9A039960F349","orderKey":-1,"placement":"inbox","revision":7,"titleBytes":7,"titleSHA256":"05487af3f074b4f31e4f9a1ec75044ab182f037a7978e1a8909c42103fb1297a","updatedAt":1791943834202},{"archivedAt":null,"completedAt":null,"contentEditedAt":1791943833961,"createdAt":1791943833961,"id":"FFDCDA73-4683-46FF-B2A7-9E916D68F203","orderKey":0,"placement":"inbox","revision":1,"titleBytes":10,"titleSHA256":"c81dcff19be977b3e3b877dabf791ade85de278f804f15fb1abe932d1de44f92","updatedAt":1791943833961}]}
+# exit 0
