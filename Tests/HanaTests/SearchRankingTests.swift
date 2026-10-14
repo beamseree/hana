@@ -22,9 +22,53 @@ struct SearchRankingTests {
         let folder = SearchResult(name: "Safari", url: URL(fileURLWithPath: "/000/Safari"), kind: .folder)
         let file = item("Safari.png")
         #expect(await results("safari", [file, folder, safari]) == [safari, folder, file])
-        // An exact file name still beats a prefix application name.
+        // A prefix application name beats an exact file name (#55).
         let exact = item("PDF.txt")
-        #expect(await results("pdf", [expert, exact]) == [exact, expert])
+        #expect(await results("pdf", [exact, expert]) == [expert, exact])
+    }
+
+    @Test func applicationsMatchingByNameOrWordStartPrecedeExactFiles() async {
+        let telegram = app("Telegram", "/Applications/Telegram.app")
+        let terminal = app("Terminal", "/Applications/Utilities/Terminal.app")
+        let textEdit = app("TextEdit", "/Applications/TextEdit.app")
+        let js = item("te.js"), json = item("te.json")
+        // Equal prefix closeness falls through to the path tie-break.
+        #expect(await results("te", [js, json, textEdit, terminal, telegram]) == [telegram, textEdit, terminal, js, json])
+
+        // No Visual Studio Code alias is an exact or prefix match for "code".
+        let visual = app("Visual Studio Code", "/Applications/Visual Studio Code.app")
+        let text = item("code.txt")
+        #expect(await results("code", [text, visual]) == [visual, text])
+        let runner = app("Code Runner", "/Applications/Code Runner.app")
+        #expect(await results("code", [text, visual, runner]) == [runner, visual, text])
+    }
+
+    @Test func promotedApplicationsKeepTheirOwnOrderAboveFoldersThenFiles() async {
+        let notes = app("Notes", "/Applications/Notes.app")
+        let pro = app("Notes Pro", "/Applications/Notes Pro.app")
+        let sticky = app("Sticky Notes", "/Applications/Sticky Notes.app")
+        let folder = SearchResult(name: "Notes", url: URL(fileURLWithPath: "/000/Notes"), kind: .folder)
+        let file = item("notes.txt")
+        // The folder and file share a kind slot; their existing path tie-break decides.
+        #expect(await results("notes", [file, folder, sticky, pro, notes]) == [notes, pro, sticky, folder, file])
+    }
+
+    @Test func substringApplicationsAndUnmatchedApplicationsAreNotPromoted() async {
+        let safari = app("Safari", "/Applications/Safari.app")
+        let far = item("far.txt")
+        #expect(await results("far", [safari, far]) == [far, safari])
+        let reporter = app("Reporter", "/Applications/Reporter.app")
+        let report = item("report.pdf")
+        #expect(await results("report.pdf", [reporter, report]).first == report)
+    }
+
+    @Test func adapterShortlistKeepsPromotedApplicationsAheadOfExactCandidatesUnderItsLimit() async {
+        let exact = (0..<50).map { SearchResult(name: "te", url: URL(fileURLWithPath: "/000/\($0)/te"), kind: .folder) }
+            + (0..<50).map { SearchResult(name: "te.js", url: URL(fileURLWithPath: "/000/\($0)/te.js"), kind: .file) }
+        let terminal = app("Terminal", "/Applications/Utilities/Terminal.app")
+        let shortlist = await Search.compactCandidates(exact + [terminal], query: "te", limit: 10)
+        #expect(shortlist.count == 10)
+        #expect(shortlist.first == terminal)
     }
 
     private func item(_ name: String, kind: SearchResult.Kind = .file) -> SearchResult {
