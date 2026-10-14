@@ -1,0 +1,46 @@
+# source: a0ea19698a5c63ade9f72a03fc5c4d3237d358e2 (clean tree); signed build/Hana.app; every command is a fresh process; <root> is a disposable fixture root
+$ Hana --collection-fixture create-root <root>
+{"event":"fixture.root-created"}
+# exit 0
+# stdin: 'Draft'
+$ Hana --collection-fixture create-note <root> --operation 7E9D4C1A-2B3C-4D5E-8F90-A1B2C3D4E5F6
+{"archived":false,"bodyBytes":5,"bodySHA256":"ebf12ef47cf575b3ba9a3cc019c5310146fdac88f6d1be6618d6e91158c2f174","contentEditedAt":1791941357412,"createdAt":1791941357412,"event":"note.created","id":"E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA","observedAfter":1,"observedBefore":0,"pinned":false,"revision":1,"titleSHA256":"ebf12ef47cf575b3ba9a3cc019c5310146fdac88f6d1be6618d6e91158c2f174","updatedAt":1791941357412}
+# stdin: "# แก้ไข Edited\r\n- [ ] kept  \n"
+$ Hana --collection-fixture edit-note <root> --id E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA --revision 1
+{"archived":false,"bodyBytes":39,"bodySHA256":"0ba45132ebf5c097153f0331ad999140a5c2d4e0260d3875788156dc628101f6","contentEditedAt":1791941357470,"createdAt":1791941357412,"event":"note.changed","id":"E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA","observedAfterRevision":2,"observedBeforeRevision":1,"pinned":false,"revision":2,"titleSHA256":"9b7efc3d075e4a2d8dfe5ea8024d72729c689d385ed1771542fb6d91c2e8d311","updatedAt":1791941357470}
+# exit 0
+$ Hana --collection-fixture pin-note <root> --id E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA --revision 2 --pinned true
+{"archived":false,"bodyBytes":39,"bodySHA256":"0ba45132ebf5c097153f0331ad999140a5c2d4e0260d3875788156dc628101f6","contentEditedAt":1791941357470,"createdAt":1791941357412,"event":"note.changed","id":"E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA","observedAfterRevision":3,"observedBeforeRevision":2,"pinned":true,"revision":3,"titleSHA256":"9b7efc3d075e4a2d8dfe5ea8024d72729c689d385ed1771542fb6d91c2e8d311","updatedAt":1791941357493}
+# exit 0
+$ Hana --collection-fixture archive-note <root> --id E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA --revision 3
+{"archived":true,"bodyBytes":39,"bodySHA256":"0ba45132ebf5c097153f0331ad999140a5c2d4e0260d3875788156dc628101f6","contentEditedAt":1791941357470,"createdAt":1791941357412,"event":"note.changed","id":"E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA","observedAfterRevision":4,"observedBeforeRevision":3,"pinned":true,"revision":4,"titleSHA256":"9b7efc3d075e4a2d8dfe5ea8024d72729c689d385ed1771542fb6d91c2e8d311","updatedAt":1791941357517}
+# exit 0
+$ Hana --collection-fixture read <root>
+{"count":0,"event":"notes","notes":[]}
+# exit 0
+$ Hana --collection-fixture read <root> --query archive
+{"count":1,"event":"notes","notes":[{"archived":true,"bodyBytes":39,"bodySHA256":"0ba45132ebf5c097153f0331ad999140a5c2d4e0260d3875788156dc628101f6","contentEditedAt":1791941357470,"createdAt":1791941357412,"id":"E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA","pinned":true,"revision":4,"titleSHA256":"9b7efc3d075e4a2d8dfe5ea8024d72729c689d385ed1771542fb6d91c2e8d311","updatedAt":1791941357517}]}
+# exit 0
+$ Hana --collection-fixture read <root> --query search
+{"count":0,"entries":[],"event":"search"}
+# exit 0
+$ Hana --collection-fixture read <root> --query search-archived
+{"count":1,"entries":[{"archived":true,"id":"E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA","textSHA256":"0ba45132ebf5c097153f0331ad999140a5c2d4e0260d3875788156dc628101f6","titleSHA256":"9b7efc3d075e4a2d8dfe5ea8024d72729c689d385ed1771542fb6d91c2e8d311"}],"event":"search"}
+# exit 0
+# stdin: 'Stale'
+$ Hana --collection-fixture edit-note <root> --id E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA --revision 1
+{"error":"staleRevision","event":"error"}
+# exit 1
+# stdin: 'Hidden'
+$ Hana --collection-fixture edit-note <root> --id E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA --revision 4
+{"error":"archivedNote","event":"error"}
+# exit 1
+$ Hana --collection-fixture archive-note <root> --id E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA --revision 4
+{"archived":true,"bodyBytes":39,"bodySHA256":"0ba45132ebf5c097153f0331ad999140a5c2d4e0260d3875788156dc628101f6","contentEditedAt":1791941357470,"createdAt":1791941357412,"event":"note.changed","id":"E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA","observedAfterRevision":4,"observedBeforeRevision":4,"pinned":true,"revision":4,"titleSHA256":"9b7efc3d075e4a2d8dfe5ea8024d72729c689d385ed1771542fb6d91c2e8d311","updatedAt":1791941357517}
+# exit 0
+$ Hana --collection-fixture restore-note <root> --id E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA --revision 4
+{"archived":false,"bodyBytes":39,"bodySHA256":"0ba45132ebf5c097153f0331ad999140a5c2d4e0260d3875788156dc628101f6","contentEditedAt":1791941357470,"createdAt":1791941357412,"event":"note.changed","id":"E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA","observedAfterRevision":5,"observedBeforeRevision":4,"pinned":true,"revision":5,"titleSHA256":"9b7efc3d075e4a2d8dfe5ea8024d72729c689d385ed1771542fb6d91c2e8d311","updatedAt":1791941357713}
+# exit 0
+$ Hana --collection-fixture read <root> --query all
+{"count":1,"event":"notes","notes":[{"archived":false,"bodyBytes":39,"bodySHA256":"0ba45132ebf5c097153f0331ad999140a5c2d4e0260d3875788156dc628101f6","contentEditedAt":1791941357470,"createdAt":1791941357412,"id":"E01E9D68-81F3-45A4-9CEC-2C5A40D85CFA","pinned":true,"revision":5,"titleSHA256":"9b7efc3d075e4a2d8dfe5ea8024d72729c689d385ed1771542fb6d91c2e8d311","updatedAt":1791941357713}]}
+# exit 0

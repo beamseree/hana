@@ -1,0 +1,14 @@
+# source: a0ea19698a5c63ade9f72a03fc5c4d3237d358e2 (clean tree), ./scripts/build
+[0/1] Planning build
+Building for production...
+[0/3] Write sources
+[1/3] Write swift-version--112E4EF74740DA65.txt
+[3/4] Compiling Hana ApplicationCatalog.swift
+[3/5] Write Objects.LinkFileList
+[4/5] Linking Hana
+Build complete! (11.92s)
+<worktree>/build/Hana.app/Contents/Info.plist: OK
+<worktree>/build/Hana.app: replacing existing signature
+<worktree>/build/Hana.app: valid on disk
+<worktree>/build/Hana.app: satisfies its Designated Requirement
+<worktree>/build/Hana.app
