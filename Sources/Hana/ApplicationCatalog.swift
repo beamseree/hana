@@ -4,7 +4,7 @@ import Foundation
 /// symlinked directories nor bundle contents can turn this into a disk crawl.
 @MainActor
 final class ApplicationCatalog {
-    static var conventionalRoots: [URL] {
+    nonisolated static var conventionalRoots: [URL] {
         [URL(fileURLWithPath: "/Applications"), URL(fileURLWithPath: "/System/Applications"),
          URL(fileURLWithPath: "/System/Library/CoreServices/Applications"),
          FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Applications")]

@@ -200,10 +200,10 @@ final class Search {
                 guard !Task.isCancelled, self?.generation == request.generation else { return }
                 let appSnapshot = state.apps, fileSnapshot = state.files
                 let usage = self?.usage ?? [:]
-                let candidates = appSnapshot.results + fileSnapshot.results
+                let appCandidates = appSnapshot.results, fileCandidates = fileSnapshot.results
                 let freshCandidates = state.freshApps + state.freshFiles
                 let work = Task.detached(priority: .userInitiated) {
-                    let results = Self.rank(candidates, query: query, usage: usage)
+                    let results = Self.rank(appCandidates + fileCandidates.filter { Self.indexedEligible($0.url, kind: $0.kind) }, query: query, usage: usage)
                     let visible = Set(results.map(\.id))
                     let hasFreshResults = freshCandidates.contains { result in
                         visible.contains(result.id) && result.matchingNames.contains { $0.tier(for: query) != nil }
@@ -258,6 +258,26 @@ final class Search {
             let path = home.appendingPathComponent(root).path
             return url.path == path || url.path.hasPrefix(path + "/")
         }
+    }
+
+    private nonisolated static let dependencyFolders: Set<String> = ["node_modules", "pods", "deriveddata", ".build", "target", "vendor", "dist"]
+    private nonisolated static let userLibrary = FileManager.default.homeDirectoryForCurrentUser
+        .appendingPathComponent("Library").standardizedFileURL.pathComponents.map { $0.lowercased() }
+    private nonisolated static let applicationRoots = ApplicationCatalog.conventionalRoots
+        .map { $0.standardizedFileURL.pathComponents.map { $0.lowercased() } }
+
+    /// Indexed results also omit dependency and build folders, `/System`,
+    /// `/Library` and `~/Library` (#56). iCloud Drive and file-provider storage
+    /// under `~/Library` stay searchable apart from their dependency folders.
+    /// Applications in the catalog's conventional roots are never removed.
+    nonisolated static func indexedEligible(_ url: URL, kind: SearchResult.Kind) -> Bool {
+        guard eligible(url) else { return false }
+        let components = url.standardizedFileURL.pathComponents.map { $0.lowercased() }
+        if kind == .application, applicationRoots.contains(where: components.starts) { return true }
+        guard !components.contains(where: dependencyFolders.contains),
+              components.count < 2 || !["system", "library"].contains(components[1]) else { return false }
+        guard components.starts(with: userLibrary) else { return true }
+        return components.count > userLibrary.count && ["mobile documents", "cloudstorage"].contains(components[userLibrary.count])
     }
 
     private nonisolated static func normalized(_ text: String) -> String {
