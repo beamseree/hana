@@ -43,6 +43,7 @@ struct CollectionFixtureHarnessTests {
                           ["archive-note", live.path, "--id", UUID().uuidString, "--revision", "1"],
                           ["create-task", live.path, "--operation", UUID().uuidString],
                           ["complete-task", live.path, "--id", UUID().uuidString, "--revision", "1"],
+                          ["reorder-task", live.path, "--id", UUID().uuidString, "--in", "inbox", "--expected", UUID().uuidString],
                           ["read", live.path, "--query", "today"]] {
             let refused = try Harness.run(arguments, stdin: "Never")
             #expect(refused.status == 1)
@@ -364,6 +365,66 @@ extension CollectionFixtureHarnessTests {
         #expect(original["placement"] as? String == placement)
         #expect((original["completedAt"] is Int) == isCompleted)
         #expect((original["archivedAt"] is Int) == isArchived)
+    }
+}
+
+extension CollectionFixtureHarnessTests {
+    /// Creates tasks in Inbox in fresh processes; returns their IDs top first.
+    private func inbox(_ count: Int, in root: HarnessRoot) throws -> [String] {
+        for index in 0..<count {
+            _ = try Harness.run(["create-task", root.path, "--operation", UUID().uuidString], stdin: "Task \(index)").event("task.created")
+        }
+        return try ids(Harness.run(["read", root.path, "--query", "inbox"]).event("tasks"))
+    }
+
+    private func ids(_ tasks: [String: Any]) -> [String] {
+        (tasks["tasks"] as? [[String: Any]] ?? []).compactMap { $0["id"] as? String }
+    }
+
+    @Test func manualOrderPersistsAcrossFreshProcessesAndAStaleViewIsRefused() throws {
+        let root = try HarnessRoot()
+        let order = try inbox(4, in: root)
+        let (a, b, c, d) = (order[0], order[1], order[2], order[3])
+        let moved = try Harness.run(["reorder-task", root.path, "--id", a, "--in", "inbox", "--after", c,
+                                     "--expected", order.joined(separator: ",")]).event("tasks.reordered")
+        #expect(ids(moved) == [b, c, a, d])
+        #expect(moved["movedID"] as? String == a && moved["revision"] as? Int == 2)
+        #expect(moved["observedBefore"] as? [String] == order && moved["observedAfter"] as? [String] == [b, c, a, d])
+        let top = try Harness.run(["reorder-task", root.path, "--id", d, "--in", "inbox",
+                                   "--expected", [b, c, a, d].joined(separator: ",")]).event("tasks.reordered")
+        #expect(ids(top) == [d, b, c, a])
+
+        // The old view is refused in a fresh process, without change, and in any time zone.
+        let stale = try Harness.run(["reorder-task", root.path, "--id", b, "--in", "inbox", "--after", d,
+                                     "--expected", order.joined(separator: ",")])
+        #expect(stale.status == 1 && stale.event("error")["error"] as? String == "staleList")
+        for zone in ["Asia/Bangkok", "America/New_York"] {
+            let read = try Harness.run(["read", root.path, "--query", "inbox"], environment: ["TZ": zone]).event("tasks")
+            #expect(ids(read) == [d, b, c, a])
+        }
+        let refused = try Harness.run(["reorder-task", root.path, "--id", b, "--in", "inbox", "--after", b,
+                                       "--expected", [d, b, c, a].joined(separator: ",")])
+        #expect(refused.event("error")["error"] as? String == "invalidReorder")
+    }
+
+    @Test(arguments: ["before-commit", "after-commit"])
+    func killedReorderIsAllOrNoneEvenWhenItRenumbers(_ point: String) throws {
+        let root = try HarnessRoot()
+        // Created keys are consecutive, so a move between neighbours renumbers the list.
+        let order = try inbox(4, in: root)
+        let before = try Harness.run(["read", root.path, "--query", "inbox"]).event("tasks")["tasks"] as? [[String: Any]]
+        let paused = try Harness.start(["reorder-task", root.path, "--id", order[0], "--in", "inbox", "--after", order[2],
+                                        "--expected", order.joined(separator: ","), "--pause", point])
+        try paused.waitForPause()
+        paused.kill()
+
+        let committed = point == "after-commit"
+        let after = try #require(try Harness.run(["read", root.path, "--query", "inbox"]).event("tasks")["tasks"] as? [[String: Any]])
+        #expect(after.compactMap { $0["id"] as? String } == (committed ? [order[1], order[2], order[0], order[3]] : order))
+        let keys = after.compactMap { $0["orderKey"] as? Int }
+        #expect(keys.count == 4 && keys == keys.sorted() && Set(keys).count == 4)
+        if !committed { #expect(after.map { $0["orderKey"] as? Int } == before?.map { $0["orderKey"] as? Int }) }
+        #expect(after.compactMap { $0["revision"] as? Int } == (committed ? [1, 1, 2, 1] : [1, 1, 1, 1]))
     }
 }
 
