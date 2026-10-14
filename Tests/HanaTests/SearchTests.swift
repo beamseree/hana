@@ -5,6 +5,100 @@ import Testing
 @Suite(.timeLimit(.minutes(1)))
 @MainActor
 struct SearchTests {
+    @Test func loadingReplacementsNeverResurrectPreviouslyInvisibleCandidates() async throws {
+        let apps = CatalogFeed()
+        let search = Search(source: { apps.stream() }, debounce: .zero)
+        let candidates = (10...34).map { app("Note \($0)", "/fixture/\($0).app") }
+        var iterator = search.search(.init(text: "Note")).makeAsyncIterator()
+        await apps.send(candidates, status: .loading)
+        var batch = await iterator.next()
+        while batch?.results.isEmpty == true { batch = await iterator.next() }
+        #expect(batch?.results == Array(candidates.prefix(20)))
+        // The next snapshot renames the visible destinations. Candidates that
+        // never reached the screen must not accumulate as hidden carryover.
+        await apps.send(candidates.prefix(20).map { SearchResult(name: "Other", url: $0.url) }, status: .loading)
+        batch = await iterator.next()
+        #expect(batch?.results.isEmpty == true)
+    }
+
+    @Test func retainedAliasesKeepTheirSourceOwnershipWhenThatSourceFinishes() async throws {
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let catalog = app("Friendly", "/Applications/Notes.app")
+        let indexed = SearchResult(name: "Notes", url: catalog.url)
+        let search = Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero)
+        var first = search.search(.init(text: "Notes")).makeAsyncIterator()
+        await apps.send([catalog]); await files.send([indexed])
+        while let batch = await first.next(), batch.fileStatus == .loading || batch.appStatus == .loading {}
+        var next = search.search(.init(text: "Note")).makeAsyncIterator()
+        #expect(await next.next()?.results.first?.id == catalog.id)
+        try await eventually { files.subscriptionCount == 2 }
+        await files.send([])
+        var batch = await next.next()
+        while batch?.fileStatus == .loading { batch = await next.next() }
+        #expect(batch?.results.isEmpty == true)
+    }
+
+    @Test func retainedMatchesSurviveLoadingSnapshotsUntilTheirSourceFinishes() async throws {
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let application = app("Notes", "/Applications/Notes.app")
+        let file = SearchResult(name: "Notes.txt", url: URL(fileURLWithPath: "/fixture/Notes.txt"), kind: .file)
+        let search = Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero)
+        var first = search.search(.init(text: "Notes")).makeAsyncIterator()
+        await apps.send([application]); await files.send([file])
+        while let batch = await first.next(), batch.results.count != 2 {}
+        var next = search.search(.init(text: "Note")).makeAsyncIterator()
+        #expect(await next.next()?.results == [application, file])
+        try await eventually { apps.subscriptionCount == 2 && files.subscriptionCount == 2 }
+        await apps.send([], status: .loading); await files.send([], status: .loading)
+        #expect(await next.next()?.results == [application, file])
+        await apps.send([], status: .ready)
+        var batch = await next.next()
+        while batch?.appStatus != .ready { batch = await next.next() }
+        #expect(batch?.results == [file])
+        await files.send([], status: .ready)
+        while batch?.fileStatus != .ready { batch = await next.next() }
+        #expect(batch?.results.isEmpty == true)
+    }
+
+    @Test func applicationsArriveWhileTheFileDebounceIsStillWaiting() async throws {
+        let destination = app("Alpha", "/Applications/A.app")
+        var filesStarted = false
+        let search = Search(source: { AsyncStream {
+            $0.yield(.init(results: [destination], status: .ready)); $0.finish()
+        } }, files: { _ in filesStarted = true; return AsyncStream { $0.finish() } }, debounce: .seconds(60))
+        var received: Search.Batch?
+        let consume = Task {
+            for await batch in search.search(.init(text: "Alpha")) {
+                if !batch.results.isEmpty { received = batch }
+            }
+        }
+        defer { consume.cancel() }
+        try await eventually { received != nil }
+        #expect(received?.results == [destination])
+        #expect(received?.fileStatus == .loading)
+        #expect(!filesStarted)
+    }
+
+    @Test func editsFirstYieldRecheckedRerankedResultsBeforeSourcesRespond() async throws {
+        let a = app("Alpha Beta", "/Applications/A.app")
+        let b = app("Beta Alpha", "/Applications/B.app")
+        var responds = true
+        let search = Search(source: {
+            AsyncStream {
+                if responds { $0.yield(.init(results: [a, b], status: .ready)) }
+                $0.finish()
+            }
+        }, debounce: .zero)
+        for await _ in search.search(.init(text: "Alpha")) {}
+        responds = false
+        for (text, expected) in [("Beta", [b, a]), ("Bet", [b, a]), ("unrelated", [])] {
+            var iterator = search.search(.init(text: text)).makeAsyncIterator()
+            let initial = await iterator.next()
+            #expect(initial?.results == expected)
+            #expect(initial?.appStatus == .loading)
+        }
+    }
+
     @Test func closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() async {
         let exact = app("App", "/Applications/exact.app")
         let close = app("App Z", "/Applications/close.app")
@@ -212,7 +306,8 @@ struct SearchTests {
         var iterator = search.search(request).makeAsyncIterator()
         await fresh.send([app("fresh", "/Applications/fresh.app")])
         await old.send([app("old", "/Applications/old.app")])
-        let batch = await iterator.next()
+        var batch = await iterator.next()
+        while batch?.results.isEmpty == true { batch = await iterator.next() }
         #expect(batch?.generation == request.generation)
         #expect(batch?.results.map(\.name) == ["fresh"])
         await consuming.value
@@ -257,7 +352,7 @@ struct SearchTests {
 
     @Test func failedSourceStatusStillDeliversAvailableMatches() async {
         let search = Search(source: { AsyncStream { $0.yield(.init(results: [app("Notes", "/Applications/Notes.app")], status: .failed)); $0.finish() } }, debounce: .zero)
-        for await batch in search.search(.init(text: "notes")) {
+        for await batch in search.search(.init(text: "notes")) where batch.appStatus != .loading {
             #expect(batch.status == .failed)
             #expect(batch.results.map(\.name) == ["Notes"])
         }
@@ -288,7 +383,7 @@ struct SearchTests {
         try await eventually { calls == 1 }
         for await batch in search.search(.init(text: "")) { #expect(batch.results.isEmpty) }
         await feed.send([app("old", "/Applications/old.app")])
-        #expect(await consume.value == 0)
+        #expect(await consume.value == 1) // The initial rechecked (empty) batch only.
     }
 
     @Test func catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() async throws {
