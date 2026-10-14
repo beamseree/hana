@@ -704,12 +704,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             height: BarStyle.collapsedHeight + (content > 0 ? BarStyle.cardPadding + content : 0)) ?? panel.frame
         setPanelFrame(frame, animated: true)
         // Results are laid out at their final size, pinned under the input, so
-        // the card's clip reveals them as it grows instead of moving them.
+        // the card's clip reveals them as it grows instead of moving them. The
+        // surface runs to the card's trailing edge so the scroll thumb can sit in
+        // the padding beside the rows.
         if let resultSurface, let card = resultSurface.superview {
             let height = max(0, frame.height - BarStyle.collapsedHeight - BarStyle.cardPadding)
             resultSurface.frame = NSRect(x: BarStyle.cardPadding,
                                          y: card.bounds.height - BarStyle.inputHeight - height,
-                                         width: max(0, frame.width - 2 * (BarStyle.inset + BarStyle.cardPadding)),
+                                         width: max(0, frame.width - 2 * BarStyle.inset - BarStyle.cardPadding),
                                          height: height)
             resultSurface.isHidden = content == 0
         }
