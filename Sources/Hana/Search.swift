@@ -279,6 +279,9 @@ final class Search {
                                          usage: [SearchResult.ID: Usage], limit: Int = 20) -> [SearchResult] {
         struct Candidate {
             let id: SearchResult.ID
+            /// An application matching by exact name, prefix or word start
+            /// outranks every non-application result, whatever its tier.
+            let promoted: Bool
             let tier: SearchName.Tier
             let kindRank: Int
             let closeness: Int
@@ -286,6 +289,7 @@ final class Search {
             let usage: Usage
         }
         func precedes(_ lhs: Candidate, _ rhs: Candidate) -> Bool {
+            if lhs.promoted != rhs.promoted { return lhs.promoted }
             if lhs.tier != rhs.tier { return lhs.tier < rhs.tier }
             if lhs.kindRank != rhs.kindRank { return lhs.kindRank < rhs.kindRank }
             if lhs.closeness != rhs.closeness { return lhs.closeness < rhs.closeness }
@@ -303,7 +307,8 @@ final class Search {
             var candidate: Candidate?
             for name in result.matchingNames {
                 guard let tier = name.tier(for: query) else { continue }
-                let scored = Candidate(id: result.id, tier: tier, kindRank: result.kindRank,
+                let scored = Candidate(id: result.id, promoted: result.kind == .application && tier <= .wordStart,
+                    tier: tier, kindRank: result.kindRank,
                     closeness: name.length - query.count, wordsInOrder: name.wordsInOrder(for: query, tier: tier),
                     usage: usage[result.id] ?? Usage())
                 if candidate == nil || precedes(scored, candidate!) { candidate = scored }
