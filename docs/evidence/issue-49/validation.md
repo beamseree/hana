@@ -1,14 +1,12 @@
 # Issue #49 — steady Search while typing
 
-## Latest follow-up — publish the completed list together
+## Latest decision — restore first-fresh-result replacement
 
-On 2026-10-14 Beam observed an intermediate list change followed by another change when files arrived, and requested a single replacement. This supersedes the first-fresh-result rule in the previous follow-up below.
+On 2026-10-14 Beam requested undoing `696bdb3` because waiting for both sources left the initial search empty too long. The rollback restores the implementation and tests exactly to `a4cab78`: retain displayed rows on edits, replace on fresh matches, and wait for both sources only before publishing an empty result. The card's loading-height retention stays intact. The first-fresh-result follow-up below is the current behavior again.
 
-Mac Interaction now preserves the displayed rows while either source is loading, even when fresh matches arrive. Once both sources report ready, partial or failed, it publishes their combined ranked results together. An initial search stays empty until that point. Clearing remains immediate; Enter still captures the selected visible row. Later completed source updates continue to reflect live changes for the same query. Search's obsolete freshness flag and raw-snapshot tracking were removed.
+Code/test equality to `a4cab78` and `git diff --check` were verified. The restored code's prior full-suite result is 146 tests in 21 suites passed with five gated skips; tests were not rerun for this exact rollback. Both read-only review axes reported no findings. A fresh release build and strict installed-signature validation passed.
 
-The new parameterized native regression failed for both source completion orders before the fix, then passed afterward. Existing typing/backspacing, cache-only update and height tests now expect terminal source completion; file-opening fixtures explicitly publish an empty ready application snapshot. Focused Search, Mac Interaction and destination checks passed: 57 tests in four suites, 11.965 seconds. Both independent standards and spec reviews reported no remaining findings. Final `xcrun swift test --no-parallel` passed: 147 tests in 21 suites, 27.547 seconds, with the same five environment-gated live-index tests skipped. `git diff --check` and `./scripts/build` passed.
-
-The user authorized the native testing slot and installation. The previous Hana process was quit before replacing `/Users/beamsereeyothin/Applications/Hana.app`; the installed signature passed strict validation. PID `38970`, launched at `2026-10-14 12:40:53 +0700`, loaded UUID `7650873A-88AA-3972-98DD-F3B989054813`, matching built and installed executables. Their SHA-256 is `ba5e0ace09577913e2128402a420230494d710c14b9a05b33457d781277c6159`. The slot was returned for the user's hands-on test. Automated native assertions and loaded-binary identity do not establish perceived motion or physical keyboard routing.
+After Beam authorized restarting Hana, the rebuilt bundle was installed at `/Users/beamsereeyothin/Applications/Hana.app`. PID `39576`, launched at `2026-10-14 12:43:19 +0700`, loaded UUID `7B07F537-2C6B-3472-B1AE-939AD18829FE`, matching built and installed executables. Both executables have SHA-256 `aa77054fa5d9af7f9603572a5ec15d397d5dc72f9c60a93ab463da4e80b0d68e`. The testing slot was returned to Beam; perceived responsiveness remains a hands-on observation.
 
 ## Follow-up — retain displayed rows until fresh results
 
