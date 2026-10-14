@@ -30,6 +30,8 @@ import Foundation
 ///   summarize active Notes (default), note Archive, every record (notes and
 ///   tasks), the note Search projection, a task view, or the task Search
 ///   projection (`task-search-all` includes completed and archived tasks).
+/// - `export <root> --destination <marked-disposable-root>`: publish a complete portable collection.
+/// - `validate-export <destination-root> --package <Hana-export-UUID>`: revalidate a published export.
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
 enum CollectionFixtureHarness {
     static let flag = "--collection-fixture"
@@ -83,6 +85,11 @@ enum CollectionFixtureHarness {
                 try await reorderTask(at: root, options)
             case "read":
                 try await withStore(try CollectionLocation.fixture(root)) { try await read(options["--query"] ?? "notes", from: $0) }
+            case "export", "validate-export":
+                let result = try await CollectionExportFixture.run(arguments[0], root: root, options: options)
+                emit(arguments[0] == "export" ? "collection.exported" : "export.validated",
+                     ["package": result.url.lastPathComponent, "collectionID": result.collectionID.uuidString,
+                      "noteCount": result.noteCount, "taskCount": result.taskCount])
             case "runtime-report":
                 let report = try await withStore(try CollectionLocation.fixture(root)) { try await $0.runtimeReport() }
                 let object = try JSONSerialization.jsonObject(with: JSONEncoder().encode(report))
@@ -297,6 +304,8 @@ enum CollectionFixtureHarness {
             if case .unsupportedSchema(let version) = error { return "unsupportedSchema(\(version))" }
             if case .storageFailure(let code) = error { return "storageFailure(\(code))" }
             return "\(error)"
+        case let error as CollectionRecovery.ExportError: return "\(error)"
+        case is CollectionExportFixture.Failure: return "usage"
         case is InjectedFailure: return "injectedFailure"
         case is Usage: return "usage"
         default: return "unexpected"
