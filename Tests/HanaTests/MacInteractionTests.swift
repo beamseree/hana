@@ -29,23 +29,146 @@ struct MacInteractionTests {
         #expect(interaction.isLoading)
     }
 
-    @Test func enterDuringRefreshOpensTheVisibleRetainedRow() async throws {
+    @Test func enterOnAnOutdatedRowWaitsAndOpensTheFreshMatch() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed()
+        var opened: [URL] = []
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+            launchApplication: { url in opened.append(url); return .init(activate: { true }) })
+        interaction.presentBar()
+        defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+        let notes = app("Notes", "/fixture/Notes.app"), safari = app("Safari", "/fixture/Safari.app")
+        interaction.updateQuery("Note")
+        await apps.send([notes])
+        try await eventually { interaction.selectedResult?.id == notes.id }
+        interaction.updateQuery("Safari")
+        #expect(interaction.selectedResult?.id == notes.id)
+        #expect(interaction.requestSelectedOpen() == nil)
+        // Held: the visible rows stay and the opening status is shown.
+        #expect(interaction.statusMessage == "Opening selected destination…")
+        #expect(interaction.results == [notes])
+        #expect(opened.isEmpty)
+        try await eventually { apps.subscriptionCount == 2 }
+        await apps.send([notes, safari])
+        try await eventually { interaction.currentInvocation == nil }
+        #expect(opened == [safari.url])
+    }
+
+    @Test func enterOnARetainedRowThatStillMatchesOpensImmediately() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed()
+        var opened: [URL] = []
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+            launchApplication: { url in opened.append(url); return .init(activate: { true }) })
+        interaction.presentBar()
+        defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+        let notes = app("Notes", "/fixture/Notes.app")
+        interaction.updateQuery("Note")
+        await apps.send([notes])
+        try await eventually { interaction.selectedResult?.id == notes.id }
+        interaction.updateQuery("Notes")
+        await interaction.requestSelectedOpen()?.value
+        #expect(opened == [notes.url])
+        #expect(interaction.currentInvocation == nil)
+    }
+
+    @Test func enterAgainAfterNavigatingToAMatchingRowOpensItAtOnce() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed()
+        var opened: [URL] = []
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+            launchApplication: { url in opened.append(url); return .init(activate: { true }) })
+        interaction.presentBar()
+        defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+        let notes = app("Notes", "/fixture/Notes.app"), numbers = app("Numbers", "/fixture/Numbers.app")
+        interaction.updateQuery("N")
+        await apps.send([notes, numbers])
+        try await eventually { interaction.results == [notes, numbers] }
+        interaction.updateQuery("Nu")
+        #expect(interaction.selectedResult?.id == notes.id)
+        #expect(interaction.requestSelectedOpen() == nil)
+        interaction.moveSelection(by: 1)
+        await interaction.requestSelectedOpen()?.value
+        #expect(opened == [numbers.url])
+        #expect(interaction.currentInvocation == nil)
+    }
+
+    @Test func anEditCancelsAHeldEnter() async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed()
         var opened: [URL] = []
         let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
             launchApplication: { url in opened.append(url); return .init(activate: { true }) })
         let invocation = interaction.presentBar()
-        defer { interaction.dismiss(invocation, reason: .outsideClick) }
-        let notes = app("Notes", "/fixture/Notes.app")
+        defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+        let notes = app("Notes", "/fixture/Notes.app"), safari = app("Safari", "/fixture/Safari.app")
         interaction.updateQuery("Note")
         await apps.send([notes])
         try await eventually { interaction.selectedResult?.id == notes.id }
         interaction.updateQuery("Safari")
-        #expect(interaction.selectedResult?.id == notes.id)
+        interaction.requestSelectedOpen()
+        interaction.updateQuery("Safar")
+        #expect(interaction.statusMessage == nil)
+        try await eventually { apps.subscriptionCount == 2 }
+        await apps.send([notes, safari])
+        try await eventually { interaction.results == [safari] }
+        try await Task.sleep(for: .milliseconds(20))
+        #expect(opened.isEmpty)
+        #expect(interaction.currentInvocation == invocation)
         await interaction.requestSelectedOpen()?.value
-        #expect(opened == [notes.url])
-        #expect(interaction.currentInvocation == nil)
+        #expect(opened == [safari.url])
+    }
+
+    @Test(arguments: [MacInteraction.DismissalReason.escape, .outsideClick])
+    func dismissalCancelsAHeldEnter(reason: MacInteraction.DismissalReason) async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed()
+        var launched: [URL] = [], activated = false
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+            launchApplication: { url in launched.append(url); return .init(activate: { activated = true; return true }) })
+        let invocation = interaction.presentBar()
+        let notes = app("Notes", "/fixture/Notes.app"), safari = app("Safari", "/fixture/Safari.app")
+        interaction.updateQuery("Note")
+        await apps.send([notes])
+        try await eventually { interaction.selectedResult?.id == notes.id }
+        interaction.updateQuery("Safari")
+        interaction.requestSelectedOpen()
+        try await eventually { apps.subscriptionCount == 2 }
+        interaction.dismiss(invocation, reason: reason)
+        let fresh = interaction.presentBar()
+        defer { interaction.dismiss(fresh, reason: .outsideClick) }
+        await apps.send([notes, safari])
+        try await Task.sleep(for: .milliseconds(20))
+        #expect(launched.isEmpty)
+        #expect(!activated)
+        #expect(interaction.currentInvocation == fresh)
+    }
+
+    @Test func aHeldEnterEndsWithNoMatchesWhenBothSourcesFinishEmpty() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed(), files = CatalogFeed()
+        var opened: [URL] = []
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero),
+            launchApplication: { url in opened.append(url); return .init(activate: { true }) },
+            openFile: { url in opened.append(url); return .init(activate: { true }) })
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let notes = app("Notes", "/fixture/Notes.app")
+        interaction.updateQuery("Note")
+        await apps.send([notes]); await files.send([])
+        try await eventually { interaction.results == [notes] && !interaction.isLoading }
+        interaction.updateQuery("no-such-result")
+        interaction.requestSelectedOpen()
+        try await eventually { apps.subscriptionCount == 2 && files.subscriptionCount == 2 }
+        await apps.send([notes])
+        try await Task.sleep(for: .milliseconds(20)) // Files are still loading.
+        #expect(interaction.results == [notes])
+        #expect(interaction.statusMessage == "Opening selected destination…")
+        await files.send([])
+        try await eventually { interaction.statusMessage?.hasPrefix("No matches") == true }
+        #expect(interaction.results.isEmpty)
+        #expect(opened.isEmpty)
+        #expect(interaction.currentInvocation == invocation)
     }
 
     @Test func editsKeepPreviousRowsUntilFreshMatchesArrive() async throws {
@@ -269,6 +392,28 @@ struct DestinationInteractionTests {
         for await batch in search.search(.init(text: "App")) { last = batch }
         #expect(last?.results.map(\.id) == [b.id, a.id])
         #expect(interaction.currentInvocation == nil)
+    }
+
+    @Test func usageIsRecordedOnlyForTheResultMatchingTheOpenedRequest() async throws {
+        _ = NSApplication.shared
+        let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [a, b], status: .ready)); $0.finish() } }, debounce: .zero)
+        var opened: [URL] = []
+        let interaction = MacInteraction(search: search,
+            launchApplication: { url in opened.append(url); return .init(activate: { true }) })
+        interaction.presentBar()
+        defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+        interaction.updateQuery("App")
+        try await eventually { interaction.results.map(\.id) == [a.id, b.id] }
+        // App A stays selected but no longer matches; Enter waits for App B.
+        interaction.updateQuery("App B")
+        #expect(interaction.selectedResult?.id == a.id)
+        interaction.requestSelectedOpen()
+        try await eventually { interaction.currentInvocation == nil }
+        #expect(opened == [b.url])
+        var last: Search.Batch?
+        for await batch in search.search(.init(text: "App")) { last = batch }
+        #expect(last?.results.map(\.id) == [b.id, a.id])
     }
 
     @Test func navigatedFileSurvivesNewExactBatchAndRemovalReturnsToFirstRow() async throws {

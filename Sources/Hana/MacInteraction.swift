@@ -46,6 +46,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var retainedContentHeight: CGFloat = 0
     private var sourceStatus: SourceStatus = .ready
     private var pendingLaunch: UUID?
+    /// Results that appeared in a batch for the current request. Only these
+    /// match it; any other visible row is a retained, outdated one.
+    private var currentMatchIDs: Set<SearchResult.ID> = []
+    /// Enter on an outdated row waits for the current request's batches.
+    private var heldEnter = false
     private(set) var results: [SearchResult] = []
     private(set) var openFailure: String?
     var query: String { editor.string }
@@ -540,11 +545,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // A new query owns a new open intent; an old acknowledgment cannot
         // block Enter or report an error into this context.
         pendingLaunch = nil
+        heldEnter = false
         let request = Search.Request(text: text)
         self.request = request
         userMovedSelection = false
         openFailure = nil
         let stream = search.search(request)
+        currentMatchIDs = Set(stream.initial.results.map(\.id))
         // Keep the displayed snapshot intact until a source delivers its
         // replacement. An edit alone must not remove nonmatching rows.
         if results.isEmpty || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -565,6 +572,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                       self.currentInvocation != nil, !Task.isCancelled else { continue }
                 self.sourceStatus = batch.appStatus
                 self.fileStatus = batch.fileStatus
+                self.currentMatchIDs.formUnion(batch.results.map(\.id))
                 // Empty or cache-only intermediate batches are not a
                 // replacement: a source has yet to deliver fresh matches.
                 if batch.hasFreshResults || (batch.appStatus != .loading && batch.fileStatus != .loading) {
@@ -576,6 +584,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                     }
                 }
                 self.renderResults()
+                if self.heldEnter { self.releaseHeldEnter() }
                 self.record("search.batch", extra: ["resultCount": batch.results.count, "appStatus": batch.appStatus.rawValue, "fileStatus": batch.fileStatus.rawValue,
                     "applicationCount": batch.results.filter { $0.kind == .application }.count,
                     "fileCount": batch.results.filter { $0.kind != .application }.count,
@@ -594,9 +603,39 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         record("search.selection", extra: ["index": next])
     }
 
+    /// Returns nil when nothing was opened now, including when Enter is held
+    /// because the selected row does not match the current request.
     @discardableResult
     func requestSelectedOpen() -> Task<Void, Never>? {
         guard let invocation = currentInvocation, let destination = selectedResult, pendingLaunch == nil else { return nil }
+        // Enter again after navigating to a matching row opens it at once.
+        guard currentMatchIDs.contains(destination.id) else {
+            heldEnter = true
+            openFailure = nil
+            renderResults()
+            record("launch.held", extra: ["destinationKind": destination.typeLabel])
+            return nil
+        }
+        heldEnter = false
+        return openResult(destination, from: invocation)
+    }
+
+    /// Opens the row selected under the usual rules once it matches the
+    /// current request; both sources finishing without one cancels the hold.
+    private func releaseHeldEnter() {
+        guard let invocation = currentInvocation else { return }
+        if let destination = selectedResult, currentMatchIDs.contains(destination.id) {
+            heldEnter = false
+            openResult(destination, from: invocation)
+        } else if sourceStatus != .loading && fileStatus != .loading {
+            heldEnter = false
+            renderResults()
+            record("launch.held-cancelled")
+        }
+    }
+
+    @discardableResult
+    private func openResult(_ destination: SearchResult, from invocation: Invocation) -> Task<Void, Never> {
         let operation = UUID()
         pendingLaunch = operation
         let generation = request?.generation
@@ -695,6 +734,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // Invalidate an already-issued native open; it cannot be recalled, but
         // its acknowledgment must never close a subsequent invocation.
         pendingLaunch = nil
+        heldEnter = false
         results = []
         icons = [:]
         selectedID = nil
@@ -736,7 +776,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let status: String?
         if !hasQuery { status = nil }
         else if let openFailure { status = openFailure }
-        else if pendingLaunch != nil { status = "Opening selected destination…" }
+        else if pendingLaunch != nil || heldEnter { status = "Opening selected destination…" }
         else if sourceStatus == .failed || fileStatus == .failed { status = "A search source reported a failure. Available results are shown; retry the search." }
         else if sourceStatus == .partial || fileStatus == .partial { status = "Partial search results — refine your query for more specific matches." }
         else if loading { status = nil }
