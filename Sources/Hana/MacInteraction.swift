@@ -319,7 +319,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         modeIcon.autoresizingMask = [.minYMargin]
         card.addSubview(modeIcon)
 
-        loadingIndicator.frame = NSRect(x: card.frame.width - 32, y: 22, width: 16, height: 16)
+        // Ends where the results' type labels end.
+        let labelTrailing = BarStyle.cardPadding + BarStyle.resultIconInset
+        loadingIndicator.frame = NSRect(x: card.frame.width - labelTrailing - 16, y: 22, width: 16, height: 16)
         loadingIndicator.autoresizingMask = [.minXMargin, .minYMargin]
         loadingIndicator.style = .spinning
         loadingIndicator.controlSize = .small

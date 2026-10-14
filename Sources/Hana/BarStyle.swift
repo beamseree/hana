@@ -31,6 +31,8 @@ enum BarStyle {
     static let textColor = NSColor(srgbRed: 0x17 / 255, green: 0x17 / 255, blue: 0x17 / 255, alpha: 1)
     static let secondaryColor = NSColor(srgbRed: 0x66 / 255, green: 0x66 / 255, blue: 0x66 / 255, alpha: 1)
     static let iconColor = NSColor(srgbRed: 0x77 / 255, green: 0x77 / 255, blue: 0x77 / 255, alpha: 1)
+    /// The bar's logo and magnifier match the query text.
+    static let modeIconColor = textColor
     static let textAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: textColor, .kern: -0.26]
     static let placeholderAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: secondaryColor, .kern: -0.26]
 }
