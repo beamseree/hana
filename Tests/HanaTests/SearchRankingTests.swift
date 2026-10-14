@@ -154,6 +154,27 @@ struct SearchRankingTests {
         }
     }
 
+    @Test func adapterShortlistKeepsLateStrongMatchesAheadOfWeakCandidates() async {
+        let weak = (0..<300).map { item(String(format: "aaaa-%03d.pdf", $0)) }
+            + (0..<300).map { item(String(format: "bbbb-%03d-xpdf.txt", $0)) }
+        let exact = item("pdf.txt"), prefix = item("pdf-guide.txt"), wordStart = item("zzzz pdf best.txt")
+        // Every strong match arrives after the 256-candidate cap has filled,
+        // in the reverse of the expected visible Search order.
+        let candidates = weak + [wordStart, prefix, exact]
+        var shortlist: [SearchResult] = []
+        for start in stride(from: 0, to: candidates.count, by: 128) {
+            let chunk = Array(candidates[start..<min(start + 128, candidates.count)])
+            // Exercise the production adapter's shared compaction boundary,
+            // including repeated compaction as Spotlight scans later chunks.
+            shortlist = await Search.compactCandidates(shortlist + chunk, query: "pdf", limit: 256)
+        }
+        #expect(shortlist.count == 256)
+        #expect(Array(shortlist.prefix(3)) == [exact, prefix, wordStart])
+        let visible = await results("pdf", candidates)
+        #expect(Array(visible.prefix(3)) == [exact, prefix, wordStart])
+        #expect(Array(shortlist.prefix(20)) == visible)
+    }
+
     @Test(.enabled(if: ProcessInfo.processInfo.environment["HANA_RANKING_FIXTURE"] != nil))
     func indexedShortlistKeepsWordStartsAheadOfMidwordAndExtensionOnlyMatches() async throws {
         let root = URL(fileURLWithPath: try #require(ProcessInfo.processInfo.environment["HANA_RANKING_FIXTURE"]))
