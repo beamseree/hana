@@ -55,7 +55,7 @@ struct NoteModeTests {
         #expect(window.frame.maxY == inputTop)
 
         for line in 3...30 { editor.insertText("\n\(line)", replacementRange: none) }
-        try await eventually { interaction.contentHeight == collapsed + BarStyle.noteMaxTextHeight - 40 }
+        try await eventually { interaction.contentHeight == collapsed + BarStyle.noteMaxTextHeight - BarStyle.editorHeight }
         #expect(twoLines < interaction.contentHeight)
         #expect(window.frame.maxY == inputTop)
         let scroll = try #require(editor.enclosingScrollView)

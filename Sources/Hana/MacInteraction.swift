@@ -352,13 +352,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         card.addSubview(modeLabel)
 
         let scroll = editorScroll
-        scroll.frame = NSRect(x: BarStyle.textInset, y: 10, width: card.frame.width - BarStyle.textInset - 44, height: 40)
+        scroll.frame = NSRect(x: BarStyle.textInset, y: BarStyle.editorTopInset,
+                              width: card.frame.width - BarStyle.textInset - 44, height: BarStyle.editorHeight)
         scroll.autoresizingMask = [.width, .minYMargin]
         scroll.drawsBackground = false
         scroll.hasHorizontalScroller = false
         scroll.hasVerticalScroller = false
         editor.frame = scroll.bounds
-        editor.minSize = NSSize(width: 0, height: 40)
+        editor.minSize = NSSize(width: 0, height: BarStyle.editorHeight)
         editor.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         editor.isVerticallyResizable = true
         editor.isHorizontallyResizable = false
@@ -414,7 +415,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     private func show(_ mode: CaptureSession.Mode) {
-        record("capture.mode", extra: ["mode": mode == .note ? "note" : "search"])
+        record("capture.mode", extra: ["mode": mode.rawValue])
         resetSearch()
         applyModePresentation(animated: panel.isVisible)
         renderResults()
@@ -431,8 +432,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         guard let card = editorScroll.superview else { return }
         // Note leaves room for its label; Search's single line stays pinned to the top.
         let trailing = note ? card.bounds.width - modeLabel.frame.minX + 8 : 44
-        editorScroll.frame = NSRect(x: BarStyle.textInset, y: card.bounds.height - 50,
-                                    width: card.bounds.width - BarStyle.textInset - trailing, height: 40)
+        editorScroll.frame = NSRect(x: BarStyle.textInset, y: card.bounds.height - BarStyle.editorTopInset - BarStyle.editorHeight,
+                                    width: card.bounds.width - BarStyle.textInset - trailing, height: BarStyle.editorHeight)
     }
 
     private func applyPlacement(displays: [Display], pointer: CGPoint, focus: WindowFocus) {
@@ -915,13 +916,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         loadingIndicator.stopAnimation(nil)
         resultSurface?.isHidden = true
         retainedContentHeight = 0
-        let height = min(BarStyle.noteMaxTextHeight, max(40, noteTextHeight))
-        let frame = currentPlacement?.frame(height: BarStyle.collapsedHeight + height - 40) ?? panel.frame
+        let height = min(BarStyle.noteMaxTextHeight, max(BarStyle.editorHeight, noteTextHeight))
+        let frame = currentPlacement?.frame(height: BarStyle.collapsedHeight + height - BarStyle.editorHeight) ?? panel.frame
         setPanelFrame(frame, animated: true)
         // Laid out at the final height, pinned under the card's top, so the card
         // reveals it as it grows.
         guard let card = editorScroll.superview else { return }
-        editorScroll.frame = NSRect(x: editorScroll.frame.minX, y: card.bounds.height - 10 - height,
+        editorScroll.frame = NSRect(x: editorScroll.frame.minX, y: card.bounds.height - BarStyle.editorTopInset - height,
                                     width: editorScroll.frame.width, height: height)
     }
 
@@ -1026,11 +1027,12 @@ private final class SearchEditor: NSTextView {
         return edit()
     }
 
-    /// The text-input insertion path. Committing marked text is not typing, and
-    /// an explicit range other than the selection is uncertain, so literal.
+    /// The text-input insertion path. Committing marked text is not typing. Key
+    /// input replaces the selection without naming a range; an explicit range
+    /// (accent menu, Emoji & Symbols, dictation) is uncertain, so literal.
     override func insertText(_ string: Any, replacementRange: NSRange) {
         let provenance: CaptureSession.Provenance = hasMarkedText() ? .compositionCommit
-            : replacementRange.location == NSNotFound || replacementRange == selectedRange() ? .typed : .programmatic
+            : replacementRange.location == NSNotFound ? .typed : .programmatic
         performing(provenance) { super.insertText(string, replacementRange: replacementRange) }
     }
 

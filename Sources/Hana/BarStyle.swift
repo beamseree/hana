@@ -26,6 +26,9 @@ enum BarStyle {
     static let modeIconFrame = NSRect(x: iconColumnMidX - 14, y: 16, width: 28, height: 28)
     /// Where query text and result names begin, in card coordinates.
     static let textInset: CGFloat = 58
+    /// The editor's single-line height, and its inset below the card's top.
+    static let editorHeight: CGFloat = 40
+    static let editorTopInset: CGFloat = 10
     /// Note's writing surface grows to this text height, then scrolls.
     static let noteMaxTextHeight: CGFloat = 240
 

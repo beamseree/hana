@@ -3,7 +3,7 @@ import Foundation
 /// The bar's capture rules as pure transitions: `handle(event)` updates the
 /// state and returns the effects window code performs. No disk or window work.
 struct CaptureSession {
-    enum Mode: Equatable { case search, note }
+    enum Mode: String { case search, note }
 
     /// Where an insertion came from, as identified by the native editor. Only
     /// `typed` can select a mode; anything uncertain is reported as `programmatic`.

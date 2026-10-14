@@ -142,9 +142,10 @@ struct Spring {
     }
 }
 
-/// Draws `SearchIconMorph`, or the note icon, with one shape layer per part. Each change is sampled
-/// from the spring into keyframes that run on the render server, so a busy main
-/// actor (results arriving on the first keystroke) cannot drop frames.
+/// Draws `SearchIconMorph` or the note icon, one shape layer per part. Each
+/// change is sampled from the spring into keyframes that run on the render
+/// server, so a busy main actor (results arriving on the first keystroke)
+/// cannot drop frames.
 @MainActor
 final class ModeIconView: NSView {
     private(set) var showsQuery = false
