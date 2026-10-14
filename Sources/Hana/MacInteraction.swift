@@ -26,8 +26,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false
     )
     private let editor = SearchEditor(frame: .zero)
-    /// Shows the current mode; the Hana logo is Search's icon.
-    private let modeIcon = NSImageView()
+    /// Shows the current mode: the Hana logo for empty Search, a magnifying glass once it has a query.
+    private let modeIcon = ModeIconView(frame: BarStyle.modeIconFrame)
     private let search: Search
     private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
     private let openFile: @MainActor (URL) async throws -> OpenedApplication
@@ -47,6 +47,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private(set) var results: [SearchResult] = []
     private(set) var openFailure: String?
     var query: String { editor.string }
+    var modeIconShowsQuery: Bool { modeIcon.showsQuery }
     var selectedResult: SearchResult? { results.first { $0.id == selectedID } }
     private let diagnostics: Diagnostics
     private var origin: NSRunningApplication?
@@ -301,11 +302,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             width: BarStyle.width - 2 * BarStyle.inset, height: BarStyle.inputHeight))
         card.autoresizingMask = [.width, .height]
         bezel.addSubview(card)
-        modeIcon.frame = BarStyle.modeIconFrame
         modeIcon.autoresizingMask = [.minYMargin]
-        modeIcon.image = NSImage.hanaLogo
-        modeIcon.contentTintColor = BarStyle.iconColor
-        modeIcon.setAccessibilityElement(false)
         card.addSubview(modeIcon)
 
         let scroll = NSScrollView(frame: NSRect(x: BarStyle.textInset, y: 10, width: card.frame.width - BarStyle.textInset - 16, height: 40))
@@ -341,6 +338,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             guard let self, let invocation = self.currentInvocation else { return }
             self.dismiss(invocation, reason: .escape)
         }
+        editor.compositionChanged = { [weak self] in self?.updateModeIcon() }
         scroll.documentView = editor
         card.addSubview(scroll)
 
@@ -358,6 +356,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.typingAttributes = BarStyle.textAttributes
         editor.setSelectedRange(NSRange(location: 0, length: 0))
         editor.undoManager?.removeAllActions()
+        modeIcon.setShowsQuery(false, animated: false)
     }
 
     private func applyPlacement(displays: [Display], pointer: CGPoint, focus: WindowFocus) {
@@ -521,6 +520,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     func updateQuery(_ text: String) {
         guard currentInvocation != nil else { return }
         if editor.string != text { editor.string = text }
+        updateModeIcon()
         searchTask?.cancel()
         // A new query owns a new open intent; an old acknowledgment cannot
         // block Enter or report an error into this context.
@@ -656,6 +656,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             guard let source = NSWorkspace.shared.frontmostApplication else { return application.activate(options: []) }
             return application.activate(from: source, options: [])
         }
+    }
+
+    /// Composition counts as a query: the placeholder is already hidden.
+    private func updateModeIcon() {
+        modeIcon.setShowsQuery(!editor.string.isEmpty || editor.hasMarkedText(), animated: panel.isVisible)
     }
 
     private func resetSearch() {
@@ -799,6 +804,7 @@ private final class SearchPanel: NSPanel {
 @MainActor
 private final class SearchEditor: NSTextView {
     var escape: (() -> Void)?
+    var compositionChanged: (() -> Void)?
     override var needsPanelToBecomeKey: Bool { true }
 
     override func keyDown(with event: NSEvent) {
@@ -830,10 +836,12 @@ private final class SearchEditor: NSTextView {
     override func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
         super.setMarkedText(string, selectedRange: selectedRange, replacementRange: replacementRange)
         needsDisplay = true
+        compositionChanged?()
     }
 
     override func unmarkText() {
         super.unmarkText()
         needsDisplay = true
+        compositionChanged?()
     }
 }
