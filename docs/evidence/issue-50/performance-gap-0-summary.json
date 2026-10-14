@@ -1,0 +1,108 @@
+{
+  "finished_runs": 1,
+  "complete_uninterrupted_runs": 1,
+  "excluded_incomplete_runs": [],
+  "units": "milliseconds",
+  "groups": {
+    "performance.integrated.cold": {
+      "attempts": 1,
+      "invalid_contexts": 0,
+      "presentationCallMilliseconds": {
+        "n": 1,
+        "median": 20.108958706259727,
+        "p95_nearest_rank": 20.108958706259727,
+        "max": 20.108958706259727
+      },
+      "nativeInsertionCallMilliseconds": {
+        "n": 1,
+        "median": 7.667958736419678,
+        "p95_nearest_rank": 7.667958736419678,
+        "max": 7.667958736419678
+      },
+      "firstAppObservedMilliseconds": {
+        "n": 1,
+        "median": 89.32400122284889,
+        "p95_nearest_rank": 89.32400122284889,
+        "max": 89.32400122284889
+      },
+      "firstFileObservedMilliseconds": {
+        "n": 1,
+        "median": 89.32400122284889,
+        "p95_nearest_rank": 89.32400122284889,
+        "max": 89.32400122284889
+      }
+    },
+    "performance.integrated.warm": {
+      "attempts": 30,
+      "invalid_contexts": 0,
+      "presentationCallMilliseconds": {
+        "n": 30,
+        "median": 3.765416331589222,
+        "p95_nearest_rank": 6.178459152579308,
+        "max": 6.246250122785568
+      },
+      "nativeInsertionCallMilliseconds": {
+        "n": 30,
+        "median": 1.0516457259654999,
+        "p95_nearest_rank": 2.368248999118805,
+        "max": 2.874249592423439
+      },
+      "firstAppObservedMilliseconds": {
+        "n": 30,
+        "median": 29.632562771439552,
+        "p95_nearest_rank": 36.081042140722275,
+        "max": 36.39991581439972
+      },
+      "firstFileObservedMilliseconds": {
+        "n": 30,
+        "median": 85.70891711860895,
+        "p95_nearest_rank": 99.18975085020065,
+        "max": 101.12458281219006
+      }
+    },
+    "performance.local.cold": {
+      "attempts": 1,
+      "invalid_contexts": 0,
+      "milliseconds": {
+        "n": 1,
+        "median": 951.478248462081,
+        "p95_nearest_rank": 951.478248462081,
+        "max": 951.478248462081
+      }
+    },
+    "performance.local.warm": {
+      "attempts": 30,
+      "invalid_contexts": 0,
+      "milliseconds": {
+        "n": 30,
+        "median": 9.424353949725628,
+        "p95_nearest_rank": 10.26320829987526,
+        "max": 11.347874999046326
+      }
+    },
+    "performance.typing": {
+      "attempts": 10,
+      "invalid_contexts": 0,
+      "firstFileAfterLastKeystrokeMilliseconds": {
+        "n": 10,
+        "median": 132.6340837404132,
+        "p95_nearest_rank": 340.3966259211302,
+        "max": 340.3966259211302
+      }
+    }
+  },
+  "scheduling_excess": {
+    "n": 7406,
+    "median": 1.054166704416275,
+    "p95_nearest_rank": 4.557956829667091,
+    "max": 47.58737504482269,
+    "over_50ms": 0
+  },
+  "typing_scheduling_excess": {
+    "n": 1777,
+    "median": 1.0553327202796936,
+    "p95_nearest_rank": 5.416500270366669,
+    "max": 47.58737504482269,
+    "over_50ms": 0
+  }
+}

@@ -72,7 +72,7 @@ struct SearchExclusionTests {
     /// every batch within a budget after the exact and prefix stages publish.
     @Test(.enabled(if: ProcessInfo.processInfo.environment["HANA_LIVE_INDEX"] != nil))
     func liveIndexedTeQueryOmitsDependencySystemAndApplicationSupportClutter() async throws {
-        let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true, debounce: .zero)
+        let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true, typingGap: .zero)
         let consumer = Task {
             var batches: [Search.Batch] = []
             for await batch in search.search(.init(text: "te")) {
@@ -100,7 +100,7 @@ struct SearchExclusionTests {
     @Test(.enabled(if: ProcessInfo.processInfo.environment["HANA_LIVE_INDEX"] != nil))
     func liveIndexedFinderQueryReturnsFinder() async {
         let finder = URL(fileURLWithPath: "/System/Library/CoreServices/Finder.app")
-        let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true, debounce: .zero)
+        let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true, typingGap: .zero)
         var found = false
         for await batch in search.search(.init(text: "Finder")) {
             if batch.results.contains(where: { $0.id.destination == finder.standardizedFileURL }) { found = true; break }
@@ -117,7 +117,7 @@ struct SearchExclusionTests {
     private func results(_ values: [SearchResult], apps: [SearchResult] = [], query: String) async -> [SearchResult] {
         let search = Search(source: { AsyncStream { $0.yield(.init(results: apps, status: .ready)); $0.finish() } },
                             files: { _ in AsyncStream { $0.yield(.init(results: values, status: .ready)); $0.finish() } },
-                            debounce: .zero)
+                            typingGap: .zero)
         var last: Search.Batch?
         for await batch in search.search(.init(text: query)) { last = batch }
         return last?.results ?? []

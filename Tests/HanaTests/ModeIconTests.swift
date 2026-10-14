@@ -67,7 +67,7 @@ struct ModeIconInteractionTests {
     @Test func queryTextShowsTheMagnifierAndClearingRestoresTheLogo() {
         _ = NSApplication.shared
         let feed = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
         #expect(!interaction.modeIconShowsQuery)

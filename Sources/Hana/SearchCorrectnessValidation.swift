@@ -12,7 +12,7 @@ final class SearchCorrectnessValidation {
             return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { apps = $0 }
         }, files: { [self] _ in
             return AsyncStream(bufferingPolicy: .bufferingNewest(1)) { files = $0 }
-        }, debounce: .milliseconds(100))
+        })
     }
 
     func run(_ interaction: MacInteraction, diagnostics: Diagnostics) async {

@@ -12,9 +12,12 @@ complete = set()
 for run in finished:
     integrated = [r for r in rows if r.get('run') == run and r['event'] == 'performance.integrated']
     local = [r for r in rows if r.get('run') == run and r['event'] == 'performance.local']
+    # Runs before #50 have no rapid-typing phase.
+    typed = [r for r in rows if r.get('run') == run and r['event'] == 'performance.typing']
     if (len(integrated) == 31 and len(local) == 31
             and all(r['contextIntact'] and r['appFound'] and r['fileFound'] for r in integrated)
-            and all(r['found'] for r in local)):
+            and all(r['found'] for r in local)
+            and all(r['contextIntact'] and r['fileFound'] for r in typed)):
         complete.add(run)
 rows = [row for row in rows if row.get('run') in complete]
 
@@ -40,6 +43,15 @@ for event, cold_key, fields in [
             **{field: describe([r[field] for r in samples if field in r and r.get('contextIntact', True)])
                for field in fields},
         }
-values = [v for r in rows if r['event'] == 'performance.scheduling' for v in r['excessMilliseconds']]
-output['scheduling_excess'] = {**describe(values), 'over_50ms': sum(v > 50 for v in values)}
+typing = [r for r in rows if r['event'] == 'performance.typing']
+output['groups']['performance.typing'] = {
+    'attempts': len(typing),
+    'invalid_contexts': sum(not r['contextIntact'] for r in typing),
+    'firstFileAfterLastKeystrokeMilliseconds': describe(
+        [r['firstFileAfterLastKeystrokeMilliseconds'] for r in typing
+         if 'firstFileAfterLastKeystrokeMilliseconds' in r and r['contextIntact']]),
+}
+for key, field in [('scheduling_excess', 'excessMilliseconds'), ('typing_scheduling_excess', 'typingExcessMilliseconds')]:
+    values = [v for r in rows if r['event'] == 'performance.scheduling' for v in r.get(field, [])]
+    output[key] = {**describe(values), 'over_50ms': sum(v > 50 for v in values)}
 print(json.dumps(output, indent=2))
