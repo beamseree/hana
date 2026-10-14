@@ -90,7 +90,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         shortcutStatus?.title = result == noErr
             ? "Option+Space is available"
             : "Option+Space unavailable (\(result)) — use Search"
-        statusItem?.button?.title = result == noErr ? "Hana" : "Hana !"
+        if let button = statusItem?.button {
+            // The logo stands in for the name; without the bundle it falls back to text.
+            let warning = result == noErr ? "" : " !"
+            if let logo = NSImage.hanaStatusLogo {
+                button.image = logo
+                button.imagePosition = .imageLeading
+                button.title = warning
+            } else {
+                button.title = "Hana" + warning
+            }
+            button.setAccessibilityLabel(result == noErr ? "Hana" : "Hana, Option+Space unavailable")
+        }
         record("startup", extra: ["shortcutStatus": result, "screenCount": NSScreen.screens.count])
     }
 
