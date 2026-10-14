@@ -11,7 +11,14 @@ import Foundation
 /// - `create-root <root>`: create a new marked disposable root.
 /// - `create-note <root> --operation <uuid> [--pause before-commit|after-commit] [--fail before-commit]`:
 ///   save the note body read from standard input while observing Notes.
-/// - `read <root>`: summarize active Notes.
+/// - `edit-note <root> --id <uuid> --revision <n> [--pause …] [--fail …]`: replace the
+///   body with standard input while observing the note.
+/// - `pin-note <root> --id <uuid> --revision <n> --pinned true|false [--pause …] [--fail …]`:
+///   pin or unpin the note while observing it.
+/// - `archive-note|restore-note <root> --id <uuid> --revision <n> [--pause …] [--fail …]`:
+///   archive or restore the note while observing it.
+/// - `read <root> [--query notes|archive|all|search|search-archived]`: summarize
+///   active Notes (default), Archive, every record, or the Search projection.
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
 enum CollectionFixtureHarness {
     static let flag = "--collection-fixture"
@@ -32,16 +39,20 @@ enum CollectionFixtureHarness {
             case "create-note":
                 guard let operation = options["--operation"].flatMap(UUID.init(uuidString:)) else { throw Usage() }
                 try await createNote(at: try CollectionLocation.fixture(root), operation: operation,
-                                     pause: options["--pause"], fail: options["--fail"])
+                                     faults: faults(pause: options["--pause"], fail: options["--fail"]))
+            case "edit-note":
+                try await changeNote(at: root, options) { .editNote($0, expectedRevision: $1, body: readStandardInput()) }
+            case "pin-note":
+                guard let pinned = options["--pinned"].flatMap({ Bool($0) }) else { throw Usage() }
+                try await changeNote(at: root, options) { .setNotePinned($0, pinned, expectedRevision: $1) }
+            case "archive-note":
+                try await changeNote(at: root, options) { .archiveNote($0, expectedRevision: $1) }
+            case "restore-note":
+                try await changeNote(at: root, options) { .restoreNote($0, expectedRevision: $1) }
             case "read":
-                let store = try await CollectionStore.open(try CollectionLocation.fixture(root))
-                let notes = try await store.read(.notes, in: store.generation)
-                await store.close()
-                emit("notes", ["count": notes.count, "notes": notes.map(summary)])
+                try await withStore(try CollectionLocation.fixture(root)) { try await read(options["--query"] ?? "notes", from: $0) }
             case "runtime-report":
-                let store = try await CollectionStore.open(try CollectionLocation.fixture(root))
-                let report = try await store.runtimeReport()
-                await store.close()
+                let report = try await withStore(try CollectionLocation.fixture(root)) { try await $0.runtimeReport() }
                 let object = try JSONSerialization.jsonObject(with: JSONEncoder().encode(report))
                 emit("runtime-report", ["report": object])
             default:
@@ -54,39 +65,105 @@ enum CollectionFixtureHarness {
         }
     }
 
-    private static func createNote(at location: CollectionLocation, operation: UUID, pause: String?, fail: String?) async throws {
-        let body = String(decoding: FileHandle.standardInput.readDataToEndOfFile(), as: UTF8.self)
+    private static func readStandardInput() -> String {
+        String(decoding: FileHandle.standardInput.readDataToEndOfFile(), as: UTF8.self)
+    }
+
+    private static func faults(pause: String?, fail: String?) -> CollectionStore.Faults {
         let holdForever: @Sendable (String) -> Void = { point in
             emit("paused", ["at": point])
             while true { sleep(60) }
         }
-        let faults = CollectionStore.Faults(
+        return CollectionStore.Faults(
             beforeCommit: { _ in
                 if pause == "before-commit" { holdForever("before-commit") }
                 if fail == "before-commit" { throw InjectedFailure() }
             },
             afterCommit: { if pause == "after-commit" { holdForever("after-commit") } })
+    }
+
+    /// Opens a store for `body` and closes it afterwards, also when `body` throws.
+    private static func withStore<Value>(_ location: CollectionLocation, faults: CollectionStore.Faults = .init(),
+                                         _ body: (CollectionStore) async throws -> Value) async throws -> Value {
         let store = try await CollectionStore.open(location, faults: faults)
-        var observed = store.observe(.notes, in: store.generation).makeAsyncIterator()
-        let before = try await observed.next() ?? []
-        let note = try await store.perform(.createNote(operation: operation, body: body), in: store.generation)
-        var after = before
-        while !after.contains(where: { $0.id == note.id }), let next = try await observed.next() { after = next }
-        await store.close()
-        var fields = summary(note)
-        fields["observedBefore"] = before.count
-        fields["observedAfter"] = after.count
+        do {
+            let value = try await body(store)
+            await store.close()
+            return value
+        } catch {
+            await store.close()
+            throw error
+        }
+    }
+
+    private static func createNote(at location: CollectionLocation, operation: UUID, faults: CollectionStore.Faults) async throws {
+        let body = readStandardInput()
+        let fields = try await withStore(location, faults: faults) { store in
+            var observed = store.observe(.notes, in: store.generation).makeAsyncIterator()
+            let before = try await observed.next() ?? []
+            let note = try await store.perform(.createNote(operation: operation, body: body), in: store.generation)
+            var after = before
+            while !after.contains(where: { $0.id == note.id }), let next = try await observed.next() { after = next }
+            var fields = summary(note)
+            fields["observedBefore"] = before.count
+            fields["observedAfter"] = after.count
+            return fields
+        }
         emit("note.created", fields)
     }
 
+    /// Performs the command for `--id`/`--revision` while observing the note
+    /// until its committed result is observed.
+    private static func changeNote(at root: URL, _ options: [String: String],
+                                   _ command: (UUID, Int64) -> CollectionCommand<Note>) async throws {
+        guard let id = options["--id"].flatMap(UUID.init(uuidString:)), let revision = options["--revision"].flatMap({ Int64($0) })
+        else { throw Usage() }
+        let command = command(id, revision)
+        let faults = faults(pause: options["--pause"], fail: options["--fail"])
+        let fields = try await withStore(try CollectionLocation.fixture(root), faults: faults) { store in
+            var observed = store.observe(.note(id), in: store.generation).makeAsyncIterator()
+            let before = try await observed.next() ?? nil
+            let note = try await store.perform(command, in: store.generation)
+            var after = before
+            while after?.revision != note.revision, let next = try await observed.next() { after = next }
+            var fields = summary(note)
+            fields["observedBeforeRevision"] = before?.revision ?? NSNull()
+            fields["observedAfterRevision"] = after?.revision ?? NSNull()
+            return fields
+        }
+        emit("note.changed", fields)
+    }
+
+    private static func read(_ query: String, from store: CollectionStore) async throws {
+        switch query {
+        case "notes": emitNotes(try await store.read(.notes, in: store.generation))
+        case "archive": emitNotes(try await store.read(.archivedNotes, in: store.generation))
+        case "all": emitNotes(try await store.read(.allRecords, in: store.generation).notes)
+        case "search", "search-archived":
+            let entries = try await store.read(.noteSearchEntries(includingArchived: query == "search-archived"), in: store.generation)
+            emit("search", ["count": entries.count, "entries": entries.map { entry in
+                ["id": entry.id.uuidString, "titleSHA256": entry.title.map(sha256) ?? NSNull(),
+                 "textSHA256": sha256(entry.text), "archived": entry.isArchived] as [String: Any]
+            }])
+        default: throw Usage()
+        }
+    }
+
+    private static func emitNotes(_ notes: [Note]) {
+        emit("notes", ["count": notes.count, "notes": notes.map(summary)])
+    }
+
     private static func summary(_ note: Note) -> [String: Any] {
-        let body = Data(note.body.utf8)
-        return ["id": note.id.uuidString, "revision": note.revision, "bodyBytes": body.count,
-                "bodySHA256": SHA256.hash(data: body).map { String(format: "%02x", $0) }.joined(),
+        return ["id": note.id.uuidString, "revision": note.revision, "bodyBytes": note.body.utf8.count,
+                "bodySHA256": sha256(note.body), "titleSHA256": note.title.map(sha256) ?? NSNull(),
                 "createdAt": CollectionStore.milliseconds(note.createdAt),
                 "contentEditedAt": CollectionStore.milliseconds(note.contentEditedAt),
                 "updatedAt": CollectionStore.milliseconds(note.updatedAt),
                 "pinned": note.isPinned, "archived": note.archivedAt != nil]
+    }
+
+    private static func sha256(_ text: String) -> String {
+        SHA256.hash(data: Data(text.utf8)).map { String(format: "%02x", $0) }.joined()
     }
 
     /// Error names only; never descriptions that could carry content or paths.

@@ -36,6 +36,22 @@ extension Note: Equatable {
     }
 }
 
+/// A note's committed title and text for Search. Archived notes are
+/// eligible only when a query asks for them.
+struct NoteSearchEntry: Equatable, Sendable {
+    let id: UUID
+    let title: String?
+    let text: String
+    let isArchived: Bool
+}
+
+/// Every saved record from one committed state, archived notes included.
+struct CollectionRecords: Equatable, Sendable {
+    let collectionID: UUID
+    /// Ordered by ID.
+    let notes: [Note]
+}
+
 /// Identifies one open store session. Every open rotates it; work carrying an
 /// older generation is rejected before it can look anything up.
 struct StoreGeneration: Hashable, Sendable {
@@ -57,6 +73,11 @@ enum CollectionStoreError: Error, Equatable, Sendable {
     case closed
     case operationReused
     case blankNote
+    case noteNotFound
+    /// The note changed since the revision the command was based on.
+    case staleRevision
+    /// The note was archived; restore it before changing its body or pin.
+    case archivedNote
     /// The primary SQLite result code of a failed storage operation.
     case storageFailure(code: Int32)
 }
@@ -77,6 +98,34 @@ extension CollectionQuery where Value == [Note] {
         Self { db in
             try NoteRow.fetch(db, where: "archived_at IS NULL", [],
                               order: "pinned DESC, content_edited_at DESC, id ASC")
+        }
+    }
+
+    /// Archived notes: most recently archived first, then stable ID.
+    static var archivedNotes: Self {
+        Self { db in
+            try NoteRow.fetch(db, where: "archived_at IS NOT NULL", [], order: "archived_at DESC, id ASC")
+        }
+    }
+}
+
+extension CollectionQuery where Value == [NoteSearchEntry] {
+    /// Ordered by ID; Search does its own ranking.
+    static func noteSearchEntries(includingArchived: Bool = false) -> Self {
+        Self { db in
+            try NoteRow.fetch(db, where: includingArchived ? "1" : "archived_at IS NULL", []).map {
+                NoteSearchEntry(id: $0.id, title: $0.title, text: $0.body, isArchived: $0.archivedAt != nil)
+            }
+        }
+    }
+}
+
+extension CollectionQuery where Value == CollectionRecords {
+    static var allRecords: Self {
+        Self { db in
+            guard let id = try String.fetchOne(db, sql: "SELECT id FROM collection").flatMap(UUID.init(uuidString:))
+            else { throw CollectionStoreError.unreadableCollection }
+            return CollectionRecords(collectionID: id, notes: try NoteRow.fetch(db, where: "1", []))
         }
     }
 }
@@ -112,6 +161,48 @@ extension CollectionCommand where Result == Note {
                 VALUES (?, ?, NULL, ?, ?)
                 """, arguments: [operation.uuidString, id, digest, context.now])
             return try NoteRow.fetch(db, where: "id = ?", [id])[0]
+        }
+    }
+
+    // Note changes check, in order: existence, the expected revision (stale
+    // fails even when the change already holds), archive state, the payload.
+    // A current command whose result already holds is a no-op.
+
+    /// Replaces the body exactly; advances content-edited time and revision.
+    static func editNote(_ id: UUID, expectedRevision: Int64, body: String) -> Self {
+        let payload = Data(body.utf8)
+        return Self { db, context in
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: true)
+            guard Note.isNonblank(body) else { throw CollectionStoreError.blankNote }
+            guard !note.body.utf8.elementsEqual(payload) else { return note }
+            return try NoteRow.update(db, id, "body = CAST(? AS TEXT), content_edited_at = ?", [payload, context.now], now: context.now)
+        }
+    }
+
+    /// Organization only: content-edited time is preserved.
+    static func setNotePinned(_ id: UUID, _ pinned: Bool, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: true)
+            guard note.isPinned != pinned else { return note }
+            return try NoteRow.update(db, id, "pinned = ?", [pinned], now: context.now)
+        }
+    }
+
+    /// Hides the note from Notes; body, pin and content-edited time are kept.
+    static func archiveNote(_ id: UUID, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: false)
+            guard note.archivedAt == nil else { return note }
+            return try NoteRow.update(db, id, "archived_at = ?", [context.now], now: context.now)
+        }
+    }
+
+    /// Returns an archived note to Notes with its body, pin and content-edited time.
+    static func restoreNote(_ id: UUID, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: false)
+            guard note.archivedAt != nil else { return note }
+            return try NoteRow.update(db, id, "archived_at = NULL", [], now: context.now)
         }
     }
 }
@@ -319,6 +410,23 @@ extension CollectionStoreError {
 }
 
 private enum NoteRow {
+    /// The note as it stands when the command executes, if `expectedRevision`
+    /// is current and, when `requireUnarchived`, the note is not archived.
+    static func current(_ db: Database, _ id: UUID, expectedRevision: Int64, requireUnarchived: Bool) throws -> Note {
+        guard let note = try fetch(db, where: "id = ?", [id.uuidString]).first else { throw CollectionStoreError.noteNotFound }
+        guard note.revision == expectedRevision else { throw CollectionStoreError.staleRevision }
+        guard !requireUnarchived || note.archivedAt == nil else { throw CollectionStoreError.archivedNote }
+        return note
+    }
+
+    /// Applies `assignment`, advancing updated time and revision.
+    static func update(_ db: Database, _ id: UUID, _ assignment: String, _ arguments: StatementArguments,
+                       now: Int64) throws -> Note {
+        try db.execute(sql: "UPDATE note SET \(assignment), updated_at = ?, revision = revision + 1 WHERE id = ?",
+                       arguments: arguments + [now, id.uuidString])
+        return try fetch(db, where: "id = ?", [id.uuidString])[0]
+    }
+
     static func fetch(_ db: Database, where condition: String, _ arguments: StatementArguments,
                       order: String = "id ASC") throws -> [Note] {
         try Row.fetchAll(db, sql: """

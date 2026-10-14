@@ -37,7 +37,10 @@ struct CollectionFixtureHarnessTests {
         let live = CollectionLocation.defaultLiveRoot
         let existed = FileManager.default.fileExists(atPath: live.path)
         for arguments in [["create-root", live.appendingPathComponent("fixture").path], ["read", live.path],
-                          ["create-note", live.path, "--operation", UUID().uuidString]] {
+                          ["create-note", live.path, "--operation", UUID().uuidString],
+                          ["read", live.path, "--query", "all"],
+                          ["edit-note", live.path, "--id", UUID().uuidString, "--revision", "1"],
+                          ["archive-note", live.path, "--id", UUID().uuidString, "--revision", "1"]] {
             let refused = try Harness.run(arguments, stdin: "Never")
             #expect(refused.status == 1)
             #expect(refused.event("error")["error"] as? String == "liveRootRefused")
@@ -125,6 +128,84 @@ struct CollectionFixtureHarnessTests {
         #expect(try root.files(containing: committed) == ["Collection/collection.sqlite"])
         #expect(captured.range(of: Data(sentinel.utf8)) == nil)
         #expect(!captured.isEmpty)
+    }
+}
+
+extension CollectionFixtureHarnessTests {
+    @Test func editPinArchiveAndRestorePersistAcrossFreshProcesses() throws {
+        let root = try HarnessRoot()
+        let created = try Harness.run(["create-note", root.path, "--operation", UUID().uuidString], stdin: "Draft").event("note.created")
+        let id = try #require(created["id"] as? String)
+        let body = "# แก้ไข Edited\r\n- [ ] kept  \n"
+
+        let edited = try Harness.run(["edit-note", root.path, "--id", id, "--revision", "1"], stdin: body).event("note.changed")
+        #expect(edited["revision"] as? Int == 2)
+        #expect(edited["bodySHA256"] as? String == sha256(body))
+        #expect(edited["titleSHA256"] as? String == sha256("# แก้ไข Edited"))
+        #expect(edited["createdAt"] as? Int == created["createdAt"] as? Int)
+        #expect(edited["observedBeforeRevision"] as? Int == 1)
+        #expect(edited["observedAfterRevision"] as? Int == 2)
+        let pinned = try Harness.run(["pin-note", root.path, "--id", id, "--revision", "2", "--pinned", "true"]).event("note.changed")
+        #expect(pinned["pinned"] as? Bool == true && pinned["revision"] as? Int == 3)
+        #expect(pinned["contentEditedAt"] as? Int == edited["contentEditedAt"] as? Int)
+        let archived = try Harness.run(["archive-note", root.path, "--id", id, "--revision", "3"]).event("note.changed")
+        #expect(archived["archived"] as? Bool == true && archived["pinned"] as? Bool == true)
+        #expect(archived["observedAfterRevision"] as? Int == 4)
+
+        #expect(try Harness.run(["read", root.path]).event("notes")["count"] as? Int == 0)
+        let archive = try Harness.run(["read", root.path, "--query", "archive"]).event("notes")
+        #expect((archive["notes"] as? [[String: Any]])?.map { $0["id"] as? String } == [id])
+        #expect(try Harness.run(["read", root.path, "--query", "search"]).event("search")["count"] as? Int == 0)
+        let eligible = try Harness.run(["read", root.path, "--query", "search-archived"]).event("search")
+        let entry = (eligible["entries"] as? [[String: Any]])?.first
+        #expect(entry?["archived"] as? Bool == true && entry?["textSHA256"] as? String == sha256(body))
+
+        // Stale and archived edits fail in a fresh process without change.
+        let stale = try Harness.run(["edit-note", root.path, "--id", id, "--revision", "1"], stdin: "Stale")
+        #expect(stale.status == 1 && stale.event("error")["error"] as? String == "staleRevision")
+        let refused = try Harness.run(["edit-note", root.path, "--id", id, "--revision", "4"], stdin: "Hidden")
+        #expect(refused.event("error")["error"] as? String == "archivedNote")
+
+        let restored = try Harness.run(["restore-note", root.path, "--id", id, "--revision", "4"]).event("note.changed")
+        #expect(restored["archived"] as? Bool == false && restored["pinned"] as? Bool == true && restored["revision"] as? Int == 5)
+        let all = try Harness.run(["read", root.path, "--query", "all"]).event("notes")
+        let final = try #require((all["notes"] as? [[String: Any]])?.first)
+        #expect(all["count"] as? Int == 1)
+        #expect(final["bodySHA256"] as? String == sha256(body) && final["revision"] as? Int == 5)
+        #expect(final["contentEditedAt"] as? Int == edited["contentEditedAt"] as? Int)
+    }
+
+    @Test func aFailedEditLeavesNoTraceInStorageOrOutput() throws {
+        let root = try HarnessRoot()
+        let created = try Harness.run(["create-note", root.path, "--operation", UUID().uuidString], stdin: "Original").event("note.created")
+        let id = try #require(created["id"] as? String)
+        let sentinel = "HANA-UNSAVED-SENTINEL-\(UUID().uuidString)"
+        let failed = try Harness.run(["edit-note", root.path, "--id", id, "--revision", "1", "--fail", "before-commit"], stdin: sentinel)
+        #expect(failed.event("error")["error"] as? String == "injectedFailure")
+        #expect(failed.output.range(of: Data(sentinel.utf8)) == nil)
+        #expect(try root.files(containing: sentinel) == [])
+        let notes = try #require(try Harness.run(["read", root.path]).event("notes")["notes"] as? [[String: Any]])
+        #expect(notes.first?["revision"] as? Int == 1 && notes.first?["bodySHA256"] as? String == sha256("Original"))
+    }
+
+    @Test(arguments: ["edit-note", "pin-note", "archive-note"], ["before-commit", "after-commit"])
+    func killedNoteChangeIsAllOrNone(_ action: String, _ point: String) throws {
+        let root = try HarnessRoot()
+        let created = try Harness.run(["create-note", root.path, "--operation", UUID().uuidString], stdin: "Original").event("note.created")
+        let id = try #require(created["id"] as? String)
+        let extra = action == "pin-note" ? ["--pinned", "true"] : []
+        let paused = try Harness.start([action, root.path, "--id", id, "--revision", "1", "--pause", point] + extra, stdin: "Replaced")
+        try paused.waitForPause()
+        paused.kill()
+
+        let committed = point == "after-commit"
+        let all = try #require(try Harness.run(["read", root.path, "--query", "all"]).event("notes")["notes"] as? [[String: Any]])
+        let note = try #require(all.first)
+        #expect(all.count == 1)
+        #expect(note["revision"] as? Int == (committed ? 2 : 1))
+        #expect(note["bodySHA256"] as? String == sha256(committed && action == "edit-note" ? "Replaced" : "Original"))
+        #expect(note["pinned"] as? Bool == (committed && action == "pin-note"))
+        #expect(note["archived"] as? Bool == (committed && action == "archive-note"))
     }
 }
 
