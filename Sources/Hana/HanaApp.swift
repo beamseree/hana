@@ -23,7 +23,8 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
         let diagnostics = Diagnostics(enabled: CommandLine.arguments.contains("--diagnostics"))
         let validation = CommandLine.arguments.contains("--validate-search-correctness") ? SearchCorrectnessValidation() : nil
         let search = validation?.makeSearch() ?? Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true,
-                            fileDelay: CommandLine.arguments.contains("--validation-file-delay") ? .seconds(5) : .zero)
+                            fileDelay: CommandLine.arguments.contains("--validation-file-delay") ? .seconds(5) : .zero,
+                            typingGap: validationTypingGap ?? Search.defaultTypingGap)
         let interaction = MacInteraction(diagnostics: diagnostics, search: search)
         self.interaction = interaction
         interaction.start()
@@ -47,4 +48,13 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
     func applicationWillTerminate(_ notification: Notification) { interaction?.stop() }
+}
+
+/// `--typing-gap-ms N` overrides the typing gap for performance validation.
+@MainActor
+var validationTypingGap: Duration? {
+    let arguments = CommandLine.arguments
+    guard let flag = arguments.firstIndex(of: "--typing-gap-ms"), flag + 1 < arguments.count,
+          let milliseconds = Int(arguments[flag + 1]), milliseconds >= 0 else { return nil }
+    return .milliseconds(milliseconds)
 }

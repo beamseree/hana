@@ -15,7 +15,7 @@ struct SearchResponsivenessTests {
         let previousPolicy = NSApp.activationPolicy()
         NSApp.setActivationPolicy(.accessory)
         defer { NSApp.setActivationPolicy(previousPolicy) }
-        let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true, debounce: .zero)
+        let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true, typingGap: .zero)
         // Real icon loading, as visible application rows request it.
         let icons = ResultIcons()
         var iconsLoaded = 0

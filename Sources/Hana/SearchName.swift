@@ -38,6 +38,10 @@ struct SearchName: Equatable, Sendable {
         return [fullTier, stemTier].compactMap { $0 }.min()
     }
 
+    /// The tier of the complete name, extension included, as Spotlight's
+    /// filename predicates see it.
+    func fullNameTier(for query: String) -> Tier? { full.tier(for: query) }
+
     func wordsInOrder(for query: String, tier: Tier) -> Bool {
         if let stem, stem.tier(for: query) == tier {
             return stem.wordsInOrder(for: query, atWordStarts: tier == .wordStart)
