@@ -123,7 +123,7 @@ Start with existing permissions and record actual signed-app behavior. If a need
 
 ## Display and editing checks — issue #8
 
-Run `xcrun swift test --filter DisplayPlacementTests` for geometry and bounded lookup behavior without presenting windows. `NativeEditingTests` and the existing Mac Interaction suites present real windows and require the coordinated native testing slot; run the complete suite with `xcrun swift test --no-parallel` to avoid concurrent window ownership between suites. Native menu, paste, physical typing and pointer placement checks remain separate from deterministic geometry. See [issue #8 evidence](evidence/issue-8/validation.md) for the exact revision/build and acceptance state.
+Run `xcrun swift test --filter DisplayPlacementTests` for geometry and bounded lookup behavior without presenting windows. `NativeEditingTests` and the existing Mac Interaction suites present real windows and hold the coordinated native testing slot (the `.nativeWindowSlot` suite trait), so no two of them run at once and `xcrun swift test` runs the complete suite in parallel. Give any new suite that presents windows the same trait. Native menu, paste, physical typing and pointer placement checks remain separate from deterministic geometry. See [issue #8 evidence](evidence/issue-8/validation.md) for the exact revision/build and acceptance state.
 
 ## Signed coverage and permissions — issue #9
 

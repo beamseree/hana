@@ -4,7 +4,7 @@ import Testing
 
 // Real AppKit presentation through the agreed module boundary. These checks do
 // not claim that macOS routed a physical keystroke or restored a foreign editor.
-@Suite(.serialized)
+@Suite(.serialized, .nativeWindowSlot)
 @MainActor
 struct MacInteractionTests {
     @Test func emptySourceUpdateDoesNotReplaceRowsWithOnlyRecheckedMatches() async throws {
@@ -368,7 +368,7 @@ struct MacInteractionTests {
 
 }
 
-@Suite(.serialized)
+@Suite(.serialized, .nativeWindowSlot)
 @MainActor
 struct DestinationInteractionTests {
     @Test func newQueryCanOpenWhileAnObsoleteOpenIsStillPending() async throws {
@@ -761,7 +761,7 @@ struct DestinationInteractionTests {
     }
 }
 
-@Suite(.serialized)
+@Suite(.serialized, .nativeWindowSlot)
 @MainActor
 struct ResultIconInteractionTests {
     @Test func neverCompletingIconsHoldBackNoBatchSelectionOrOpening() async throws {
@@ -845,8 +845,17 @@ final class CatalogFeed {
             }
         }
     }
+    /// Waits for a subscriber, as long as `eventually` waits for a condition. A
+    /// Search that never subscribes fails the test instead of spinning forever.
     func send(_ apps: [SearchResult], status: SourceStatus = .ready) async {
-        while continuations.isEmpty { await Task.yield() }
+        let deadline = ContinuousClock.now + .seconds(3)
+        while continuations.isEmpty {
+            guard ContinuousClock.now < deadline else {
+                Issue.record("No Search subscribed to this feed")
+                return
+            }
+            await Task.yield()
+        }
         for continuation in continuations { continuation.yield(.init(results: apps, status: status)) }
     }
 }
