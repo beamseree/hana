@@ -1,5 +1,16 @@
 # Issue #49 — steady Search while typing
 
+## PR #52 integration — current main
+
+On 2026-10-14 GitHub reported PR #52 conflicted with `main` after #48 landed at `d1b2c85`. There were no submitted GitHub reviews, review comments, check runs or configured Actions workflows. The branch was updated with main; the PR itself remains unmerged.
+
+The Search conflict was resolved by retaining #49's shared alias-merging helper while delegating to #48's `mergingNames(from:)`, preserving prepared matching data instead of rebuilding it per query. The fresh-result check now uses each source result's prepared names with the same matching rules as ranking. Source-local retention, selection and card behavior are unchanged.
+
+- Focused Search and ranking checks: 38 tests in two suites passed in 4.250 seconds.
+- Final `xcrun swift test --no-parallel`: 155 tests in 22 suites passed in 27.061 seconds, with six environment-gated live-index tests skipped.
+- Independent standards and spec integration reviews reported no findings; `git diff --cached --check` passed.
+- Beam explicitly handed over the native testing slot for the full suite, and it was released afterward. This integration was not installed or physically tested; prior installed identities below refer to earlier revisions.
+
 ## Latest decision — restore first-fresh-result replacement
 
 On 2026-10-14 Beam requested undoing `696bdb3` because waiting for both sources left the initial search empty too long. The rollback restores the implementation and tests exactly to `a4cab78`: retain displayed rows on edits, replace on fresh matches, and wait for both sources only before publishing an empty result. The card's loading-height retention stays intact. The first-fresh-result follow-up below is the current behavior again.
