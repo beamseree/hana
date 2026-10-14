@@ -8,7 +8,7 @@ import Testing
 struct NoteOrganizationTests {
     private static let start = Date(timeIntervalSince1970: 1_800_000_000.250)
 
-    @Test func contentEditReplacesTheExactBodyAndAdvancesWritingTimeAndRevision() async throws {
+    @Test func contentEditReplacesTheExactBodyAndAdvancesContentEditedTimeAndRevision() async throws {
         let fixture = try TemporaryFixture()
         let clock = FixedClock(Self.start)
         let store = try await CollectionStore.open(fixture.location, clock: clock.now)
@@ -32,7 +32,7 @@ struct NoteOrganizationTests {
         await reopened.close()
     }
 
-    @Test func pinsComeFirstThenMostRecentWritingThenStableIDAndPinningKeepsWritingTime() async throws {
+    @Test func pinsComeFirstThenMostRecentlyContentEditedThenStableIDAndPinningKeepsContentEditedTime() async throws {
         let fixture = try TemporaryFixture()
         let clock = FixedClock(Self.start)
         let store = try await CollectionStore.open(fixture.location, clock: clock.now)
@@ -70,7 +70,34 @@ struct NoteOrganizationTests {
         await reopened.close()
     }
 
-    @Test func archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndWritingTimeIntact() async throws {
+    @Test func pinnedNotesAndArchiveEachOrderByTheirTimeThenStableID() async throws {
+        let fixture = try TemporaryFixture()
+        let clock = FixedClock(Self.start)
+        let store = try await CollectionStore.open(fixture.location, clock: clock.now)
+        let g = store.generation
+        func ordered(_ a: Note, _ b: Note) -> [UUID] { [a.id, b.id].sorted { $0.uuidString < $1.uuidString } }
+        let tiedA = try await store.perform(.createNote(operation: UUID(), body: "Tied A"), in: g)
+        let tiedB = try await store.perform(.createNote(operation: UUID(), body: "Tied B"), in: g)
+        clock.advance(by: 1)
+        let newer = try await store.perform(.createNote(operation: UUID(), body: "Newer"), in: g)
+        clock.advance(by: 1)
+        let unpinned = try await store.perform(.createNote(operation: UUID(), body: "Unpinned, newest"), in: g)
+        // Pinning order does not matter inside the pinned group; writing time does.
+        for note in [newer, tiedB, tiedA] {
+            clock.advance(by: 1)
+            _ = try await store.perform(.setNotePinned(note.id, true, expectedRevision: 1), in: g)
+        }
+        #expect(try await store.read(.notes, in: g).map(\.id) == [newer.id] + ordered(tiedA, tiedB) + [unpinned.id])
+
+        clock.advance(by: 1)
+        for note in [tiedA, tiedB] { _ = try await store.perform(.archiveNote(note.id, expectedRevision: 2), in: g) }
+        clock.advance(by: 1)
+        _ = try await store.perform(.archiveNote(unpinned.id, expectedRevision: 1), in: g)
+        #expect(try await store.read(.archivedNotes, in: g).map(\.id) == [unpinned.id] + ordered(tiedA, tiedB))
+        await store.close()
+    }
+
+    @Test func archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndContentEditedTimeIntact() async throws {
         let fixture = try TemporaryFixture()
         let clock = FixedClock(Self.start)
         let store = try await CollectionStore.open(fixture.location, clock: clock.now)
@@ -99,8 +126,13 @@ struct NoteOrganizationTests {
         await #expect(throws: CollectionStoreError.archivedNote) {
             try await store.perform(.editNote(created.id, expectedRevision: 3, body: "Changed"), in: g)
         }
+        for pinned in [false, true] {
+            await #expect(throws: CollectionStoreError.archivedNote) {
+                try await store.perform(.setNotePinned(created.id, pinned, expectedRevision: 3), in: g)
+            }
+        }
         await #expect(throws: CollectionStoreError.archivedNote) {
-            try await store.perform(.setNotePinned(created.id, false, expectedRevision: 3), in: g)
+            try await store.perform(.editNote(created.id, expectedRevision: 3, body: "Keep *me*\n"), in: g)
         }
         #expect(try await store.read(.note(created.id), in: g) == archived)
 
@@ -108,6 +140,7 @@ struct NoteOrganizationTests {
         let restored = try await store.perform(.restoreNote(created.id, expectedRevision: 3), in: g)
         #expect(restored.archivedAt == nil && restored.revision == 4 && restored.updatedAt == Self.start + 14)
         #expect(restored.body == pinned.body && restored.isPinned && restored.contentEditedAt == created.contentEditedAt)
+        #expect(restored.createdAt == created.createdAt)
         #expect(try await store.read(.notes, in: g) == [restored])
         #expect(try await store.read(.archivedNotes, in: g) == [archivedOlder])
         await store.close()
@@ -187,7 +220,7 @@ struct NoteOrganizationTests {
 
         // A late edit carrying a replaced revision cannot undo a later archive.
         let archived = try await store.perform(.archiveNote(note.id, expectedRevision: 2), in: g)
-        for revision: Int64 in [1, 2] where revision != archived.revision {
+        for revision: Int64 in [1, 2] {
             await #expect(throws: CollectionStoreError.staleRevision) {
                 try await store.perform(.editNote(note.id, expectedRevision: revision, body: "Late"), in: g)
             }

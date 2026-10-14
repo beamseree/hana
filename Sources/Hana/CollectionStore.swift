@@ -172,7 +172,7 @@ extension CollectionCommand where Result == Note {
     static func editNote(_ id: UUID, expectedRevision: Int64, body: String) -> Self {
         let payload = Data(body.utf8)
         return Self { db, context in
-            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, editable: true)
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: true)
             guard Note.isNonblank(body) else { throw CollectionStoreError.blankNote }
             guard !note.body.utf8.elementsEqual(payload) else { return note }
             return try NoteRow.update(db, id, "body = CAST(? AS TEXT), content_edited_at = ?", [payload, context.now], now: context.now)
@@ -182,7 +182,7 @@ extension CollectionCommand where Result == Note {
     /// Organization only: content-edited time is preserved.
     static func setNotePinned(_ id: UUID, _ pinned: Bool, expectedRevision: Int64) -> Self {
         Self { db, context in
-            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, editable: true)
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: true)
             guard note.isPinned != pinned else { return note }
             return try NoteRow.update(db, id, "pinned = ?", [pinned], now: context.now)
         }
@@ -191,7 +191,7 @@ extension CollectionCommand where Result == Note {
     /// Hides the note from Notes; body, pin and content-edited time are kept.
     static func archiveNote(_ id: UUID, expectedRevision: Int64) -> Self {
         Self { db, context in
-            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, editable: false)
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: false)
             guard note.archivedAt == nil else { return note }
             return try NoteRow.update(db, id, "archived_at = ?", [context.now], now: context.now)
         }
@@ -200,7 +200,7 @@ extension CollectionCommand where Result == Note {
     /// Returns an archived note to Notes with its body, pin and content-edited time.
     static func restoreNote(_ id: UUID, expectedRevision: Int64) -> Self {
         Self { db, context in
-            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, editable: false)
+            let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: false)
             guard note.archivedAt != nil else { return note }
             return try NoteRow.update(db, id, "archived_at = NULL", [], now: context.now)
         }
@@ -411,11 +411,11 @@ extension CollectionStoreError {
 
 private enum NoteRow {
     /// The note as it stands when the command executes, if `expectedRevision`
-    /// is current; `editable` also requires it to be unarchived.
-    static func current(_ db: Database, _ id: UUID, expectedRevision: Int64, editable: Bool) throws -> Note {
+    /// is current and, when `requireUnarchived`, the note is not archived.
+    static func current(_ db: Database, _ id: UUID, expectedRevision: Int64, requireUnarchived: Bool) throws -> Note {
         guard let note = try fetch(db, where: "id = ?", [id.uuidString]).first else { throw CollectionStoreError.noteNotFound }
         guard note.revision == expectedRevision else { throw CollectionStoreError.staleRevision }
-        guard !editable || note.archivedAt == nil else { throw CollectionStoreError.archivedNote }
+        guard !requireUnarchived || note.archivedAt == nil else { throw CollectionStoreError.archivedNote }
         return note
     }
 

@@ -175,8 +175,7 @@ extension CollectionFixtureHarnessTests {
         #expect(final["contentEditedAt"] as? Int == edited["contentEditedAt"] as? Int)
     }
 
-    @Test(arguments: ["before-commit", "after-commit"])
-    func killedEditIsAllOrNoneAndAFailedEditLeavesNoTrace(_ point: String) throws {
+    @Test func aFailedEditLeavesNoTraceInStorageOrOutput() throws {
         let root = try HarnessRoot()
         let created = try Harness.run(["create-note", root.path, "--operation", UUID().uuidString], stdin: "Original").event("note.created")
         let id = try #require(created["id"] as? String)
@@ -185,14 +184,28 @@ extension CollectionFixtureHarnessTests {
         #expect(failed.event("error")["error"] as? String == "injectedFailure")
         #expect(failed.output.range(of: Data(sentinel.utf8)) == nil)
         #expect(try root.files(containing: sentinel) == [])
+        let notes = try #require(try Harness.run(["read", root.path]).event("notes")["notes"] as? [[String: Any]])
+        #expect(notes.first?["revision"] as? Int == 1 && notes.first?["bodySHA256"] as? String == sha256("Original"))
+    }
 
-        let paused = try Harness.start(["edit-note", root.path, "--id", id, "--revision", "1", "--pause", point], stdin: "Replaced")
+    @Test(arguments: ["edit-note", "pin-note", "archive-note"], ["before-commit", "after-commit"])
+    func killedNoteChangeIsAllOrNone(_ action: String, _ point: String) throws {
+        let root = try HarnessRoot()
+        let created = try Harness.run(["create-note", root.path, "--operation", UUID().uuidString], stdin: "Original").event("note.created")
+        let id = try #require(created["id"] as? String)
+        let extra = action == "pin-note" ? ["--pinned", "true"] : []
+        let paused = try Harness.start([action, root.path, "--id", id, "--revision", "1", "--pause", point] + extra, stdin: "Replaced")
         try paused.waitForPause()
         paused.kill()
-        let notes = try #require(try Harness.run(["read", root.path]).event("notes")["notes"] as? [[String: Any]])
-        #expect(notes.count == 1)
-        #expect(notes.first?["revision"] as? Int == (point == "after-commit" ? 2 : 1))
-        #expect(notes.first?["bodySHA256"] as? String == sha256(point == "after-commit" ? "Replaced" : "Original"))
+
+        let committed = point == "after-commit"
+        let all = try #require(try Harness.run(["read", root.path, "--query", "all"]).event("notes")["notes"] as? [[String: Any]])
+        let note = try #require(all.first)
+        #expect(all.count == 1)
+        #expect(note["revision"] as? Int == (committed ? 2 : 1))
+        #expect(note["bodySHA256"] as? String == sha256(committed && action == "edit-note" ? "Replaced" : "Original"))
+        #expect(note["pinned"] as? Bool == (committed && action == "pin-note"))
+        #expect(note["archived"] as? Bool == (committed && action == "archive-note"))
     }
 }
 
