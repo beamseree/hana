@@ -34,6 +34,8 @@ import Foundation
 /// - `snapshot-list <root>`: list usable snapshots and diagnostic incomplete/invalid candidates.
 /// - `snapshot-inspect <root> --id <uuid>`: revalidate the selected published package.
 /// - `snapshot-reopen <root> --id <uuid> --destination <new-disposable-root>`: reopen a copy only.
+/// - `export <root> --destination <marked-disposable-root>`: publish a complete portable collection.
+/// - `validate-export <destination-root> --package <Hana-export-UUID>`: revalidate a published export.
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
 enum CollectionFixtureHarness {
     static let flag = "--collection-fixture"
@@ -89,6 +91,11 @@ enum CollectionFixtureHarness {
                 try await withStore(try CollectionLocation.fixture(root)) { try await read(options["--query"] ?? "notes", from: $0) }
             case "snapshot-create", "snapshot-list", "snapshot-inspect", "snapshot-reopen":
                 try await CollectionSnapshotFixture.run(arguments[0], root: root, options: options)
+            case "export", "validate-export":
+                let result = try await CollectionExportFixture.run(arguments[0], root: root, options: options)
+                emit(arguments[0] == "export" ? "collection.exported" : "export.validated",
+                     ["package": result.url.lastPathComponent, "collectionID": result.collectionID.uuidString,
+                      "noteCount": result.noteCount, "taskCount": result.taskCount])
             case "runtime-report":
                 let report = try await withStore(try CollectionLocation.fixture(root)) { try await $0.runtimeReport() }
                 let object = try JSONSerialization.jsonObject(with: JSONEncoder().encode(report))
@@ -304,6 +311,8 @@ enum CollectionFixtureHarness {
             if case .storageFailure(let code) = error { return "storageFailure(\(code))" }
             return "\(error)"
         case let error as CollectionRecovery.SnapshotError: return "\(error)"
+        case let error as CollectionRecovery.ExportError: return "\(error)"
+        case is CollectionExportFixture.Failure: return "usage"
         case is InjectedFailure: return "injectedFailure"
         case is Usage: return "usage"
         default: return "unexpected"

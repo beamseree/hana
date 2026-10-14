@@ -64,3 +64,9 @@ TDD added lowercase note and task cases with valid receipt foreign keys and an u
 Independent verification of this source: signed release build and strict signature checks pass; the complete non-native suite passes **98 tests in 12 suites** with `--no-parallel` and the same five native exclusions. `HANA_EXECUTABLE` points to the rebuilt signed fixture binary; SHA-256 `f72846cec9ed04744494bc528f812359668257e87bf4cc82adaa8e6223f2153e`. This identity supersedes the earlier signed build for the corrected source.
 
 Separate Standards and Spec reviews of `c1bd4ff...57a756a` found no remaining findings and confirmed the P2 resolved. The refreshed [combined AC10 report](../issue-22-combined/README.md) pins this source plus #28 `0592aab` and records **107 non-native tests in 15 suites** passing, including the signed restart/export/snapshot/reopen journey. No native UI, install, personal-store mutation, PR merge or issue closure occurred.
+
+## Integration after PR #44 merged — 2026-10-14
+
+Integrated main `4f73c971c8627f17221496de983ace6bb2d84771` into the snapshot branch after the user merged #44. Resolved the fixture harness and technical-design conflicts by preserving both feature additions. All 28 production source files match the previously reviewed combined validation manifest. The canonical UUID fix remains present.
+
+The resolved branch itself passes a fresh signed release build and **107 non-native tests in 15 suites**, including the combined restart/export/snapshot/reopen journey and UUID regressions. The combined journey test was copied temporarily from the committed evidence directory and removed after testing. Signed binary SHA-256: `0ba1604c2e5c883316e8fb38d4e95438d0ba4a3f9b7100256a60346eeae9683d`. [Commands and check excerpts](main-integration-checks.txt). The same five native test groups remain unrun; PR #45 remains unmerged.

@@ -462,6 +462,12 @@ The Store gains `reorderTask(id, in: placement, after: predecessor, expectedOrde
 
 **Fixture harness and fixtures.** `reorder-task <root> --id --in inbox|today [--after] --expected id,id,…` takes the same `--pause`/`--fail` faults. It observes the list until the committed order appears, then emits `tasks.reordered` with the list, the moved ID and revision, and the observed order before and after. In the tests, `OrganizedCollection` builds a collection through the Store with every organization fact: pins, note archive, manual Inbox order including a renumbered list, Today order, a move in, all four completion and archive combinations, reopen and both restores. Later export and snapshot tests compare against its query views and records.
 
+## Full collection export — issue #28
+
+`CollectionRecovery.export(from:in:to:)` captures one committed `allRecords` value and publishes exact note Markdown plus versioned note metadata/task JSON. Staging, file synchronization/close, validation and exclusive same-directory rename occur off the main actor. The source/default collection roots and their aliases are refused as destinations; earlier exports are never overwritten. Capture read bounds and package time are separate from record timestamps, with no invented global commit timestamp. Public validation checks package/domain integrity; a test-only independent decoder reconstructs every record and organized view.
+
+The fixture-only `export` and `validate-export` commands require marked disposable roots. No editor, import, automatic backup, production restore or normal UI wiring is added. Future editors must flush successfully before requesting export. See the [wire format and caller contract](evidence/issue-28/format.md) and [validation evidence](evidence/issue-28/validation.md).
+
 ## Manual validated snapshots — issue #29
 
 Collection Recovery now creates, lists and inspects manually triggered snapshots and opens a copy in a new disposable Store. Capture uses GRDB online backup on the existing Store writer queue, which excludes later commands and preserves the single source writer/checkpointer invariant. Publication follows destination close, supported-schema/integrity/foreign-key/domain validation and a versioned UTC/identity/count/SHA-256 manifest. Failed staging remains diagnostic; explicit retry never overwrites a previous copy.
