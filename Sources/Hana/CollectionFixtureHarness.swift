@@ -6,7 +6,7 @@ import Foundation
 ///
 /// It accepts only marked disposable roots (never the live root, descendants or
 /// aliases) and prints content-free JSON lines: IDs, revisions, timestamps,
-/// counts and body digests, never note text. Normal launch does not use it.
+/// counts and body/title digests, never note or task text. Normal launch does not use it.
 ///
 /// - `create-root <root>`: create a new marked disposable root.
 /// - `create-note <root> --operation <uuid> [--pause before-commit|after-commit] [--fail before-commit]`:
@@ -17,8 +17,16 @@ import Foundation
 ///   pin or unpin the note while observing it.
 /// - `archive-note|restore-note <root> --id <uuid> --revision <n> [--pause …] [--fail …]`:
 ///   archive or restore the note while observing it.
-/// - `read <root> [--query notes|archive|all|search|search-archived]`: summarize
-///   active Notes (default), Archive, every record, or the Search projection.
+/// - `create-task <root> --operation <uuid> [--placement inbox|today] [--pause …] [--fail …]`:
+///   save the task title read from standard input while observing its list.
+/// - `edit-task <root> --id <uuid> --revision <n> [--pause …] [--fail …]`: replace the
+///   title with standard input while observing the task.
+/// - `move-task <root> --id <uuid> --revision <n> --to inbox|today [--pause …] [--fail …]`
+/// - `complete-task|reopen-task|archive-task|restore-task <root> --id <uuid> --revision <n> [--pause …] [--fail …]`
+/// - `read <root> [--query notes|archive|all|search|search-archived|inbox|today|completed|archived-tasks|task-search|task-search-all]`:
+///   summarize active Notes (default), note Archive, every record (notes and
+///   tasks), the note Search projection, a task view, or the task Search
+///   projection (`task-search-all` includes completed and archived tasks).
 /// - `runtime-report <root>`: linked SQLite identity and effective settings.
 enum CollectionFixtureHarness {
     static let flag = "--collection-fixture"
@@ -49,6 +57,25 @@ enum CollectionFixtureHarness {
                 try await changeNote(at: root, options) { .archiveNote($0, expectedRevision: $1) }
             case "restore-note":
                 try await changeNote(at: root, options) { .restoreNote($0, expectedRevision: $1) }
+            case "create-task":
+                guard let operation = options["--operation"].flatMap(UUID.init(uuidString:)),
+                      let placement = TaskPlacement(rawValue: options["--placement"] ?? "inbox")
+                else { throw Usage() }
+                try await createTask(at: try CollectionLocation.fixture(root), operation: operation, placement: placement,
+                                     faults: faults(pause: options["--pause"], fail: options["--fail"]))
+            case "edit-task":
+                try await changeTask(at: root, options) { .editTaskTitle($0, expectedRevision: $1, title: readStandardInput()) }
+            case "move-task":
+                guard let placement = options["--to"].flatMap(TaskPlacement.init(rawValue:)) else { throw Usage() }
+                try await changeTask(at: root, options) { .moveTask($0, to: placement, expectedRevision: $1) }
+            case "complete-task":
+                try await changeTask(at: root, options) { .completeTask($0, expectedRevision: $1) }
+            case "reopen-task":
+                try await changeTask(at: root, options) { .reopenTask($0, expectedRevision: $1) }
+            case "archive-task":
+                try await changeTask(at: root, options) { .archiveTask($0, expectedRevision: $1) }
+            case "restore-task":
+                try await changeTask(at: root, options) { .restoreTask($0, expectedRevision: $1) }
             case "read":
                 try await withStore(try CollectionLocation.fixture(root)) { try await read(options["--query"] ?? "notes", from: $0) }
             case "runtime-report":
@@ -112,41 +139,101 @@ enum CollectionFixtureHarness {
         emit("note.created", fields)
     }
 
-    /// Performs the command for `--id`/`--revision` while observing the note
-    /// until its committed result is observed.
-    private static func changeNote(at root: URL, _ options: [String: String],
-                                   _ command: (UUID, Int64) -> CollectionCommand<Note>) async throws {
-        guard let id = options["--id"].flatMap(UUID.init(uuidString:)), let revision = options["--revision"].flatMap({ Int64($0) })
-        else { throw Usage() }
-        let command = command(id, revision)
-        let faults = faults(pause: options["--pause"], fail: options["--fail"])
-        let fields = try await withStore(try CollectionLocation.fixture(root), faults: faults) { store in
-            var observed = store.observe(.note(id), in: store.generation).makeAsyncIterator()
-            let before = try await observed.next() ?? nil
-            let note = try await store.perform(command, in: store.generation)
+    private static func createTask(at location: CollectionLocation, operation: UUID, placement: TaskPlacement,
+                                   faults: CollectionStore.Faults) async throws {
+        let title = readStandardInput()
+        let fields = try await withStore(location, faults: faults) { store in
+            var observed = store.observe(placement == .today ? .today : .inbox, in: store.generation).makeAsyncIterator()
+            let before = try await observed.next() ?? []
+            let task = try await store.perform(.createTask(operation: operation, title: title, placement: placement),
+                                               in: store.generation)
             var after = before
-            while after?.revision != note.revision, let next = try await observed.next() { after = next }
-            var fields = summary(note)
-            fields["observedBeforeRevision"] = before?.revision ?? NSNull()
-            fields["observedAfterRevision"] = after?.revision ?? NSNull()
+            while !after.contains(where: { $0.id == task.id }), let next = try await observed.next() { after = next }
+            var fields = summary(task)
+            fields["observedBefore"] = before.count
+            fields["observedAfter"] = after.count
             return fields
         }
-        emit("note.changed", fields)
+        emit("task.created", fields)
+    }
+
+    private static func changeNote(at root: URL, _ options: [String: String],
+                                   _ command: (UUID, Int64) -> CollectionCommand<Note>) async throws {
+        try await change(at: root, options, command, query: CollectionQuery.note, revision: \.revision, summary: summary,
+                         event: "note.changed")
+    }
+
+    private static func changeTask(at root: URL, _ options: [String: String],
+                                   _ command: (UUID, Int64) -> CollectionCommand<TaskItem>) async throws {
+        try await change(at: root, options, command, query: CollectionQuery.task, revision: \.revision, summary: summary,
+                         event: "task.changed")
+    }
+
+    /// Performs the command for `--id`/`--revision` while observing the item
+    /// until its committed result is observed.
+    private static func change<Item: Sendable>(at root: URL, _ options: [String: String],
+                                               _ command: (UUID, Int64) -> CollectionCommand<Item>,
+                                               query: (UUID) -> CollectionQuery<Item?>, revision: KeyPath<Item, Int64>,
+                                               summary: (Item) -> [String: Any], event: String) async throws {
+        guard let id = options["--id"].flatMap(UUID.init(uuidString:)), let expected = options["--revision"].flatMap({ Int64($0) })
+        else { throw Usage() }
+        let command = command(id, expected)
+        let faults = faults(pause: options["--pause"], fail: options["--fail"])
+        let fields = try await withStore(try CollectionLocation.fixture(root), faults: faults) { store in
+            var observed = store.observe(query(id), in: store.generation).makeAsyncIterator()
+            let before = try await observed.next() ?? nil
+            let item = try await store.perform(command, in: store.generation)
+            var after = before
+            while after?[keyPath: revision] != item[keyPath: revision], let next = try await observed.next() { after = next }
+            var fields = summary(item)
+            fields["observedBeforeRevision"] = before?[keyPath: revision] ?? NSNull()
+            fields["observedAfterRevision"] = after?[keyPath: revision] ?? NSNull()
+            return fields
+        }
+        emit(event, fields)
     }
 
     private static func read(_ query: String, from store: CollectionStore) async throws {
         switch query {
         case "notes": emitNotes(try await store.read(.notes, in: store.generation))
         case "archive": emitNotes(try await store.read(.archivedNotes, in: store.generation))
-        case "all": emitNotes(try await store.read(.allRecords, in: store.generation).notes)
+        case "all":
+            let records = try await store.read(.allRecords, in: store.generation)
+            emitNotes(records.notes)
+            emitTasks(records.tasks)
         case "search", "search-archived":
             let entries = try await store.read(.noteSearchEntries(includingArchived: query == "search-archived"), in: store.generation)
             emit("search", ["count": entries.count, "entries": entries.map { entry in
                 ["id": entry.id.uuidString, "titleSHA256": entry.title.map(sha256) ?? NSNull(),
                  "textSHA256": sha256(entry.text), "archived": entry.isArchived] as [String: Any]
             }])
+        case "inbox": emitTasks(try await store.read(.inbox, in: store.generation))
+        case "today": emitTasks(try await store.read(.today, in: store.generation))
+        case "completed": emitTasks(try await store.read(.completedTasks, in: store.generation))
+        case "archived-tasks": emitTasks(try await store.read(.archivedTasks, in: store.generation))
+        case "task-search", "task-search-all":
+            let all = query == "task-search-all"
+            let entries = try await store.read(.taskSearchEntries(includingCompleted: all, includingArchived: all), in: store.generation)
+            emit("task-search", ["count": entries.count, "entries": entries.map { entry in
+                ["id": entry.id.uuidString, "titleSHA256": sha256(entry.title), "completed": entry.isCompleted,
+                 "archived": entry.isArchived] as [String: Any]
+            }])
         default: throw Usage()
         }
+    }
+
+    private static func emitTasks(_ tasks: [TaskItem]) {
+        emit("tasks", ["count": tasks.count, "tasks": tasks.map(summary)])
+    }
+
+    private static func summary(_ task: TaskItem) -> [String: Any] {
+        ["id": task.id.uuidString, "revision": task.revision, "titleBytes": task.title.utf8.count,
+         "titleSHA256": sha256(task.title), "createdAt": CollectionStore.milliseconds(task.createdAt),
+         "contentEditedAt": CollectionStore.milliseconds(task.contentEditedAt),
+         "updatedAt": CollectionStore.milliseconds(task.updatedAt),
+         "completedAt": task.completedAt.map(CollectionStore.milliseconds) ?? NSNull(),
+         "archivedAt": task.archivedAt.map(CollectionStore.milliseconds) ?? NSNull(),
+         "placement": task.placement?.rawValue ?? NSNull(), "orderKey": task.orderKey ?? NSNull()]
     }
 
     private static func emitNotes(_ notes: [Note]) {
