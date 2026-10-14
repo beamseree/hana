@@ -28,15 +28,14 @@ extension CollectionRecovery {
 
     /// Captures all records in one Store read. Future editors must successfully
     /// flush before calling this; unsaved caller buffers are never accepted.
+    @concurrent
     static func export(from store: CollectionStore, in generation: StoreGeneration,
                        to destination: URL, faults: ExportFaults = .init()) async throws -> ExportResult {
         let started = CollectionStore.milliseconds(Date())
         let records = try await store.read(.allRecords, in: generation)
         let finished = CollectionStore.milliseconds(Date())
-        return try await Task.detached {
-            let parent = try exportDestination(destination, source: store.location.root)
-            return try writeExport(records, started: started, finished: finished, to: parent, faults: faults)
-        }.value
+        let parent = try exportDestination(destination, source: store.location.root)
+        return try writeExport(records, started: started, finished: finished, to: parent, faults: faults)
     }
 
     private static func writeExport(_ records: CollectionRecords, started: Int64, finished: Int64,
@@ -136,9 +135,10 @@ extension CollectionRecovery {
     }
 
     /// Revalidates a portable package; this is inspection, not import.
+    @concurrent
     static func validateExport(at package: URL) async throws -> ExportResult {
         guard !package.lastPathComponent.hasPrefix(".hana-export-") else { throw ExportError.invalidPackage }
-        return try await Task.detached { try validateExportPackage(package) }.value
+        return try validateExportPackage(package)
     }
 
     private static func validateExportPackage(_ package: URL) throws -> ExportResult {
