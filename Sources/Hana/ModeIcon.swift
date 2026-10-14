@@ -96,6 +96,19 @@ enum SearchIconMorph {
     }
 }
 
+/// Note's mode icon, App/Resources/NoteIcon.svg: the logo's bloom around two
+/// lines of text, in the same 28-point SVG space.
+enum NoteIcon {
+    static var lines: CGPath {
+        let path = CGMutablePath()
+        path.move(to: CGPoint(x: 9.933, y: 11.6))
+        path.addLine(to: CGPoint(x: 18.067, y: 11.6))
+        path.move(to: CGPoint(x: 9.933, y: 16.4))
+        path.addLine(to: CGPoint(x: 14.8, y: 16.4))
+        return path
+    }
+}
+
 /// A unit-mass spring in Apple's (duration, bounce) terms, as in
 /// `CASpringAnimation(perceptualDuration:bounce:)`. Solved analytically, so a
 /// retarget can start from the exact current displacement and velocity.
@@ -129,17 +142,19 @@ struct Spring {
     }
 }
 
-/// Draws `SearchIconMorph` with one shape layer per part. Each change is sampled
+/// Draws `SearchIconMorph`, or the note icon, with one shape layer per part. Each change is sampled
 /// from the spring into keyframes that run on the render server, so a busy main
 /// actor (results arriving on the first keystroke) cannot drop frames.
 @MainActor
 final class ModeIconView: NSView {
     private(set) var showsQuery = false
+    private(set) var showsNote = false
     private let canvas = CALayer()
     private let bloom = CAShapeLayer()
     private let ring = CAShapeLayer()
     private let spokes = (0..<4).map { _ in CAShapeLayer() }
-    private var parts: [CAShapeLayer] { [bloom, ring] + spokes }
+    private let noteLines = CAShapeLayer()
+    private var parts: [CAShapeLayer] { [bloom, ring] + spokes + [noteLines] }
     private var motion: Motion?
 
     private struct Motion {
@@ -166,6 +181,7 @@ final class ModeIconView: NSView {
             part.lineJoin = .round
             canvas.addSublayer(part)
         }
+        noteLines.path = NoteIcon.lines
         apply(SearchIconMorph.shape(at: 0))
     }
 
@@ -189,6 +205,8 @@ final class ModeIconView: NSView {
     /// first character mid-morph reverses smoothly.
     func setShowsQuery(_ shows: Bool, animated: Bool) {
         guard shows != showsQuery else { return }
+        // Note's icon does not follow the query.
+        guard !showsNote else { showsQuery = shows; return }
         let now = CACurrentMediaTime()
         let current = progress(at: now)
         showsQuery = shows
@@ -238,6 +256,24 @@ final class ModeIconView: NSView {
         apply(shapes[count])
     }
 
+    /// Cross-fades between the note icon and Search's current icon.
+    func setShowsNote(_ shows: Bool, animated: Bool) {
+        guard shows != showsNote else { return }
+        showsNote = shows
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        defer { CATransaction.commit() }
+        for layer in [canvas] + parts { layer.removeAllAnimations() }
+        motion = nil
+        if animated {
+            let fade = CATransition()
+            fade.type = .fade
+            fade.duration = BarStyle.resizeDuration
+            canvas.add(fade, forKey: "fade")
+        }
+        apply(SearchIconMorph.shape(at: shows ? 0 : showsQuery ? 1 : 0))
+    }
+
     private func progress(at now: CFTimeInterval) -> (p: Double, v: Double) {
         guard let motion, now - motion.start < motion.duration else { return (showsQuery ? 1 : 0, 0) }
         let state = SearchIconMorph.spring.state(x0: motion.x0, v0: motion.v0, t: now - motion.start)
@@ -247,14 +283,16 @@ final class ModeIconView: NSView {
     private func apply(_ shape: SearchIconMorph.Shape) {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
+        // Note keeps the logo's bloom and replaces its centre with lines.
         bloom.path = shape.bloom.path
         bloom.opacity = shape.bloom.opacity
         ring.path = shape.ring.path
-        ring.opacity = shape.ring.opacity
+        ring.opacity = showsNote ? 0 : shape.ring.opacity
         for (spoke, part) in zip(spokes, shape.spokes) {
             spoke.path = part.path
-            spoke.opacity = part.opacity
+            spoke.opacity = showsNote ? 0 : part.opacity
         }
+        noteLines.opacity = showsNote ? 1 : 0
         CATransaction.commit()
     }
 }

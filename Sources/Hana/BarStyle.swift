@@ -26,6 +26,8 @@ enum BarStyle {
     static let modeIconFrame = NSRect(x: iconColumnMidX - 14, y: 16, width: 28, height: 28)
     /// Where query text and result names begin, in card coordinates.
     static let textInset: CGFloat = 58
+    /// Note's writing surface grows to this text height, then scrolls.
+    static let noteMaxTextHeight: CGFloat = 240
 
     static let font = NSFont.systemFont(ofSize: 26)
     static let textColor = NSColor(srgbRed: 0x17 / 255, green: 0x17 / 255, blue: 0x17 / 255, alpha: 1)
@@ -34,6 +36,7 @@ enum BarStyle {
     /// The bar's logo and magnifier match the query text.
     static let modeIconColor = textColor
     static let textAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: textColor, .kern: -0.26]
+    static let modeLabelFont = NSFont.systemFont(ofSize: 13, weight: .medium)
     static let placeholderAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: secondaryColor, .kern: -0.26]
 }
 

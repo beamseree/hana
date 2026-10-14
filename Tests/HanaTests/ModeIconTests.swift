@@ -37,6 +37,23 @@ struct SearchIconMorphTests {
         #expect(CGRect(x: 0, y: 0, width: 28, height: 28).contains(bounds))
     }
 
+    /// Note's icon is the shipped asset: its text lines, inside the logo's bloom.
+    @Test func noteLinesMatchTheNoteIconAsset() throws {
+        let asset = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("App/Resources/NoteIcon.svg")
+        let svg = try String(contentsOf: asset, encoding: .utf8)
+        let lines = try #require(svg.firstMatch(of: /id="Lines" d="([^"]+)"/)?.1)
+        // "M x y H x" segments, as the asset writes them.
+        let expected = lines.matches(of: /M([\d.]+) ([\d.]+)H([\d.]+)/).flatMap { match in
+            [CGPoint(x: Double(match.1)!, y: Double(match.2)!), CGPoint(x: Double(match.3)!, y: Double(match.2)!)]
+        }
+        var drawn: [CGPoint] = []
+        NoteIcon.lines.applyWithBlock { drawn.append($0.pointee.points[0]) }
+        #expect(expected.count == 4)
+        #expect(drawn == expected)
+    }
+
     @Test func springStartsWhereItIsAndSettlesOnTarget() {
         let spring = SearchIconMorph.spring
         let start = spring.state(x0: -1, v0: 0, t: 0)
