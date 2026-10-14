@@ -46,3 +46,9 @@ xcrun swift test --filter DisplayPlacementTests
 ```
 
 These are 97 non-native tests with the native exclusions above; the broad single-run result is not clean. No unrelated deadline/Store lifetime implementation was changed for this ticket.
+
+## Signed fixture identity
+
+Reviewed source commit: `f65db15499a7d4b1eb660c3cc726fd1ed236eb79` (subsequent evidence-only commits do not change code). macOS 26.4.1 (25E253), Apple Swift 6.3.3, GRDB 7.11.1. `./scripts/build` passed release compilation, Info.plist lint and strict ad-hoc signature verification. Bundle identifier `com.beamseree.hana`; no TeamIdentifier. Worktree-local binary SHA-256: `5ed5a698d0887b5ed907a1eba45b8f276011c2c783229102209663fab63c3409`.
+
+Both snapshot harness tests passed against `build/Hana.app/Contents/MacOS/Hana` using `HANA_EXECUTABLE`, and the [reproducible fixture script](run-fixture.py) generated [the raw signed fixture transcript](signed-fixture.jsonl), including actual linked SQLite identity/effective settings and ordinary fresh-process reopen equality. Run the script with the binary path and a genuinely new fixture parent path. [Check excerpts](check-results.txt) retain failures and passing grouped/signed results. This binary was executed only with `--collection-fixture`.
