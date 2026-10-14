@@ -32,3 +32,21 @@ The implementation followed vertical red/green slices: absent Recovery API; empt
 Host macOS 26.4.1 (25E253), arm64; Apple Swift 6.3.3 (`swiftlang-6.3.3.1.3`, clang 2100.1.1.101). Package pins GRDB 7.11.1. Release build, signed fixture run and non-native regression results will be appended before handoff.
 
 No actual disk-full, device/power-loss, hostile-filesystem or production replacement recovery experiment was run. Controlled errors establish bounded failure handling. Future editor flush behavior is a documented caller precondition, not a tested editor. The accepted eventual backup/restore scope and inherited native limitations remain outside this ticket.
+
+## Review and final regression result
+
+The [two-axis review](review.md) reported one P3 Standards finding, resolved in `2f34bfb` by using `@concurrent` export/validation entry points; Spec reported zero actionable findings.
+
+The isolated Store rollback/retry rerun passed. The first non-native run (98 tests) instead hit the existing DisplayPlacement deadline assertion: 1.060796084 seconds versus a 1-second threshold. No native windows were involved in that injected deadline test. These initial failures remain recorded; neither Store nor display-placement source was changed.
+
+Final non-native regression command after the review fix:
+
+```sh
+HANA_EXECUTABLE="$PWD/build/Hana.app/Contents/MacOS/Hana" xcrun swift test --no-parallel --skip 'NativeEditingTests|MacInteractionTests|DestinationInteractionTests|ResultIconInteractionTests|SearchResponsivenessTests'
+```
+
+Result: **98 tests in 12 suites passed** in 14.278 seconds. Explicit serial test execution prevents unrelated concurrent test load from consuming the existing deadline margin. The test module used source `2f34bfb`; fixture subprocesses in this run used the previously built `42609f2` bundle. The final signed bundle and fixture recheck below distinguish that identity precisely. This is not a full-suite pass because the coordinated native exclusions remain unrun.
+
+Final signed build from `2f34bfb` passed release compilation, Info.plist lint, ad-hoc signing and strict signature verification. Mach-O UUID: `1D9A38BC-32E2-3CB0-921D-FDEC01693E00`; SHA-256: `a5ed3653f2afb8df3b184f60115571c292826e4ff61698444cef8fa4a4a135b9`. Signed `CollectionExportHarnessTests` rerun passed (1 test, 0.650 s). The [content-free signed transcript](signed-fixture.jsonl) records full source commit IDs, binary/fixture paths, SQLite runtime/configuration, separate-process create/organize/read/export/validate events, final-code recheck and independent Python comparison preserving the earlier export. Runtime: linked SQLite 3.51.0, source ID `2025-06-12 13:14:41 f0ca7bba1c5e232e5d279fad6338121ab55af0c8c68c84cdfb18ba5114dcaapl`; WAL/FULL/fullfsync/checkpoint_fullfsync/foreign_keys verified by Store runtime report; read-only reader rejects checkpoint with code 8. This ticket preserves #24's Store/runtime safety design; it does not reassess vendor SQLite fix coverage.
+
+The Standards reviewer rechecked `42609f2..2f34bfb` and confirmed zero unresolved findings. Final evidence-only commits do not change the tested code. Combined AC10 and excluded native testing remain outstanding in their stated scopes.
