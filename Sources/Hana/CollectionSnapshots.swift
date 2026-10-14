@@ -30,14 +30,17 @@ extension CollectionRecovery {
 
     struct SnapshotInspection: Sendable {
         let url: URL
-        let manifest: SnapshotManifest?
-        let failure: SnapshotError?
-        var isUsable: Bool { manifest != nil && failure == nil }
+        let validation: Result<SnapshotManifest, SnapshotError>
+        var manifest: SnapshotManifest? { try? validation.get() }
+        var failure: SnapshotError? {
+            if case let .failure(error) = validation { error } else { nil }
+        }
+        var isUsable: Bool { if case .success = validation { true } else { false } }
     }
 
     @concurrent static func inspectSnapshot(at url: URL) async -> SnapshotInspection {
-        do { return SnapshotInspection(url: url, manifest: try validateSnapshot(at: url), failure: nil) }
-        catch { return SnapshotInspection(url: url, manifest: nil, failure: error as? SnapshotError ?? .invalidDatabase) }
+        do { return SnapshotInspection(url: url, validation: .success(try validateSnapshot(at: url))) }
+        catch { return SnapshotInspection(url: url, validation: .failure(error as? SnapshotError ?? .invalidDatabase)) }
     }
 
     /// Every candidate gets a diagnostic; only validated published packages

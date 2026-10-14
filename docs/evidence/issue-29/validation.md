@@ -31,3 +31,18 @@ Ordinary backup/reopen and controlled error handling only. No crash/power-loss r
 The coordinator withheld native test slots. `NativeEditingTests`, `MacInteractionTests`, `DestinationInteractionTests`, `ResultIconInteractionTests`, and opt-in `SearchResponsivenessTests` are excluded. Report the remaining checks as a non-native regression suite, never a full-suite pass. No app/native wiring changed.
 
 Combined AC10 export + snapshot journey is coordinated separately after both feature commits are available; it is not claimed complete by these snapshot-only tests.
+
+## Review and regression result
+
+Review of `b08b41e` against the pinned base used separate Standards and Spec agents. Standards found no hard violations and suggested safer test preconditions, a mutually exclusive inspection result and a cleanup helper. The first two were applied and rechecked; the two different Store acquisition lifetimes keep explicit close/error handling. No outstanding Standards findings. Spec found no implementation defects or scope creep; combined AC10 remains pending.
+
+The first broad non-native run (97 tests/12 suites) failed five assertions in three existing tests: Accessibility deadline/fallback and two `alreadyOwned` close/reopen failures. All three passed a focused rerun. A second broad run passed the Store checks but again exceeded the Accessibility test's one-second deadline. This is retained as observed timing sensitivity, not silently discarded or attributed to a proven cause.
+
+After review fixes, grouped non-native regression passed: 92 tests in 11 suites, then all 5 `DisplayPlacementTests` alone. Commands:
+
+```sh
+xcrun swift test --skip 'NativeEditingTests|MacInteractionTests|DestinationInteractionTests|ResultIconInteractionTests|SearchResponsivenessTests|DisplayPlacementTests'
+xcrun swift test --filter DisplayPlacementTests
+```
+
+These are 97 non-native tests with the native exclusions above; the broad single-run result is not clean. No unrelated deadline/Store lifetime implementation was changed for this ticket.

@@ -23,6 +23,7 @@ struct CollectionSnapshotTests {
         try FileManager.default.removeItem(at: fixture.location.collectionDirectory)
         let reopened = try await CollectionRecovery.reopenSnapshot(at: snapshot.url,
             disposableRoot: fixture.directory.appendingPathComponent("validation"))
+        #expect(reopened.generation != store.generation)
         #expect(try await OrganizedCollection.views(of: reopened) == organized.views)
         await reopened.close()
         for name in ["collection.sqlite", "manifest.json"] {
@@ -102,7 +103,7 @@ struct CollectionSnapshotTests {
         let backup = Task {
             try await CollectionRecovery.createSnapshot(from: store, in: store.generation,
                 destination: fixture.directory.appendingPathComponent("Snapshots"),
-                faults: .init(captureBarrier: { held.signal(); release.wait() }))
+                faults: .init(captureBarrier: { #expect(!Thread.isMainThread); held.signal(); release.wait() }))
         }
         await withCheckedContinuation { continuation in
             DispatchQueue.global().async { held.wait(); continuation.resume() }
@@ -172,8 +173,8 @@ struct CollectionSnapshotTests {
             try await CollectionRecovery.createSnapshot(from: store, in: store.generation, destination: catalog,
                 faults: .init(atPhase: { phase in
                     if phase == .publishing {
-                        let staging = try FileManager.default.contentsOfDirectory(at: catalog, includingPropertiesForKeys: nil)
-                            .first { $0.lastPathComponent.hasPrefix(".incomplete-") }!
+                        let candidates = try FileManager.default.contentsOfDirectory(at: catalog, includingPropertiesForKeys: nil)
+                        let staging = try #require(candidates.first { $0.lastPathComponent.hasPrefix(".incomplete-") })
                         let name = staging.lastPathComponent.replacingOccurrences(of: ".incomplete-", with: "snapshot-")
                         try FileManager.default.createDirectory(at: catalog.appendingPathComponent(name), withIntermediateDirectories: false,
                             attributes: [.posixPermissions: 0o700])
