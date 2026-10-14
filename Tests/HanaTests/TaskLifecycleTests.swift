@@ -174,7 +174,7 @@ extension TaskLifecycleTests {
     private func make(_ state: State, in store: CollectionStore, clock: FixedClock) async throws -> TaskItem {
         let g = store.generation
         var task = try await store.perform(.createTask(operation: UUID(), title: "Task \(state)",
-                                                       placement: state == .today ? .today : .inbox), in: g)
+                                                       placement: state.placement ?? .inbox), in: g)
         clock.advance(by: 1)
         if state.isCompleted { task = try await store.perform(.completeTask(task.id, expectedRevision: task.revision), in: g) }
         clock.advance(by: 1)
@@ -220,7 +220,7 @@ extension TaskLifecycleTests {
                     #expect(after.archivedAt == (next.isArchived ? before.archivedAt ?? now : nil), "\(state) \(command)")
                     if next.placement != nil, next.placement != before.placement {
                         #expect(after.orderKey != nil)
-                        let list = try await store.read(next.placement == .today ? .today : .inbox, in: g)
+                        let list = try await store.read(.tasks(in: try #require(next.placement)), in: g)
                         #expect(list.first == after, "\(state) \(command) is not at the top")
                     } else {
                         // Leaving a list clears the key; staying keeps it.

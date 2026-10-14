@@ -179,10 +179,10 @@ extension CollectionQuery where Value == TaskItem? {
 
 extension CollectionQuery where Value == [TaskItem] {
     /// Inbox in manual order: ascending order key, then stable ID.
-    static var inbox: Self { list(.inbox) }
+    static var inbox: Self { tasks(in: .inbox) }
 
     /// Today in manual order: ascending order key, then stable ID.
-    static var today: Self { list(.today) }
+    static var today: Self { tasks(in: .today) }
 
     /// Completed, unarchived tasks: most recently completed first, then stable ID.
     static var completedTasks: Self {
@@ -199,7 +199,8 @@ extension CollectionQuery where Value == [TaskItem] {
         }
     }
 
-    private static func list(_ placement: TaskPlacement) -> Self {
+    /// Inbox or Today in manual order: ascending order key, then stable ID.
+    static func tasks(in placement: TaskPlacement) -> Self {
         Self { db in
             try TaskRow.fetch(db, where: "placement = ?", [placement.rawValue], order: "order_key ASC, id ASC")
         }
@@ -340,7 +341,7 @@ extension CollectionCommand where Result == TaskItem {
                                   completed_at, archived_at, placement, order_key)
                 VALUES (?, CAST(? AS TEXT), ?, ?, ?, 1, NULL, NULL, ?, ?)
                 """, arguments: [id, payload, context.now, context.now, context.now, placement.rawValue,
-                                 try TaskRow.topKey(db, placement)])
+                                 try TaskRow.claimTopKey(db, placement)])
             try db.execute(sql: """
                 INSERT INTO creation_receipt (operation_id, note_id, task_id, payload_sha256, committed_at)
                 VALUES (?, NULL, ?, ?, ?)
@@ -374,7 +375,7 @@ extension CollectionCommand where Result == TaskItem {
             guard task.completedAt == nil else { throw CollectionStoreError.completedTask }
             guard task.placement != placement else { return task }
             return try TaskRow.update(db, id, "placement = ?, order_key = ?",
-                                      [placement.rawValue, try TaskRow.topKey(db, placement)], now: context.now)
+                                      [placement.rawValue, try TaskRow.claimTopKey(db, placement)], now: context.now)
         }
     }
 
@@ -394,8 +395,8 @@ extension CollectionCommand where Result == TaskItem {
         Self { db, context in
             let task = try TaskRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: true)
             guard task.completedAt != nil else { return task }
-            return try TaskRow.update(db, id, "completed_at = NULL, placement = 'inbox', order_key = ?",
-                                      [try TaskRow.topKey(db, .inbox)], now: context.now)
+            return try TaskRow.update(db, id, "completed_at = NULL, placement = ?, order_key = ?",
+                                      [TaskPlacement.inbox.rawValue, try TaskRow.claimTopKey(db, .inbox)], now: context.now)
         }
     }
 
@@ -415,8 +416,8 @@ extension CollectionCommand where Result == TaskItem {
             let task = try TaskRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: false)
             guard task.archivedAt != nil else { return task }
             if task.completedAt != nil { return try TaskRow.update(db, id, "archived_at = NULL", [], now: context.now) }
-            return try TaskRow.update(db, id, "archived_at = NULL, placement = 'inbox', order_key = ?",
-                                      [try TaskRow.topKey(db, .inbox)], now: context.now)
+            return try TaskRow.update(db, id, "archived_at = NULL, placement = ?, order_key = ?",
+                                      [TaskPlacement.inbox.rawValue, try TaskRow.claimTopKey(db, .inbox)], now: context.now)
         }
     }
 }
@@ -683,7 +684,7 @@ private enum TaskRow {
     /// 0, 1, 2… in its current order (key, then ID) inside the caller's
     /// transaction. Renumbering changes no revision or updated time: the
     /// tasks' order and facts are the same.
-    static func topKey(_ db: Database, _ placement: TaskPlacement) throws -> Int64 {
+    static func claimTopKey(_ db: Database, _ placement: TaskPlacement) throws -> Int64 {
         guard let first = try Int64.fetchOne(db, sql: "SELECT min(order_key) FROM task WHERE placement = ?",
                                              arguments: [placement.rawValue])
         else { return 0 }

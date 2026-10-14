@@ -130,7 +130,9 @@ enum CollectionFixtureHarness {
             let before = try await observed.next() ?? []
             let note = try await store.perform(.createNote(operation: operation, body: body), in: store.generation)
             var after = before
-            while !after.contains(where: { $0.id == note.id }), let next = try await observed.next() { after = next }
+            // A retry returns the note as it stands now, possibly archived.
+            while note.archivedAt == nil, !after.contains(where: { $0.id == note.id }),
+                  let next = try await observed.next() { after = next }
             var fields = summary(note)
             fields["observedBefore"] = before.count
             fields["observedAfter"] = after.count
@@ -143,12 +145,14 @@ enum CollectionFixtureHarness {
                                    faults: CollectionStore.Faults) async throws {
         let title = readStandardInput()
         let fields = try await withStore(location, faults: faults) { store in
-            var observed = store.observe(placement == .today ? .today : .inbox, in: store.generation).makeAsyncIterator()
+            var observed = store.observe(.tasks(in: placement), in: store.generation).makeAsyncIterator()
             let before = try await observed.next() ?? []
             let task = try await store.perform(.createTask(operation: operation, title: title, placement: placement),
                                                in: store.generation)
             var after = before
-            while !after.contains(where: { $0.id == task.id }), let next = try await observed.next() { after = next }
+            // A retry returns the task as it stands now, possibly no longer in this list.
+            while task.placement == placement, !after.contains(where: { $0.id == task.id }),
+                  let next = try await observed.next() { after = next }
             var fields = summary(task)
             fields["observedBefore"] = before.count
             fields["observedAfter"] = after.count
