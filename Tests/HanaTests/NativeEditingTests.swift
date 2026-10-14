@@ -162,7 +162,7 @@ struct NativeEditingTests {
     private func presentEditor() async throws -> (MacInteraction, MacInteraction.Invocation, NSTextView) {
         _ = NSApplication.shared
         let feed = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         try await eventually { NSApp.keyWindow?.firstResponder is NSTextView }
         let editor = try #require(NSApp.keyWindow?.firstResponder as? NSTextView)

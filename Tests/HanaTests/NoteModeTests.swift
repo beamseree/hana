@@ -11,7 +11,7 @@ struct NoteModeTests {
     @Test func typedPrefixShowsTheNoteLabelAndIconAndHidesSearchResults() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let editor = try await firstResponderEditor()
@@ -35,7 +35,7 @@ struct NoteModeTests {
 
     @Test func noteGrowsDownwardToAMaximumHeightAndThenScrolls() async throws {
         _ = NSApplication.shared
-        let interaction = MacInteraction(search: Search(source: { CatalogFeed().stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { CatalogFeed().stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let editor = try await firstResponderEditor()
@@ -68,7 +68,7 @@ struct NoteModeTests {
     @Test(arguments: [MacInteraction.DismissalReason.escape, .outsideClick])
     func dismissingNoteDiscardsItAndTheNextInvocationOpensAnEmptySearch(reason: MacInteraction.DismissalReason) async throws {
         _ = NSApplication.shared
-        let interaction = MacInteraction(search: Search(source: { CatalogFeed().stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { CatalogFeed().stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         let editor = try await firstResponderEditor()
         let collapsed = interaction.contentHeight
