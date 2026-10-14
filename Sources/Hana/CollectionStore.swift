@@ -614,7 +614,8 @@ final class CollectionStore: Sendable {
                             }
                         }
                         guard case let .string(id) = (row["id"] as DatabaseValue).storage,
-                              UUID(uuidString: id) != nil,
+                              // Store queries bind uuidString against case-sensitive TEXT IDs.
+                              UUID(uuidString: id)?.uuidString == id,
                               case .string = (row[textColumn] as DatabaseValue).storage
                         else { throw CollectionStoreError.unreadableCollection }
                         if table == "note" {

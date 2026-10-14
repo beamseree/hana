@@ -32,7 +32,7 @@ struct CollectionSnapshotTests {
     }
     @Test(arguments: ["valid", "truncated", "future-schema", "future-manifest", "bad-count", "bad-hash", "bad-identity",
                       "bad-time", "bad-name", "missing-manifest", "incomplete", "blank-note", "multiline-task", "bad-utf8",
-                      "foreign-key", "invalid-placement", "symlink", "missing-table"])
+                      "foreign-key", "invalid-placement", "symlink", "missing-table", "lowercase-note-id", "lowercase-task-id"])
     func onlyCompleteCompatibleValidatedSnapshotsAreUsable(_ damage: String) async throws {
         let fixture = try TemporaryFixture()
         let store = try await CollectionStore.open(fixture.location)
@@ -47,7 +47,7 @@ struct CollectionSnapshotTests {
         var manifest = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: manifestURL)) as? [String: Any])
         switch damage {
         case "truncated": try Data("not sqlite".utf8).write(to: database)
-        case "future-schema", "blank-note", "multiline-task", "bad-utf8", "foreign-key", "invalid-placement", "missing-table":
+        case "future-schema", "blank-note", "multiline-task", "bad-utf8", "foreign-key", "invalid-placement", "missing-table", "lowercase-note-id", "lowercase-task-id":
             var config = Configuration(); config.foreignKeysEnabled = false
             let db = try DatabaseQueue(path: database.path, configuration: config)
             try await db.write { db in
@@ -60,6 +60,10 @@ struct CollectionSnapshotTests {
                 case "multiline-task": sql = "UPDATE task SET title = 'one' || char(11) || 'two'"
                 case "bad-utf8": sql = "UPDATE note SET body = CAST(x'fffe' AS TEXT)"
                 case "foreign-key": sql = "UPDATE creation_receipt SET note_id = '11111111-1111-1111-1111-111111111111' WHERE note_id IS NOT NULL"
+                // Keep foreign keys and the manifest hash valid so rejection
+                // depends on the ID representation, not unrelated corruption.
+                case "lowercase-note-id": sql = "UPDATE note SET id = 'abcdefab-1234-4567-89ab-abcdefabcdef'; UPDATE creation_receipt SET note_id = 'abcdefab-1234-4567-89ab-abcdefabcdef' WHERE note_id IS NOT NULL"
+                case "lowercase-task-id": sql = "UPDATE task SET id = 'abcdefab-1234-4567-89ab-abcdefabcdef'; UPDATE creation_receipt SET task_id = 'abcdefab-1234-4567-89ab-abcdefabcdef' WHERE task_id IS NOT NULL"
                 default: sql = "UPDATE task SET placement = NULL, order_key = NULL"
                 }
                 try db.execute(sql: sql)
@@ -92,6 +96,30 @@ struct CollectionSnapshotTests {
             }
             #expect(!FileManager.default.fileExists(atPath: fixture.directory.appendingPathComponent("verification").path))
         }
+    }
+
+    @Test func reopenedCanonicalIdentifiersSupportReadsAndMutations() async throws {
+        let fixture = try TemporaryFixture()
+        let store = try await CollectionStore.open(fixture.location)
+        let note = try await store.perform(.createNote(operation: UUID(), body: "Saved note"), in: store.generation)
+        let task = try await store.perform(.createTask(operation: UUID(), title: "Saved task"), in: store.generation)
+        let snapshot = try await CollectionRecovery.createSnapshot(from: store, in: store.generation,
+            destination: fixture.directory.appendingPathComponent("Snapshots"))
+        await store.close()
+        let database = snapshot.url.appendingPathComponent("collection.sqlite")
+        let before = try Data(contentsOf: database)
+        let reopened = try await CollectionRecovery.reopenSnapshot(at: snapshot.url,
+            disposableRoot: fixture.directory.appendingPathComponent("verification"))
+        #expect(try await reopened.read(.note(note.id), in: reopened.generation) == note)
+        #expect(try await reopened.read(.task(task.id), in: reopened.generation) == task)
+        let pinned = try await reopened.perform(.setNotePinned(note.id, true, expectedRevision: note.revision), in: reopened.generation)
+        let edited = try await reopened.perform(.editTaskTitle(task.id, expectedRevision: task.revision, title: "Edited task"), in: reopened.generation)
+        #expect(pinned.isPinned)
+        #expect(edited.title == "Edited task")
+        #expect(try await reopened.read(.note(note.id), in: reopened.generation) == pinned)
+        #expect(try await reopened.read(.task(task.id), in: reopened.generation) == edited)
+        await reopened.close()
+        #expect(try Data(contentsOf: database) == before)
     }
 
     @Test func captureBarrierIncludesCommittedWALAndExcludesAConcurrentLaterCommand() async throws {
