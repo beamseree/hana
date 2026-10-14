@@ -145,7 +145,7 @@ struct SearchRankingTests {
         let info = try PropertyListSerialization.data(fromPropertyList:
             ["CFBundleDisplayName": "Friendly Editor", "CFBundleName": "PowerPoint"], format: .xml, options: 0)
         try info.write(to: contents.appendingPathComponent("Info.plist"))
-        let search = Search(roots: [root], debounce: .zero)
+        let search = Search(roots: [root], typingGap: .zero)
         for query in ["friendly", "point", "code studio"] {
             for await batch in search.search(.init(text: query)) where batch.appStatus != .loading {
                 #expect(batch.results.map(\.name) == ["Friendly Editor"])
@@ -178,7 +178,7 @@ struct SearchRankingTests {
     @Test(.enabled(if: ProcessInfo.processInfo.environment["HANA_RANKING_FIXTURE"] != nil))
     func indexedShortlistKeepsWordStartsAheadOfMidwordAndExtensionOnlyMatches() async throws {
         let root = URL(fileURLWithPath: try #require(ProcessInfo.processInfo.environment["HANA_RANKING_FIXTURE"]))
-        let search = Search(roots: [], indexedFiles: true, debounce: .zero)
+        let search = Search(roots: [], indexedFiles: true, typingGap: .zero)
         var last: Search.Batch?
         for await batch in search.search(.init(text: "aifc")) {
             last = batch
@@ -197,7 +197,7 @@ struct SearchRankingTests {
             AsyncStream { $0.yield(.init(results: candidates.filter { $0.kind == .application }, status: .ready)); $0.finish() }
         }, files: { _ in
             AsyncStream { $0.yield(.init(results: candidates.filter { $0.kind != .application }, status: .ready)); $0.finish() }
-        }, debounce: .zero)
+        }, typingGap: .zero)
         for result in opened { search.recordOpened(result.id) }
         var results: [SearchResult] = []
         for await batch in search.search(.init(text: text)) { results = batch.results }

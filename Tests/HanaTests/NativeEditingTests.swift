@@ -10,7 +10,7 @@ struct NativeEditingTests {
     @Test func lateResultsPreserveEditorSelectionUndoAndInputPosition() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         try await eventually { NSApp.keyWindow?.firstResponder is NSTextView }

@@ -1,0 +1,10 @@
+Building for production...
+[0/2] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.12s)
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/next-issues-6f54f5/build/Hana.app/Contents/Info.plist: OK
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/next-issues-6f54f5/build/Hana.app: replacing existing signature
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/next-issues-6f54f5/build/Hana.app: valid on disk
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/next-issues-6f54f5/build/Hana.app: satisfies its Designated Requirement
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/next-issues-6f54f5/build/Hana.app
+/Users/beamsereeyothin/Applications/Hana.app: valid on disk
+/Users/beamsereeyothin/Applications/Hana.app: satisfies its Designated Requirement

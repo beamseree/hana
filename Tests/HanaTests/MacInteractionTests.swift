@@ -10,7 +10,7 @@ struct MacInteractionTests {
     @Test func emptySourceUpdateDoesNotReplaceRowsWithOnlyRecheckedMatches() async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let notes = app("Notes", "/fixture/Notes.app"), numbers = app("Numbers", "/fixture/Numbers.app")
@@ -37,7 +37,7 @@ struct MacInteractionTests {
         let matches = CatalogFeed(), failing = CatalogFeed()
         let apps = fileSourceFails ? matches : failing
         let files = fileSourceFails ? failing : matches
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let result = SearchResult(name: "Notes", url: URL(fileURLWithPath: "/fixture/Notes"),
@@ -64,7 +64,7 @@ struct MacInteractionTests {
         _ = NSApplication.shared
         let apps = CatalogFeed()
         var opened: [URL] = []
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
             launchApplication: { url in opened.append(url); return .init(activate: { true }) })
         interaction.presentBar()
         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
@@ -89,7 +89,7 @@ struct MacInteractionTests {
         _ = NSApplication.shared
         let apps = CatalogFeed()
         var opened: [URL] = []
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
             launchApplication: { url in opened.append(url); return .init(activate: { true }) })
         interaction.presentBar()
         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
@@ -107,7 +107,7 @@ struct MacInteractionTests {
         _ = NSApplication.shared
         let apps = CatalogFeed()
         var opened: [URL] = []
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
             launchApplication: { url in opened.append(url); return .init(activate: { true }) })
         interaction.presentBar()
         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
@@ -128,7 +128,7 @@ struct MacInteractionTests {
         _ = NSApplication.shared
         let apps = CatalogFeed()
         var opened: [URL] = []
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
             launchApplication: { url in opened.append(url); return .init(activate: { true }) })
         let invocation = interaction.presentBar()
         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
@@ -155,7 +155,7 @@ struct MacInteractionTests {
         _ = NSApplication.shared
         let apps = CatalogFeed()
         var launched: [URL] = [], activated = false
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
             launchApplication: { url in launched.append(url); return .init(activate: { activated = true; return true }) })
         let invocation = interaction.presentBar()
         let notes = app("Notes", "/fixture/Notes.app"), safari = app("Safari", "/fixture/Safari.app")
@@ -179,7 +179,7 @@ struct MacInteractionTests {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
         var opened: [URL] = []
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero),
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero),
             launchApplication: { url in opened.append(url); return .init(activate: { true }) },
             openFile: { url in opened.append(url); return .init(activate: { true }) })
         let invocation = interaction.presentBar()
@@ -205,7 +205,7 @@ struct MacInteractionTests {
     @Test func editsKeepPreviousRowsUntilFreshMatchesArrive() async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let notes = app("Notes", "/fixture/Notes.app")
@@ -241,7 +241,7 @@ struct MacInteractionTests {
     @Test func editingDuringAFinishedShrinkHoldsTheCurrentHeightWhileLoading() async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let values = (1...7).map { app("Notes \($0)", "/fixture/\($0).app") }
@@ -259,7 +259,7 @@ struct MacInteractionTests {
     @Test func selectionFollowsBetterMatchesAndEveryEditResetsNavigationAndScroll() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let values = (10...21).map { app("App \($0)", "/fixture/\($0).app") }
@@ -287,7 +287,7 @@ struct MacInteractionTests {
     @Test func loadingUsesNoStatusRowAndNoResultsWaitsForBothSources() async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         interaction.updateQuery("nothing")
@@ -308,7 +308,7 @@ struct MacInteractionTests {
     func typingKeepsHeightUntilBothSourcesFinishAndClearingCollapses(finishedStatus: SourceStatus) async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let values = (1...7).map { app("Notes \($0)", "/fixture/\($0).app") }
@@ -377,7 +377,7 @@ struct DestinationInteractionTests {
         var oldCompletion: CheckedContinuation<Void, Error>?
         var activated: [URL] = []
         let a = app("Alpha", "/Applications/A.app"), b = app("Beta", "/Applications/B.app")
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), launchApplication: { url in
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero), launchApplication: { url in
             if url == a.url { try await withCheckedThrowingContinuation { oldCompletion = $0 } }
             return .init(activate: { activated.append(url); return true })
         })
@@ -403,7 +403,7 @@ struct DestinationInteractionTests {
     @Test func onlyAcknowledgedOpeningImprovesSessionUsage() async throws {
         _ = NSApplication.shared
         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
-        let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, debounce: .zero)
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
         var shouldFail = true
         let interaction = MacInteraction(search: search, launchApplication: { _ in
             if shouldFail { throw CocoaError(.fileReadNoPermission) }
@@ -428,7 +428,7 @@ struct DestinationInteractionTests {
     @Test func usageIsRecordedOnlyForTheResultMatchingTheOpenedRequest() async throws {
         _ = NSApplication.shared
         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
-        let search = Search(source: { AsyncStream { $0.yield(.init(results: [a, b], status: .ready)); $0.finish() } }, debounce: .zero)
+        let search = Search(source: { AsyncStream { $0.yield(.init(results: [a, b], status: .ready)); $0.finish() } }, typingGap: .zero)
         var opened: [URL] = []
         let interaction = MacInteraction(search: search,
             launchApplication: { url in opened.append(url); return .init(activate: { true }) })
@@ -454,7 +454,7 @@ struct DestinationInteractionTests {
         let chosen = SearchResult(name: "Note Z", url: URL(fileURLWithPath: "/fixture/Z.txt"), kind: .file)
         let exact = app("Note", "/Applications/exact.app")
         var opened: [URL] = []
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero),
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero),
                                          openFile: { url in opened.append(url); return .init(activate: { true }) })
         let invocation = interaction.presentBar()
         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
@@ -486,7 +486,7 @@ struct DestinationInteractionTests {
         let freshFile = SearchResult(name: "Fresh", url: URL(fileURLWithPath: "/fixture/fresh.txt"), kind: .file)
         let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { text in
             text == "Old" ? oldFiles.stream() : newFiles.stream()
-        }, debounce: .zero), openFile: { _ in
+        }, typingGap: .zero), openFile: { _ in
             try await withCheckedThrowingContinuation { completion = $0 }
             return .init(activate: { Issue.record("Obsolete callback activated"); return false })
         })
@@ -521,7 +521,7 @@ struct DestinationInteractionTests {
         let files = CatalogFeed()
         var completion: CheckedContinuation<Void, Error>?
         var activated = false
-        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { _ in files.stream() }, debounce: .zero), openFile: { _ in
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { _ in files.stream() }, typingGap: .zero), openFile: { _ in
             try await withCheckedThrowingContinuation { completion = $0 }
             return .init(activate: { activated = true; return true })
         })
@@ -545,7 +545,7 @@ struct DestinationInteractionTests {
     @Test func deletedFileFailsNativeRevalidationWithoutLosingQuery() async throws {
         _ = NSApplication.shared
         let files = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { _ in files.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, files: { _ in files.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         interaction.updateQuery("Missing")
@@ -562,7 +562,7 @@ struct DestinationInteractionTests {
         let files = CatalogFeed(), apps = CatalogFeed()
         var attempted: URL?
         let file = SearchResult(name: "Notes.txt", url: URL(fileURLWithPath: "/missing/Notes.txt"), kind: .file)
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero), openFile: { url in
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero), openFile: { url in
             attempted = url
             throw CocoaError(.fileReadNoPermission)
         })
@@ -588,7 +588,7 @@ struct DestinationInteractionTests {
         let apps = CatalogFeed(), files = CatalogFeed()
         let destination = app("Hana9 App", "/Applications/Hana9.app")
         var activated = false
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero),
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero),
             launchApplication: { _ in .init(activate: { activated = true; return true }) })
         interaction.presentBar()
         interaction.updateQuery("Hana9")
@@ -603,7 +603,7 @@ struct DestinationInteractionTests {
     @Test func missingFileExplainsUnavailableLocationAndRetainsSelection() async throws {
         _ = NSApplication.shared
         let file = SearchResult(name: "Hana9 Missing", url: URL(fileURLWithPath: "/nonexistent-hana9/Missing.txt"), kind: .file)
-        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.yield(.init(results: [file], status: .ready)); $0.finish() } }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { AsyncStream { $0.yield(.init(results: [file], status: .ready)); $0.finish() } }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .escape) }
         interaction.updateQuery("Hana9")
@@ -620,7 +620,7 @@ struct DestinationInteractionTests {
         let feed = CatalogFeed()
         var completion: CheckedContinuation<Void, Error>?
         var activated = false
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), launchApplication: { _ in
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero), launchApplication: { _ in
             try await withCheckedThrowingContinuation { completion = $0 }
             return .init(activate: { activated = true; return true })
         })
@@ -642,7 +642,7 @@ struct DestinationInteractionTests {
     @Test func unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         interaction.updateQuery("Missing")
@@ -658,7 +658,7 @@ struct DestinationInteractionTests {
         _ = NSApplication.shared
         let feed = CatalogFeed()
         var opened: [URL] = []
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), launchApplication: { url in .init(activate: { opened.append(url); return true }) })
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero), launchApplication: { url in .init(activate: { opened.append(url); return true }) })
         let invocation = interaction.presentBar()
         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
         interaction.updateQuery("App")
@@ -677,7 +677,7 @@ struct DestinationInteractionTests {
         let feed = CatalogFeed()
         var completion: CheckedContinuation<Void, Error>?
         var activationRequests = 0
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), launchApplication: { _ in
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero), launchApplication: { _ in
             try await withCheckedThrowingContinuation { completion = $0 }
             return .init(activate: { activationRequests += 1; return true })
         })
@@ -713,7 +713,7 @@ struct DestinationInteractionTests {
     @Test func obsoleteBatchesAndClearingCannotReplaceCurrentResults() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero))
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         interaction.updateQuery("Alpha")
@@ -734,7 +734,7 @@ struct DestinationInteractionTests {
     @Test func selectionTracksIdentityAndVanishingReturnsToFollowingTheTop() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
-        let search = Search(source: { feed.stream() }, debounce: .zero)
+        let search = Search(source: { feed.stream() }, typingGap: .zero)
         var opened: [URL] = []
         let interaction = MacInteraction(search: search, launchApplication: { url in .init(activate: { opened.append(url); return true }) })
         let invocation = interaction.presentBar()
@@ -769,7 +769,7 @@ struct ResultIconInteractionTests {
         let feed = CatalogFeed(), icons = IconFeed()
         let a = app("Alpha", "/Applications/A.app"), b = app("Alpha Beta", "/Applications/B.app")
         var launched: [URL] = []
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero),
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero),
             launchApplication: { url in launched.append(url); return .init(activate: { true }) },
             loadIcon: icons.load)
         interaction.presentBar()
@@ -790,7 +790,7 @@ struct ResultIconInteractionTests {
         let feed = CatalogFeed(), icons = IconFeed()
         let old = app("Old", "/Applications/Old.app")
         let a = app("New", "/Applications/New.app"), b = app("New Beta", "/Applications/New Beta.app")
-        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero), loadIcon: icons.load)
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero), loadIcon: icons.load)
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         interaction.updateQuery("Old")

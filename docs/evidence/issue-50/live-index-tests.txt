@@ -1,0 +1,148 @@
+[0/1] Planning build
+Test Suite 'Selected tests' started at 2026-10-14 21:36:43.550.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-14 21:36:43.551.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-14 21:36:43.551.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-14 21:36:43.551.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite SearchExclusionTests started.
+􀟈  Test dependencyAndBuildFoldersAreExcludedAtAnyDepthByWholeName() started.
+􁁛  Test dependencyAndBuildFoldersAreExcludedAtAnyDepthByWholeName() passed after 0.014 seconds.
+􀟈  Test systemAndLibraryLocationsAreExcludedExceptICloudDriveAndCloudStorage() started.
+􁁛  Test systemAndLibraryLocationsAreExcludedExceptICloudDriveAndCloudStorage() passed after 0.003 seconds.
+􀟈  Test applicationsInConventionalRootsStillAppearFromTheCatalogAndTheIndex() started.
+􁁛  Test applicationsInConventionalRootsStillAppearFromTheCatalogAndTheIndex() passed after 0.001 seconds.
+􀟈  Test finderRemainsSearchableAlthoughOutsideTheCatalogRoots() started.
+􁁛  Test finderRemainsSearchableAlthoughOutsideTheCatalogRoots() passed after 0.001 seconds.
+􀟈  Test excludedCandidatesDoNotTakeShortlistPlaces() started.
+􁁛  Test excludedCandidatesDoNotTakeShortlistPlaces() passed after 0.079 seconds.
+􀟈  Test liveIndexedTeQueryOmitsDependencySystemAndApplicationSupportClutter() started.
+􁁛  Test liveIndexedTeQueryOmitsDependencySystemAndApplicationSupportClutter() passed after 40.371 seconds.
+􀟈  Test liveIndexedFinderQueryReturnsFinder() started.
+􁁛  Test liveIndexedFinderQueryReturnsFinder() passed after 0.181 seconds.
+􁁛  Suite SearchExclusionTests passed after 40.653 seconds.
+􀟈  Suite SearchRankingTests started.
+􀟈  Test wordStartsBeatShorterMidwordMatches() started.
+􁁛  Test wordStartsBeatShorterMidwordMatches() passed after 0.001 seconds.
+􀟈  Test extensionsAreFallbackMatchesAndKindsBreakEqualTiers() started.
+􁁛  Test extensionsAreFallbackMatchesAndKindsBreakEqualTiers() passed after 0.002 seconds.
+􀟈  Test applicationsMatchingByNameOrWordStartPrecedeExactFiles() started.
+􁁛  Test applicationsMatchingByNameOrWordStartPrecedeExactFiles() passed after 0.002 seconds.
+􀟈  Test promotedApplicationsKeepTheirOwnOrderAboveFoldersThenFiles() started.
+􁁛  Test promotedApplicationsKeepTheirOwnOrderAboveFoldersThenFiles() passed after 0.001 seconds.
+􀟈  Test substringApplicationsAndUnmatchedApplicationsAreNotPromoted() started.
+􁁛  Test substringApplicationsAndUnmatchedApplicationsAreNotPromoted() passed after 0.001 seconds.
+􀟈  Test adapterShortlistKeepsPromotedApplicationsAheadOfExactCandidatesUnderItsLimit() started.
+􁁛  Test adapterShortlistKeepsPromotedApplicationsAheadOfExactCandidatesUnderItsLimit() passed after 0.009 seconds.
+􀟈  Test wordOrderWinsBeforeUsageAndPathOnlyAfterCloseness() started.
+􁁛  Test wordOrderWinsBeforeUsageAndPathOnlyAfterCloseness() passed after 0.001 seconds.
+􀟈  Test languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "studio code", first → "Visual Studio Code", second → "xstudio xcode" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "code studio", first → "Visual Studio Code", second → "xcode xstudio" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "point", first → "PowerPoint", second → "Checkpoint" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "time", first → "FaceTime", second → "Overtime" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "udio", first → "Another udio tool", second → "Visual Studio Code" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "ภาษา", first → "บันทึกภาษาไทย", second → "เอกสารยาวมาก ภาษา" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "ทึก", first → "เอกสาร ทึก สรุป", second → "บันทึก" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "ไทย", first → "เอกสาร ไทย มากมาย", second → "ภาษาไทย" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "studio", first → "Android Studio", second → "Visual Studio Code" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􁁛  Test languageAwareWordStartsAndSubstringFallback(query:first:second:) with 9 test cases passed after 0.005 seconds.
+􀟈  Test fullFilenamesAndUnrecognizedDottedSuffixesRemainLiteral() started.
+􁁛  Test fullFilenamesAndUnrecognizedDottedSuffixesRemainLiteral() passed after 0.002 seconds.
+􀟈  Test fileClosenessIgnoresDeclaredExtensionAndFilesShareFolderRank() started.
+􁁛  Test fileClosenessIgnoresDeclaredExtensionAndFilesShareFolderRank() passed after 0.001 seconds.
+􀟈  Test usageCannotCrossTierKindClosenessOrWordOrderAndTiesAreStable() started.
+􁁛  Test usageCannotCrossTierKindClosenessOrWordOrderAndTiesAreStable() passed after 0.001 seconds.
+􀟈  Test catalogMatchesDisplayBundleAndInstallationNames() started.
+􁁛  Test catalogMatchesDisplayBundleAndInstallationNames() passed after 0.032 seconds.
+􀟈  Test adapterShortlistKeepsLateStrongMatchesAheadOfWeakCandidates() started.
+􁁛  Test adapterShortlistKeepsLateStrongMatchesAheadOfWeakCandidates() passed after 0.214 seconds.
+􀟈  Test indexedShortlistKeepsWordStartsAheadOfMidwordAndExtensionOnlyMatches() started.
+􁁛  Test indexedShortlistKeepsWordStartsAheadOfMidwordAndExtensionOnlyMatches() passed after 0.654 seconds.
+􁁛  Suite SearchRankingTests passed after 0.931 seconds.
+􀟈  Suite SearchResponsivenessTests started.
+􀟈  Test liveIndexedSearchKeepsInputQueueResponsive() started.
+Sleep scheduling diagnostic: samples=776, maximumExcessMs=32.97612525522709
+Input-queue scheduling: samples=1002, maximumEnqueueDelayMs=5.830001085996628, iconsLoaded=389
+􁁛  Test liveIndexedSearchKeepsInputQueueResponsive() passed after 5.071 seconds.
+􁁛  Suite SearchResponsivenessTests passed after 5.071 seconds.
+􀟈  Suite SearchTests started.
+􀟈  Test loadingReplacementsNeverResurrectPreviouslyInvisibleCandidates() started.
+􁁛  Test loadingReplacementsNeverResurrectPreviouslyInvisibleCandidates() passed after 0.003 seconds.
+􀟈  Test retainedAliasesKeepTheirSourceOwnershipWhenThatSourceFinishes() started.
+􁁛  Test retainedAliasesKeepTheirSourceOwnershipWhenThatSourceFinishes() passed after 0.006 seconds.
+􀟈  Test retainedMatchesSurviveLoadingSnapshotsUntilTheirSourceFinishes() started.
+􁁛  Test retainedMatchesSurviveLoadingSnapshotsUntilTheirSourceFinishes() passed after 0.007 seconds.
+􀟈  Test editsFirstYieldRecheckedRerankedResultsBeforeSourcesRespond() started.
+􁁛  Test editsFirstYieldRecheckedRerankedResultsBeforeSourcesRespond() passed after 0.001 seconds.
+􀟈  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() started.
+􁁛  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() passed after 0.001 seconds.
+􀟈  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() started.
+􁁛  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() passed after 0.001 seconds.
+􀟈  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() started.
+􁁛  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() passed after 0.001 seconds.
+􀟈  Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() started.
+􁁛  Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() passed after 0.521 seconds.
+􀟈  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() started.
+􁁛  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() passed after 0.073 seconds.
+􀟈  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() started.
+􁁛  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() passed after 0.559 seconds.
+􀟈  Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() started.
+􁁛  Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() passed after 2.129 seconds.
+􀟈  Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() started.
+􁁛  Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() passed after 0.005 seconds.
+􀟈  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() started.
+􁁛  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() passed after 0.002 seconds.
+􀟈  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() started.
+􁁛  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() passed after 0.001 seconds.
+􀟈  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() started.
+􁁛  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() passed after 0.001 seconds.
+􀟈  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() started.
+􁁛  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() passed after 0.132 seconds.
+􀟈  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() started.
+􁁛  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() passed after 0.006 seconds.
+􀟈  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() started.
+􁁛  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() passed after 0.005 seconds.
+􀟈  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() started.
+􁁛  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() passed after 0.001 seconds.
+􀟈  Test failedSourceStatusStillDeliversAvailableMatches() started.
+􁁛  Test failedSourceStatusStillDeliversAvailableMatches() passed after 0.001 seconds.
+􀟈  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() started.
+􁁛  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() passed after 0.029 seconds.
+􀟈  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() started.
+􁁛  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() passed after 0.006 seconds.
+􀟈  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() started.
+􁁛  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() passed after 2.075 seconds.
+􀟈  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() started.
+􁁛  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() passed after 0.014 seconds.
+􀟈  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() started.
+􁁛  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() passed after 0.061 seconds.
+􀟈  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() started.
+􁁛  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() passed after 0.001 seconds.
+􀟈  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() started.
+􁁛  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() passed after 0.001 seconds.
+􀟈  Test exactPrefixAndSubstringHaveDeterministicOrder() started.
+􁁛  Test exactPrefixAndSubstringHaveDeterministicOrder() passed after 0.001 seconds.
+􁁛  Suite SearchTests passed after 5.654 seconds.
+􀟈  Suite SearchTypingGapTests started.
+􀟈  Test aKeystrokeAfterAnIdleGapStartsTheFileQueryImmediately() started.
+􁁛  Test aKeystrokeAfterAnIdleGapStartsTheFileQueryImmediately() passed after 0.012 seconds.
+􀟈  Test keystrokesWithinTheGapStartOneFileQueryWithTheLatestTextOnceTypingPauses() started.
+􁁛  Test keystrokesWithinTheGapStartOneFileQueryWithTheLatestTextOnceTypingPauses() passed after 0.123 seconds.
+􀟈  Test applicationsAndRetainedResultsArriveWhileTheFileQueryWaitsForAPause() started.
+􁁛  Test applicationsAndRetainedResultsArriveWhileTheFileQueryWaitsForAPause() passed after 0.001 seconds.
+􁁛  Suite SearchTypingGapTests passed after 0.138 seconds.
+􀟈  Suite SpotlightStageTests started.
+􀟈  Test allThreeStagesStartBeforeAnyFinishesGathering() started.
+􁁛  Test allThreeStagesStartBeforeAnyFinishesGathering() passed after 0.544 seconds.
+􀟈  Test aNameMatchSurvivesThousandsOfExtensionOnlyMatchesInTheShortlist() started.
+􁁛  Test aNameMatchSurvivesThousandsOfExtensionOnlyMatchesInTheShortlist() passed after 2.748 seconds.
+􀟈  Test indexedHiddenDestinationsAreExcludedAfterShortlisting() started.
+􁁛  Test indexedHiddenDestinationsAreExcludedAfterShortlisting() passed after 1.847 seconds.
+􀟈  Test destinationsInsidePackagesOrHiddenFoldersAreNotVisible() started.
+􁁛  Test destinationsInsidePackagesOrHiddenFoldersAreNotVisible() passed after 0.002 seconds.
+􁁛  Suite SpotlightStageTests passed after 5.143 seconds.
+􁁛  Test run with 57 tests in 6 suites passed after 57.593 seconds.

@@ -1,4 +1,5 @@
 import Foundation
+import Synchronization
 
 /// Internal adapter: query start/stop, notification delivery and metadata reads
 /// belong to the application's main run loop. No NSMetadataItem leaves it.
@@ -21,6 +22,7 @@ final class SpotlightSource: NSObject {
     private static let scanChunk = 128
     private nonisolated static let candidateLimit = 256
     private let usage: [SearchResult.ID: Search.Usage]
+    private let visibility = DestinationVisibility()
     private let text: String
     private let continuation: AsyncStream<SourceSnapshot>.Continuation
     private var stages: [Stage] = []
@@ -30,7 +32,9 @@ final class SpotlightSource: NSObject {
         let (stream, continuation) = AsyncStream<SourceSnapshot>.makeStream(bufferingPolicy: .bufferingNewest(1))
         let source = SpotlightSource(text: text, usage: usage, continuation: continuation)
         continuation.onTermination = { _ in Task { @MainActor in source.stop() } }
-        source.startStage()
+        // Exact, prefix and substring gathering run together; status is
+        // complete only once all three have finished.
+        for _ in 0..<3 { source.startStage() }
         return stream
     }
 
@@ -45,13 +49,13 @@ final class SpotlightSource: NSObject {
         let query = NSMetadataQuery()
         query.operationQueue = .main
         query.searchScopes = [NSMetadataQueryLocalComputerScope]
-        query.notificationBatchingInterval = 0.1
+        query.notificationBatchingInterval = 0.02
         query.predicate = predicate(for: stages.count)
-        query.sortDescriptors = [NSSortDescriptor(key: NSMetadataItemFSNameKey, ascending: true),
-                                 NSSortDescriptor(key: NSMetadataItemPathKey, ascending: true)]
-        // Request type values with the query. Per-item value(forAttribute:) can
+        // Search ranks candidates itself, so the query has no sort descriptors.
+        // Query values exist only for requested attributes: request name and
+        // type values with the query. Per-item value(forAttribute:) can
         // synchronously fetch uncached metadata from Spotlight on the input actor.
-        query.valueListAttributes = [NSMetadataItemContentTypeTreeKey]
+        query.valueListAttributes = [NSMetadataItemFSNameKey, NSMetadataItemContentTypeTreeKey]
         stages.append(Stage(query: query))
         for name in [NSNotification.Name.NSMetadataQueryDidFinishGathering, NSNotification.Name.NSMetadataQueryGatheringProgress, NSNotification.Name.NSMetadataQueryDidUpdate] {
             NotificationCenter.default.addObserver(self, selector: #selector(changed(_:)), name: name, object: query)
@@ -59,7 +63,6 @@ final class SpotlightSource: NSObject {
         if !query.start() {
             stages[stages.count - 1].status = .failed
             publish()
-            startStage()
         }
     }
 
@@ -111,9 +114,12 @@ final class SpotlightSource: NSObject {
         stages[index].processing?.cancel()
         // Keep the previous complete snapshot while replacing it. Publishing
         // partial prefixes here would invalidate a still-existing selection.
+        // A stage with nothing published yet publishes after every chunk, so
+        // its first matches never wait for the whole result set.
         stages[index].status = .loading
         publish()
-        let text = text, usage = usage
+        let progressive = stages[index].results.isEmpty
+        let text = text, usage = usage, visibility = visibility
         stages[index].processing = Task { [weak self] in
             guard let self, !self.stopped, self.stages[index].revision == revision else { return }
             let count = query.resultCount
@@ -123,8 +129,8 @@ final class SpotlightSource: NSObject {
                 query.disableUpdates()
                 let end = min(query.resultCount, start + Self.scanChunk)
                 let values: [Item] = (min(start, end)..<end).compactMap { offset in
-                    // kMDItemPath is not supplied by query.value on the tested OS,
-                    // even as a sort key; keep the item's cheap path lookup.
+                    // kMDItemPath is not supplied by query.value on the tested OS;
+                    // keep the item's cheap path lookup.
                     guard let item = query.result(at: offset) as? NSMetadataItem,
                           let name = query.value(ofAttribute: NSMetadataItemFSNameKey, forResultAt: offset) as? String,
                           let path = item.value(forAttribute: NSMetadataItemPathKey) as? String else { return nil }
@@ -138,20 +144,36 @@ final class SpotlightSource: NSObject {
                 query.enableUpdates()
                 let previous = retained
                 let work = Task.detached(priority: .userInitiated) {
-                    var results = previous
+                    let normalized = SearchName.normalized(text)
+                    var candidates = previous
                     for item in values {
                         if Task.isCancelled { return previous }
+                        // Path checks are cheap; preparing names is not.
+                        guard Search.indexedEligible(item.url, kind: item.kind) else { continue }
                         let name = item.kind == .application ? item.url.deletingPathExtension().lastPathComponent : item.name
-                        guard let tier = [name, item.name].compactMap({ Search.matchTier($0, query: text) }).min(),
-                              index == 2 || tier == index,
-                              Search.indexedEligible(item.url, kind: item.kind), Self.visibleDestination(item.url) else { continue }
-                        results.append(SearchResult(name: name, url: item.url,
-                            alternateNames: item.kind == .application ? [item.name] : [], kind: item.kind))
+                        let result = SearchResult(name: name, url: item.url,
+                            alternateNames: item.kind == .application ? [item.name] : [], kind: item.kind)
+                        // Each stage keeps the complete names its predicate matches.
+                        guard let tier = result.matchingNames.compactMap({ $0.fullNameTier(for: normalized) }).min(),
+                              index == 2 || tier.rawValue == index else { continue }
+                        candidates.append(result)
                     }
-                    return await Search.compactCandidates(results, query: text, limit: Self.candidateLimit, usage: usage)
+                    // Hidden-item and package checks read the filesystem, so only
+                    // the shortlist is checked; an excluded candidate frees its place.
+                    while true {
+                        let shortlist = await Search.compactCandidates(candidates, query: text, limit: Self.candidateLimit, usage: usage)
+                        if Task.isCancelled { return previous }
+                        let excluded = Set(shortlist.lazy.filter { !visibility.isVisible($0.url) }.map(\.id))
+                        if excluded.isEmpty { return shortlist }
+                        candidates.removeAll { excluded.contains($0.id) }
+                    }
                 }
                 retained = await withTaskCancellationHandler { await work.value } onCancel: { work.cancel() }
                 guard !Task.isCancelled, !self.stopped, self.stages[index].revision == revision else { return }
+                if progressive, !retained.isEmpty {
+                    self.stages[index].results = retained
+                    self.publish()
+                }
                 await Task.yield()
             }
             guard !Task.isCancelled, !self.stopped, self.stages[index].revision == revision else { return }
@@ -159,21 +181,11 @@ final class SpotlightSource: NSObject {
             self.stages[index].status = !complete ? .loading : retained.count == Self.candidateLimit ? .partial : .ready
             self.publish()
         }
-        // Keep completed queries alive for updates. Start stronger gathering
-        // first, without waiting for filesystem validation of its value snapshot.
-        if notification.name == NSNotification.Name.NSMetadataQueryDidFinishGathering, index == stages.count - 1 { startStage() }
+        // Completed queries stay alive for updates.
     }
 
     nonisolated static func visibleDestination(_ url: URL) -> Bool {
-        var current = url
-        var isDestination = true
-        while current.path != "/" {
-            guard let flags = try? current.resourceValues(forKeys: [.isHiddenKey, .isPackageKey]),
-                  flags.isHidden != true, isDestination || flags.isPackage != true else { return false }
-            isDestination = false
-            current.deleteLastPathComponent()
-        }
-        return true
+        DestinationVisibility().isVisible(url)
     }
 
     private func publish() {
@@ -193,5 +205,31 @@ final class SpotlightSource: NSObject {
         }
         stages.removeAll()
         continuation.finish()
+    }
+}
+
+/// Whether a destination is neither hidden nor inside a hidden folder or a
+/// package. Verdicts are cached, per parent directory, for one query.
+private final class DestinationVisibility: Sendable {
+    private let destinations = Mutex<[String: Bool]>([:])
+    private let directories = Mutex<[String: Bool]>([:])
+
+    func isVisible(_ url: URL) -> Bool {
+        if url.path == "/" { return true }
+        if let known = destinations.withLock({ $0[url.path] }) { return known }
+        let flags = try? url.resourceValues(forKeys: [.isHiddenKey])
+        let visible = flags != nil && flags?.isHidden != true && directoryVisible(url.deletingLastPathComponent())
+        destinations.withLock { $0[url.path] = visible }
+        return visible
+    }
+
+    private func directoryVisible(_ directory: URL) -> Bool {
+        if directory.path == "/" { return true }
+        if let known = directories.withLock({ $0[directory.path] }) { return known }
+        let flags = try? directory.resourceValues(forKeys: [.isHiddenKey, .isPackageKey])
+        let visible = flags != nil && flags?.isHidden != true && flags?.isPackage != true
+            && directoryVisible(directory.deletingLastPathComponent())
+        directories.withLock { $0[directory.path] = visible }
+        return visible
     }
 }

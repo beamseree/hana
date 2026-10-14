@@ -105,7 +105,11 @@ final class Search {
     private var retainedFiles: [SearchResult] = []
     private let source: () -> AsyncStream<SourceSnapshot>
     private var files: ((String) -> AsyncStream<SourceSnapshot>)?
-    private let debounce: Duration
+    private let typingGap: Duration
+    /// The injected clock, as time since construction and a sleep until such a time.
+    private let elapsed: @Sendable () -> Duration
+    private let sleepUntil: @Sendable (Duration) async throws -> Void
+    private var lastEdit: Duration?
     private var task: Task<Void, Never>?
     private var generation: UUID?
     struct Usage: Sendable { var count = 0; var sequence = 0 }
@@ -120,15 +124,23 @@ final class Search {
         usage[id]?.sequence = sequence
     }
 
-    init(source: @escaping () -> AsyncStream<SourceSnapshot>, files: ((String) -> AsyncStream<SourceSnapshot>)? = nil, debounce: Duration = .milliseconds(100)) {
+    /// While edits arrive closer together than this, indexed-file queries
+    /// wait for a pause; an edit after a pause starts one at once.
+    nonisolated static let defaultTypingGap: Duration = .milliseconds(50)
+
+    init<C: Clock<Duration>>(source: @escaping () -> AsyncStream<SourceSnapshot>, files: ((String) -> AsyncStream<SourceSnapshot>)? = nil,
+                             typingGap: Duration = Search.defaultTypingGap, clock: C = ContinuousClock()) {
         self.files = files
         self.source = source
-        self.debounce = debounce
+        self.typingGap = typingGap
+        let origin = clock.now
+        elapsed = { origin.duration(to: clock.now) }
+        sleepUntil = { try await clock.sleep(until: origin.advanced(by: $0), tolerance: nil) }
     }
 
-    convenience init(roots: [URL], indexedFiles: Bool = false, fileDelay: Duration = .zero, debounce: Duration = .milliseconds(100)) {
+    convenience init(roots: [URL], indexedFiles: Bool = false, fileDelay: Duration = .zero, typingGap: Duration = Search.defaultTypingGap) {
         let catalog = ApplicationCatalog(roots: roots)
-        self.init(source: { catalog.snapshots() }, debounce: debounce)
+        self.init(source: { catalog.snapshots() }, typingGap: typingGap)
         if indexedFiles {
             self.files = { [weak self] text in
                 // Opening dismisses the query. Each subsequent query captures
@@ -153,6 +165,11 @@ final class Search {
     func search(_ request: Request) -> Batches {
         task?.cancel()
         generation = request.generation
+        // Like Alfred's queue delay: an edit after a pause starts the file
+        // query at once; during fast typing it waits for a pause.
+        let now = elapsed()
+        let fileStart = lastEdit.flatMap { now - $0 < typingGap ? now + typingGap : nil }
+        lastEdit = now
         let (stream, continuation) = AsyncStream<Batch>.makeStream(bufferingPolicy: .bufferingNewest(1))
         let query = Self.normalized(request.text).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else {
@@ -164,7 +181,7 @@ final class Search {
         }
         let source = source
         let files = files
-        let debounce = debounce
+        let sleepUntil = sleepUntil
         let state = SourceState(apps: retainedApps, files: retainedFiles, hasFiles: files != nil)
         let initialResults = Self.rank(state.apps.results + state.files.results, query: query, usage: usage)
         retain(initialResults, from: state)
@@ -186,7 +203,9 @@ final class Search {
             }
             let metadata = Task {
                 if let files {
-                    do { try await Task.sleep(for: debounce) } catch { return }
+                    if let fileStart {
+                        do { try await sleepUntil(fileStart) } catch { return }
+                    }
                     for await snapshot in files(request.text) {
                         state.freshFiles = snapshot.results
                         state.receive(snapshot, for: \.files)
@@ -246,19 +265,20 @@ final class Search {
         retainedFiles = retained(from: files)
     }
 
+    private nonisolated static let bundleExtensions: Set<String> = ["app", "bundle", "framework", "plugin", "appex"]
+    private nonisolated static let privatePaths = ["Library/Application Support/com.beamseree.hana", "Library/Caches/com.beamseree.hana",
+        "Library/Logs/com.beamseree.hana", "Library/Logs/Hana", "Library/Application Support/Hana", "Library/Caches/Hana",
+        "Library/Preferences/com.beamseree.hana.plist"].map { FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent($0).path }
+
     /// Shared eligibility is applied before merging/ranking and visible limits.
+    /// Ranking calls it for every candidate, so it builds no paths per call.
     nonisolated static func eligible(_ url: URL) -> Bool {
         let url = url.standardizedFileURL
         let components = url.pathComponents
         guard !components.contains(where: { $0.hasPrefix(".") }) else { return false }
-        let bundleExtensions: Set<String> = ["app", "bundle", "framework", "plugin", "appex"]
         guard !components.dropLast().contains(where: { bundleExtensions.contains(($0 as NSString).pathExtension.lowercased()) }) else { return false }
-        let home = FileManager.default.homeDirectoryForCurrentUser
-        let privateRoots = ["Library/Application Support/com.beamseree.hana", "Library/Caches/com.beamseree.hana", "Library/Logs/com.beamseree.hana", "Library/Logs/Hana", "Library/Application Support/Hana", "Library/Caches/Hana", "Library/Preferences/com.beamseree.hana.plist"]
-        return !privateRoots.contains { root in
-            let path = home.appendingPathComponent(root).path
-            return url.path == path || url.path.hasPrefix(path + "/")
-        }
+        let path = url.path
+        return !privatePaths.contains { path == $0 || path.hasPrefix($0 + "/") }
     }
 
     private nonisolated static let dependencyFolders: Set<String> = ["node_modules", "pods", "deriveddata", ".build", "target", "vendor", "dist"]
@@ -291,10 +311,6 @@ final class Search {
         SearchName.normalized(text)
     }
 
-    nonisolated static func matchTier(_ name: String, query: String) -> Int? {
-        SearchName(name).tier(for: normalized(query))?.rawValue
-    }
-
     // Internal adapter compaction uses the same ordering as visible Search.
     // The retained shortlist is bounded; ranking checks cancellation every 128 candidates.
     nonisolated static func compactCandidates(_ results: [SearchResult], query: String, limit: Int, usage: [SearchResult.ID: Usage] = [:]) async -> [SearchResult] {
@@ -314,6 +330,8 @@ final class Search {
             let closeness: Int
             let wordsInOrder: Bool
             let usage: Usage
+            /// The stable tie-break, prepared once: URL paths are rebuilt per access.
+            let path: String
         }
         func precedes(_ lhs: Candidate, _ rhs: Candidate) -> Bool {
             if lhs.promoted != rhs.promoted { return lhs.promoted }
@@ -323,7 +341,7 @@ final class Search {
             if lhs.wordsInOrder != rhs.wordsInOrder { return lhs.wordsInOrder }
             if lhs.usage.sequence != rhs.usage.sequence { return lhs.usage.sequence > rhs.usage.sequence }
             if lhs.usage.count != rhs.usage.count { return lhs.usage.count > rhs.usage.count }
-            return lhs.id.destination.path < rhs.id.destination.path
+            return lhs.path < rhs.path
         }
         var best: [Candidate] = []
         for (offset, result) in results.enumerated() {
@@ -332,12 +350,13 @@ final class Search {
             }
             guard eligible(result.url) else { continue }
             var candidate: Candidate?
+            let id = result.id
             for name in result.matchingNames {
                 guard let tier = name.tier(for: query) else { continue }
-                let scored = Candidate(id: result.id, promoted: result.kind == .application && tier <= .wordStart,
+                let scored = Candidate(id: id, promoted: result.kind == .application && tier <= .wordStart,
                     tier: tier, kindRank: result.kindRank,
                     closeness: name.length - query.count, wordsInOrder: name.wordsInOrder(for: query, tier: tier),
-                    usage: usage[result.id] ?? Usage())
+                    usage: usage[id] ?? Usage(), path: candidate?.path ?? id.destination.path)
                 if candidate == nil || precedes(scored, candidate!) { candidate = scored }
             }
             guard let candidate else { continue }
