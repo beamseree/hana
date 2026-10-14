@@ -49,6 +49,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// Results that appeared in a batch for the current request. Only these
     /// match it; any other visible row is a retained, outdated one.
     private var currentMatchIDs: Set<SearchResult.ID> = []
+    /// The request whose batch supplied the displayed snapshot, which can
+    /// outlive that request while the next query loads its replacement.
+    private var displayedResultsGeneration: UUID?
     /// Enter on an outdated row waits for the current request's batches.
     private var heldEnter = false
     private(set) var results: [SearchResult] = []
@@ -556,6 +559,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // replacement. An edit alone must not remove nonmatching rows.
         if results.isEmpty || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             results = stream.initial.results
+            displayedResultsGeneration = request.generation
         }
         selectedID = results.first?.id
         icons = icons.filter { id, _ in results.contains { $0.id == id } }
@@ -577,6 +581,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 // replacement: a source has yet to deliver fresh matches.
                 if batch.hasFreshResults || (batch.appStatus != .loading && batch.fileStatus != .loading) {
                     self.results = batch.results
+                    self.displayedResultsGeneration = batch.generation
                     self.icons = self.icons.filter { id, _ in batch.results.contains { $0.id == id } }
                     if !self.userMovedSelection || !batch.results.contains(where: { $0.id == self.selectedID }) {
                         self.selectedID = batch.results.first?.id
@@ -736,6 +741,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         pendingLaunch = nil
         heldEnter = false
         results = []
+        displayedResultsGeneration = nil
         icons = [:]
         selectedID = nil
         openFailure = nil
@@ -777,7 +783,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         if !hasQuery { status = nil }
         else if let openFailure { status = openFailure }
         else if pendingLaunch != nil || heldEnter { status = "Opening selected destination…" }
-        else if sourceStatus == .failed || fileStatus == .failed { status = "A search source reported a failure. Available results are shown; retry the search." }
+        else if sourceStatus == .failed || fileStatus == .failed {
+            status = !results.isEmpty && displayedResultsGeneration == request?.generation
+                ? "A search source reported a failure. Available results are shown; retry the search."
+                : "A search source reported a failure. Retry the search."
+        }
         else if sourceStatus == .partial || fileStatus == .partial { status = "Partial search results — refine your query for more specific matches." }
         else if loading { status = nil }
         else { status = results.isEmpty ? "No matches returned. Indexing and access can limit results." : nil }

@@ -24,9 +24,40 @@ struct MacInteractionTests {
         await files.send([], status: .failed)
         try await eventually { interaction.statusMessage?.contains("failure") == true }
         #expect(interaction.results == [notes, numbers])
+        #expect(interaction.statusMessage == "A search source reported a failure. Retry the search.")
         await apps.send([notes], status: .loading)
         try await eventually { interaction.results == [notes] }
         #expect(interaction.isLoading)
+        #expect(interaction.statusMessage == "A search source reported a failure. Available results are shown; retry the search.")
+    }
+
+    @Test(arguments: [true, false])
+    func sourceFailureOnlyClaimsResultsForTheDisplayedRequest(fileSourceFails: Bool) async throws {
+        _ = NSApplication.shared
+        let matches = CatalogFeed(), failing = CatalogFeed()
+        let apps = fileSourceFails ? matches : failing
+        let files = fileSourceFails ? failing : matches
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let result = SearchResult(name: "Notes", url: URL(fileURLWithPath: "/fixture/Notes"),
+                                  kind: fileSourceFails ? .application : .file)
+        interaction.updateQuery("Notes")
+        await matches.send([result], status: .loading)
+        try await eventually { interaction.results == [result] }
+        await failing.send([], status: .failed)
+        try await eventually { interaction.statusMessage?.contains("failure") == true }
+        #expect(interaction.statusMessage == "A search source reported a failure. Available results are shown; retry the search.")
+
+        interaction.updateQuery("missing")
+        try await eventually { failing.subscriptionCount == 2 }
+        await failing.send([], status: .failed)
+        try await eventually { interaction.statusMessage?.contains("failure") == true }
+        #expect(interaction.results == [result])
+        #expect(interaction.statusMessage == "A search source reported a failure. Retry the search.")
+        await matches.send([])
+        try await eventually { interaction.results.isEmpty }
+        #expect(interaction.statusMessage == "A search source reported a failure. Retry the search.")
     }
 
     @Test func enterOnAnOutdatedRowWaitsAndOpensTheFreshMatch() async throws {
