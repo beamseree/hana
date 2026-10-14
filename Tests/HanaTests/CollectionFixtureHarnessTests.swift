@@ -40,7 +40,10 @@ struct CollectionFixtureHarnessTests {
                           ["create-note", live.path, "--operation", UUID().uuidString],
                           ["read", live.path, "--query", "all"],
                           ["edit-note", live.path, "--id", UUID().uuidString, "--revision", "1"],
-                          ["archive-note", live.path, "--id", UUID().uuidString, "--revision", "1"]] {
+                          ["archive-note", live.path, "--id", UUID().uuidString, "--revision", "1"],
+                          ["create-task", live.path, "--operation", UUID().uuidString],
+                          ["complete-task", live.path, "--id", UUID().uuidString, "--revision", "1"],
+                          ["read", live.path, "--query", "today"]] {
             let refused = try Harness.run(arguments, stdin: "Never")
             #expect(refused.status == 1)
             #expect(refused.event("error")["error"] as? String == "liveRootRefused")
@@ -209,6 +212,161 @@ extension CollectionFixtureHarnessTests {
     }
 }
 
+extension CollectionFixtureHarnessTests {
+    @Test func taskLifecyclePersistsAcrossFreshProcessesAndTimeZones() throws {
+        let root = try HarnessRoot()
+        let title = " ซื้อนม Thai é 🌸 "
+        let operation = UUID()
+        // Each step runs in a fresh process, some in another time zone.
+        let created = try Harness.run(["create-task", root.path, "--operation", operation.uuidString, "--placement", "today"],
+                                      stdin: title, environment: ["TZ": "Asia/Bangkok"]).event("task.created")
+        let id = try #require(created["id"] as? String)
+        #expect(created["titleSHA256"] as? String == sha256(title) && created["titleBytes"] as? Int == title.utf8.count)
+        #expect(created["placement"] as? String == "today" && created["revision"] as? Int == 1)
+        #expect(created["observedBefore"] as? Int == 0 && created["observedAfter"] as? Int == 1)
+        let retried = try Harness.run(["create-task", root.path, "--operation", operation.uuidString, "--placement", "today"],
+                                      stdin: title).event("task.created")
+        #expect(retried["id"] as? String == id && retried["observedBefore"] as? Int == 1)
+        let other = try Harness.run(["create-task", root.path, "--operation", UUID().uuidString], stdin: "Inbox").event("task.created")
+        #expect(other["placement"] as? String == "inbox")
+
+        for zone in ["America/New_York", "Europe/Berlin", "Pacific/Kiritimati", "UTC"] {
+            let today = try Harness.run(["read", root.path, "--query", "today"], environment: ["TZ": zone]).event("tasks")
+            #expect((today["tasks"] as? [[String: Any]])?.map { $0["id"] as? String } == [id], "\(zone)")
+        }
+        let multiline = try Harness.run(["create-task", root.path, "--operation", UUID().uuidString], stdin: "Two\nlines")
+        #expect(multiline.status == 1 && multiline.event("error")["error"] as? String == "multilineTaskTitle")
+        #expect(multiline.output.range(of: Data("Two".utf8)) == nil)
+
+        let edited = try Harness.run(["edit-task", root.path, "--id", id, "--revision", "1"], stdin: "Renamed").event("task.changed")
+        #expect(edited["revision"] as? Int == 2 && edited["titleSHA256"] as? String == sha256("Renamed"))
+        #expect(edited["observedBeforeRevision"] as? Int == 1 && edited["observedAfterRevision"] as? Int == 2)
+        let moved = try Harness.run(["move-task", root.path, "--id", id, "--revision", "2", "--to", "inbox"]).event("task.changed")
+        #expect(moved["placement"] as? String == "inbox")
+        let inbox = try Harness.run(["read", root.path, "--query", "inbox"]).event("tasks")
+        #expect((inbox["tasks"] as? [[String: Any]])?.map { $0["id"] as? String } == [id, other["id"] as? String])
+        let completed = try Harness.run(["complete-task", root.path, "--id", id, "--revision", "3"]).event("task.changed")
+        #expect(completed["completedAt"] is Int && completed["placement"] is NSNull && completed["orderKey"] is NSNull)
+        let archived = try Harness.run(["archive-task", root.path, "--id", id, "--revision", "4"]).event("task.changed")
+        #expect(archived["archivedAt"] is Int && archived["completedAt"] as? Int == completed["completedAt"] as? Int)
+        let refused = try Harness.run(["reopen-task", root.path, "--id", id, "--revision", "5"])
+        #expect(refused.status == 1 && refused.event("error")["error"] as? String == "archivedTask")
+        #expect(try Harness.run(["read", root.path, "--query", "archived-tasks"]).event("tasks")["count"] as? Int == 1)
+        #expect(try Harness.run(["read", root.path, "--query", "task-search"]).event("task-search")["count"] as? Int == 1)
+        #expect(try Harness.run(["read", root.path, "--query", "task-search-all"]).event("task-search")["count"] as? Int == 2)
+
+        let restored = try Harness.run(["restore-task", root.path, "--id", id, "--revision", "5"]).event("task.changed")
+        #expect(restored["archivedAt"] is NSNull && restored["completedAt"] as? Int == completed["completedAt"] as? Int)
+        #expect(try Harness.run(["read", root.path, "--query", "completed"]).event("tasks")["count"] as? Int == 1)
+        let reopened = try Harness.run(["reopen-task", root.path, "--id", id, "--revision", "6"]).event("task.changed")
+        #expect(reopened["placement"] as? String == "inbox" && reopened["completedAt"] is NSNull)
+        let all = try Harness.run(["read", root.path, "--query", "all"])
+        #expect(all.event("notes")["count"] as? Int == 0)
+        let tasks = try #require(all.event("tasks")["tasks"] as? [[String: Any]])
+        let final = try #require(tasks.first { $0["id"] as? String == id })
+        #expect(tasks.count == 2 && final["revision"] as? Int == 7 && final["createdAt"] as? Int == created["createdAt"] as? Int)
+        #expect(final["contentEditedAt"] as? Int == edited["contentEditedAt"] as? Int)
+    }
+
+    @Test func creationRetriesReturnTheItemEvenAfterItLeftItsView() throws {
+        let root = try HarnessRoot()
+        let taskOperation = UUID().uuidString, noteOperation = UUID().uuidString
+        let task = try Harness.run(["create-task", root.path, "--operation", taskOperation, "--placement", "today"], stdin: "Task")
+            .event("task.created")
+        let note = try Harness.run(["create-note", root.path, "--operation", noteOperation], stdin: "Note").event("note.created")
+        let taskID = try #require(task["id"] as? String), noteID = try #require(note["id"] as? String)
+        _ = try Harness.run(["complete-task", root.path, "--id", taskID, "--revision", "1"]).event("task.changed")
+        _ = try Harness.run(["archive-note", root.path, "--id", noteID, "--revision", "1"]).event("note.changed")
+
+        let retriedTask = try Harness.run(["create-task", root.path, "--operation", taskOperation, "--placement", "today"],
+                                          stdin: "Task").event("task.created")
+        #expect(retriedTask["id"] as? String == taskID && retriedTask["revision"] as? Int == 2)
+        #expect(retriedTask["completedAt"] is Int && retriedTask["placement"] is NSNull)
+        let retriedNote = try Harness.run(["create-note", root.path, "--operation", noteOperation], stdin: "Note").event("note.created")
+        #expect(retriedNote["id"] as? String == noteID && retriedNote["archived"] as? Bool == true)
+    }
+
+    @Test func failedTaskSavesLeaveNoTraceInStorageOrOutput() throws {
+        let root = try HarnessRoot()
+        let created = try Harness.run(["create-task", root.path, "--operation", UUID().uuidString], stdin: "Original").event("task.created")
+        let id = try #require(created["id"] as? String)
+        let sentinel = "HANA-UNSAVED-SENTINEL-\(UUID().uuidString)"
+        var captured = Data()
+        for arguments in [["create-task", root.path, "--operation", UUID().uuidString, "--fail", "before-commit"],
+                          ["edit-task", root.path, "--id", id, "--revision", "1", "--fail", "before-commit"]] {
+            let failed = try Harness.run(arguments, stdin: sentinel)
+            #expect(failed.event("error")["error"] as? String == "injectedFailure")
+            captured += failed.output
+        }
+        let killed = try Harness.start(["create-task", root.path, "--operation", UUID().uuidString, "--pause", "before-commit"],
+                                       stdin: sentinel)
+        try killed.waitForPause()
+        killed.kill()
+        captured += killed.output
+        let refused = try Harness.run(["create-task", root.path, "--operation", UUID().uuidString], stdin: "\(sentinel)\nsecond line")
+        #expect(refused.event("error")["error"] as? String == "multilineTaskTitle")
+        captured += refused.output
+
+        let read = try Harness.run(["read", root.path, "--query", "all"])
+        captured += read.output
+        let tasks = try #require(read.event("tasks")["tasks"] as? [[String: Any]])
+        #expect(tasks.count == 1 && tasks.first?["titleSHA256"] as? String == sha256("Original"))
+        #expect(try root.files(containing: sentinel) == [])
+        #expect(try root.files(containing: "Original") == ["Collection/collection.sqlite"])
+        #expect(captured.range(of: Data(sentinel.utf8)) == nil && !captured.isEmpty)
+    }
+
+    @Test(arguments: ["create-task", "edit-task", "move-task", "complete-task", "reopen-task", "archive-task", "restore-task"],
+          ["before-commit", "after-commit"])
+    func killedTaskCommandIsAllOrNone(_ action: String, _ point: String) throws {
+        let root = try HarnessRoot()
+        let created = try Harness.run(["create-task", root.path, "--operation", UUID().uuidString], stdin: "Original").event("task.created")
+        let id = try #require(created["id"] as? String)
+        // Reopen starts from Completed and restore from Archive; the rest from Inbox.
+        let setup = ["reopen-task": "complete-task", "restore-task": "archive-task"][action]
+        if let setup { _ = try Harness.run([setup, root.path, "--id", id, "--revision", "1"]).event("task.changed") }
+        let revision = setup == nil ? 1 : 2
+        let operation = UUID().uuidString
+        let arguments = action == "create-task"
+            ? [action, root.path, "--operation", operation, "--placement", "today"]
+            : [action, root.path, "--id", id, "--revision", "\(revision)"] + (action == "move-task" ? ["--to", "today"] : [])
+        let paused = try Harness.start(arguments + ["--pause", point], stdin: "Replaced")
+        try paused.waitForPause()
+        paused.kill()
+
+        let committed = point == "after-commit"
+        let tasks = try #require(try Harness.run(["read", root.path, "--query", "all"]).event("tasks")["tasks"] as? [[String: Any]])
+        let original = try #require(tasks.first { $0["id"] as? String == id })
+        if action == "create-task" {
+            #expect(tasks.count == (committed ? 2 : 1))
+            // The retry returns the survivor or creates the task exactly once.
+            let survivor = tasks.first { $0["id"] as? String != id }?["id"] as? String
+            let retried = try Harness.run(["create-task", root.path, "--operation", operation, "--placement", "today"],
+                                          stdin: "Replaced").event("task.created")
+            if let survivor { #expect(retried["id"] as? String == survivor) }
+            #expect(try Harness.run(["read", root.path, "--query", "today"]).event("tasks")["count"] as? Int == 1)
+            return
+        }
+        // Placement, completed and archived before the command, and after it commits.
+        let states: [String: (before: (String?, Bool, Bool), after: (String?, Bool, Bool))] = [
+            "edit-task": (("inbox", false, false), ("inbox", false, false)),
+            "move-task": (("inbox", false, false), ("today", false, false)),
+            "complete-task": (("inbox", false, false), (nil, true, false)),
+            "reopen-task": ((nil, true, false), ("inbox", false, false)),
+            "archive-task": (("inbox", false, false), (nil, false, true)),
+            "restore-task": ((nil, false, true), ("inbox", false, false)),
+        ]
+        let state = try #require(states[action])
+        let (placement, isCompleted, isArchived) = committed ? state.after : state.before
+        #expect(tasks.count == 1)
+        #expect(original["revision"] as? Int == revision + (committed ? 1 : 0))
+        #expect(original["titleSHA256"] as? String == sha256(committed && action == "edit-task" ? "Replaced" : "Original"))
+        #expect(original["placement"] as? String == placement)
+        #expect((original["completedAt"] is Int) == isCompleted)
+        #expect((original["archivedAt"] is Int) == isArchived)
+    }
+}
+
 private func sha256(_ text: String) -> String {
     SHA256.hash(data: Data(text.utf8)).map { String(format: "%02x", $0) }.joined()
 }
@@ -286,8 +444,9 @@ enum Harness {
         return Bundle(for: Running.self).bundleURL.deletingLastPathComponent().appendingPathComponent("Hana")
     }
 
-    static func start(_ arguments: [String], stdin: String = "") throws -> Running {
+    static func start(_ arguments: [String], stdin: String = "", environment: [String: String] = [:]) throws -> Running {
         let process = Process()
+        process.environment = ProcessInfo.processInfo.environment.merging(environment) { $1 }
         process.executableURL = executable
         process.arguments = ["--collection-fixture"] + arguments
         let output = Pipe(), input = Pipe()
@@ -300,8 +459,8 @@ enum Harness {
         return Running(process: process, pipe: output)
     }
 
-    static func run(_ arguments: [String], stdin: String = "") throws -> Result {
-        let running = try start(arguments, stdin: stdin)
+    static func run(_ arguments: [String], stdin: String = "", environment: [String: String] = [:]) throws -> Result {
+        let running = try start(arguments, stdin: stdin, environment: environment)
         let output = running.process.standardOutput as! Pipe
         let data = output.fileHandleForReading.readDataToEndOfFile()
         running.process.waitUntilExit()

@@ -1,0 +1,63 @@
+# source: 44da9636f9e23ee542d03d7a6ea1afc8d9cb4dc5 (clean tree); HANA_EXECUTABLE=build/Hana.app/Contents/MacOS/Hana xcrun swift test --no-parallel --filter CollectionFixtureHarness
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.91s)
+Test Suite 'Selected tests' started at 2026-10-14 09:09:52.572.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-14 09:09:52.573.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-14 09:09:52.573.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-14 09:09:52.573.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CollectionFixtureHarnessTests started.
+􀟈  Test createReadObserveAndRetryAcrossFreshProcesses() started.
+􁁛  Test createReadObserveAndRetryAcrossFreshProcesses() passed after 0.760 seconds.
+􀟈  Test harnessRefusesTheLiveRootWithoutCreatingIt() started.
+􁁛  Test harnessRefusesTheLiveRootWithoutCreatingIt() passed after 0.139 seconds.
+􀟈  Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􀟈  Test case passing 1 argument point → "before-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􀟈  Test case passing 1 argument point → "after-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􁁛  Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) with 2 test cases passed after 0.249 seconds.
+􀟈  Test processDeathReleasesOwnership() started.
+􁁛  Test processDeathReleasesOwnership() passed after 0.148 seconds.
+􀟈  Test unsavedSentinelNeverReachesStorageOrDiagnostics() started.
+􁁛  Test unsavedSentinelNeverReachesStorageOrDiagnostics() passed after 0.115 seconds.
+􀟈  Test editPinArchiveAndRestorePersistAcrossFreshProcesses() started.
+􁁛  Test editPinArchiveAndRestorePersistAcrossFreshProcesses() passed after 0.283 seconds.
+􀟈  Test aFailedEditLeavesNoTraceInStorageOrOutput() started.
+􁁛  Test aFailedEditLeavesNoTraceInStorageOrOutput() passed after 0.095 seconds.
+􀟈  Test killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "edit-note", point → "before-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "edit-note", point → "after-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "pin-note", point → "before-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "pin-note", point → "after-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "archive-note", point → "before-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "archive-note", point → "after-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􁁛  Test killedNoteChangeIsAllOrNone(_:_:) with 6 test cases passed after 0.586 seconds.
+􀟈  Test taskLifecyclePersistsAcrossFreshProcessesAndTimeZones() started.
+􁁛  Test taskLifecyclePersistsAcrossFreshProcessesAndTimeZones() passed after 0.494 seconds.
+􀟈  Test creationRetriesReturnTheItemEvenAfterItLeftItsView() started.
+􁁛  Test creationRetriesReturnTheItemEvenAfterItLeftItsView() passed after 0.184 seconds.
+􀟈  Test failedTaskSavesLeaveNoTraceInStorageOrOutput() started.
+􁁛  Test failedTaskSavesLeaveNoTraceInStorageOrOutput() passed after 0.170 seconds.
+􀟈  Test killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "create-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "create-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "edit-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "edit-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "move-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "move-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "complete-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "complete-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "reopen-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "reopen-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "archive-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "archive-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "restore-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "restore-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􁁛  Test killedTaskCommandIsAllOrNone(_:_:) with 14 test cases passed after 2.032 seconds.
+􁁛  Suite CollectionFixtureHarnessTests passed after 5.261 seconds.
+􁁛  Test run with 12 tests in 1 suite passed after 5.261 seconds.

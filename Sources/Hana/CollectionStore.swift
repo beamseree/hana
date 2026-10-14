@@ -36,6 +36,49 @@ extension Note: Equatable {
     }
 }
 
+/// An active unfinished task's list.
+enum TaskPlacement: String, Sendable, CaseIterable {
+    case inbox, today
+}
+
+/// A committed, immutable task value. Named to stay clear of Swift's `Task`.
+struct TaskItem: Identifiable, Sendable {
+    let id: UUID
+    /// Exactly as submitted: nonblank, one line, never trimmed or flattened.
+    let title: String
+    let createdAt: Date
+    let contentEditedAt: Date
+    let updatedAt: Date
+    let revision: Int64
+    let completedAt: Date?
+    let archivedAt: Date?
+    /// Present exactly when the task is neither completed nor archived.
+    let placement: TaskPlacement?
+    /// Present exactly when `placement` is; lower keys come first.
+    let orderKey: Int64?
+
+    /// Every Unicode mandatory line break: LF, VT, FF, CR, NEL, LINE and
+    /// PARAGRAPH SEPARATOR. The schema checks the subset LF, CR, NEL, LS, PS.
+    private static let lineBreaks: Set<UInt32> = [0x0A, 0x0B, 0x0C, 0x0D, 0x85, 0x2028, 0x2029]
+
+    /// Accepts a title only as it stands; nothing is trimmed or flattened.
+    static func validate(title: String) throws {
+        guard !title.unicodeScalars.contains(where: { lineBreaks.contains($0.value) })
+        else { throw CollectionStoreError.multilineTaskTitle }
+        guard Note.isNonblank(title) else { throw CollectionStoreError.blankTaskTitle }
+    }
+}
+
+extension TaskItem: Equatable {
+    /// Titles compare by exact UTF-8 bytes, not canonical equivalence.
+    static func == (a: TaskItem, b: TaskItem) -> Bool {
+        a.id == b.id && a.title.utf8.elementsEqual(b.title.utf8) && a.createdAt == b.createdAt
+            && a.contentEditedAt == b.contentEditedAt && a.updatedAt == b.updatedAt && a.revision == b.revision
+            && a.completedAt == b.completedAt && a.archivedAt == b.archivedAt && a.placement == b.placement
+            && a.orderKey == b.orderKey
+    }
+}
+
 /// A note's committed title and text for Search. Archived notes are
 /// eligible only when a query asks for them.
 struct NoteSearchEntry: Equatable, Sendable {
@@ -45,11 +88,22 @@ struct NoteSearchEntry: Equatable, Sendable {
     let isArchived: Bool
 }
 
+/// A task's committed title for Search. Completed and archived tasks are
+/// each eligible only when a query asks for them.
+struct TaskSearchEntry: Equatable, Sendable {
+    let id: UUID
+    let title: String
+    let isCompleted: Bool
+    let isArchived: Bool
+}
+
 /// Every saved record from one committed state, archived notes included.
 struct CollectionRecords: Equatable, Sendable {
     let collectionID: UUID
     /// Ordered by ID.
     let notes: [Note]
+    /// Ordered by ID.
+    let tasks: [TaskItem]
 }
 
 /// Identifies one open store session. Every open rotates it; work carrying an
@@ -78,6 +132,14 @@ enum CollectionStoreError: Error, Equatable, Sendable {
     case staleRevision
     /// The note was archived; restore it before changing its body or pin.
     case archivedNote
+    case taskNotFound
+    /// The task was archived; restore it before editing, completing, reopening or moving it.
+    case archivedTask
+    /// A completed task has no list; reopen it before moving it.
+    case completedTask
+    case blankTaskTitle
+    /// Task titles are one line; a title containing any line break is refused whole.
+    case multilineTaskTitle
     /// The primary SQLite result code of a failed storage operation.
     case storageFailure(code: Int32)
 }
@@ -109,6 +171,42 @@ extension CollectionQuery where Value == [Note] {
     }
 }
 
+extension CollectionQuery where Value == TaskItem? {
+    static func task(_ id: UUID) -> Self {
+        Self { db in try TaskRow.fetch(db, where: "id = ?", [id.uuidString]).first }
+    }
+}
+
+extension CollectionQuery where Value == [TaskItem] {
+    /// Inbox in manual order: ascending order key, then stable ID.
+    static var inbox: Self { tasks(in: .inbox) }
+
+    /// Today in manual order: ascending order key, then stable ID.
+    static var today: Self { tasks(in: .today) }
+
+    /// Completed, unarchived tasks: most recently completed first, then stable ID.
+    static var completedTasks: Self {
+        Self { db in
+            try TaskRow.fetch(db, where: "completed_at IS NOT NULL AND archived_at IS NULL", [],
+                              order: "completed_at DESC, id ASC")
+        }
+    }
+
+    /// Archived tasks, finished or not: most recently archived first, then stable ID.
+    static var archivedTasks: Self {
+        Self { db in
+            try TaskRow.fetch(db, where: "archived_at IS NOT NULL", [], order: "archived_at DESC, id ASC")
+        }
+    }
+
+    /// Inbox or Today in manual order: ascending order key, then stable ID.
+    static func tasks(in placement: TaskPlacement) -> Self {
+        Self { db in
+            try TaskRow.fetch(db, where: "placement = ?", [placement.rawValue], order: "order_key ASC, id ASC")
+        }
+    }
+}
+
 extension CollectionQuery where Value == [NoteSearchEntry] {
     /// Ordered by ID; Search does its own ranking.
     static func noteSearchEntries(includingArchived: Bool = false) -> Self {
@@ -120,12 +218,26 @@ extension CollectionQuery where Value == [NoteSearchEntry] {
     }
 }
 
+extension CollectionQuery where Value == [TaskSearchEntry] {
+    /// Ordered by ID; Search does its own ranking. Each flag lifts one
+    /// exclusion, so an archived completed task needs both.
+    static func taskSearchEntries(includingCompleted: Bool = false, includingArchived: Bool = false) -> Self {
+        Self { db in
+            try TaskRow.fetch(db, where: "(? OR completed_at IS NULL) AND (? OR archived_at IS NULL)",
+                              [includingCompleted, includingArchived]).map {
+                TaskSearchEntry(id: $0.id, title: $0.title, isCompleted: $0.completedAt != nil, isArchived: $0.archivedAt != nil)
+            }
+        }
+    }
+}
+
 extension CollectionQuery where Value == CollectionRecords {
     static var allRecords: Self {
         Self { db in
             guard let id = try String.fetchOne(db, sql: "SELECT id FROM collection").flatMap(UUID.init(uuidString:))
             else { throw CollectionStoreError.unreadableCollection }
-            return CollectionRecords(collectionID: id, notes: try NoteRow.fetch(db, where: "1", []))
+            return CollectionRecords(collectionID: id, notes: try NoteRow.fetch(db, where: "1", []),
+                                     tasks: try TaskRow.fetch(db, where: "1", []))
         }
     }
 }
@@ -203,6 +315,109 @@ extension CollectionCommand where Result == Note {
             let note = try NoteRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: false)
             guard note.archivedAt != nil else { return note }
             return try NoteRow.update(db, id, "archived_at = NULL", [], now: context.now)
+        }
+    }
+}
+
+extension CollectionCommand where Result == TaskItem {
+    /// Idempotent under `operation`: an identical retry returns the task created
+    /// first (in its current committed state); a different title or placement fails.
+    static func createTask(operation: UUID, title: String, placement: TaskPlacement = .inbox) -> Self {
+        let payload = Data(title.utf8)
+        let digest = Data(SHA256.hash(data: Data("task\u{0}\(placement.rawValue)\u{0}".utf8) + payload))
+        return Self { db, context in
+            if let receipt = try Row.fetchOne(db, sql: """
+                SELECT task_id, payload_sha256 FROM creation_receipt WHERE operation_id = ?
+                """, arguments: [operation.uuidString]) {
+                guard let taskID = receipt["task_id"] as String?, receipt["payload_sha256"] as Data? == digest,
+                      let task = try TaskRow.fetch(db, where: "id = ?", [taskID]).first
+                else { throw CollectionStoreError.operationReused }
+                return task
+            }
+            try TaskItem.validate(title: title)
+            let id = UUID().uuidString
+            try db.execute(sql: """
+                INSERT INTO task (id, title, created_at, content_edited_at, updated_at, revision,
+                                  completed_at, archived_at, placement, order_key)
+                VALUES (?, CAST(? AS TEXT), ?, ?, ?, 1, NULL, NULL, ?, ?)
+                """, arguments: [id, payload, context.now, context.now, context.now, placement.rawValue,
+                                 try TaskRow.claimTopKey(db, placement)])
+            try db.execute(sql: """
+                INSERT INTO creation_receipt (operation_id, note_id, task_id, payload_sha256, committed_at)
+                VALUES (?, NULL, ?, ?, ?)
+                """, arguments: [operation.uuidString, id, digest, context.now])
+            return try TaskRow.fetch(db, where: "id = ?", [id])[0]
+        }
+    }
+
+    // Task changes check, in order: existence, the expected revision (stale
+    // fails even when the change already holds), archive state (only restore
+    // and archive accept an archived task), then the command's own state and
+    // payload. A current command whose result already holds is a no-op.
+
+    /// Replaces the title exactly; advances content-edited time and revision.
+    /// Completed tasks may be renamed; archived ones must be restored first.
+    static func editTaskTitle(_ id: UUID, expectedRevision: Int64, title: String) -> Self {
+        let payload = Data(title.utf8)
+        return Self { db, context in
+            let task = try TaskRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: true)
+            try TaskItem.validate(title: title)
+            guard !task.title.utf8.elementsEqual(payload) else { return task }
+            return try TaskRow.update(db, id, "title = CAST(? AS TEXT), content_edited_at = ?", [payload, context.now],
+                                      now: context.now)
+        }
+    }
+
+    /// Moves an active unfinished task to the top of the other list.
+    static func moveTask(_ id: UUID, to placement: TaskPlacement, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let task = try TaskRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: true)
+            guard task.completedAt == nil else { throw CollectionStoreError.completedTask }
+            guard task.placement != placement else { return task }
+            return try TaskRow.update(db, id, "placement = ?, order_key = ?",
+                                      [placement.rawValue, try TaskRow.claimTopKey(db, placement)], now: context.now)
+        }
+    }
+
+    /// Records completion and takes the task out of its list.
+    static func completeTask(_ id: UUID, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let task = try TaskRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: true)
+            guard task.completedAt == nil else { return task }
+            return try TaskRow.update(db, id, "completed_at = ?, placement = NULL, order_key = NULL", [context.now],
+                                      now: context.now)
+        }
+    }
+
+    /// Clears completion and returns the task to the top of Inbox, never to
+    /// the list it was completed from.
+    static func reopenTask(_ id: UUID, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let task = try TaskRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: true)
+            guard task.completedAt != nil else { return task }
+            return try TaskRow.update(db, id, "completed_at = NULL, placement = ?, order_key = ?",
+                                      [TaskPlacement.inbox.rawValue, try TaskRow.claimTopKey(db, .inbox)], now: context.now)
+        }
+    }
+
+    /// Hides the task in Archive, keeping whether it was completed.
+    static func archiveTask(_ id: UUID, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let task = try TaskRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: false)
+            guard task.archivedAt == nil else { return task }
+            return try TaskRow.update(db, id, "archived_at = ?, placement = NULL, order_key = NULL", [context.now],
+                                      now: context.now)
+        }
+    }
+
+    /// Returns an unfinished task to the top of Inbox, or a completed one to Completed.
+    static func restoreTask(_ id: UUID, expectedRevision: Int64) -> Self {
+        Self { db, context in
+            let task = try TaskRow.current(db, id, expectedRevision: expectedRevision, requireUnarchived: false)
+            guard task.archivedAt != nil else { return task }
+            if task.completedAt != nil { return try TaskRow.update(db, id, "archived_at = NULL", [], now: context.now) }
+            return try TaskRow.update(db, id, "archived_at = NULL, placement = ?, order_key = ?",
+                                      [TaskPlacement.inbox.rawValue, try TaskRow.claimTopKey(db, .inbox)], now: context.now)
         }
     }
 }
@@ -442,6 +657,71 @@ private enum NoteRow {
                  revision: row["revision"],
                  isPinned: row["pinned"],
                  archivedAt: (row["archived_at"] as Int64?).map(CollectionStore.date))
+        }
+    }
+}
+
+private enum TaskRow {
+    /// The task as it stands when the command executes, if `expectedRevision`
+    /// is current and, when `requireUnarchived`, the task is not archived.
+    static func current(_ db: Database, _ id: UUID, expectedRevision: Int64, requireUnarchived: Bool) throws -> TaskItem {
+        guard let task = try fetch(db, where: "id = ?", [id.uuidString]).first else { throw CollectionStoreError.taskNotFound }
+        guard task.revision == expectedRevision else { throw CollectionStoreError.staleRevision }
+        guard !requireUnarchived || task.archivedAt == nil else { throw CollectionStoreError.archivedTask }
+        return task
+    }
+
+    /// Applies `assignment`, advancing updated time and revision.
+    static func update(_ db: Database, _ id: UUID, _ assignment: String, _ arguments: StatementArguments,
+                       now: Int64) throws -> TaskItem {
+        try db.execute(sql: "UPDATE task SET \(assignment), updated_at = ?, revision = revision + 1 WHERE id = ?",
+                       arguments: arguments + [now, id.uuidString])
+        return try fetch(db, where: "id = ?", [id.uuidString])[0]
+    }
+
+    /// The key that places a task above every task now in `placement`. When
+    /// the lowest key is already `Int64.min`, the list is first renumbered
+    /// 0, 1, 2… in its current order (key, then ID) inside the caller's
+    /// transaction. Renumbering changes no revision or updated time: the
+    /// tasks' order and facts are the same.
+    static func claimTopKey(_ db: Database, _ placement: TaskPlacement) throws -> Int64 {
+        guard let first = try Int64.fetchOne(db, sql: "SELECT min(order_key) FROM task WHERE placement = ?",
+                                             arguments: [placement.rawValue])
+        else { return 0 }
+        guard first == .min else { return first - 1 }
+        let ids = try String.fetchAll(db, sql: "SELECT id FROM task WHERE placement = ? ORDER BY order_key ASC, id ASC",
+                                      arguments: [placement.rawValue])
+        for (key, id) in ids.enumerated() {
+            try db.execute(sql: "UPDATE task SET order_key = ? WHERE id = ?", arguments: [Int64(key), id])
+        }
+        return -1
+    }
+
+    static func fetch(_ db: Database, where condition: String, _ arguments: StatementArguments,
+                      order: String = "id ASC") throws -> [TaskItem] {
+        try Row.fetchAll(db, sql: """
+            SELECT id, CAST(title AS BLOB) AS title, created_at, content_edited_at, updated_at, revision,
+                   completed_at, archived_at, placement, order_key
+            FROM task WHERE \(condition) ORDER BY \(order)
+            """, arguments: arguments).map { row in
+            guard let id = UUID(uuidString: row["id"]) else { throw CollectionStoreError.unreadableCollection }
+            let placement: TaskPlacement?
+            if let raw = row["placement"] as String? {
+                guard let known = TaskPlacement(rawValue: raw) else { throw CollectionStoreError.unreadableCollection }
+                placement = known
+            } else {
+                placement = nil
+            }
+            return TaskItem(id: id,
+                 title: String(decoding: row["title"] as Data? ?? Data(), as: UTF8.self),
+                 createdAt: CollectionStore.date(row["created_at"]),
+                 contentEditedAt: CollectionStore.date(row["content_edited_at"]),
+                 updatedAt: CollectionStore.date(row["updated_at"]),
+                 revision: row["revision"],
+                 completedAt: (row["completed_at"] as Int64?).map(CollectionStore.date),
+                 archivedAt: (row["archived_at"] as Int64?).map(CollectionStore.date),
+                 placement: placement,
+                 orderKey: row["order_key"])
         }
     }
 }
