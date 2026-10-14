@@ -80,19 +80,7 @@ enum CollectionFixtureHarness {
             case "restore-task":
                 try await changeTask(at: root, options) { .restoreTask($0, expectedRevision: $1) }
             case "reorder-task":
-                guard let id = options["--id"].flatMap(UUID.init(uuidString:)),
-                      let placement = options["--in"].flatMap(TaskPlacement.init(rawValue:)),
-                      let expected = options["--expected"]?.split(separator: ",").map({ UUID(uuidString: String($0)) }),
-                      !expected.contains(nil)
-                else { throw Usage() }
-                var predecessor: UUID?
-                if let after = options["--after"] {
-                    guard let parsed = UUID(uuidString: after) else { throw Usage() }
-                    predecessor = parsed
-                }
-                try await reorderTask(at: try CollectionLocation.fixture(root),
-                                      .reorderTask(id, in: placement, after: predecessor, expectedOrder: expected.compactMap { $0 }),
-                                      placement: placement, faults: faults(pause: options["--pause"], fail: options["--fail"]))
+                try await reorderTask(at: root, options)
             case "read":
                 try await withStore(try CollectionLocation.fixture(root)) { try await read(options["--query"] ?? "notes", from: $0) }
             case "runtime-report":
@@ -178,9 +166,20 @@ enum CollectionFixtureHarness {
         emit("task.created", fields)
     }
 
-    private static func reorderTask(at location: CollectionLocation, _ command: CollectionCommand<TaskItem>,
-                                    placement: TaskPlacement, faults: CollectionStore.Faults) async throws {
-        let fields = try await withStore(location, faults: faults) { store in
+    /// Performs the reorder for `--id`/`--in`/`--after`/`--expected` while
+    /// observing the list until its committed order is observed.
+    private static func reorderTask(at root: URL, _ options: [String: String]) async throws {
+        let expected = options["--expected"]?.split(separator: ",") ?? []
+        let expectedOrder = expected.compactMap { UUID(uuidString: String($0)) }
+        // `--after` is optional, but when given it must be an ID.
+        let predecessor = options["--after"].flatMap(UUID.init(uuidString:))
+        guard let id = options["--id"].flatMap(UUID.init(uuidString:)),
+              let placement = options["--in"].flatMap(TaskPlacement.init(rawValue:)),
+              !expected.isEmpty, expectedOrder.count == expected.count, (options["--after"] == nil) == (predecessor == nil)
+        else { throw Usage() }
+        let command = CollectionCommand.reorderTask(id, in: placement, after: predecessor, expectedOrder: expectedOrder)
+        let faults = faults(pause: options["--pause"], fail: options["--fail"])
+        let fields = try await withStore(try CollectionLocation.fixture(root), faults: faults) { store in
             var observed = store.observe(.tasks(in: placement), in: store.generation).makeAsyncIterator()
             let before = try await observed.next() ?? []
             let task = try await store.perform(command, in: store.generation)

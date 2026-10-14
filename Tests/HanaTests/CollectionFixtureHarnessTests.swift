@@ -405,6 +405,15 @@ extension CollectionFixtureHarnessTests {
         let refused = try Harness.run(["reorder-task", root.path, "--id", b, "--in", "inbox", "--after", b,
                                        "--expected", [d, b, c, a].joined(separator: ",")])
         #expect(refused.event("error")["error"] as? String == "invalidReorder")
+        // Malformed arguments are usage errors, not reorders.
+        let current = [d, b, c, a].joined(separator: ",")
+        for arguments in [["--id", b, "--in", "inbox"], ["--id", b, "--in", "inbox", "--expected", current + ",nope"],
+                          ["--id", b, "--in", "inbox", "--after", "nope", "--expected", current],
+                          ["--id", b, "--in", "someday", "--expected", current]] {
+            let usage = try Harness.run(["reorder-task", root.path] + arguments)
+            #expect(usage.status == 1 && usage.event("error")["error"] as? String == "usage", "\(arguments)")
+        }
+        #expect(ids(try Harness.run(["read", root.path, "--query", "inbox"]).event("tasks")) == [d, b, c, a])
     }
 
     @Test(arguments: ["before-commit", "after-commit"])

@@ -155,16 +155,6 @@ extension TaskOrderingTests {
 }
 
 extension TaskOrderingTests {
-    /// Sets order keys directly while no Store owns the root: the only way to
-    /// reach the edge of the key space without 2^63 insertions.
-    private func setOrderKeys(_ keys: [UUID: Int64], in fixture: TemporaryFixture) throws {
-        let queue = try DatabaseQueue(path: fixture.location.databaseURL.path)
-        try queue.write { db in
-            for (id, key) in keys { try db.execute(sql: "UPDATE task SET order_key = ? WHERE id = ?", arguments: [key, id.uuidString]) }
-        }
-        try queue.close()
-    }
-
     @Test func reorderUsesAFreeKeyWhenOneFitsAndOtherwiseRenumbersAtomicallyWithoutLosingAnyTask() async throws {
         let fixture = try TemporaryFixture()
         let clock = FixedClock(Self.start)
@@ -177,7 +167,7 @@ extension TaskOrderingTests {
         let ids = created.map(\.id)
         let (tieLow, tieHigh) = ids[0].uuidString < ids[1].uuidString ? (ids[0], ids[1]) : (ids[1], ids[0])
         let (m, w, top) = (ids[2], ids[3], ids[4])
-        try setOrderKeys([tieLow: .min, tieHigh: .min, m: -2, w: .max - 1, top: .max], in: fixture)
+        try fixture.setOrderKeys([tieLow: .min, tieHigh: .min, m: -2, w: .max - 1, top: .max])
 
         let inject = Switch(), violate = Switch()
         store = try await CollectionStore.open(fixture.location, clock: clock.now, faults: .init(beforeCommit: { db in
@@ -225,7 +215,7 @@ extension TaskOrderingTests {
 
         // A wide gap takes a key strictly inside it; nothing else moves.
         await store.close()
-        try setOrderKeys([tieLow: .min + 1, top: .min + 2, tieHigh: .min + 3, m: .max - 1, w: .max], in: fixture)
+        try fixture.setOrderKeys([tieLow: .min + 1, top: .min + 2, tieHigh: .min + 3, m: .max - 1, w: .max])
         store = try await CollectionStore.open(fixture.location, clock: clock.now)
         let g2 = store.generation
         before = try await store.read(.inbox, in: g2)
@@ -239,7 +229,7 @@ extension TaskOrderingTests {
 
         // Past the lowest and the highest possible key, then between adjacent keys.
         await store.close()
-        try setOrderKeys([tieLow: .min, top: 0, tieHigh: 1, w: 2, m: .max], in: fixture)
+        try fixture.setOrderKeys([tieLow: .min, top: 0, tieHigh: 1, w: 2, m: .max])
         store = try await CollectionStore.open(fixture.location, clock: clock.now)
         let g3 = store.generation
         for (id, predecessor, order) in [(m, nil as UUID?, [m, tieLow, top, tieHigh, w]), (tieLow, w, [m, top, tieHigh, w, tieLow]),
