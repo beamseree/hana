@@ -3,6 +3,11 @@ import AppKit
 @main
 struct HanaApp {
     @MainActor static func main() {
+        if CommandLine.arguments.dropFirst().first == CollectionFixtureHarness.flag {
+            // Fixture-only harness: no AppKit, no live storage.
+            Task.detached { exit(await CollectionFixtureHarness.run(Array(CommandLine.arguments.dropFirst(2)))) }
+            dispatchMain()
+        }
         let app = NSApplication.shared
         let delegate = AppDelegate()
         app.delegate = delegate
