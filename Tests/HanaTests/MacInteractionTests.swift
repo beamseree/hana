@@ -7,23 +7,81 @@ import Testing
 @Suite(.serialized)
 @MainActor
 struct MacInteractionTests {
-    @Test func editsSynchronouslySelectOnlyRecheckedMatches() async throws {
+    @Test func emptySourceUpdateDoesNotReplaceRowsWithOnlyRecheckedMatches() async throws {
         _ = NSApplication.shared
-        let apps = CatalogFeed()
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero))
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
-        let destination = app("Notes", "/fixture/Notes.app")
+        let notes = app("Notes", "/fixture/Notes.app"), numbers = app("Numbers", "/fixture/Numbers.app")
+        interaction.updateQuery("N")
+        await apps.send([notes, numbers]); await files.send([])
+        try await eventually { interaction.results == [notes, numbers] }
+        interaction.updateQuery("No")
+        try await eventually { files.subscriptionCount == 2 }
+        // A completed empty file response can publish the catalog's rechecked
+        // Notes row even though no source has delivered any fresh match yet.
+        await files.send([], status: .failed)
+        try await eventually { interaction.statusMessage?.contains("failure") == true }
+        #expect(interaction.results == [notes, numbers])
+        await apps.send([notes], status: .loading)
+        try await eventually { interaction.results == [notes] }
+        #expect(interaction.isLoading)
+    }
+
+    @Test func enterDuringRefreshOpensTheVisibleRetainedRow() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed()
+        var opened: [URL] = []
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero),
+            launchApplication: { url in opened.append(url); return .init(activate: { true }) })
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let notes = app("Notes", "/fixture/Notes.app")
         interaction.updateQuery("Note")
-        await apps.send([destination])
-        try await eventually { interaction.selectedResult?.id == destination.id }
-        interaction.updateQuery("Notes")
-        #expect(interaction.selectedResult?.id == destination.id)
-        interaction.updateQuery("unrelated")
-        #expect(interaction.results.isEmpty)
-        interaction.moveSelection(by: 1)
-        #expect(interaction.selectedResult == nil)
-        #expect(interaction.requestSelectedOpen() == nil)
+        await apps.send([notes])
+        try await eventually { interaction.selectedResult?.id == notes.id }
+        interaction.updateQuery("Safari")
+        #expect(interaction.selectedResult?.id == notes.id)
+        await interaction.requestSelectedOpen()?.value
+        #expect(opened == [notes.url])
+        #expect(interaction.currentInvocation == nil)
+    }
+
+    @Test func editsKeepPreviousRowsUntilFreshMatchesArrive() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let notes = app("Notes", "/fixture/Notes.app")
+        let numbers = app("Numbers", "/fixture/Numbers.app")
+        let safari = app("Safari", "/fixture/Safari.app")
+        interaction.updateQuery("N")
+        await apps.send([notes, numbers]); await files.send([])
+        try await eventually { interaction.results == [notes, numbers] }
+        interaction.updateQuery("No")
+        #expect(interaction.results == [notes, numbers])
+        #expect(interaction.selectedResult?.id == notes.id)
+        interaction.updateQuery("N") // Backspace before the new source responds.
+        #expect(interaction.results == [notes, numbers])
+        interaction.updateQuery("Safari")
+        #expect(interaction.results == [notes, numbers])
+        try await eventually { apps.subscriptionCount >= 2 && files.subscriptionCount >= 2 }
+        await apps.send([], status: .failed)
+        try await eventually { interaction.statusMessage?.contains("failure") == true }
+        #expect(interaction.results == [notes, numbers])
+        #expect(interaction.isLoading)
+        await files.send([safari], status: .loading)
+        try await eventually { interaction.results == [safari] }
+        #expect(interaction.selectedResult?.id == safari.id)
+        #expect(interaction.isLoading)
+        interaction.updateQuery("no-such-result")
+        #expect(interaction.results == [safari])
+        let subscriptions = files.subscriptionCount
+        try await eventually { files.subscriptionCount > subscriptions }
+        await apps.send([]); await files.send([])
+        try await eventually { interaction.results.isEmpty && interaction.statusMessage?.hasPrefix("No matches") == true }
     }
 
     @Test func editingDuringAFinishedShrinkHoldsTheCurrentHeightWhileLoading() async throws {

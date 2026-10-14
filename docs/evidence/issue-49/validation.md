@@ -1,5 +1,34 @@
 # Issue #49 — steady Search while typing
 
+## Follow-up — retain displayed rows until fresh results
+
+On 2026-10-14 the user requested that typing and backspacing preserve even nonmatching displayed rows until replacements load. This supersedes the immediate-removal behavior in the original implementation record below.
+
+Mac Interaction now keeps its displayed snapshot across edits. It replaces that snapshot when the current request supplies a visible fresh match, or when both sources finish. Empty or cache-only intermediate updates cannot remove previous rows. Clearing the query still clears immediately. Selection resets to the first displayed row on edit; Enter captures that visible destination, including a retained row. The existing loading-height retention remains intact.
+
+Search marks batches with `hasFreshResults`, calculated from the latest raw source snapshots and the ranked visible identities. Matching the source-local names prevents a retained alias from falsely identifying a result as fresh. Current-query matching and generation cancellation remain enforced within Search; only the presentation layer retains the previous displayed snapshot.
+
+### Verification
+
+- Regression fixtures cover forward typing, backspacing, replacement, empty pending updates, fresh loading matches, final no-results, and Enter on a retained visible row. A separate regression reproduced the cache-only update removing a previous row before fresh results arrived, then passed after the freshness fix.
+- Focused Search and Mac Interaction tests: 56 tests in four suites passed in 11.920 seconds.
+- Final `xcrun swift test --no-parallel`: 146 tests in 21 suites passed in 27.498 seconds. The same five environment-gated live-index tests listed below were skipped.
+- Final `./scripts/build`: release build and bundle-signature validation passed.
+- Separate standards and spec reviews reported no remaining findings after the cache-only replacement fix.
+- The user explicitly authorized the native testing slot, installation and relaunch. The slot was released after verification. Native fixture assertions are automated evidence; perceived motion and physical keyboard routing remain for the user's hands-on test.
+
+### Installed identity
+
+The final bundle was installed at `/Users/beamsereeyothin/Applications/Hana.app` after quitting the previous Hana process. The installed signature passed verification. PID `36650`, launched at `2026-10-14 12:28:31 +0700`, loaded Mach-O UUID `773EA9B2-7F77-3340-8FE1-907B5BAED372`, matching both built and installed binaries. This was checked with a process sample, not inferred solely from the file on disk. An earlier installation had a disk/process mismatch; the loaded-image check resolves that ambiguity for this handover.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| Release executable, built and installed | `eeae1aed9f08c8e2789a535accc99bfbff6fb3c60b14a6c8a0c2f021cb0f5fcf` |
+| `.build/debug/Hana` | `6fae638c59631015cd135231b0fef1e6db0ec7b5f1352db6d86803618cf46fe4` |
+| `.build/debug/HanaPackageTests.xctest/Contents/MacOS/HanaPackageTests` | `7685757205cab83ed9329a49dc8d3765570d38591ceef7a0a4aa73e66de4f5bb` |
+
+## Original implementation record — b071801
+
 Verified on 2026-10-14 against the implementation commit containing this record, on `codex/issue-49-steady-search`. Starting revision: `680bb1e1c146eadc172ff03e5d31fc4fc935818d`.
 
 ## Change

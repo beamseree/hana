@@ -545,7 +545,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         userMovedSelection = false
         openFailure = nil
         let stream = search.search(request)
-        results = stream.initial.results
+        // Keep the displayed snapshot intact until a source delivers its
+        // replacement. An edit alone must not remove nonmatching rows.
+        if results.isEmpty || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            results = stream.initial.results
+        }
         selectedID = results.first?.id
         icons = icons.filter { id, _ in results.contains { $0.id == id } }
         sourceStatus = stream.initial.appStatus
@@ -559,13 +563,17 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             for await batch in stream.updates {
                 guard let self, self.request?.generation == batch.generation,
                       self.currentInvocation != nil, !Task.isCancelled else { continue }
-                self.results = batch.results
-                self.icons = self.icons.filter { id, _ in batch.results.contains { $0.id == id } }
                 self.sourceStatus = batch.appStatus
                 self.fileStatus = batch.fileStatus
-                if !self.userMovedSelection || !batch.results.contains(where: { $0.id == self.selectedID }) {
-                    self.selectedID = batch.results.first?.id
-                    self.userMovedSelection = false
+                // Empty or cache-only intermediate batches are not a
+                // replacement: a source has yet to deliver fresh matches.
+                if batch.hasFreshResults || (batch.appStatus != .loading && batch.fileStatus != .loading) {
+                    self.results = batch.results
+                    self.icons = self.icons.filter { id, _ in batch.results.contains { $0.id == id } }
+                    if !self.userMovedSelection || !batch.results.contains(where: { $0.id == self.selectedID }) {
+                        self.selectedID = batch.results.first?.id
+                        self.userMovedSelection = false
+                    }
                 }
                 self.renderResults()
                 self.record("search.batch", extra: ["resultCount": batch.results.count, "appStatus": batch.appStatus.rawValue, "fileStatus": batch.fileStatus.rawValue,
