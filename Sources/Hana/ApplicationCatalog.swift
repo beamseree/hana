@@ -103,7 +103,8 @@ final class ApplicationCatalog {
                         ?? child.deletingPathExtension().lastPathComponent
                     let localized = manager.displayName(atPath: child.path)
                     applications.append(SearchResult(name: name, url: child.standardizedFileURL,
-                        alternateNames: [child.deletingPathExtension().lastPathComponent,
+                        alternateNames: [info?["CFBundleName"] as? String ?? name,
+                                         child.deletingPathExtension().lastPathComponent,
                                          localized.hasSuffix(".app") ? String(localized.dropLast(4)) : localized]))
                 } else if !["bundle", "framework", "plugin", "appex"].contains(child.pathExtension.lowercased()) {
                     pending.append(child)
