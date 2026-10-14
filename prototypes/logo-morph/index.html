@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logo Search Morph</title>
+<!--
+  Tuning prototype: the Hana logo in the Search bar morphs into a magnifying
+  glass once the query is non-empty. Open this file directly in a browser.
+  Its defaults are the shipped settings; see README.md for porting changes back.
+
+  Every part is a stroked primitive driven by one progress value p (0 = logo,
+  1 = search), so each variant ports to one CAShapeLayer per part:
+    bloom outline -> path (N-point polyline, same count both ends)
+    inner ring    -> path / transform + lineWidth
+    spokes        -> path endpoints (or strokeStart/strokeEnd) + opacity
+  The spring uses Apple's (duration, bounce) parameterisation, which matches
+  CASpringAnimation(perceptualDuration:bounce:).
+-->
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --panel: #ffffff;
+    --line: rgba(0, 0, 0, 0.09);
+    --text: #171717;
+    --muted: #6b6b6b;
+    --icon: #777777;
+    --accent: #171717;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 13px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 1040px; margin: 0 auto; padding: 32px 16px 64px; }
+  header h1 { font-size: 17px; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header p { margin: 0 0 20px; color: var(--muted); max-width: 680px; }
+
+  /* Stage: a wallpaper so the bezel's translucency reads like the real panel. */
+  .stage {
+    border-radius: 18px;
+    padding: 72px 16px;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(60% 80% at 15% 20%, #9fb7d9 0%, transparent 60%),
+      radial-gradient(50% 70% at 85% 30%, #e7b98f 0%, transparent 60%),
+      radial-gradient(70% 90% at 50% 100%, #6f86a8 0%, transparent 70%),
+      #c9ced6;
+  }
+  .bezel {
+    width: 660px;
+    max-width: 100%;
+    padding: 4px;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.35);
+    -webkit-backdrop-filter: blur(30px) saturate(1.6);
+    backdrop-filter: blur(30px) saturate(1.6);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22), 0 0 0 0.5px rgba(0, 0, 0, 0.14);
+  }
+  .card { position: relative; height: 60px; background: #fff; border-radius: 22px; }
+  .mode-icon { position: absolute; left: 20px; top: 16px; width: 28px; height: 28px; color: var(--icon); overflow: visible; }
+  .query {
+    position: absolute; left: 58px; right: 16px; top: 10px; height: 40px;
+    border: 0; outline: 0; background: transparent; padding: 0;
+    font: 26px -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+    letter-spacing: -0.26px; color: #171717; caret-color: #171717;
+  }
+  .query::placeholder { color: #666; }
+  .stage-hint { margin-top: 14px; color: rgba(255, 255, 255, 0.9); font-size: 12px; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+
+  .grid { display: grid; grid-template-columns: 300px 1fr; gap: 16px; margin-top: 16px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border-radius: 14px; box-shadow: 0 0 0 0.5px var(--line), 0 1px 2px rgba(0,0,0,.04); padding: 16px; }
+  .panel h2 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 12px; }
+
+  .inspector svg.big { display: block; width: 100%; max-width: 268px; aspect-ratio: 1; margin: 0 auto; color: var(--icon); overflow: visible; }
+  .readout { font: 11px/1.4 ui-monospace, "SF Mono", Menlo, monospace; color: var(--muted); margin: 10px 0 8px; text-align: center; font-variant-numeric: tabular-nums; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .row + .row { margin-top: 8px; }
+
+  button {
+    font: inherit; font-weight: 500; color: var(--text);
+    background: #f1f1ef; border: 0; border-radius: 8px; padding: 6px 10px; cursor: pointer;
+    transition: transform 160ms var(--ease-out), background-color 160ms ease;
+  }
+  button:active { transform: scale(0.97); }
+  @media (hover: hover) and (pointer: fine) { button:hover { background: #e8e8e5; } }
+
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
+  @media (max-width: 560px) { .controls { grid-template-columns: 1fr; } }
+  .field { min-width: 0; }
+  .field.wide { grid-column: 1 / -1; }
+  .field label.title { display: flex; justify-content: space-between; font-weight: 500; margin-bottom: 6px; }
+  .field label.title output { color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 400; }
+  .field .help { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .field[hidden] { display: none; }
+  input[type=range] { width: 100%; accent-color: var(--accent); margin: 0; }
+  .checks { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .checks label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+  input[type=checkbox] { accent-color: var(--accent); margin: 0; }
+
+  .seg { display: flex; background: #f1f1ef; border-radius: 9px; padding: 2px; gap: 2px; flex-wrap: wrap; }
+  .seg label { flex: 1 1 auto; text-align: center; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg span {
+    display: block; padding: 5px 8px; border-radius: 7px; cursor: pointer; white-space: nowrap; color: var(--muted);
+    transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+  }
+  .seg input:checked + span { background: #fff; color: var(--text); box-shadow: 0 0 0 0.5px var(--line), 0 1px 2px rgba(0,0,0,.08); }
+  .seg input:focus-visible + span { outline: 2px solid #4b8bf5; outline-offset: 1px; }
+
+  .strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+  .frame { background: #fff; border-radius: 10px; box-shadow: 0 0 0 0.5px var(--line); padding: 10px 6px 6px; text-align: center; }
+  .frame svg { width: 100%; max-width: 64px; aspect-ratio: 1; color: var(--icon); overflow: visible; }
+  .frame div { font: 10px ui-monospace, "SF Mono", Menlo, monospace; color: var(--muted); margin-top: 4px; }
+
+  .settings { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
+  .settings code { flex: 1; min-width: 0; font: 11px ui-monospace, "SF Mono", Menlo, monospace; background: #f6f6f4; padding: 7px 9px; border-radius: 8px; overflow-x: auto; white-space: nowrap; }
+  .notes { color: var(--muted); margin-top: 16px; }
+  .notes ul { margin: 6px 0 0; padding-left: 18px; }
+  .notes li + li { margin-top: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Logo → Search morph</h1>
+    <p>Type in the bar. The mode icon morphs when the query goes from empty to non-empty, and back. Try deleting mid-morph: it has to reverse from where it is without snapping.</p>
+  </header>
+
+  <section class="stage">
+    <div class="bezel">
+      <div class="card">
+        <svg class="mode-icon" id="barIcon" viewBox="0 0 28 28" aria-hidden="true"></svg>
+        <input class="query" id="query" placeholder="Search" autocomplete="off" spellcheck="false" autofocus>
+      </div>
+    </div>
+    <div class="stage-hint">Actual size · Esc clears</div>
+  </section>
+
+  <div class="grid">
+    <section class="panel inspector">
+      <h2>Inspector</h2>
+      <svg class="big" id="bigIcon" viewBox="0 0 28 28" aria-hidden="true"></svg>
+      <div class="readout" id="readout">p 0.000 · target 0</div>
+      <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Scrub progress">
+      <div class="row" style="margin-top:10px">
+        <button id="toSearch">→ Search</button>
+        <button id="toLogo">→ Logo</button>
+        <button id="jitter" title="Type, delete, type, delete at 90ms intervals">Rapid toggle</button>
+      </div>
+      <div class="checks" style="margin-top:12px">
+        <label><input type="checkbox" id="slowmo"> Slow-mo ×5</label>
+        <label><input type="checkbox" id="pixelGrid"> Grid</label>
+        <label><input type="checkbox" id="overlay"> Original logo</label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Tuning</h2>
+      <div class="controls">
+        <div class="field wide">
+          <label class="title">Variant</label>
+          <div class="seg" id="variant">
+            <label><input type="radio" name="variant" value="bloom"><span>Bloom → lens</span></label>
+            <label><input type="radio" name="variant" value="centre"><span>Centre → lens</span></label>
+            <label><input type="radio" name="variant" value="crossfade"><span>Blur crossfade</span></label>
+            <label><input type="radio" name="variant" value="instant"><span>Instant</span></label>
+          </div>
+          <div class="help" id="variantHelp"></div>
+        </div>
+
+        <div class="field wide">
+          <label class="title">Motion</label>
+          <div class="seg" id="motion">
+            <label><input type="radio" name="motion" value="spring"><span>Spring</span></label>
+            <label><input type="radio" name="motion" value="easeOut"><span>Ease-out</span></label>
+            <label><input type="radio" name="motion" value="easeInOut"><span>Ease-in-out</span></label>
+          </div>
+        </div>
+
+        <div class="field" data-for="animated">
+          <label class="title" for="duration">Duration <output id="durationOut"></output></label>
+          <input type="range" id="duration" min="80" max="600" step="10">
+        </div>
+        <div class="field" data-for="spring">
+          <label class="title" for="bounce">Bounce <output id="bounceOut"></output></label>
+          <input type="range" id="bounce" min="0" max="0.4" step="0.05">
+        </div>
+        <div class="field" data-for="bloom">
+          <label class="title" for="twist">Twist <output id="twistOut"></output></label>
+          <input type="range" id="twist" min="-90" max="90" step="5">
+          <div class="help">Rotates the bloom while it rounds into the lens.</div>
+        </div>
+        <div class="field" data-for="morph">
+          <label class="title" for="midBlur">Mid-morph blur <output id="midBlurOut"></output></label>
+          <input type="range" id="midBlur" min="0" max="3" step="0.25">
+          <div class="help">Peaks at p = 0.5. Hides awkward in-between shapes.</div>
+        </div>
+        <div class="field" data-for="crossfade">
+          <label class="title" for="fadeBlur">Crossfade blur <output id="fadeBlurOut"></output></label>
+          <input type="range" id="fadeBlur" min="0" max="4" step="0.25">
+        </div>
+        <div class="field">
+          <label class="title" for="stroke">Stroke <output id="strokeOut"></output></label>
+          <input type="range" id="stroke" min="1.5" max="2.6" step="0.05">
+          <div class="help">Logo and magnifier share it. The shipped logo is 1.867.</div>
+        </div>
+        <div class="field">
+          <label class="title" for="searchScale">Search size <output id="searchScaleOut"></output></label>
+          <input type="range" id="searchScale" min="0.9" max="1.3" step="0.02">
+          <div class="help">Lens and handle together, about the icon centre.</div>
+        </div>
+        <div class="field wide">
+          <div class="checks">
+            <label><input type="checkbox" id="reduced"> Reduce Motion (opacity-only fade)</label>
+          </div>
+        </div>
+      </div>
+      <div class="settings">
+        <code id="settingsLine"></code>
+        <button id="copy">Copy</button>
+        <button id="reset">Reset</button>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top:16px">
+    <h2>Frames</h2>
+    <div class="strip" id="strip"></div>
+    <div class="notes">
+      <ul>
+        <li>Frames show geometry at fixed p. With an eased or spring curve, the time spent near each frame differs.</li>
+        <li>The bar is opened many times a day and the morph is triggered by a keystroke. Keep it short and never let it delay the typed text.</li>
+        <li>Try <b>Original logo</b> in the inspector to check that the stroked rebuild matches the shipped SVG at p = 0.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  // ---------- Geometry (28 × 28 box, same units as HanaLogo.svg) ----------
+  const C = 14;
+  const LOGO_SW = 1.867;                    // shipped logo stroke weight
+  const LOBE_R = 7.467;                     // bloom lobe centreline radius
+  const LOBE_D = 5.6 * Math.SQRT2;          // lobe centres at (14 ± 5.6, 14 ± 5.6)
+  const RING_R = 2.61;                      // inner ring centreline radius
+  const SPOKE_D0 = RING_R;                  // spokes start on the ring
+  const SPOKE_D1 = (14 - 9.968) * Math.SQRT2; // and end at the cap centres
+  // Magnifier at scale 1; searchScale grows it about its own visual centre.
+  const BASE_LENS = { x: 12.2, y: 12.2, r: 7 };
+  const BASE_HANDLE_END = { x: 23, y: 23 };
+  const MAG_CENTRE = 14.1; // middle of the magnifier's stroked bounds
+  let LENS = BASE_LENS, HANDLE_END = BASE_HANDLE_END;
+  function scaleMagnifier(s) {
+    const at = v => MAG_CENTRE + (v - MAG_CENTRE) * s;
+    LENS = { x: at(BASE_LENS.x), y: at(BASE_LENS.y), r: BASE_LENS.r * s };
+    HANDLE_END = { x: at(BASE_HANDLE_END.x), y: at(BASE_HANDLE_END.y) };
+  }
+  const U = [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([x, y]) => [x / Math.SQRT2, y / Math.SQRT2]);
+  const HANDLE = 3; // bottom-right spoke becomes the handle
+
+  const N = 192; // multiple of 4 so samples land exactly on the bloom's cusps
+  const THETA = Array.from({ length: N }, (_, i) => -Math.PI / 2 + (2 * Math.PI * i) / N);
+  const PHI = [1, 3, 5, 7].map(k => (k * Math.PI) / 4);
+  const BLOOM = THETA.map(t => {
+    let r = 0;
+    for (const phi of PHI) {
+      const a = t - phi, s = LOBE_D * Math.sin(a), k = LOBE_R * LOBE_R - s * s;
+      if (k >= 0) r = Math.max(r, LOBE_D * Math.cos(a) + Math.sqrt(k));
+    }
+    return [C + r * Math.cos(t), C + r * Math.sin(t)];
+  });
+
+  // The shipped logo, for the fidelity overlay and the crossfade variant.
+  const LOGO_PATHS = [
+    "M26.1333 8.39998C26.1333 4.79173 23.2083 1.86666 19.6 1.86666C17.7285 1.86666 16.0419 2.65238 14.8496 3.91459C14.3888 4.40245 13.6112 4.40245 13.1504 3.91459C11.9581 2.65238 10.2715 1.86666 8.4 1.86666C4.79174 1.86666 1.86667 4.79173 1.86667 8.39998C1.86667 10.2715 2.65239 11.9581 3.9146 13.1504C4.40247 13.6113 4.40246 14.3888 3.9146 14.8497C2.65239 16.042 1.86667 17.7285 1.86667 19.6C1.86667 23.2083 4.79174 26.1333 8.4 26.1333C10.2715 26.1333 11.9581 25.3476 13.1504 24.0854L13.1722 24.0629C13.6281 23.605 14.3719 23.605 14.8278 24.0629L14.8496 24.0854L14.9058 24.1442C16.0946 25.372 17.7577 26.1333 19.6 26.1333C23.2083 26.1333 26.1333 23.2083 26.1333 19.6C26.1333 17.7285 25.3476 16.042 24.0854 14.8497C23.5975 14.3888 23.5976 13.6112 24.0854 13.1504L24.1442 13.0941C25.3719 11.9053 26.1333 10.2423 26.1333 8.39998ZM28 8.39998C28 10.5512 27.1902 12.5145 25.8609 14C27.1903 15.4854 28 17.4487 28 19.6C28 24.2392 24.2392 28 19.6 28C17.4487 28 15.4854 27.1902 14 25.8608C12.5146 27.1902 10.5513 28 8.4 28C3.76081 28 6.15745e-06 24.2392 0 19.6C0 17.4488 0.809673 15.4854 2.13901 14C0.809705 12.5145 0 10.5512 0 8.39998C0 3.7608 3.76081 0 8.4 0C10.5512 0 12.5146 0.809689 14 2.139C15.4854 0.809689 17.4488 0 19.6 0C24.2392 0 28 3.7608 28 8.39998Z",
+    "M17.3101 9.30812C17.6746 8.94363 18.2659 8.94365 18.6304 9.30812C18.9949 9.6726 18.9949 10.2639 18.6304 10.6284L17.0542 12.2026C17.3515 12.7214 17.5229 13.3216 17.523 13.9624C17.523 14.6029 17.3522 15.2035 17.0552 15.7222L18.6304 17.2974C18.9949 17.6619 18.9949 18.2532 18.6304 18.6177C18.2659 18.982 17.6745 18.9821 17.3101 18.6177L15.7349 17.0415C15.2164 17.3383 14.6163 17.5093 13.9761 17.5093C13.3319 17.5092 12.7282 17.3369 12.2075 17.0366L10.6284 18.6177C10.264 18.9821 9.67263 18.982 9.30813 18.6177C8.94364 18.2532 8.94364 17.6619 9.30813 17.2974L10.8921 15.7124C10.5985 15.196 10.4302 14.5989 10.4302 13.9624C10.4303 13.3255 10.5981 12.7281 10.8921 12.2114L9.30813 10.6284C8.94364 10.2639 8.94364 9.6726 9.30813 9.30812C9.67262 8.94365 10.264 8.94363 10.6284 9.30812L12.2075 10.8882C12.7281 10.588 13.332 10.4166 13.9761 10.4165C14.6162 10.4165 15.2165 10.5866 15.7349 10.8833L17.3101 9.30812ZM13.9761 12.2827C13.0485 12.2829 12.2966 13.0348 12.2964 13.9624C12.2964 14.8901 13.0484 15.6429 13.9761 15.6431C14.9039 15.6431 15.6568 14.8903 15.6568 13.9624C15.6566 13.0347 14.9038 12.2827 13.9761 12.2827Z",
+  ];
+
+  const clamp01 = x => Math.min(1, Math.max(0, x));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t)];
+  const along = (cx, cy, d, u) => [cx + d * u[0], cy + d * u[1]];
+
+  // ---------- Settings ----------
+  // The shipped settings; keep in step with SearchIconMorph in Sources/Hana/ModeIcon.swift.
+  const DEFAULTS = {
+    variant: "centre", motion: "spring", duration: 240, bounce: 0.4,
+    twist: 0, midBlur: 0, fadeBlur: 2, stroke: 2, searchScale: 1.2,
+    reduced: matchMedia("(prefers-reduced-motion: reduce)").matches,
+  };
+  const KEY = "hana-logo-morph";
+  let S = { ...DEFAULTS };
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    // Earlier versions stroked only the magnifier; carry that weight over.
+    if ("searchStroke" in saved && !("stroke" in saved)) saved.stroke = saved.searchStroke;
+    delete saved.searchStroke;
+    Object.assign(S, saved);
+  } catch {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+
+  const HELP = {
+    bloom: "The bloom outline rounds into the lens; the centre dissolves; the bottom-right spoke slides out into the handle.",
+    centre: "The centre ring grows into the lens and its bottom-right spoke becomes the handle; the bloom releases outward and fades.",
+    crossfade: "Logo and magnifier swap with scale and blur. Simplest to ship; reads as a swap, not a morph.",
+    instant: "No animation. The baseline every variant has to beat.",
+  };
+
+  // ---------- Geometry for a given progress ----------
+  function geometry(p) {
+    const variant = S.reduced ? "fade" : S.variant;
+    const q = clamp01(p), over = p - q;          // over > 0 only on spring overshoot
+    const win = (a, b) => clamp01((q - a) / (b - a)) + over; // geometry may overshoot
+    const fade = (a, b) => clamp01((q - a) / (b - a));       // opacity never does
+    const SW = S.stroke;
+    const g = { morph: null, logo: null, mag: null };
+
+    if (variant === "bloom") {
+      const e = win(0, 1), tw = (S.twist * Math.PI) / 180;
+      const pts = BLOOM.map((b, i) => lerpPt(b, [LENS.x + LENS.r * Math.cos(THETA[i] + tw), LENS.y + LENS.r * Math.sin(THETA[i] + tw)], e));
+      const r = win(0, 0.5);
+      const spokes = U.map((u, i) => {
+        if (i === HANDLE) {
+          return {
+            a: lerpPt(along(C, C, SPOKE_D0, u), along(LENS.x, LENS.y, LENS.r, u), e),
+            b: lerpPt(along(C, C, SPOKE_D1, u), [HANDLE_END.x, HANDLE_END.y], e),
+            w: SW, o: 1,
+          };
+        }
+        const f = win(0, 0.45);
+        return { a: along(C, C, SPOKE_D0, u), b: along(C, C, lerp(SPOKE_D1, SPOKE_D0, f), u), w: SW, o: 1 - fade(0.2, 0.45) };
+      });
+      g.morph = {
+        bloom: { pts, w: SW, o: 1, s: 1 },
+        ring: { x: C, y: C, r: lerp(RING_R, RING_R * 0.3, r), w: SW, o: 1 - fade(0.1, 0.5) },
+        spokes, blur: S.midBlur * Math.sin(Math.PI * q),
+      };
+    } else if (variant === "centre") {
+      const e = win(0, 1);
+      const rx = lerp(C, LENS.x, e), ry = lerp(C, LENS.y, e), rr = lerp(RING_R, LENS.r, e);
+      const f = fade(0, 0.6);
+      const spokes = U.map((u, i) => {
+        const a = along(rx, ry, rr, u);
+        if (i === HANDLE) return { a, b: lerpPt(along(C, C, SPOKE_D1, u), [HANDLE_END.x, HANDLE_END.y], e), w: SW, o: 1 };
+        const len = lerp(SPOKE_D1 - SPOKE_D0, 0, win(0, 0.4));
+        return { a, b: [a[0] + len * u[0], a[1] + len * u[1]], w: SW, o: 1 - fade(0.15, 0.4) };
+      });
+      g.morph = {
+        bloom: { pts: BLOOM, w: SW, o: 1 - f, s: lerp(1, 1.12, f) },
+        ring: { x: rx, y: ry, r: rr, w: SW, o: 1 },
+        spokes, blur: S.midBlur * Math.sin(Math.PI * q),
+      };
+    } else if (variant === "crossfade") {
+      g.logo = { o: 1 - q, s: lerp(1, 0.9, q), blur: S.fadeBlur * q };
+      g.mag = { o: q, s: lerp(0.9, 1, q) + over * 0.1, blur: S.fadeBlur * (1 - q) };
+    } else if (variant === "fade") {
+      g.logo = { o: 1 - q, s: 1, blur: 0 };
+      g.mag = { o: q, s: 1, blur: 0 };
+    } else {
+      const on = p >= 0.5;
+      g.logo = { o: on ? 0 : 1, s: 1, blur: 0 };
+      g.mag = { o: on ? 1 : 0, s: 1, blur: 0 };
+    }
+    return g;
+  }
+
+  // ---------- SVG rigs ----------
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  let rigCount = 0;
+  function makeRig(svg, { inspector = false } = {}) {
+    const id = "rig" + rigCount++;
+    const defs = el("defs", {}, svg);
+    const filter = name => {
+      const f = el("filter", { id: id + name, x: "-50%", y: "-50%", width: "200%", height: "200%" }, defs);
+      return { id: id + name, fe: el("feGaussianBlur", { stdDeviation: 0 }, f) };
+    };
+    const rig = { svg };
+    if (inspector) {
+      rig.grid = el("g", { stroke: "#000", "stroke-opacity": 0.07, "stroke-width": 0.03 }, svg);
+      for (let i = 0; i <= 28; i++) {
+        el("line", { x1: i, y1: 0, x2: i, y2: 28 }, rig.grid);
+        el("line", { x1: 0, y1: i, x2: 28, y2: i }, rig.grid);
+      }
+    }
+    rig.morph = el("g", { fill: "none", stroke: "currentColor", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
+    rig.morphFx = filter("m");
+    rig.bloom = el("path", {}, rig.morph);
+    rig.ring = el("circle", {}, rig.morph);
+    rig.spokes = U.map(() => el("line", {}, rig.morph));
+    // The stroked rebuild at rest, so the shared stroke applies to every variant.
+    rig.logo = el("g", { fill: "none", stroke: "currentColor", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
+    rig.logoFx = filter("l");
+    el("path", { d: "M" + BLOOM.map(pt => pt[0].toFixed(3) + " " + pt[1].toFixed(3)).join("L") + "Z" }, rig.logo);
+    el("circle", { cx: C, cy: C, r: RING_R }, rig.logo);
+    U.forEach(u => {
+      const a = along(C, C, SPOKE_D0, u), b = along(C, C, SPOKE_D1, u);
+      el("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }, rig.logo);
+    });
+    rig.mag = el("g", { fill: "none", stroke: "currentColor", "stroke-linecap": "round" }, svg);
+    rig.magFx = filter("g");
+    rig.magRing = el("circle", {}, rig.mag);
+    rig.magHandle = el("line", {}, rig.mag);
+    if (inspector) {
+      rig.overlay = el("g", { fill: "#e5484d", "fill-opacity": 0.35 }, svg);
+      LOGO_PATHS.forEach(d => el("path", { d }, rig.overlay));
+    }
+    return rig;
+  }
+
+  const f3 = n => n.toFixed(3);
+  const scaleAbout = s => `translate(${C} ${C}) scale(${f3(s)}) translate(${-C} ${-C})`;
+  function setBlur(group, fx, amount) {
+    if (amount > 0.02) {
+      fx.fe.setAttribute("stdDeviation", f3(amount));
+      group.setAttribute("filter", `url(#${fx.id})`);
+    } else group.removeAttribute("filter");
+  }
+  function setLine(line, s) {
+    line.setAttribute("x1", f3(s.a[0])); line.setAttribute("y1", f3(s.a[1]));
+    line.setAttribute("x2", f3(s.b[0])); line.setAttribute("y2", f3(s.b[1]));
+    line.setAttribute("stroke-width", f3(s.w));
+    line.setAttribute("opacity", f3(clamp01(s.o)));
+  }
+
+  function draw(rig, g) {
+    rig.morph.style.display = g.morph ? "" : "none";
+    rig.logo.style.display = g.logo ? "" : "none";
+    rig.mag.style.display = g.mag ? "" : "none";
+    if (g.morph) {
+      const m = g.morph;
+      rig.bloom.setAttribute("d", "M" + m.bloom.pts.map(pt => f3(pt[0]) + " " + f3(pt[1])).join("L") + "Z");
+      rig.bloom.setAttribute("stroke-width", f3(m.bloom.w));
+      rig.bloom.setAttribute("opacity", f3(clamp01(m.bloom.o)));
+      rig.bloom.setAttribute("transform", scaleAbout(m.bloom.s));
+      rig.ring.setAttribute("cx", f3(m.ring.x)); rig.ring.setAttribute("cy", f3(m.ring.y));
+      rig.ring.setAttribute("r", f3(Math.max(0, m.ring.r)));
+      rig.ring.setAttribute("stroke-width", f3(m.ring.w));
+      rig.ring.setAttribute("opacity", f3(clamp01(m.ring.o)));
+      m.spokes.forEach((s, i) => setLine(rig.spokes[i], s));
+      setBlur(rig.morph, rig.morphFx, m.blur);
+    }
+    for (const [key, fxKey] of [["logo", "logoFx"], ["mag", "magFx"]]) {
+      const v = g[key];
+      if (!v) continue;
+      rig[key].setAttribute("opacity", f3(clamp01(v.o)));
+      rig[key].setAttribute("transform", scaleAbout(v.s));
+      setBlur(rig[key], rig[fxKey], v.blur);
+    }
+    if (g.mag) {
+      const hs = along(LENS.x, LENS.y, LENS.r, U[HANDLE]);
+      rig.magRing.setAttribute("cx", f3(LENS.x)); rig.magRing.setAttribute("cy", f3(LENS.y)); rig.magRing.setAttribute("r", f3(LENS.r));
+      rig.magHandle.setAttribute("x1", f3(hs[0])); rig.magHandle.setAttribute("y1", f3(hs[1]));
+      rig.magHandle.setAttribute("x2", f3(HANDLE_END.x)); rig.magHandle.setAttribute("y2", f3(HANDLE_END.y));
+    }
+    rig.logo.setAttribute("stroke-width", f3(S.stroke));
+    rig.mag.setAttribute("stroke-width", f3(S.stroke));
+  }
+
+  const barRig = makeRig(document.getElementById("barIcon"));
+  const bigRig = makeRig(document.getElementById("bigIcon"), { inspector: true });
+
+  const strip = document.getElementById("strip");
+  const FRAMES = [0, 1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6, 1];
+  const stripRigs = FRAMES.map(p => {
+    const frame = document.createElement("div");
+    frame.className = "frame";
+    const svg = el("svg", { viewBox: "0 0 28 28", "aria-hidden": "true" });
+    frame.appendChild(svg);
+    const label = document.createElement("div");
+    label.textContent = "p " + p.toFixed(2);
+    frame.appendChild(label);
+    strip.appendChild(frame);
+    return { p, rig: makeRig(svg) };
+  });
+  const drawStrip = () => stripRigs.forEach(({ p, rig }) => draw(rig, geometry(p)));
+
+  // ---------- Driver: one scalar p, retargetable mid-flight ----------
+  const anim = { p: 0, v: 0, target: 0, from: 0, elapsed: 0, span: 0, raf: 0, last: 0 };
+
+  function bezier(x1, y1, x2, y2) {
+    const ax = 3 * x1 - 3 * x2 + 1, bx = 3 * x2 - 6 * x1, cx = 3 * x1;
+    const ay = 3 * y1 - 3 * y2 + 1, by = 3 * y2 - 6 * y1, cy = 3 * y1;
+    const X = t => ((ax * t + bx) * t + cx) * t, Y = t => ((ay * t + by) * t + cy) * t;
+    const dX = t => (3 * ax * t + 2 * bx) * t + cx;
+    return x => {
+      let t = x;
+      for (let i = 0; i < 8; i++) {
+        const d = dX(t);
+        if (Math.abs(d) < 1e-6) break;
+        t -= (X(t) - x) / d;
+      }
+      t = clamp01(t);
+      let lo = 0, hi = 1;
+      for (let i = 0; i < 20 && Math.abs(X(t) - x) > 1e-5; i++) {
+        if (X(t) < x) lo = t; else hi = t;
+        t = (lo + hi) / 2;
+      }
+      return Y(t);
+    };
+  }
+  const EASE = {
+    easeOut: bezier(0.23, 1, 0.32, 1),   // BarStyle.easeOut
+    easeInOut: bezier(0.77, 0, 0.175, 1),
+    linear: x => x,
+  };
+
+  const motionKind = () => (S.reduced ? "linear" : S.motion);
+  const durationSec = () => (S.reduced ? 0.15 : S.duration / 1000);
+
+  function retarget(target) {
+    anim.target = target;
+    if (!S.reduced && S.variant === "instant") {
+      anim.p = target; anim.v = 0;
+      stop(); render();
+      return;
+    }
+    // Tweens restart from the current p with a duration scaled by the remaining
+    // distance; the spring keeps its velocity, which is why it reverses smoothly.
+    anim.from = anim.p;
+    anim.elapsed = 0;
+    anim.span = durationSec() * Math.abs(target - anim.p);
+    if (!anim.raf) {
+      anim.last = performance.now();
+      anim.raf = requestAnimationFrame(tick);
+    }
+  }
+  function stop() {
+    if (anim.raf) cancelAnimationFrame(anim.raf);
+    anim.raf = 0;
+  }
+  function tick(now) {
+    let dt = Math.min((now - anim.last) / 1000, 1 / 20);
+    anim.last = now;
+    if (slowmo.checked) dt /= 5;
+    let done;
+    if (motionKind() === "spring") {
+      const d = durationSec(), k = (2 * Math.PI / d) ** 2, c = (4 * Math.PI * (1 - S.bounce)) / d;
+      const steps = Math.max(1, Math.ceil(dt / 0.001)), h = dt / steps;
+      for (let i = 0; i < steps; i++) {
+        anim.v += (-k * (anim.p - anim.target) - c * anim.v) * h;
+        anim.p += anim.v * h;
+      }
+      done = Math.abs(anim.p - anim.target) < 1e-4 && Math.abs(anim.v) < 1e-3;
+    } else {
+      anim.elapsed += dt;
+      const x = anim.span > 0 ? clamp01(anim.elapsed / anim.span) : 1;
+      anim.p = lerp(anim.from, anim.target, EASE[motionKind()](x));
+      anim.v = 0;
+      done = x >= 1;
+    }
+    if (done) { anim.p = anim.target; anim.v = 0; anim.raf = 0; }
+    render();
+    if (!done) anim.raf = requestAnimationFrame(tick);
+  }
+
+  // ---------- Rendering & readouts ----------
+  const readout = document.getElementById("readout");
+  const scrub = document.getElementById("scrub");
+  let scrubbing = false;
+  function render() {
+    const g = geometry(anim.p);
+    draw(barRig, g);
+    draw(bigRig, g);
+    readout.textContent = `p ${anim.p.toFixed(3)} · target ${anim.target}` + (motionKind() === "spring" ? ` · v ${anim.v.toFixed(2)}` : "");
+    if (!scrubbing) scrub.value = Math.round(clamp01(anim.p) * 1000);
+  }
+
+  // ---------- Input ----------
+  const query = document.getElementById("query");
+  let composing = false;
+  const sync = () => {
+    const target = query.value.length > 0 || composing ? 1 : 0;
+    if (target !== anim.target || anim.p !== target) retarget(target);
+  };
+  query.addEventListener("input", sync);
+  query.addEventListener("compositionstart", () => { composing = true; sync(); });
+  query.addEventListener("compositionend", () => { composing = false; sync(); });
+  query.addEventListener("keydown", e => {
+    if (e.key === "Escape") { query.value = ""; sync(); }
+  });
+
+  scrub.addEventListener("pointerdown", () => { scrubbing = true; stop(); });
+  addEventListener("pointerup", () => { scrubbing = false; });
+  scrub.addEventListener("input", () => {
+    stop();
+    anim.p = scrub.value / 1000; anim.v = 0;
+    render();
+  });
+
+  document.getElementById("toSearch").onclick = () => retarget(1);
+  document.getElementById("toLogo").onclick = () => retarget(0);
+  document.getElementById("jitter").onclick = () => {
+    const seq = ["a", "", "a", ""];
+    query.value = "";
+    sync();
+    seq.forEach((v, i) => setTimeout(() => { query.value = v; sync(); }, 90 * (i + 1)));
+    query.focus();
+  };
+
+  const slowmo = document.getElementById("slowmo");
+  const pixelGrid = document.getElementById("pixelGrid");
+  const overlay = document.getElementById("overlay");
+  const applyInspectorToggles = () => {
+    bigRig.grid.style.display = pixelGrid.checked ? "" : "none";
+    bigRig.overlay.style.display = overlay.checked ? "" : "none";
+  };
+  pixelGrid.onchange = overlay.onchange = applyInspectorToggles;
+
+  // ---------- Tuning controls ----------
+  const fmt = {
+    duration: v => `${v} ms`, bounce: v => (+v).toFixed(2), twist: v => `${v}°`,
+    midBlur: v => `${(+v).toFixed(2)} pt`, fadeBlur: v => `${(+v).toFixed(2)} pt`, stroke: v => (+v).toFixed(2),
+    searchScale: v => `${(+v).toFixed(2)}×`,
+  };
+  for (const key of Object.keys(fmt)) {
+    const input = document.getElementById(key), out = document.getElementById(key + "Out");
+    input.value = S[key];
+    out.textContent = fmt[key](S[key]);
+    input.addEventListener("input", () => {
+      S[key] = +input.value;
+      out.textContent = fmt[key](input.value);
+      changed();
+    });
+  }
+  for (const name of ["variant", "motion"]) {
+    document.querySelectorAll(`input[name=${name}]`).forEach(radio => {
+      radio.checked = radio.value === S[name];
+      radio.addEventListener("change", () => { S[name] = radio.value; changed(); });
+    });
+  }
+  const reduced = document.getElementById("reduced");
+  reduced.checked = S.reduced;
+  reduced.onchange = () => { S.reduced = reduced.checked; changed(); };
+
+  function updateVisibility() {
+    const morph = S.variant === "bloom" || S.variant === "centre";
+    const show = {
+      animated: S.variant !== "instant",
+      spring: S.variant !== "instant" && S.motion === "spring",
+      bloom: S.variant === "bloom",
+      morph,
+      crossfade: S.variant === "crossfade",
+    };
+    document.querySelectorAll("[data-for]").forEach(f => { f.hidden = S.reduced || !show[f.dataset.for]; });
+    document.getElementById("variantHelp").textContent = S.reduced
+      ? "Reduce Motion is on: every variant becomes a 150 ms opacity fade."
+      : HELP[S.variant];
+  }
+  const settingsLine = document.getElementById("settingsLine");
+  function describe() {
+    if (S.reduced) return "reduceMotion: opacity fade 150ms";
+    const parts = [`variant: ${S.variant}`];
+    if (S.variant !== "instant") {
+      parts.push(S.motion === "spring" ? `spring(duration: ${S.duration / 1000}, bounce: ${S.bounce})` : `${S.motion} ${S.duration}ms`);
+    }
+    if (S.variant === "bloom" && S.twist) parts.push(`twist: ${S.twist}°`);
+    if ((S.variant === "bloom" || S.variant === "centre") && S.midBlur) parts.push(`midBlur: ${S.midBlur}pt`);
+    if (S.variant === "crossfade") parts.push(`blur: ${S.fadeBlur}pt`);
+    parts.push(`stroke: ${S.stroke}`, `searchScale: ${S.searchScale}`);
+    return parts.join(" · ");
+  }
+  function changed() {
+    scaleMagnifier(S.searchScale);
+    save();
+    updateVisibility();
+    settingsLine.textContent = describe();
+    drawStrip();
+    render();
+  }
+  document.getElementById("copy").onclick = async () => {
+    try { await navigator.clipboard.writeText(settingsLine.textContent); } catch {}
+  };
+  document.getElementById("reset").onclick = () => {
+    S = { ...DEFAULTS };
+    try { localStorage.removeItem(KEY); } catch {}
+    location.reload();
+  };
+
+  applyInspectorToggles();
+  changed();
+  query.focus();
+})();
+</script>
+</body>
+</html>
