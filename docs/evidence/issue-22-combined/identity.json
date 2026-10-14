@@ -2,7 +2,7 @@
   "base": "210e9f34de86d751de6eb80a584cc41cde560ee3",
   "featureCommits": [
     "0592aab17803b2f1a0e5978af2f51aa4494a1bd8",
-    "9dc752d07be3496f2c4f65d246a25990c15f3473"
+    "57a756aad05549eb5207a34b00c3b75d1d5fd8d0"
   ],
   "exactFeatureSourceFilesVerified": [
     "Sources/Hana/CollectionExport.swift",
@@ -56,7 +56,7 @@
     },
     {
       "path": "Sources/Hana/CollectionStore.swift",
-      "sha256": "a30d5221f948fcbe9ea81b39d69d972493481d0f5be2e64182966b0c35ce2c88"
+      "sha256": "62fbd4ad7bfc3db5deb6ffc8a17831ef1eefcb92cdbb1eadc5095ee5f88fad0f"
     },
     {
       "path": "Sources/Hana/CoverageValidation.swift",
@@ -127,10 +127,10 @@
       "sha256": "456d03c5684fc8ce3c38a6eb88d4b2b49a3b62d242d48874a0b7bc3fc1c342e8"
     }
   ],
-  "productionTreeSHA256": "18de87d2546a24410229c016ac373f68d7e1976d4502c6b7a842523ca6b79d2f",
-  "binarySHA256": "efcc69da5a346497b90269938d9004c8dc9442f159ffd1aaab261dae8d04110c",
+  "productionTreeSHA256": "138b4d4eeef624aae785d304e0bee14629deb50810f2a89b2f6bc36e1d6b3494",
+  "binarySHA256": "cc02dbf318eebea39341ddd54c7f2e6cf18f5582b1a4763fa40e3a0d8cd16c06",
   "worktree": "/Users/beamsereeyothin/.codex/worktrees/issue-22-combined-validation/hana",
   "branch": "codex/issue-22-combined-validation",
   "nativeTestsRun": false,
-  "localValidationCommit": "ccf17183581a3937850fe8425a3cb4f0fc380747"
+  "localValidationCommit": "0af0197650323220b71af956da97b960d26059f2"
 }

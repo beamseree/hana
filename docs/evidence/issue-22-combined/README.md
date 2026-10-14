@@ -6,9 +6,9 @@ This is an isolated validation state, not a merge to main or either feature bran
 | --- | --- | --- |
 | Common base | `210e9f34de86d751de6eb80a584cc41cde560ee3` | — |
 | Full export (#28) | `0592aab17803b2f1a0e5978af2f51aa4494a1bd8` | [#44](https://github.com/beamseree/hana/pull/44) |
-| Manual snapshots (#29) | `9dc752d07be3496f2c4f65d246a25990c15f3473` | [#45](https://github.com/beamseree/hana/pull/45) |
+| Manual snapshots (#29) | `57a756aad05549eb5207a34b00c3b75d1d5fd8d0` | [#45](https://github.com/beamseree/hana/pull/45) |
 
-The export commit's tested production source is `2f34bfb`; the snapshot commit's tested production source is `f65db15`. Their final commits add evidence only. The validation applies both pinned diffs to the base, with no `git merge` and no PR merge. It preserves the identical Recovery namespace, both harness dispatch/error sets, snapshot-required read/emit visibility and both appended documentation sections. There are no extra production changes.
+The export commit's tested production source is `2f34bfb`; the snapshot commit's tested production source is `57a756a`, including canonical UUID validation. Subsequent feature commits add evidence only. The validation applies both pinned diffs to the base, with no `git merge` and no PR merge. It preserves the identical Recovery namespace, both harness dispatch/error sets, snapshot-required read/emit visibility and both appended documentation sections. There are no extra production changes.
 
 ## Reproduce
 
@@ -37,13 +37,13 @@ No native testing slot was acquired. Exclude `NativeEditingTests`, `MacInteracti
 
 ## Observed result — 2026-10-14
 
-PASS. The dedicated signed journey passed, then all **106 non-native tests in 15 suites** passed in one explicit `--no-parallel` run (15.692 seconds), including the combined journey again. The signed release build and strict signature verification passed. No combined production defects were found; no feature-source fixes or identity changes were needed.
+PASS. After the UUID fix, the signed journey passed within all **107 non-native tests in 15 suites** in one explicit `--no-parallel` run (18.633 seconds). This includes rejection of lowercase note/task IDs and successful ID-specific reads and mutations after reopening a canonical snapshot. The signed release build and strict signature verification passed. No combined production defects were found; no feature-source fixes or identity changes were needed.
 
-- Local, unmerged validation commit: `ccf17183581a3937850fe8425a3cb4f0fc380747` on `codex/issue-22-combined-validation`. This branch was not pushed or merged.
+- Local, unmerged validation commit: `0af0197650323220b71af956da97b960d26059f2` on `codex/issue-22-combined-validation`. This branch was not pushed or merged.
 - Worktree: `/Users/beamsereeyothin/.codex/worktrees/issue-22-combined-validation/hana`, retained for inspection.
 - macOS 26.4.1 (25E253), Apple Swift 6.3.3, GRDB 7.11.1; actual linked SQLite/settings appear in the runtime event of [journey.json](journey.json).
-- Signed binary SHA-256: `efcc69da5a346497b90269938d9004c8dc9442f159ffd1aaab261dae8d04110c`.
-- Combined production source-tree digest: `18de87d2546a24410229c016ac373f68d7e1976d4502c6b7a842523ca6b79d2f` (canonical JSON list of relative paths/file SHA-256 values, including Sources and Package.swift/Package.resolved).
+- Signed binary SHA-256: `cc02dbf318eebea39341ddd54c7f2e6cf18f5582b1a4763fa40e3a0d8cd16c06`.
+- Combined production source-tree digest: `138b4d4eeef624aae785d304e0bee14629deb50810f2a89b2f6bc36e1d6b3494` (SHA-256 of the productionSourceFiles array encoded as JSON with sorted keys and compact separators; includes Sources and Package.swift/Package.resolved).
 
 [Identity manifest](identity.json) records every production source hash and confirms all feature-owned source files equal their pinned feature versions; only the agreed harness overlap is composed. [Check excerpts](check-results.txt) record build and test outcomes. The [raw journey report](journey.json) pins both feature commits, fixture/collection/snapshot identities, subprocess actions/status/runtime events and successful full-record/organized-view/byte comparisons.
 

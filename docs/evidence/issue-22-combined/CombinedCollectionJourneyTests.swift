@@ -73,7 +73,7 @@ struct CombinedCollectionJourneyTests {
         let summary: [String: Any] = [
             "base": "210e9f34de86d751de6eb80a584cc41cde560ee3",
             "exportCommit": "0592aab17803b2f1a0e5978af2f51aa4494a1bd8",
-            "snapshotCommit": "9dc752d07be3496f2c4f65d246a25990c15f3473",
+            "snapshotCommit": "57a756aad05549eb5207a34b00c3b75d1d5fd8d0",
             "binarySHA256": SHA256.hash(data: try Data(contentsOf: Harness.executable)).map { String(format: "%02x", $0) }.joined(),
             "fixtureRoot": parent.path, "collectionID": expected.records.collectionID.uuidString,
             "notes": 7, "tasks": 14, "snapshotID": id,

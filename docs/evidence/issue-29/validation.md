@@ -54,3 +54,13 @@ Reviewed source commit: `f65db15499a7d4b1eb660c3cc726fd1ed236eb79` (subsequent e
 Both snapshot harness tests passed against `build/Hana.app/Contents/MacOS/Hana` using `HANA_EXECUTABLE`, and the [reproducible fixture script](run-fixture.py) generated [the raw signed fixture transcript](signed-fixture.jsonl), including actual linked SQLite identity/effective settings and ordinary fresh-process reopen equality. Run the script with the binary path and a genuinely new fixture parent path. [Check excerpts](check-results.txt) retain failures and passing grouped/signed results. This binary was executed only with `--collection-fixture`.
 
 Final independent verification used explicit `--no-parallel` with the five native exclusions and passed all 97 non-native tests in 12 suites in one run (15.423 seconds). Earlier concurrent failures remain recorded above.
+
+## UUID validation correction — 2026-10-14
+
+A subsequent independent review found one P2: lowercase persisted note/task IDs passed UUID parsing, but Store's case-sensitive lookups bind canonical uppercase UUID strings. Inspection could report a usable snapshot whose listed records could not be edited by ID. Source commit `57a756aad05549eb5207a34b00c3b75d1d5fd8d0` now requires each persisted note/task ID to equal its parsed UUID's `uuidString`. Rejection preserves the snapshot; no normalization or schema migration is performed.
+
+TDD added lowercase note and task cases with valid receipt foreign keys and an updated database checksum. Before the fix both cases failed inspection/list/reopen rejection expectations (eight assertions); afterward all 20 candidate cases pass. A positive regression verifies ID-specific note/task reads, pin/title mutations in a disposable reopened Store and an unchanged original snapshot. All six snapshot test functions pass. [Red/green and verification excerpts](uuid-regression-tests.txt).
+
+Independent verification of this source: signed release build and strict signature checks pass; the complete non-native suite passes **98 tests in 12 suites** with `--no-parallel` and the same five native exclusions. `HANA_EXECUTABLE` points to the rebuilt signed fixture binary; SHA-256 `f72846cec9ed04744494bc528f812359668257e87bf4cc82adaa8e6223f2153e`. This identity supersedes the earlier signed build for the corrected source.
+
+Separate Standards and Spec reviews of `c1bd4ff...57a756a` found no remaining findings and confirmed the P2 resolved. The refreshed [combined AC10 report](../issue-22-combined/README.md) pins this source plus #28 `0592aab` and records **107 non-native tests in 15 suites** passing, including the signed restart/export/snapshot/reopen journey. No native UI, install, personal-store mutation, PR merge or issue closure occurred.

@@ -1,0 +1,28 @@
+uuid-red.log
+Build complete! (3.41s)
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "lowercase-note-id" at CollectionSnapshotTests.swift:91:9: Expectation failed: (inspection.isUsable → true) == ((damage == "valid") → false)
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "lowercase-note-id" at CollectionSnapshotTests.swift:92:9: Expectation failed: try await CollectionRecovery.listSnapshots(in: catalog).filter(\.isUsable).count == (damage == "valid" ? 1 : 0)
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "lowercase-note-id" at CollectionSnapshotTests.swift:94:19: Expectation failed: an error was expected but none was thrown and "Hana.CollectionStore" was returned
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "lowercase-note-id" at CollectionSnapshotTests.swift:97:13: Expectation failed: !((FileManager.default → <NSFileManager: 0x10143ccd0>).fileExists(atPath: fixture.directory.appendingPathComponent("verification").path → "/var/folders/4n/ydpyp2b97mb8zn_7v0xpyd4r0000gn/T/hana-collection-tests-34F21025-6D00-4D6C-8408-F49875DEB97C/verification") → true)
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "lowercase-task-id" at CollectionSnapshotTests.swift:91:9: Expectation failed: (inspection.isUsable → true) == ((damage == "valid") → false)
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "lowercase-task-id" at CollectionSnapshotTests.swift:92:9: Expectation failed: try await CollectionRecovery.listSnapshots(in: catalog).filter(\.isUsable).count == (damage == "valid" ? 1 : 0)
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "lowercase-task-id" at CollectionSnapshotTests.swift:94:19: Expectation failed: an error was expected but none was thrown and "Hana.CollectionStore" was returned
+􀢄  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) recorded an issue with 1 argument damage → "lowercase-task-id" at CollectionSnapshotTests.swift:97:13: Expectation failed: !((FileManager.default → <NSFileManager: 0x10143ccd0>).fileExists(atPath: fixture.directory.appendingPathComponent("verification").path → "/var/folders/4n/ydpyp2b97mb8zn_7v0xpyd4r0000gn/T/hana-collection-tests-A9252F95-A387-41A6-89A2-642088F35851/verification") → true)
+􀢄  Test run with 1 test in 1 suite failed after 0.962 seconds with 8 issues.
+
+uuid-green.log
+Build complete! (3.40s)
+􁁛  Test run with 1 test in 1 suite passed after 0.891 seconds.
+
+uuid-snapshot-tests.log
+Build complete! (2.32s)
+􁁛  Test run with 6 tests in 1 suite passed after 1.570 seconds.
+
+uuid-release-build.log
+Build complete! (13.14s)
+/Users/beamsereeyothin/.codex/worktrees/bf24/hana/build/Hana.app: valid on disk
+/Users/beamsereeyothin/.codex/worktrees/bf24/hana/build/Hana.app: satisfies its Designated Requirement
+
+uuid-non-native-tests.log
+Build complete! (0.90s)
+􁁛  Test run with 98 tests in 12 suites passed after 16.781 seconds.

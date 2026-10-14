@@ -1,13 +1,9 @@
-release-build.log
-Build complete! (52.15s)
+uuid-release-build.log
+Build complete! (13.16s)
 /Users/beamsereeyothin/.codex/worktrees/issue-22-combined-validation/hana/build/Hana.app: valid on disk
 /Users/beamsereeyothin/.codex/worktrees/issue-22-combined-validation/hana/build/Hana.app: satisfies its Designated Requirement
 
-combined-journey.log
-Build complete! (23.73s)
-􁁛  Test run with 1 test in 1 suite passed after 0.900 seconds.
-
-combined-non-native-regression.log
-Build complete! (0.88s)
-􁁛  Test run with 106 tests in 15 suites passed after 15.692 seconds.
-
+uuid-combined-tests.log
+Build complete! (5.45s)
+􁁛  Suite CombinedCollectionJourneyTests passed after 0.272 seconds.
+􁁛  Test run with 107 tests in 15 suites passed after 18.633 seconds.
