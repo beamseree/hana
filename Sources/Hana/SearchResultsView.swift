@@ -6,6 +6,9 @@ struct SearchResultsView: View {
     var status: String?
     /// Values only: the view owns no cache and does no filesystem work.
     var icons: [SearchResult.ID: ResultIcon] = [:]
+    var scrollResetID: UUID?
+    var followsFirstResult = true
+    var scrollOffsetChanged: (CGFloat) -> Void = { _ in }
     var select: (SearchResult.ID) -> Void = { _ in }
     var rowAppeared: (SearchResult.ID) -> Void = { _ in }
 
@@ -41,11 +44,19 @@ struct SearchResultsView: View {
                     .scrollIndicators(.never)
                     .onScrollGeometryChange(for: ScrollMetrics.self) {
                         ScrollMetrics(offset: $0.contentOffset.y, content: $0.contentSize.height, visible: $0.containerSize.height)
-                    } action: { _, metrics in scroll = metrics }
+                    } action: { _, metrics in
+                        scroll = metrics
+                        scrollOffsetChanged(metrics.offset)
+                    }
                     .overlay(alignment: .topTrailing) { scrollThumb }
                     .frame(height: CGFloat(min(results.count, Self.maxVisibleRows)) * Self.rowHeight)
-                    .onChange(of: selectedID) { _, id in if let id { proxy.scrollTo(id) } }
+                    .onChange(of: selectedID) { _, id in
+                        if let id { proxy.scrollTo(id, anchor: followsFirstResult ? .top : nil) }
+                    }
                 }
+                // Recreate the scroll position on every edit, including edits
+                // whose first result has the same ID as before.
+                .id(scrollResetID)
             }
             if let status {
                 Text(status).font(.system(size: 12)).foregroundStyle(Color(nsColor: BarStyle.secondaryColor))

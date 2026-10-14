@@ -7,6 +7,122 @@ import Testing
 @Suite(.serialized)
 @MainActor
 struct MacInteractionTests {
+    @Test func editsSynchronouslySelectOnlyRecheckedMatches() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let destination = app("Notes", "/fixture/Notes.app")
+        interaction.updateQuery("Note")
+        await apps.send([destination])
+        try await eventually { interaction.selectedResult?.id == destination.id }
+        interaction.updateQuery("Notes")
+        #expect(interaction.selectedResult?.id == destination.id)
+        interaction.updateQuery("unrelated")
+        #expect(interaction.results.isEmpty)
+        interaction.moveSelection(by: 1)
+        #expect(interaction.selectedResult == nil)
+        #expect(interaction.requestSelectedOpen() == nil)
+    }
+
+    @Test func editingDuringAFinishedShrinkHoldsTheCurrentHeightWhileLoading() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let values = (1...7).map { app("Notes \($0)", "/fixture/\($0).app") }
+        interaction.updateQuery("N")
+        await apps.send(values)
+        try await eventually { interaction.contentHeight == 468 }
+        await apps.send([values[0]])
+        try await eventually { interaction.results.count == 1 }
+        let heightAtEdit = interaction.contentHeight
+        interaction.updateQuery("No")
+        try await Task.sleep(for: .milliseconds(180))
+        #expect(interaction.contentHeight >= heightAtEdit)
+    }
+
+    @Test func selectionFollowsBetterMatchesAndEveryEditResetsNavigationAndScroll() async throws {
+        _ = NSApplication.shared
+        let feed = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let values = (10...21).map { app("App \($0)", "/fixture/\($0).app") }
+        let best = app("App", "/fixture/best.app")
+        interaction.updateQuery("App")
+        await feed.send(values)
+        try await eventually { interaction.selectedResult?.id == values[0].id }
+        await feed.send(values + [best])
+        try await eventually { interaction.selectedResult?.id == best.id }
+        interaction.moveSelection(by: 12)
+        try await eventually { interaction.resultsScrollOffset > 0 }
+        let chosen = interaction.selectedResult?.id
+        await feed.send(Array(values.dropFirst()) + [best])
+        try await eventually { interaction.results.count == 12 }
+        #expect(interaction.selectedResult?.id == chosen)
+        interaction.updateQuery("App ")
+        try await eventually { interaction.selectedResult?.id == best.id && interaction.resultsScrollOffset == 0 }
+        // Another edit resets even when the selected result's ID is unchanged.
+        interaction.updateQuery("App")
+        try await eventually { feed.subscriptionCount == 3 }
+        #expect(interaction.selectedResult?.id == best.id)
+        #expect(interaction.resultsScrollOffset == 0)
+    }
+
+    @Test func loadingUsesNoStatusRowAndNoResultsWaitsForBothSources() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        interaction.updateQuery("nothing")
+        #expect(interaction.isLoading)
+        #expect(interaction.statusMessage == nil)
+        await apps.send([])
+        try await eventually { files.subscriptionCount == 1 }
+        try await Task.sleep(for: .milliseconds(180))
+        #expect(interaction.statusMessage == nil)
+        #expect(interaction.contentHeight == 68)
+        await files.send([])
+        try await eventually { interaction.statusMessage?.hasPrefix("No matches") == true }
+        #expect(!interaction.isLoading)
+        #expect(interaction.results.isEmpty)
+    }
+
+    @Test(arguments: [SourceStatus.ready, .partial, .failed])
+    func typingKeepsHeightUntilBothSourcesFinishAndClearingCollapses(finishedStatus: SourceStatus) async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, debounce: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let values = (1...7).map { app("Notes \($0)", "/fixture/\($0).app") }
+        interaction.updateQuery("N")
+        await apps.send(values)
+        try await eventually { interaction.results.count == 7 && interaction.contentHeight >= 468 }
+        let expanded = interaction.contentHeight
+        for (index, query) in ["No", "Not", "Note", "Notes"].enumerated() {
+            interaction.updateQuery(query)
+            #expect(interaction.results == values)
+            try await eventually { apps.subscriptionCount == index + 2 && files.subscriptionCount == index + 2 }
+            await apps.send(values, status: .loading)
+            try await Task.sleep(for: .milliseconds(180)) // Let any incorrect shrink animation finish.
+            #expect(interaction.contentHeight == expanded)
+        }
+        await apps.send([values[0]], status: .ready)
+        try await eventually { interaction.results.count == 1 }
+        try await Task.sleep(for: .milliseconds(180))
+        #expect(interaction.contentHeight == expanded) // Files still loading.
+        await files.send([], status: finishedStatus)
+        let finishedHeight: CGFloat = finishedStatus == .ready ? 132 : 176
+        try await eventually { interaction.contentHeight == finishedHeight }
+        interaction.updateQuery("")
+        try await eventually { interaction.contentHeight == 68 && interaction.results.isEmpty }
+    }
+
     @Test func reinvocationKeepsTheCurrentSession() {
         _ = NSApplication.shared
         let interaction = MacInteraction()
@@ -97,7 +213,7 @@ struct DestinationInteractionTests {
         #expect(interaction.currentInvocation == nil)
     }
 
-    @Test func navigatedFileSurvivesNewExactBatchAndRemovalRequiresExplicitSelection() async throws {
+    @Test func navigatedFileSurvivesNewExactBatchAndRemovalReturnsToFirstRow() async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
         let a = app("Note A", "/Applications/A.app")
@@ -118,12 +234,11 @@ struct DestinationInteractionTests {
         #expect(interaction.selectedResult?.id == chosen.id)
         await files.send([])
         try await eventually { interaction.results.count == 2 }
-        #expect(interaction.selectedResult == nil)
-        #expect(interaction.requestSelectedOpen() == nil)
+        #expect(interaction.selectedResult?.id == exact.id)
         await files.send([chosen])
         try await eventually { interaction.results.count == 3 }
-        #expect(interaction.selectedResult == nil)
-        interaction.moveSelection(by: -1)
+        #expect(interaction.selectedResult?.id == exact.id)
+        interaction.moveSelection(by: 2)
         await interaction.requestSelectedOpen()?.value
         #expect(opened == [chosen.url])
         #expect(interaction.currentInvocation != invocation)
@@ -222,6 +337,7 @@ struct DestinationInteractionTests {
         interaction.updateQuery("Notes")
         await files.send([file])
         try await eventually { interaction.selectedResult?.id == file.id }
+        interaction.moveSelection(by: 1)
         await apps.send([app("Notes", "/Applications/Notes.app")])
         try await eventually { interaction.results.count == 2 }
         #expect(interaction.selectedResult?.id == file.id)
@@ -381,7 +497,7 @@ struct DestinationInteractionTests {
         #expect(interaction.selectedResult == nil)
     }
 
-    @Test func selectionTracksIdentityAndVanishingNeverOpensANeighbor() async throws {
+    @Test func selectionTracksIdentityAndVanishingReturnsToFollowingTheTop() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
         let search = Search(source: { feed.stream() }, debounce: .zero)
@@ -400,12 +516,13 @@ struct DestinationInteractionTests {
         #expect(interaction.selectedResult?.id == b.id)
         await feed.send([a])
         try await eventually { interaction.results.first?.id == a.id }
-        #expect(interaction.selectedResult == nil)
+        #expect(interaction.selectedResult?.id == a.id)
+        let best = app("App", "/Applications/Best.app")
+        await feed.send([a, best])
+        try await eventually { interaction.results.first?.id == best.id }
+        #expect(interaction.selectedResult?.id == best.id)
         await interaction.requestSelectedOpen()?.value
-        #expect(opened.isEmpty)
-        interaction.moveSelection(by: 1)
-        await interaction.requestSelectedOpen()?.value
-        #expect(opened == [a.url])
+        #expect(opened == [best.url])
         #expect(interaction.currentInvocation == nil)
     }
 }

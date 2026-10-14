@@ -28,6 +28,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private let editor = SearchEditor(frame: .zero)
     /// Shows the current mode: the Hana logo for empty Search, a magnifying glass once it has a query.
     private let modeIcon = ModeIconView(frame: BarStyle.modeIconFrame)
+    private let loadingIndicator = NSProgressIndicator()
     private let search: Search
     private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
     private let openFile: @MainActor (URL) async throws -> OpenedApplication
@@ -39,14 +40,19 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var searchTask: Task<Void, Never>?
     private var request: Search.Request?
     private var selectedID: SearchResult.ID?
-    private var didSelectInitialResult = false
+    private var userMovedSelection = false
     private var resultSurface: NSHostingView<SearchResultsView>?
     private var resizeTarget: NSRect?
+    private var retainedContentHeight: CGFloat = 0
     private var sourceStatus: SourceStatus = .ready
     private var pendingLaunch: UUID?
     private(set) var results: [SearchResult] = []
     private(set) var openFailure: String?
     var query: String { editor.string }
+    var contentHeight: CGFloat { panel.contentView?.bounds.height ?? 0 }
+    private(set) var resultsScrollOffset: CGFloat = 0
+    var statusMessage: String? { resultSurface?.rootView.status }
+    var isLoading: Bool { !loadingIndicator.isHidden }
     var modeIconShowsQuery: Bool { modeIcon.showsQuery }
     var selectedResult: SearchResult? { results.first { $0.id == selectedID } }
     private let diagnostics: Diagnostics
@@ -305,7 +311,16 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         modeIcon.autoresizingMask = [.minYMargin]
         card.addSubview(modeIcon)
 
-        let scroll = NSScrollView(frame: NSRect(x: BarStyle.textInset, y: 10, width: card.frame.width - BarStyle.textInset - 16, height: 40))
+        loadingIndicator.frame = NSRect(x: card.frame.width - 32, y: 22, width: 16, height: 16)
+        loadingIndicator.autoresizingMask = [.minXMargin, .minYMargin]
+        loadingIndicator.style = .spinning
+        loadingIndicator.controlSize = .small
+        loadingIndicator.isDisplayedWhenStopped = false
+        loadingIndicator.isHidden = true
+        loadingIndicator.setAccessibilityLabel("Searching")
+        card.addSubview(loadingIndicator)
+
+        let scroll = NSScrollView(frame: NSRect(x: BarStyle.textInset, y: 10, width: card.frame.width - BarStyle.textInset - 44, height: 40))
         scroll.autoresizingMask = [.width, .minYMargin]
         scroll.drawsBackground = false
         scroll.hasHorizontalScroller = false
@@ -527,28 +542,30 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         pendingLaunch = nil
         let request = Search.Request(text: text)
         self.request = request
-        results = []
-        selectedID = nil
-        didSelectInitialResult = false
+        userMovedSelection = false
         openFailure = nil
-        sourceStatus = text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .ready : .loading
-        fileStatus = sourceStatus
+        let stream = search.search(request)
+        results = stream.initial.results
+        selectedID = results.first?.id
+        icons = icons.filter { id, _ in results.contains { $0.id == id } }
+        sourceStatus = stream.initial.appStatus
+        fileStatus = stream.initial.fileStatus
+        // Interrupt a preceding finished batch's shrink at the actual current
+        // height; holding its smaller target would keep shrinking during typing.
+        retainedContentHeight = max(retainedContentHeight, contentHeight - BarStyle.collapsedHeight - BarStyle.cardPadding)
         renderResults()
         let started = ProcessInfo.processInfo.systemUptime
-        let stream = search.search(request)
         searchTask = Task { [weak self] in
-            for await batch in stream {
+            for await batch in stream.updates {
                 guard let self, self.request?.generation == batch.generation,
                       self.currentInvocation != nil, !Task.isCancelled else { continue }
                 self.results = batch.results
                 self.icons = self.icons.filter { id, _ in batch.results.contains { $0.id == id } }
                 self.sourceStatus = batch.appStatus
                 self.fileStatus = batch.fileStatus
-                if let selectedID = self.selectedID, !batch.results.contains(where: { $0.id == selectedID }) {
-                    self.selectedID = nil
-                } else if !self.didSelectInitialResult, let first = batch.results.first {
-                    self.selectedID = first.id
-                    self.didSelectInitialResult = true
+                if !self.userMovedSelection || !batch.results.contains(where: { $0.id == self.selectedID }) {
+                    self.selectedID = batch.results.first?.id
+                    self.userMovedSelection = false
                 }
                 self.renderResults()
                 self.record("search.batch", extra: ["resultCount": batch.results.count, "appStatus": batch.appStatus.rawValue, "fileStatus": batch.fileStatus.rawValue,
@@ -564,7 +581,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let index = selectedID.flatMap { id in results.firstIndex { $0.id == id } }
         let next = index.map { min(results.count - 1, max(0, $0 + offset)) } ?? (offset < 0 ? results.count - 1 : 0)
         selectedID = results[next].id
-        didSelectInitialResult = true
+        userMovedSelection = true
         renderResults()
         record("search.selection", extra: ["index": next])
     }
@@ -705,17 +722,23 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     private func renderResults() {
         let hasQuery = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let loading = hasQuery && (sourceStatus == .loading || fileStatus == .loading)
+        loadingIndicator.isHidden = !loading
+        if loading { loadingIndicator.startAnimation(nil) } else { loadingIndicator.stopAnimation(nil) }
         let status: String?
         if !hasQuery { status = nil }
         else if let openFailure { status = openFailure }
         else if pendingLaunch != nil { status = "Opening selected destination…" }
         else if sourceStatus == .failed || fileStatus == .failed { status = "A search source reported a failure. Available results are shown; retry the search." }
-        else if sourceStatus == .loading || fileStatus == .loading { status = results.isEmpty ? "Searching apps and indexed filenames…" : "Partial results — still searching indexed filenames…" }
-        else if fileStatus == .partial { status = "Partial indexed results — refine your query for more specific matches." }
+        else if sourceStatus == .partial || fileStatus == .partial { status = "Partial search results — refine your query for more specific matches." }
+        else if loading { status = nil }
         else { status = results.isEmpty ? "No matches returned. Indexing and access can limit results." : nil }
         // Results extend the card downward below the input row, so the input
         // position never moves while expanding.
-        let content = hasQuery ? SearchResultsView.height(rowCount: results.count, hasStatus: status != nil) : 0
+        let needed = hasQuery ? SearchResultsView.height(rowCount: results.count, hasStatus: status != nil) : 0
+        let finished = sourceStatus != .loading && fileStatus != .loading
+        retainedContentHeight = !hasQuery || finished ? needed : max(retainedContentHeight, needed)
+        let content = retainedContentHeight
         let frame = currentPlacement?.frame(
             height: BarStyle.collapsedHeight + (content > 0 ? BarStyle.cardPadding + content : 0)) ?? panel.frame
         setPanelFrame(frame, animated: true)
@@ -732,10 +755,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             resultSurface.isHidden = content == 0
         }
         resultSurface?.rootView = SearchResultsView(results: results, selectedID: selectedID, status: status, icons: icons,
+            scrollResetID: request?.generation, followsFirstResult: !userMovedSelection,
+            scrollOffsetChanged: { [weak self] in self?.resultsScrollOffset = $0 },
             select: { [weak self] id in
                 guard let self, self.results.contains(where: { $0.id == id }) else { return }
                 self.selectedID = id
-                self.didSelectInitialResult = true
+                self.userMovedSelection = true
                 self.renderResults()
                 self.panel.makeFirstResponder(self.editor)
             }, rowAppeared: { [weak self] id in self?.requestIcon(id) })
