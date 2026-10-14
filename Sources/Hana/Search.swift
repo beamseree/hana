@@ -267,14 +267,16 @@ final class Search {
     private nonisolated static let retainedLibraryFolders: Set<String> = ["mobile documents", "cloudstorage"]
     private nonisolated static let userLibrary = FileManager.default.homeDirectoryForCurrentUser
         .appendingPathComponent("Library").standardizedFileURL.pathComponents.map { $0.lowercased() }
-    private nonisolated static let applicationRoots = ApplicationCatalog.conventionalRoots
+    /// Finder lives outside the catalog's roots; only the index supplies it.
+    private nonisolated static let applicationRoots = (ApplicationCatalog.conventionalRoots
+        + [URL(fileURLWithPath: "/System/Library/CoreServices/Finder.app")])
         .map { $0.standardizedFileURL.pathComponents.map { $0.lowercased() } }
 
     /// Shared eligibility for indexed results, applied before any candidate
     /// limit: also omit dependency and build folders, `/System`, `/Library`
     /// and `~/Library`. iCloud Drive and file-provider storage under
     /// `~/Library` stay searchable apart from their dependency folders.
-    /// Applications in the catalog's conventional roots are never removed.
+    /// Applications in the catalog's conventional roots, and Finder, are never removed.
     nonisolated static func indexedEligible(_ url: URL, kind: SearchResult.Kind) -> Bool {
         guard eligible(url) else { return false }
         let components = url.standardizedFileURL.pathComponents.map { $0.lowercased() }

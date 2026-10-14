@@ -50,6 +50,12 @@ struct SearchExclusionTests {
         #expect(Set(found.map(\.url.path)) == Set([terminal, textEdit, viewer].map(\.url.path)))
     }
 
+    @Test func finderRemainsSearchableAlthoughOutsideTheCatalogRoots() async {
+        let finder = app("Finder", "/System/Library/CoreServices/Finder.app")
+        let neighbour = app("Finder Helper", "/System/Library/CoreServices/Finder Helper.app")
+        #expect(await results([finder, neighbour], query: "finder") == [finder])
+    }
+
     @Test func excludedCandidatesDoNotTakeShortlistPlaces() async {
         // Exact matches outrank the eligible prefix matches; there are more of
         // them than the visible limit and the Spotlight adapter's shortlist.
@@ -89,6 +95,18 @@ struct SearchExclusionTests {
                 && ApplicationCatalog.conventionalRoots.contains { path.hasPrefix($0.standardizedFileURL.path + "/") }
             #expect(!path.hasPrefix("/System/") || catalogApplication, "\(path)")
         }
+    }
+
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["HANA_LIVE_INDEX"] != nil))
+    func liveIndexedFinderQueryReturnsFinder() async {
+        let finder = URL(fileURLWithPath: "/System/Library/CoreServices/Finder.app")
+        let search = Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true, debounce: .zero)
+        var found = false
+        for await batch in search.search(.init(text: "Finder")) {
+            if batch.results.contains(where: { $0.id.destination == finder.standardizedFileURL }) { found = true; break }
+            if batch.appStatus != .loading, batch.fileStatus != .loading { break }
+        }
+        #expect(found)
     }
 
     private func indexed(_ path: String, kind: SearchResult.Kind = .file) -> SearchResult {
