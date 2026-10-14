@@ -30,11 +30,11 @@ Ordinary backup/reopen and controlled error handling only. No crash/power-loss r
 
 The coordinator withheld native test slots. `NativeEditingTests`, `MacInteractionTests`, `DestinationInteractionTests`, `ResultIconInteractionTests`, and opt-in `SearchResponsivenessTests` are excluded. Report the remaining checks as a non-native regression suite, never a full-suite pass. No app/native wiring changed.
 
-Combined AC10 export + snapshot journey is coordinated separately after both feature commits are available; it is not claimed complete by these snapshot-only tests.
+The snapshot-only tests do not establish combined AC10. The later isolated composition with #28 completed the [combined AC10 journey](../issue-22-combined/README.md), with both reviewed feature identities pinned and no production changes imported into this branch.
 
 ## Review and regression result
 
-Review of `b08b41e` against the pinned base used separate Standards and Spec agents. Standards found no hard violations and suggested safer test preconditions, a mutually exclusive inspection result and a cleanup helper. The first two were applied and rechecked; the two different Store acquisition lifetimes keep explicit close/error handling. No outstanding Standards findings. Spec found no implementation defects or scope creep; combined AC10 remains pending.
+Review of `b08b41e` against the pinned base used separate Standards and Spec agents. Standards found no hard violations and suggested safer test preconditions, a mutually exclusive inspection result and a cleanup helper. The first two were applied and rechecked; the two different Store acquisition lifetimes keep explicit close/error handling. No outstanding Standards findings. Spec found no implementation defects or scope creep; combined AC10 was pending at independent review and subsequently passed in the isolated validation state.
 
 The first broad non-native run (97 tests/12 suites) failed five assertions in three existing tests: Accessibility deadline/fallback and two `alreadyOwned` close/reopen failures. All three passed a focused rerun. A second broad run passed the Store checks but again exceeded the Accessibility test's one-second deadline. This is retained as observed timing sensitivity, not silently discarded or attributed to a proven cause.
 
@@ -45,10 +45,12 @@ xcrun swift test --skip 'NativeEditingTests|MacInteractionTests|DestinationInter
 xcrun swift test --filter DisplayPlacementTests
 ```
 
-These are 97 non-native tests with the native exclusions above; the broad single-run result is not clean. No unrelated deadline/Store lifetime implementation was changed for this ticket.
+These are 97 non-native tests with the native exclusions above; the earlier broad concurrent results were not clean. No unrelated deadline/Store lifetime implementation was changed for this ticket.
 
 ## Signed fixture identity
 
 Reviewed source commit: `f65db15499a7d4b1eb660c3cc726fd1ed236eb79` (subsequent evidence-only commits do not change code). macOS 26.4.1 (25E253), Apple Swift 6.3.3, GRDB 7.11.1. `./scripts/build` passed release compilation, Info.plist lint and strict ad-hoc signature verification. Bundle identifier `com.beamseree.hana`; no TeamIdentifier. Worktree-local binary SHA-256: `5ed5a698d0887b5ed907a1eba45b8f276011c2c783229102209663fab63c3409`.
 
 Both snapshot harness tests passed against `build/Hana.app/Contents/MacOS/Hana` using `HANA_EXECUTABLE`, and the [reproducible fixture script](run-fixture.py) generated [the raw signed fixture transcript](signed-fixture.jsonl), including actual linked SQLite identity/effective settings and ordinary fresh-process reopen equality. Run the script with the binary path and a genuinely new fixture parent path. [Check excerpts](check-results.txt) retain failures and passing grouped/signed results. This binary was executed only with `--collection-fixture`.
+
+Final independent verification used explicit `--no-parallel` with the five native exclusions and passed all 97 non-native tests in 12 suites in one run (15.423 seconds). Earlier concurrent failures remain recorded above.
