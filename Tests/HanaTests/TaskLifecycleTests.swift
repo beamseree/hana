@@ -337,16 +337,6 @@ extension TaskLifecycleTests {
 }
 
 extension TaskLifecycleTests {
-    /// Sets order keys directly while no Store owns the root: the only way to
-    /// reach the edge of the key space without 2^63 insertions.
-    private func setOrderKeys(_ keys: [UUID: Int64], in fixture: TemporaryFixture) throws {
-        let queue = try DatabaseQueue(path: fixture.location.databaseURL.path)
-        try queue.write { db in
-            for (id, key) in keys { try db.execute(sql: "UPDATE task SET order_key = ? WHERE id = ?", arguments: [key, id.uuidString]) }
-        }
-        try queue.close()
-    }
-
     @Test func topInsertionAtTheEndOfTheKeySpaceRenumbersAtomicallyAndKeepsOrderAndTies() async throws {
         let fixture = try TemporaryFixture()
         let clock = FixedClock(Self.start)
@@ -358,8 +348,8 @@ extension TaskLifecycleTests {
         await store.close()
         // Two tasks tie on the lowest possible key; ID breaks the tie.
         let (tiedLow, tiedHigh) = inbox[0].id.uuidString < inbox[1].id.uuidString ? (inbox[0], inbox[1]) : (inbox[1], inbox[0])
-        try setOrderKeys([tiedLow.id: .min, tiedHigh.id: .min, inbox[2].id: .min + 1, inbox[3].id: .max,
-                          todayTask.id: .min], in: fixture)
+        try fixture.setOrderKeys([tiedLow.id: .min, tiedHigh.id: .min, inbox[2].id: .min + 1, inbox[3].id: .max,
+                                  todayTask.id: .min])
         let expectedOrder = [tiedLow.id, tiedHigh.id, inbox[2].id, inbox[3].id]
 
         let inject = Switch(), violate = Switch()

@@ -1,4 +1,5 @@
 import Foundation
+import GRDB
 import Testing
 @testable import Hana
 
@@ -207,6 +208,16 @@ struct TemporaryFixture {
             .appendingPathComponent("hana-collection-tests-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: false)
         location = try CollectionLocation.createFixtureRoot(at: directory.appendingPathComponent("root"))
+    }
+
+    /// Sets task order keys directly while no Store owns the root: the only
+    /// way to reach the edge of the key space without 2^63 insertions.
+    func setOrderKeys(_ keys: [UUID: Int64]) throws {
+        let queue = try DatabaseQueue(path: location.databaseURL.path)
+        try queue.write { db in
+            for (id, key) in keys { try db.execute(sql: "UPDATE task SET order_key = ? WHERE id = ?", arguments: [key, id.uuidString]) }
+        }
+        try queue.close()
     }
 }
 

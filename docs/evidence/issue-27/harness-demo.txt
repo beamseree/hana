@@ -1,0 +1,38 @@
+# source: 700319f1c9b815f9e24f27c3c090e73d6717f0eb (clean tree); signed build/Hana.app; every command is a fresh process; <root> is a disposable fixture root
+$ Hana --collection-fixture create-root <root>
+{"event":"fixture.root-created"}
+# exit 0
+# stdin: 'Task A'
+# stdin: 'Task B'
+# stdin: 'Task C'
+# stdin: 'Task D'
+# (four create-task outputs omitted)
+# stdin: 'Today task'
+$ Hana --collection-fixture create-task <root> --operation C69C6535-8E0A-47CF-8735-2171159958E5 --placement today
+{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264745,"createdAt":1791945264745,"event":"task.created","id":"B84A3549-6249-4CCB-8143-2D382E473587","observedAfter":1,"observedBefore":0,"orderKey":0,"placement":"today","revision":1,"titleBytes":10,"titleSHA256":"7a7a77473bc1be6dd59f640ab7d5a120e7efb54b29262aaab69fd8edfbd82df1","updatedAt":1791945264745}
+# exit 0
+# Inbox top first: D C B A = EDAFF466-CF59-4C16-BA7F-6873668E0DEE,248C340D-1880-4A30-A9B9-3F03FE0C5088,36E3DA51-90AF-4110-839E-7CF5F0283F36,CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26
+# move D below B: the list is renumbered (created keys are consecutive)
+$ Hana --collection-fixture reorder-task <root> --id EDAFF466-CF59-4C16-BA7F-6873668E0DEE --in inbox --after 36E3DA51-90AF-4110-839E-7CF5F0283F36 --expected EDAFF466-CF59-4C16-BA7F-6873668E0DEE,248C340D-1880-4A30-A9B9-3F03FE0C5088,36E3DA51-90AF-4110-839E-7CF5F0283F36,CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26
+{"count":4,"event":"tasks.reordered","movedID":"EDAFF466-CF59-4C16-BA7F-6873668E0DEE","observedAfter":["248C340D-1880-4A30-A9B9-3F03FE0C5088","36E3DA51-90AF-4110-839E-7CF5F0283F36","EDAFF466-CF59-4C16-BA7F-6873668E0DEE","CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26"],"observedBefore":["EDAFF466-CF59-4C16-BA7F-6873668E0DEE","248C340D-1880-4A30-A9B9-3F03FE0C5088","36E3DA51-90AF-4110-839E-7CF5F0283F36","CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26"],"revision":2,"tasks":[{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264692,"createdAt":1791945264692,"id":"248C340D-1880-4A30-A9B9-3F03FE0C5088","orderKey":0,"placement":"inbox","revision":1,"titleBytes":6,"titleSHA256":"2ee70e036403e156400387f392a823156f40aafc004a918530f43c75d5ad0cc4","updatedAt":1791945264692},{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264666,"createdAt":1791945264666,"id":"36E3DA51-90AF-4110-839E-7CF5F0283F36","orderKey":1,"placement":"inbox","revision":1,"titleBytes":6,"titleSHA256":"a5c7a70cfcff308376cf6f0475b97c4bb668e5f2d2845020ec6f1fb10f34cfc9","updatedAt":1791945264666},{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264719,"createdAt":1791945264719,"id":"EDAFF466-CF59-4C16-BA7F-6873668E0DEE","orderKey":2,"placement":"inbox","revision":2,"titleBytes":6,"titleSHA256":"1348edbf7ee7226ecaba5bcde93897f5603965dae69e7b0a10b47147dc4eb9d8","updatedAt":1791945264812},{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264639,"createdAt":1791945264639,"id":"CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26","orderKey":3,"placement":"inbox","revision":1,"titleBytes":6,"titleSHA256":"cce1e926d3c40c9962f349c1b85fb22bfde95043f8f7a1330bd700beffeac8ae","updatedAt":1791945264639}]}
+# exit 0
+# a reorder from the old view is refused, nothing changes
+$ Hana --collection-fixture reorder-task <root> --id CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26 --in inbox --expected EDAFF466-CF59-4C16-BA7F-6873668E0DEE,248C340D-1880-4A30-A9B9-3F03FE0C5088,36E3DA51-90AF-4110-839E-7CF5F0283F36,CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26
+{"error":"staleList","event":"error"}
+# exit 1
+# a new task goes above the manual order
+# stdin: 'Task E'
+$ Hana --collection-fixture create-task <root> --operation 61DF7E48-E0AF-4FD2-A13A-38D01F9FAD21
+{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264889,"createdAt":1791945264889,"event":"task.created","id":"A0E93448-7A57-452F-9D1C-8BA56A1CE40B","observedAfter":5,"observedBefore":4,"orderKey":-1,"placement":"inbox","revision":1,"titleBytes":6,"titleSHA256":"12924a03e7884aff4dcf1a4aeef205246a653a6b1cde7fc562290c4418e45c2a","updatedAt":1791945264889}
+# exit 0
+# the view from before that insertion is now stale too
+$ Hana --collection-fixture reorder-task <root> --id CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26 --in inbox --expected 248C340D-1880-4A30-A9B9-3F03FE0C5088,36E3DA51-90AF-4110-839E-7CF5F0283F36,EDAFF466-CF59-4C16-BA7F-6873668E0DEE,CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26
+{"error":"staleList","event":"error"}
+# exit 1
+# restart: fresh-process reads; Today untouched
+$ Hana --collection-fixture read <root> --query inbox
+{"count":5,"event":"tasks","tasks":[{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264889,"createdAt":1791945264889,"id":"A0E93448-7A57-452F-9D1C-8BA56A1CE40B","orderKey":-1,"placement":"inbox","revision":1,"titleBytes":6,"titleSHA256":"12924a03e7884aff4dcf1a4aeef205246a653a6b1cde7fc562290c4418e45c2a","updatedAt":1791945264889},{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264692,"createdAt":1791945264692,"id":"248C340D-1880-4A30-A9B9-3F03FE0C5088","orderKey":0,"placement":"inbox","revision":1,"titleBytes":6,"titleSHA256":"2ee70e036403e156400387f392a823156f40aafc004a918530f43c75d5ad0cc4","updatedAt":1791945264692},{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264666,"createdAt":1791945264666,"id":"36E3DA51-90AF-4110-839E-7CF5F0283F36","orderKey":1,"placement":"inbox","revision":1,"titleBytes":6,"titleSHA256":"a5c7a70cfcff308376cf6f0475b97c4bb668e5f2d2845020ec6f1fb10f34cfc9","updatedAt":1791945264666},{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264719,"createdAt":1791945264719,"id":"EDAFF466-CF59-4C16-BA7F-6873668E0DEE","orderKey":2,"placement":"inbox","revision":2,"titleBytes":6,"titleSHA256":"1348edbf7ee7226ecaba5bcde93897f5603965dae69e7b0a10b47147dc4eb9d8","updatedAt":1791945264812},{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264639,"createdAt":1791945264639,"id":"CD2DD6D3-68B1-447D-9F7D-AA6DC3179C26","orderKey":3,"placement":"inbox","revision":1,"titleBytes":6,"titleSHA256":"cce1e926d3c40c9962f349c1b85fb22bfde95043f8f7a1330bd700beffeac8ae","updatedAt":1791945264639}]}
+# exit 0
+$ Hana --collection-fixture read <root> --query today
+{"count":1,"event":"tasks","tasks":[{"archivedAt":null,"completedAt":null,"contentEditedAt":1791945264745,"createdAt":1791945264745,"id":"B84A3549-6249-4CCB-8143-2D382E473587","orderKey":0,"placement":"today","revision":1,"titleBytes":10,"titleSHA256":"7a7a77473bc1be6dd59f640ab7d5a120e7efb54b29262aaab69fd8edfbd82df1","updatedAt":1791945264745}]}
+# exit 0

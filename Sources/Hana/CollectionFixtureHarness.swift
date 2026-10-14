@@ -23,6 +23,9 @@ import Foundation
 ///   title with standard input while observing the task.
 /// - `move-task <root> --id <uuid> --revision <n> --to inbox|today [--pause …] [--fail …]`
 /// - `complete-task|reopen-task|archive-task|restore-task <root> --id <uuid> --revision <n> [--pause …] [--fail …]`
+/// - `reorder-task <root> --id <uuid> --in inbox|today [--after <uuid>] --expected <uuid,uuid,…> [--pause …] [--fail …]`:
+///   move the task below `--after` (top when absent), given the list as last
+///   seen, while observing the list until its committed order appears.
 /// - `read <root> [--query notes|archive|all|search|search-archived|inbox|today|completed|archived-tasks|task-search|task-search-all]`:
 ///   summarize active Notes (default), note Archive, every record (notes and
 ///   tasks), the note Search projection, a task view, or the task Search
@@ -76,6 +79,8 @@ enum CollectionFixtureHarness {
                 try await changeTask(at: root, options) { .archiveTask($0, expectedRevision: $1) }
             case "restore-task":
                 try await changeTask(at: root, options) { .restoreTask($0, expectedRevision: $1) }
+            case "reorder-task":
+                try await reorderTask(at: root, options)
             case "read":
                 try await withStore(try CollectionLocation.fixture(root)) { try await read(options["--query"] ?? "notes", from: $0) }
             case "runtime-report":
@@ -159,6 +164,34 @@ enum CollectionFixtureHarness {
             return fields
         }
         emit("task.created", fields)
+    }
+
+    /// Performs the reorder for `--id`/`--in`/`--after`/`--expected` while
+    /// observing the list until its committed order is observed.
+    private static func reorderTask(at root: URL, _ options: [String: String]) async throws {
+        let expected = options["--expected"]?.split(separator: ",") ?? []
+        let expectedOrder = expected.compactMap { UUID(uuidString: String($0)) }
+        // `--after` is optional, but when given it must be an ID.
+        let predecessor = options["--after"].flatMap(UUID.init(uuidString:))
+        guard let id = options["--id"].flatMap(UUID.init(uuidString:)),
+              let placement = options["--in"].flatMap(TaskPlacement.init(rawValue:)),
+              !expected.isEmpty, expectedOrder.count == expected.count, (options["--after"] == nil) == (predecessor == nil)
+        else { throw Usage() }
+        let command = CollectionCommand.reorderTask(id, in: placement, after: predecessor, expectedOrder: expectedOrder)
+        let faults = faults(pause: options["--pause"], fail: options["--fail"])
+        let fields = try await withStore(try CollectionLocation.fixture(root), faults: faults) { store in
+            var observed = store.observe(.tasks(in: placement), in: store.generation).makeAsyncIterator()
+            let before = try await observed.next() ?? []
+            let task = try await store.perform(command, in: store.generation)
+            var after = before
+            while !after.contains(task), let next = try await observed.next() { after = next }
+            var fields: [String: Any] = ["count": after.count, "tasks": after.map(summary), "movedID": task.id.uuidString,
+                                         "revision": task.revision]
+            fields["observedBefore"] = before.map(\.id.uuidString)
+            fields["observedAfter"] = after.map(\.id.uuidString)
+            return fields
+        }
+        emit("tasks.reordered", fields)
     }
 
     private static func changeNote(at root: URL, _ options: [String: String],

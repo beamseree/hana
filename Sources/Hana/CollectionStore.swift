@@ -133,10 +133,15 @@ enum CollectionStoreError: Error, Equatable, Sendable {
     /// The note was archived; restore it before changing its body or pin.
     case archivedNote
     case taskNotFound
-    /// The task was archived; restore it before editing, completing, reopening or moving it.
+    /// The task was archived; restore it before editing, completing, reopening, moving or reordering it.
     case archivedTask
-    /// A completed task has no list; reopen it before moving it.
+    /// A completed task has no list; reopen it before moving or reordering it.
     case completedTask
+    /// The list changed since the order the reorder was based on.
+    case staleList
+    /// A reorder naming a task or predecessor outside its own expected order,
+    /// or the task as its own predecessor.
+    case invalidReorder
     case blankTaskTitle
     /// Task titles are one line; a title containing any line break is refused whole.
     case multilineTaskTitle
@@ -376,6 +381,35 @@ extension CollectionCommand where Result == TaskItem {
             guard task.placement != placement else { return task }
             return try TaskRow.update(db, id, "placement = ?, order_key = ?",
                                       [placement.rawValue, try TaskRow.claimTopKey(db, placement)], now: context.now)
+        }
+    }
+
+    /// Moves an active unfinished task within its list to just below
+    /// `predecessor`, or to the top when it is nil.
+    static func reorderTask(_ id: UUID, in placement: TaskPlacement, after predecessor: UUID?,
+                            expectedOrder: [UUID]) -> Self {
+        Self { db, context in
+            guard let task = try TaskRow.fetch(db, where: "id = ?", [id.uuidString]).first
+            else { throw CollectionStoreError.taskNotFound }
+            guard task.archivedAt == nil else { throw CollectionStoreError.archivedTask }
+            guard task.completedAt == nil else { throw CollectionStoreError.completedTask }
+            guard expectedOrder.contains(id), predecessor != id, predecessor.map(expectedOrder.contains) ?? true
+            else { throw CollectionStoreError.invalidReorder }
+            var list = try TaskRow.fetch(db, where: "placement = ?", [placement.rawValue], order: "order_key ASC, id ASC")
+            guard list.map(\.id) == expectedOrder else { throw CollectionStoreError.staleList }
+            // The list matches `expectedOrder`, so it holds the task and the predecessor.
+            let current = list.firstIndex { $0.id == id }!
+            list.remove(at: current)
+            let position = predecessor.map { p in list.firstIndex { $0.id == p }! + 1 } ?? 0
+            guard position != current else { return task }
+            var key = TaskRow.key(between: position > 0 ? list[position - 1].orderKey : nil,
+                                  and: position < list.count ? list[position].orderKey : nil)
+            if key == nil {
+                // No integer fits: renumber the list in its new order, in this transaction.
+                try TaskRow.renumber(db, list.map(\.id), leavingGapAt: position)
+                key = Int64(position)
+            }
+            return try TaskRow.update(db, id, "order_key = ?", [key], now: context.now)
         }
     }
 
@@ -689,12 +723,35 @@ private enum TaskRow {
                                              arguments: [placement.rawValue])
         else { return 0 }
         guard first == .min else { return first - 1 }
-        let ids = try String.fetchAll(db, sql: "SELECT id FROM task WHERE placement = ? ORDER BY order_key ASC, id ASC",
-                                      arguments: [placement.rawValue])
-        for (key, id) in ids.enumerated() {
-            try db.execute(sql: "UPDATE task SET order_key = ? WHERE id = ?", arguments: [Int64(key), id])
-        }
+        try renumber(db, try fetch(db, where: "placement = ?", [placement.rawValue], order: "order_key ASC, id ASC").map(\.id))
         return -1
+    }
+
+    /// Gives `ids` the keys 0, 1, 2… in the order given, leaving the key
+    /// `gap` unused for the caller. Changes no revision or updated time.
+    static func renumber(_ db: Database, _ ids: [UUID], leavingGapAt gap: Int? = nil) throws {
+        for (offset, id) in ids.enumerated() {
+            let key = Int64(gap.map { offset >= $0 ? offset + 1 : offset } ?? offset)
+            try db.execute(sql: "UPDATE task SET order_key = ? WHERE id = ?", arguments: [key, id.uuidString])
+        }
+    }
+
+    /// A key strictly between two neighbouring keys (nil for a list end), or
+    /// nil when no integer fits there.
+    static func key(between previous: Int64?, and next: Int64?) -> Int64? {
+        switch (previous, next) {
+        case (nil, nil): 0
+        case (nil, let next?): next == .min ? nil : next - 1
+        case (let previous?, nil): previous == .max ? nil : previous + 1
+        case (let previous?, let next?): midpoint(previous, next)
+        }
+    }
+
+    /// Computed without overflow: neighbours are sorted, so the wrapped
+    /// difference read as unsigned is the true gap, and half of it fits.
+    private static func midpoint(_ previous: Int64, _ next: Int64) -> Int64? {
+        let gap = UInt64(bitPattern: next &- previous)
+        return gap < 2 ? nil : previous &+ Int64(gap / 2)
     }
 
     static func fetch(_ db: Database, where condition: String, _ arguments: StatementArguments,

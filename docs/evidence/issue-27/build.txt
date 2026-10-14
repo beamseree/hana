@@ -1,0 +1,17 @@
+# source: 700319f1c9b815f9e24f27c3c090e73d6717f0eb (clean tree), ./scripts/build
+Building for production...
+[0/7] Write sources
+[0/7] Copying PrivacyInfo.xcprivacy
+[2/7] Copying Info.plist
+[3/7] Write sources
+[4/7] Write swift-version--112E4EF74740DA65.txt
+[6/8] Compiling GRDB Configuration.swift
+[7/9] Compiling Hana ApplicationCatalog.swift
+[7/9] Write Objects.LinkFileList
+[8/9] Linking Hana
+Build complete! (45.03s)
+<worktree>/build/Hana.app/Contents/Info.plist: OK
+<worktree>/build/Hana.app: replacing existing signature
+<worktree>/build/Hana.app: valid on disk
+<worktree>/build/Hana.app: satisfies its Designated Requirement
+<worktree>/build/Hana.app
