@@ -56,6 +56,14 @@ extension NSImage {
         return image
     }()
 
+    /// A menu-bar-sized copy, so resizing it leaves the bar's mode icon alone.
+    static let hanaStatusLogo: NSImage? = {
+        guard let image = hanaLogo?.copy() as? NSImage else { return nil }
+        image.size = NSSize(width: 16, height: 16)
+        image.isTemplate = true
+        return image
+    }()
+
     /// A resizable rounded-rectangle mask, so the material and the window shadow follow the bezel's corners.
     static func roundedMask(radius: CGFloat) -> NSImage {
         let edge = radius * 2 + 1
