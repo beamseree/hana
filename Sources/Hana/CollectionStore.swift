@@ -541,6 +541,119 @@ final class CollectionStore: Sendable {
         }
     }
 
+    /// Recovery's internal capture: the existing writer queue is a barrier.
+    /// No command can commit between the capture timestamp, online backup and
+    /// record read. No additional writable source connection is opened.
+    struct SnapshotCapture: Sendable {
+        let capturedAt: Date
+        let records: CollectionRecords
+    }
+
+    func captureSnapshot(to database: URL, in generation: StoreGeneration,
+                         atBarrier: (@Sendable () throws -> Void)? = nil,
+                         beforeClose: (@Sendable () throws -> Void)? = nil) async throws -> SnapshotCapture {
+        try requireCurrent(generation)
+        return try await pool.writeWithoutTransaction { source in
+            try self.requireCurrent(generation)
+            let capturedAt = Date()
+            try atBarrier?()
+            let destination = try DatabaseQueue(path: database.path, configuration: CollectionSchema.configuration)
+            do {
+                try destination.writeWithoutTransaction { target in
+                    try source.backup(to: target)
+                    // A standalone closed file, with no WAL dependency, also
+                    // lets inspection use a read-only connection without sidecars.
+                    try target.execute(sql: "PRAGMA journal_mode = DELETE")
+                }
+                try beforeClose?()
+                try destination.close()
+                // SQLite can leave an orphan SHM index after switching the
+                // backup from WAL to DELETE. All destination handles are closed;
+                // the committed data must already be in the standalone file.
+                let wal = URL(fileURLWithPath: database.path + "-wal")
+                if FileManager.default.fileExists(atPath: wal.path) {
+                    guard try Data(contentsOf: wal).isEmpty else { throw CollectionStoreError.unreadableCollection }
+                    try FileManager.default.removeItem(at: wal)
+                }
+                let shm = URL(fileURLWithPath: database.path + "-shm")
+                if FileManager.default.fileExists(atPath: shm.path) { try FileManager.default.removeItem(at: shm) }
+            } catch {
+                try? destination.close()
+                throw CollectionStoreError.mapped(error)
+            }
+            return SnapshotCapture(capturedAt: capturedAt, records: try CollectionQuery.allRecords.fetch(source))
+        }
+    }
+
+    /// Read-only validation of a closed, standalone backup before publication
+    /// and again before disposable reopening. Database handles stay in Store.
+    static func validatedSnapshotRecords(at database: URL) throws -> CollectionRecords {
+        try CollectionSchema.validate(database)
+        var configuration = Configuration()
+        configuration.readonly = true
+        let queue = try DatabaseQueue(path: database.path, configuration: configuration)
+        do {
+            let records = try queue.read { db in
+                try CollectionSchema.validateSnapshotStructure(db)
+                guard try String.fetchOne(db, sql: "PRAGMA journal_mode") == "delete",
+                      try String.fetchAll(db, sql: "PRAGMA integrity_check") == ["ok"],
+                      try Row.fetchAll(db, sql: "PRAGMA foreign_key_check").isEmpty
+                else { throw CollectionStoreError.unreadableCollection }
+                // Validate types before the typed row decoder; a damaged or
+                // fabricated schema must produce an error, never a conversion trap.
+                for (table, textColumn) in [("note", "body"), ("task", "title")] {
+                    for row in try Row.fetchAll(db, sql: "SELECT * FROM \(table)") {
+                        for column in ["created_at", "content_edited_at", "updated_at", "revision"] {
+                            guard case .int64 = (row[column] as DatabaseValue).storage
+                            else { throw CollectionStoreError.unreadableCollection }
+                        }
+                        for column in table == "note" ? ["archived_at"] : ["archived_at", "completed_at", "order_key"] {
+                            switch (row[column] as DatabaseValue).storage {
+                            case .null, .int64: break
+                            default: throw CollectionStoreError.unreadableCollection
+                            }
+                        }
+                        guard case let .string(id) = (row["id"] as DatabaseValue).storage,
+                              UUID(uuidString: id) != nil,
+                              case .string = (row[textColumn] as DatabaseValue).storage
+                        else { throw CollectionStoreError.unreadableCollection }
+                        if table == "note" {
+                            guard case let .int64(pin) = (row["pinned"] as DatabaseValue).storage, pin == 0 || pin == 1
+                            else { throw CollectionStoreError.unreadableCollection }
+                        } else {
+                            switch (row["placement"] as DatabaseValue).storage {
+                            case .null: break
+                            case let .string(value) where TaskPlacement(rawValue: value) != nil: break
+                            default: throw CollectionStoreError.unreadableCollection
+                            }
+                        }
+                    }
+                    // Read raw bytes, because Swift's repairing UTF-8 initializer
+                    // would hide invalid SQLite TEXT and lose exact note bytes.
+                    for bytes in try Data.fetchAll(db, sql: "SELECT CAST(\(textColumn) AS BLOB) FROM \(table)") {
+                        guard let text = String(data: bytes, encoding: .utf8), Note.isNonblank(text)
+                        else { throw CollectionStoreError.unreadableCollection }
+                        if table == "task" { try TaskItem.validate(title: text) }
+                    }
+                }
+                let records = try CollectionQuery.allRecords.fetch(db)
+                guard Set(records.notes.map(\.id) + records.tasks.map(\.id)).count == records.notes.count + records.tasks.count,
+                      records.notes.allSatisfy({ $0.revision >= 1 }),
+                      records.tasks.allSatisfy({ task in
+                          task.revision >= 1 && ((task.archivedAt == nil && task.completedAt == nil) == (task.placement != nil))
+                              && ((task.placement == nil) == (task.orderKey == nil))
+                      })
+                else { throw CollectionStoreError.unreadableCollection }
+                return records
+            }
+            try queue.close()
+            return records
+        } catch {
+            try? queue.close()
+            throw error
+        }
+    }
+
     /// Identity and effective settings of the SQLite actually linked into
     /// this process, from the writer and from a pool reader.
     struct RuntimeReport: Codable, Sendable {
