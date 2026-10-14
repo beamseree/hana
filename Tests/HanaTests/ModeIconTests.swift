@@ -61,7 +61,7 @@ struct SearchIconMorphTests {
     }
 }
 
-@Suite(.serialized)
+@Suite(.serialized, .nativeWindowSlot)
 @MainActor
 struct ModeIconInteractionTests {
     @Test func queryTextShowsTheMagnifierAndClearingRestoresTheLogo() {
