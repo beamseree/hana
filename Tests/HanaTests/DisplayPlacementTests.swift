@@ -1,4 +1,5 @@
 import Foundation
+import Synchronization
 import Testing
 @testable import Hana
 
@@ -55,21 +56,32 @@ struct DisplayPlacementTests {
         #expect(MacInteraction.placement(displays: [], pointer: .zero, focus: .unavailable) == nil)
     }
 
+    @MainActor
     @Test func failedOrUnresponsiveAccessibilityUsesCapturedPointer() async throws {
         let failed = await MacInteraction.focusedWindowWithinDeadline { nil }
         #expect(failed == nil)
-        let clock = ContinuousClock()
-        let start = clock.now
-        let late = await MacInteraction.focusedWindowWithinDeadline {
-            // Deliberately ignores cancellation, like a foreign IPC request.
-            await withCheckedContinuation { continuation in
-                DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
-                    continuation.resume(returning: CGRect(x: 100, y: 100, width: 800, height: 600))
-                }
+        // A virtual clock keeps the deadline exact even when other suites
+        // saturate the cooperative pool.
+        let clock = TestClock()
+        let reply = Mutex<CheckedContinuation<CGRect?, Never>?>(nil)
+        var returned = false
+        let lookup = Task {
+            defer { returned = true }
+            return await MacInteraction.focusedWindowWithinDeadline(clock: clock) {
+                // Deliberately ignores cancellation, like a foreign IPC request.
+                await withCheckedContinuation { continuation in reply.withLock { $0 = continuation } }
             }
         }
+        try await eventually { reply.withLock { $0 != nil } }
+        clock.advance(by: .milliseconds(60))
+        // The lookup is still pending, so only the deadline can return. The
+        // generous bound turns a regression into a failure, not a hang.
+        let bound = ContinuousClock.now + .seconds(30)
+        while !returned, ContinuousClock.now < bound { try await Task.sleep(for: .milliseconds(5)) }
+        #expect(returned)
+        reply.withLock { $0 }?.resume(returning: CGRect(x: 100, y: 100, width: 800, height: 600))
+        let late = await lookup.value
         #expect(late == nil)
-        #expect(start.duration(to: clock.now) < .seconds(1))
         let placement = try #require(MacInteraction.placement(displays: screens,
             pointer: CGPoint(x: -100, y: 100), focus: late.map(MacInteraction.WindowFocus.accessibility) ?? .unavailable))
         #expect(placement.frame(height: 64).minX == -1290)
