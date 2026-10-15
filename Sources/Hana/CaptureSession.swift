@@ -63,10 +63,14 @@ struct CaptureSession {
 
     struct State: Equatable {
         var mode = Mode.search
-        var text = ""
+        /// An emptied buffer arms mode prefixes again, however it was emptied.
+        var text = "" {
+            didSet { if text.isEmpty { prefixesArmed = true } }
+        }
         /// UTF-16 range, as the native editor reports it.
         var selection = NSRange(location: 0, length: 0)
-        /// Whether a typed prefix at the start of Search selects a mode.
+        /// Whether a typed mode prefix at the start of Search selects a mode. Off
+        /// only after a return to Search kept text, until the buffer is empty.
         var prefixesArmed = true
         /// Where Task saves. Inbox for each invocation until changed.
         var destination = TaskPlacement.inbox
@@ -117,12 +121,13 @@ struct CaptureSession {
             return []
         case .deleteBackward:
             // Backspace with nothing before the cursor leaves a capture for
-            // Search, keeping every character. Prefixes stay off from then on.
+            // Search, keeping every character. Prefixes stay off while kept
+            // text remains, so a `-` typed before it stays literal.
             // Once submitted, the capture stays put until the save settles.
             guard state.mode != .search, state.phase == .editing,
                   state.selection == NSRange(location: 0, length: 0) else { return [] }
             state.mode = .search
-            state.prefixesArmed = false
+            state.prefixesArmed = state.text.isEmpty
             state.notice = nil
             return [.enterMode(.search)]
         case .tab:
