@@ -131,11 +131,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private let taskMenuTarget = TaskWorkspaceMenuTarget()
     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
     private var noteWindows: [UUID: NoteWindowController] = [:]
+    private var noteOpeningLifetime = UUID()
+    private var ordinaryNoteOpenings: Set<UUID> = []
     private var noteOpenings: [UUID: Task<Void, Never>] = [:]
     private struct NoteFocusRequest {
         let token: UUID
         let frontmostProcess: pid_t?
         let atEnd: Bool
+        let isOrdinary: Bool
     }
     private var latestWindowOpen = UUID()
     private var noteFocusRequests: [UUID: NoteFocusRequest] = [:]
@@ -179,7 +182,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     var archiveWorkspacePresentation: ArchiveWorkspacePresentation? { workingWindows[.main]?.archiveWorkspace }
     var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
     func canPerformTaskAction(_ action: TaskWorkspaceAction) -> Bool {
-        guard currentInvocation == nil, let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
+        guard !isPreparingForQuit, currentInvocation == nil, let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
         return tasks.canPerform(action, in: presentation.selectedSection)
     }
 
@@ -189,6 +192,17 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     func performTaskAction(_ action: TaskWorkspaceAction) async -> Bool {
         guard let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
         return await tasks.perform(action, in: presentation.selectedSection)
+    }
+
+    func requestTaskAction(_ action: TaskWorkspaceAction) -> TaskActionRequest? {
+        guard !isPreparingForQuit, let section = mainWindowPresentation?.selectedSection else { return nil }
+        return taskWorkspacePresentation?.requestAction(action, in: section)
+    }
+
+    @discardableResult
+    func performTaskAction(_ request: TaskActionRequest) async -> Bool {
+        guard !isPreparingForQuit, mainWindowPresentation?.selectedSection == request.section else { return false }
+        return await taskWorkspacePresentation?.perform(request) ?? false
     }
 
     func requestTaskReorder(_ action: TaskWorkspaceAction) -> TaskReorderRequest? {
@@ -225,11 +239,17 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         guard !isPreparingForQuit else { throw NoteOrganizationError.unavailable }
         if let session = noteEditing?.existingSession(row.id) {
             try await session.organize(action)
-        } else {
-            guard let collection else { throw CollectionStoreError.missingCollection }
-            let store = try await collection.value
-            _ = try await store.perform(action.command(row.id, revision: row.revision), in: store.generation)
+            return
         }
+        guard let collection else { throw CollectionStoreError.missingCollection }
+        let store = try await collection.value
+        guard !isPreparingForQuit else { throw NoteOrganizationError.unavailable }
+        if noteEditing == nil { noteEditing = NoteEditing(store: store) }
+        guard let session = try await noteEditing?.open(row.id), !isPreparingForQuit else { throw NoteOrganizationError.unavailable }
+        // Closed rows still act on the revision the user saw. Opening while
+        // organization awaits now shares this session and its editing freeze.
+        guard session.committed.revision == row.revision else { throw CollectionStoreError.staleRevision }
+        try await session.organize(action)
     }
     func selectMainNote(_ id: UUID?) { mainWindowPresentation?.selectedNoteID = id }
     private var localMouse: Any?
@@ -296,6 +316,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     func stop() {
+        noteOpeningLifetime = UUID()
+        noteOpenings.values.forEach { $0.cancel() }
+        noteOpenings = [:]
+        noteFocusRequests = [:]
+        ordinaryNoteOpenings = []
         latestWindowOpen = UUID()
         if let invocation = currentInvocation { dismiss(invocation, reason: .environmentChange) }
         for controller in Array(workingWindows.values) { controller.close() }
@@ -418,7 +443,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         }
         latestWindowOpen = UUID()
         let focus = NoteFocusRequest(token: latestWindowOpen,
-                                    frontmostProcess: frontmostApplication()?.processIdentifier, atEnd: focusAtEnd)
+                                    frontmostProcess: frontmostApplication()?.processIdentifier, atEnd: focusAtEnd, isOrdinary: invocation == nil)
         if let currentInvocation { dismiss(currentInvocation, reason: .destination) }
         if case .note(let id) = destination { return openNote(id, focus: focus) }
         if workingWindows[destination] == nil {
@@ -463,21 +488,29 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             return true
         }
         guard let collection else { return false }
+        if focus.isOrdinary { ordinaryNoteOpenings.insert(id) }
         noteFocusRequests[id] = focus
         guard noteOpenings[id] == nil else { return true }
+        let lifetime = noteOpeningLifetime
         noteOpenings[id] = Task { [weak self] in
             guard let self else { return }
-            defer { noteOpenings[id] = nil; noteFocusRequests[id] = nil }
+            defer {
+                if lifetime == noteOpeningLifetime {
+                    noteOpenings[id] = nil; noteFocusRequests[id] = nil; ordinaryNoteOpenings.remove(id)
+                }
+            }
             do {
                 let store = try await collection.value
+                guard lifetime == noteOpeningLifetime, !Task.isCancelled, !isPreparingForQuit else { return }
                 if noteEditing == nil { noteEditing = NoteEditing(store: store) }
-                guard let session = try await noteEditing?.open(id), !isPreparingForQuit else { return }
+                guard let session = try await noteEditing?.open(id), !isPreparingForQuit, lifetime == noteOpeningLifetime, !Task.isCancelled else { return }
                 let frontmost = frontmostApplication()?.processIdentifier
-                guard let focus = noteFocusRequests[id], focus.token == latestWindowOpen,
-                      currentInvocation == nil,
-                      frontmost == focus.frontmostProcess || frontmost == ProcessInfo.processInfo.processIdentifier else {
+                guard let focus = noteFocusRequests[id] else { return }
+                let ownsFocus = focus.token == latestWindowOpen && currentInvocation == nil &&
+                    (frontmost == focus.frontmostProcess || frontmost == ProcessInfo.processInfo.processIdentifier)
+                if !ownsFocus {
                     record("note.open-focus-superseded")
-                    return
+                    guard ordinaryNoteOpenings.contains(id) else { return }
                 }
                 let controller = NoteWindowController(session: session, previewParser: previewParser, openPreviewLink: openPreviewLink)
                 controller.onOrganization = { [weak self] action in
@@ -488,7 +521,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                 controller.onTitleChange = { [weak self] in self?.refreshNoteMenu() }
                 noteWindows[id] = controller
                 refreshNoteMenu()
-                showNote(controller, atEnd: focus.atEnd)
+                if ownsFocus { showNote(controller, atEnd: focus.atEnd) }
+                else { updateActivationPolicy(); controller.window?.orderBack(nil) }
             } catch {
                 record("note.open-failed")
             }
@@ -523,6 +557,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         // accept another edit while a later note's write is still pending.
         isPreparingForQuit = true
         let controllers = Array(noteWindows.values)
+        let organizer = workingWindows[.main]
+        organizer?.taskWorkspace.suspendEditing(true)
         for controller in controllers { controller.commitComposition() }
         for controller in controllers { controller.suspendEditing(true) }
         if editor.hasMarkedText() { editor.unmarkText() }
@@ -532,6 +568,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let pendingCapture = captureSave
         let operation = Task { [self] in
             await pendingCapture?.value
+            let renameSucceeded: Bool
+            if let tasks = organizer?.taskWorkspace, tasks.editing != nil { renameSucceeded = await tasks.commitRename() }
+            else { renameSucceeded = true }
             let captureFailed = pendingCapture != nil && (capture.state.notice == .failed || capture.state.notice == .collectionUnavailable)
             var failures: [NoteWindowController] = []
             for controller in controllers {
@@ -541,15 +580,27 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             if let failure = failures.first(where: { !$0.session.isClosed }) {
                 isPreparingForQuit = false
                 for controller in controllers { controller.suspendEditing(false) }
+                organizer?.taskWorkspace.suspendEditing(false)
                 editor.isEditable = !isPreparingForQuit && capture.state.phase == .editing
                 renderResults()
                 showNote(failure)
                 failure.holdQuitAfterFailure()
                 return false
             }
+            if !renameSucceeded {
+                isPreparingForQuit = false
+                for controller in controllers { controller.suspendEditing(false) }
+                organizer?.taskWorkspace.suspendEditing(false)
+                editor.isEditable = capture.state.phase == .editing
+                renderResults()
+                organizer?.window?.makeKeyAndOrderFront(nil)
+                organizer?.taskWorkspace.focusRename()
+                return false
+            }
             if captureFailed {
                 isPreparingForQuit = false
                 for controller in controllers { controller.suspendEditing(false) }
+                organizer?.taskWorkspace.suspendEditing(false)
                 editor.isEditable = !isPreparingForQuit && capture.state.phase == .editing
                 renderResults()
                 if currentInvocation != nil { showBar(existing: true, started: ProcessInfo.processInfo.systemUptime) }
@@ -929,6 +980,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         tasks.submenu = taskMenuTarget.makeMenu()
         main.addItem(tasks)
         let noteMenu = NSMenu(title: "Note")
+        let openNote = NSMenuItem(title: "Open Note", action: #selector(openSelectedNote), keyEquivalent: "o")
+        openNote.target = self
+        noteMenu.addItem(openNote)
         for (title, action, key) in [
             ("Pin Note", #selector(toggleSelectedNotePin), "p"),
             ("Archive Note", #selector(archiveSelectedNote), "a"),
@@ -942,6 +996,22 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let noteItem = NSMenuItem(title: "Note", action: nil, keyEquivalent: "")
         noteItem.submenu = noteMenu
         main.addItem(noteItem)
+        let viewMenu = NSMenu(title: "View")
+        for (index, section) in MainSection.allCases.enumerated() {
+            let item = NSMenuItem(title: "Show " + section.rawValue, action: #selector(showSection(_:)), keyEquivalent: String(index + 2))
+            item.tag = index
+            item.target = self
+            viewMenu.addItem(item)
+        }
+        viewMenu.addItem(.separator())
+        let preview = NSMenuItem(title: "Markdown Preview", action: #selector(toggleSelectedPreview), keyEquivalent: "p")
+        preview.keyEquivalentModifierMask = [.command, .option]
+        preview.target = self
+        viewMenu.addItem(preview)
+        let viewItem = NSMenuItem(title: "View", action: nil, keyEquivalent: "")
+        viewItem.submenu = viewMenu
+        main.addItem(viewItem)
+
         let archiveMenu = NSMenu(title: "Archive")
         let restore = NSMenuItem(title: "Restore Selected Item", action: #selector(restoreSelectedArchiveItem), keyEquivalent: "r")
         restore.keyEquivalentModifierMask = [.command, .shift]
@@ -974,13 +1044,20 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     private var selectedOrganizerNote: MainWindowPresentation.Row? {
-        guard currentInvocation == nil, let presentation = mainWindowPresentation,
+        guard !isPreparingForQuit, currentInvocation == nil, NSApp.keyWindow === window(for: .main), let presentation = mainWindowPresentation,
               presentation.selectedSection == .notes, presentation.availability == .available,
               !presentation.isOrganizingNote else { return nil }
         return presentation.rows.first { $0.id == presentation.selectedNoteID }
     }
 
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(openSelectedNote) { return selectedOrganizerNote != nil }
+        if menuItem.action == #selector(showSection(_:)) { return !isPreparingForQuit && currentInvocation == nil }
+        if menuItem.action == #selector(toggleSelectedPreview) {
+            menuItem.state = selectedPreviewNote.flatMap { noteWindows[$0]?.preview.isVisible } == true ? .on : .off
+            return selectedPreviewNote != nil
+        }
+
         if menuItem.action == #selector(restoreSelectedArchiveItem) { return selectedArchiveRow != nil }
         if menuItem.action == #selector(openSelectedArchiveNote) {
             if case .note = selectedArchiveRow { return true }
@@ -993,6 +1070,26 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         if menuItem.action == #selector(archiveSelectedNote) { return selectedOrganizerNote != nil }
         if menuItem.action == #selector(restoreSelectedNote) { return selectedArchivedNote != nil }
         return true
+    }
+
+    @objc private func openSelectedNote() {
+        guard let row = selectedOrganizerNote else { return }
+        _ = open(.note(row.id))
+    }
+
+    @objc private func showSection(_ item: NSMenuItem) {
+        guard !isPreparingForQuit, currentInvocation == nil, MainSection.allCases.indices.contains(item.tag) else { return }
+        _ = open(.main, section: MainSection.allCases[item.tag])
+    }
+
+    private var selectedPreviewNote: UUID? {
+        guard !isPreparingForQuit, currentInvocation == nil else { return nil }
+        return noteWindows.first(where: { $0.value.window === NSApp.keyWindow })?.key
+    }
+
+    @objc private func toggleSelectedPreview() {
+        guard let id = selectedPreviewNote else { return }
+        toggleNotePreview(id)
     }
 
     @objc private func toggleSelectedNotePin() {

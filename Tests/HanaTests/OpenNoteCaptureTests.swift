@@ -166,7 +166,12 @@ struct OpenNoteCaptureTests {
         let interaction = MacInteraction(diagnostics: Diagnostics(file: log), collection: collection,
                                          frontmostApplication: { .current })
         defer { interaction.stop() }
-        interaction.open(.note(note.id), focusAtEnd: true)
+        interaction.open(.main)
+        defer { interaction.window(for: .main)?.close() }
+        let original = interaction.presentBar()
+        let originalEditor = try await captureEditor()
+        interaction.open(.note(note.id), from: original, focusAtEnd: true)
+        try await eventually { originalEditor.window?.isVisible == false }
         try await eventually { completion != nil }
         let current = interaction.presentBar()
         let editor = try await captureEditor()

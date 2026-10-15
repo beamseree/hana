@@ -43,8 +43,8 @@ struct CompletedArchiveTests {
         interaction.selectTask(done.id)
         #expect(await interaction.performTaskAction(.rename))
         let window = try #require(interaction.window(for: .main))
-        try await eventually { completedEditor(in: window.contentView) != nil }
-        let editor = try #require(completedEditor(in: window.contentView))
+        try await eventually { nativeTaskTitleEditor(in: window.contentView) != nil }
+        let editor = try #require(nativeTaskTitleEditor(in: window.contentView))
         editor.selectAll(nil)
         editor.insertText("Finished ไทย", replacementRange: NSRange(location: NSNotFound, length: 0))
         #expect(await interaction.commitTaskRename())
@@ -160,7 +160,7 @@ struct CompletedArchiveTests {
         try await eventually { interaction.taskWorkspacePresentation?.notice != nil }
         #expect(interaction.mainWindowPresentation?.selectedSection == .inbox)
         let window = try #require(interaction.window(for: .main))
-        try await eventually { completedEditor(in: window.contentView) != nil }
+        try await eventually { nativeTaskTitleEditor(in: window.contentView) != nil }
         #expect(interaction.taskWorkspacePresentation?.editing?.text == "  ")
         interaction.editTaskTitle("Fixed title")
         interaction.open(.main, section: .completed)
@@ -308,10 +308,4 @@ struct CompletedArchiveTests {
         #expect(interaction.archiveWorkspacePresentation?.selectedRow == nil)
     }
 
-}
-
-@MainActor private func completedEditor(in view: NSView?) -> NSTextView? {
-    guard let view else { return nil }
-    if let editor = view as? NSTextView, editor.identifier?.rawValue == "task-title-editor" { return editor }
-    return view.subviews.lazy.compactMap { completedEditor(in: $0) }.first
 }

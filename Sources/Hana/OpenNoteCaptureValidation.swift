@@ -6,7 +6,8 @@ import Synchronization
 func validateOpenNoteCapture(register: (MacInteraction) -> Void) async {
     guard let index = CommandLine.arguments.firstIndex(of: "--open-note-capture-report"),
           index + 1 < CommandLine.arguments.count else { exit(2) }
-    let diagnostics = Diagnostics(file: URL(fileURLWithPath: CommandLine.arguments[index + 1]))
+    let reportURL = URL(fileURLWithPath: CommandLine.arguments[index + 1])
+    let diagnostics = Diagnostics(file: reportURL)
     let root = FileManager.default.temporaryDirectory.appendingPathComponent("hana-open-note-\(UUID().uuidString)")
     let faults = Mutex((hold: true, arrivals: 0, failBefore: false, failAfter: false))
     let gate = DispatchSemaphore(value: 0)
@@ -98,11 +99,41 @@ func validateOpenNoteCapture(register: (MacInteraction) -> Void) async {
               platform.window(for: .main)?.isKeyWindow == true else { throw OpenNoteCaptureCheck.failed("dismiss-focus") }
         diagnostics.record("open-note-capture.dismissed", state: ["committed": true, "opened": false, "chosenFocusKept": true])
         let savedIDs = try await opened.read(.notes, in: opened.generation).map(\.id)
-        await opened.close()
-        for saved in savedIDs {
-            platform.window(for: .note(saved))?.close()
-        }
+        for saved in savedIDs { platform.window(for: .note(saved))?.close() }
+        platform.window(for: .main)?.close()
         platform.stop()
+
+        // Repeat the native test’s key/responder/query assertions on the real
+        // application event loop, including a genuinely invocation-bound open.
+        var completion: CheckedContinuation<CollectionStore, any Error>?
+        let delayedCollection = Task<CollectionStore, any Error> {
+            try await withCheckedThrowingContinuation { completion = $0 }
+        }
+        let delayed = MacInteraction(diagnostics: diagnostics, collection: delayedCollection)
+        interaction = delayed
+        register(delayed)
+        delayed.start()
+        delayed.open(.main)
+        try await openCaptureCheck("delayed-main-key") { NSApp.keyWindow === delayed.window(for: .main) }
+        let original = delayed.presentBar()
+        _ = try await openCaptureEditor()
+        delayed.open(.note(note.id), from: original, focusAtEnd: true)
+        try await openCaptureCheck("delayed-collection") { completion != nil }
+        let current = delayed.presentBar()
+        let newerEditor = try await openCaptureEditor()
+        newerEditor.insertText("new query", replacementRange: none)
+        completion?.resume(returning: opened)
+        try await openCaptureCheck("superseded-open-finished") {
+            (try? String(contentsOf: reportURL, encoding: .utf8).contains("note.open-focus-superseded")) == true
+        }
+        guard delayed.currentInvocation == current, NSApp.keyWindow?.firstResponder === newerEditor,
+              newerEditor.string == "new query", delayed.window(for: .note(note.id)) == nil else {
+            throw OpenNoteCaptureCheck.failed("newer-bar-focus")
+        }
+        diagnostics.record("open-note-capture.newer-bar", state: ["keyResponderKept": true, "queryKept": true, "unwantedWindow": false])
+        await opened.close()
+        delayed.window(for: .main)?.close()
+        delayed.stop()
         try FileManager.default.removeItem(at: root)
         diagnostics.record("open-note-capture.validation-passed", state: [:])
         RunLoop.main.perform(inModes: [.common]) { MainActor.assumeIsolated { NSApp.terminate(nil) } }

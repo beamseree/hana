@@ -1,0 +1,64 @@
+Build complete! (3.96s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite MainNoteOrganizationTests started.
+◇ Suite OpenNoteCaptureSessionTests started.
+◇ Suite OpenNoteCaptureTests started.
+◇ Test searchAndTaskNeverSubmitAnOpenNote() started.
+◇ Test openInWindowSubmitsTheExactNoteOnceAndRetriesTheSameReceipt() started.
+◇ Test explicitOpeningRetryAfterADismissedFailureOwnsTheNewAttempt() started.
+◇ Test blankNotesAreRefusedWithoutASaveEffect(text:) started.
+◇ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() started.
+◇ Test case passing 1 argument text → "" to blankNotesAreRefusedWithoutASaveEffect(text:) started.
+◇ Test case passing 1 argument text → "␠
+⇥
+" to blankNotesAreRefusedWithoutASaveEffect(text:) started.
+✔ Test searchAndTaskNeverSubmitAnOpenNote() passed after 0.001 seconds.
+✔ Test blankNotesAreRefusedWithoutASaveEffect(text:) with 2 test cases passed after 0.001 seconds.
+✔ Test explicitOpeningRetryAfterADismissedFailureOwnsTheNewAttempt() passed after 0.001 seconds.
+✔ Test openInWindowSubmitsTheExactNoteOnceAndRetriesTheSameReceipt() passed after 0.001 seconds.
+✔ Suite OpenNoteCaptureSessionTests passed after 0.001 seconds.
+✔ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() passed after 0.235 seconds.
+◇ Test archiveRemovesTheRowAndPreservesWritingAndPin() started.
+✔ Test archiveRemovesTheRowAndPreservesWritingAndPin() passed after 0.094 seconds.
+◇ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .setPinned(true) to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .archive to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+✔ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) with 2 test cases passed after 0.166 seconds.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MainNoteOrganizationTests.swift:106:9: Expectation failed: (interaction → <Hana.MacInteraction: 0x80eecc700>).validateMenuItem(pin → <NSMenuItem: 0x811b848c0 Pin Note, ke='Control-Command-P', action: toggleSelectedNotePin>)
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MainNoteOrganizationTests.swift:113:9: Expectation failed: (interaction → <Hana.MacInteraction: 0x80eecc700>).validateMenuItem(pin → <NSMenuItem: 0x811b848c0 Pin Note, ke='Control-Command-P', action: toggleSelectedNotePin>)
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MainNoteOrganizationTests.swift:114:9: Expectation failed: (pin.title → "Pin Note") == "Unpin Note"
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() failed after 6.232 seconds with 5 issues.
+✘ Suite MainNoteOrganizationTests failed after 6.729 seconds with 5 issues.
+◇ Test pausedRepeatedOpeningCommitsOnceAndFocusesTheSavedNotesEnd() started.
+✘ Test pausedRepeatedOpeningCommitsOnceAndFocusesTheSavedNotesEnd() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test pausedRepeatedOpeningCommitsOnceAndFocusesTheSavedNotesEnd() recorded an issue at OpenNoteCaptureTests.swift:233:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+✘ Test pausedRepeatedOpeningCommitsOnceAndFocusesTheSavedNotesEnd() failed after 3.082 seconds with 2 issues.
+◇ Test noteControlAndCommandReturnSubmitThroughTheSameIntent() started.
+✘ Test noteControlAndCommandReturnSubmitThroughTheSameIntent() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test noteControlAndCommandReturnSubmitThroughTheSameIntent() recorded an issue at OpenNoteCaptureTests.swift:233:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+✘ Test noteControlAndCommandReturnSubmitThroughTheSameIntent() failed after 3.062 seconds with 2 issues.
+◇ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) started.
+◇ Test case passing 1 argument lostAcknowledgement → false to failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) started.
+✘ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) recorded an issue with 1 argument lostAcknowledgement → false at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) recorded an issue with 1 argument lostAcknowledgement → false at OpenNoteCaptureTests.swift:233:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+◇ Test case passing 1 argument lostAcknowledgement → true to failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) started.
+✘ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) recorded an issue with 1 argument lostAcknowledgement → true at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) recorded an issue with 1 argument lostAcknowledgement → true at OpenNoteCaptureTests.swift:233:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+✘ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) with 2 test cases failed after 6.131 seconds with 4 issues.
+◇ Test aNewerInvocationRefusesAnEarlierInvocationBoundOpening() started.
+✔ Test aNewerInvocationRefusesAnEarlierInvocationBoundOpening() passed after 0.154 seconds.
+◇ Test compositionKeepsTheOpenControlDisabledAndSavesNothing() started.
+✘ Test compositionKeepsTheOpenControlDisabledAndSavesNothing() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test compositionKeepsTheOpenControlDisabledAndSavesNothing() recorded an issue at OpenNoteCaptureTests.swift:233:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+✘ Test compositionKeepsTheOpenControlDisabledAndSavesNothing() failed after 3.042 seconds with 2 issues.
+◇ Test dismissalDuringACommittedOpeningKeepsTheUsersNewDestination() started.
+✘ Test dismissalDuringACommittedOpeningKeepsTheUsersNewDestination() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test dismissalDuringACommittedOpeningKeepsTheUsersNewDestination() recorded an issue at OpenNoteCaptureTests.swift:233:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+✘ Test dismissalDuringACommittedOpeningKeepsTheUsersNewDestination() failed after 3.068 seconds with 2 issues.
+✘ Suite OpenNoteCaptureTests failed after 25.271 seconds with 12 issues.
+✘ Test run with 14 tests in 3 suites failed after 25.271 seconds with 17 issues.

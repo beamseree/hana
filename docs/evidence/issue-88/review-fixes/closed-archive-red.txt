@@ -1,0 +1,16 @@
+Build complete! (2.33s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite WorkingWindowReviewTests started.
+◇ Test openingDuringClosedNoteArchiveSharesTheOrganizationFreeze() started.
+✘ Test openingDuringClosedNoteArchiveSharesTheOrganizationFreeze() recorded an issue at WorkingWindowReviewTests.swift:255:9: Expectation failed: !((editor → <Hana.NoteEditor: 0xc6b83e400>
+    Frame = {{0.00, 0.00}, {660.00, 501.00}}, Bounds = {{0.00, 0.00}, {660.00, 501.00}}
+    Horizontally resizable: NO, Vertically resizable: YES
+    MinSize = {660.00, 501.00}, MaxSize = {660.00, 10000000.00}
+).isEditable → true → true)
+✘ Test openingDuringClosedNoteArchiveSharesTheOrganizationFreeze() recorded an issue at WorkingWindowReviewTests.swift:257:9: Expectation failed: (interaction.noteSession(note.id)?.text → "OriginalLate unsaved text") == "Original"
+✘ Test openingDuringClosedNoteArchiveSharesTheOrganizationFreeze() recorded an issue at WorkingWindowReviewTests.swift:261:9: Expectation failed: (interaction.noteSession(note.id)?.text → "OriginalLate unsaved text") == "Original"
+✘ Test openingDuringClosedNoteArchiveSharesTheOrganizationFreeze() failed after 0.262 seconds with 3 issues.
+✘ Suite WorkingWindowReviewTests failed after 0.262 seconds with 3 issues.
+✘ Test run with 1 test in 1 suite failed after 0.262 seconds with 3 issues.

@@ -1,0 +1,15 @@
+Build complete! (2.33s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NoteEditingLifetimeReviewTests started.
+◇ Test releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test case passing 1 argument ending → "abandon" to releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test case passing 1 argument ending → "close" to releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test case passing 1 argument ending → "discard" to releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+✘ Test releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) recorded an issue with 1 argument ending → "discard" at NoteEditingLifetimeReviewTests.swift:25:9: Expectation failed: (released → Hana.NoteEditingSession) == nil
+✘ Test releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) recorded an issue with 1 argument ending → "close" at NoteEditingLifetimeReviewTests.swift:25:9: Expectation failed: (released → Hana.NoteEditingSession) == nil
+✘ Test releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) recorded an issue with 1 argument ending → "abandon" at NoteEditingLifetimeReviewTests.swift:25:9: Expectation failed: (released → Hana.NoteEditingSession) == nil
+✘ Test releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) with 3 test cases failed after 0.426 seconds with 3 issues.
+✘ Suite NoteEditingLifetimeReviewTests failed after 0.426 seconds with 3 issues.
+✘ Test run with 1 test in 1 suite failed after 0.426 seconds with 3 issues.
