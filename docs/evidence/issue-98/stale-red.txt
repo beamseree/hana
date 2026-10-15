@@ -1,0 +1,95 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--1AB21518FC5DEDBE.txt
+[3/7] Compiling HanaTests MarkdownPreviewTests.swift
+[4/7] Emitting module HanaTests
+[5/7] Compiling HanaTests NotePreviewTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:15:85: error: extra argument 'previewParser' in call
+13 |         let note = try await store.perform(.createNote(operation: UUID(), body: "Old"), in: store.generation)
+14 |         let parser = DeferredPreviewParser()
+15 |         let interaction = MacInteraction(collection: Task { store }, previewParser: { text in await parser.parse(text) })
+   |                                                                                     `- error: extra argument 'previewParser' in call
+16 |         defer { interaction.window(for: .note(note.id))?.close(); interaction.stop() }
+17 |         interaction.open(.note(note.id))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:16:42: error: cannot infer contextual base in reference to member 'note'
+14 |         let parser = DeferredPreviewParser()
+15 |         let interaction = MacInteraction(collection: Task { store }, previewParser: { text in await parser.parse(text) })
+16 |         defer { interaction.window(for: .note(note.id))?.close(); interaction.stop() }
+   |                                          `- error: cannot infer contextual base in reference to member 'note'
+17 |         interaction.open(.note(note.id))
+18 |         try await eventually { interaction.noteSession(note.id) != nil }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:17:27: error: cannot infer contextual base in reference to member 'note'
+15 |         let interaction = MacInteraction(collection: Task { store }, previewParser: { text in await parser.parse(text) })
+16 |         defer { interaction.window(for: .note(note.id))?.close(); interaction.stop() }
+17 |         interaction.open(.note(note.id))
+   |                           `- error: cannot infer contextual base in reference to member 'note'
+18 |         try await eventually { interaction.noteSession(note.id) != nil }
+19 |         interaction.toggleNotePreview(note.id)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:24:76: error: cannot convert value of type 'Optional<_>' to expected argument type 'Array<Optional<_>>'
+22 |         try await waitForParses(parser, count: 2)
+23 |         await parser.complete(1, text: "New preview")
+24 |         try await eventually { interaction.notePreview(note.id)?.document?.blocks == [.paragraph([.text("New preview")])] }
+   |                                                                            `- error: cannot convert value of type 'Optional<_>' to expected argument type 'Array<Optional<_>>'
+25 |         await parser.complete(0, text: "Old preview")
+26 |         try await Task.sleep(for: .milliseconds(20))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:24:100: error: type 'Any' has no member 'text'
+22 |         try await waitForParses(parser, count: 2)
+23 |         await parser.complete(1, text: "New preview")
+24 |         try await eventually { interaction.notePreview(note.id)?.document?.blocks == [.paragraph([.text("New preview")])] }
+   |                                                                                                    `- error: type 'Any' has no member 'text'
+25 |         await parser.complete(0, text: "Old preview")
+26 |         try await Task.sleep(for: .milliseconds(20))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:27:61: error: cannot convert value of type 'Optional<_>' to expected argument type 'Array<Optional<_>>'
+25 |         await parser.complete(0, text: "Old preview")
+26 |         try await Task.sleep(for: .milliseconds(20))
+27 |         #expect(interaction.notePreview(note.id)?.document?.blocks == [.paragraph([.text("New preview")])])
+   |                                                             `- error: cannot convert value of type 'Optional<_>' to expected argument type 'Array<Optional<_>>'
+28 |         interaction.toggleNotePreview(note.id)
+29 |         #expect(interaction.notePreview(note.id)?.isVisible == false)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:27:85: error: type 'Any' has no member 'text'
+25 |         await parser.complete(0, text: "Old preview")
+26 |         try await Task.sleep(for: .milliseconds(20))
+27 |         #expect(interaction.notePreview(note.id)?.document?.blocks == [.paragraph([.text("New preview")])])
+   |                                                                                     `- error: type 'Any' has no member 'text'
+28 |         interaction.toggleNotePreview(note.id)
+29 |         #expect(interaction.notePreview(note.id)?.isVisible == false)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:36:76: error: cannot convert value of type 'Optional<_>' to expected argument type 'Array<Optional<_>>'
+34 |         try await waitForParses(parser, count: 4)
+35 |         await parser.complete(3, text: "Latest visibility")
+36 |         try await eventually { interaction.notePreview(note.id)?.document?.blocks == [.paragraph([.text("Latest visibility")])] }
+   |                                                                            `- error: cannot convert value of type 'Optional<_>' to expected argument type 'Array<Optional<_>>'
+37 |         await parser.complete(2, text: "Hidden session preview")
+38 |         try await Task.sleep(for: .milliseconds(20))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:36:100: error: type 'Any' has no member 'text'
+34 |         try await waitForParses(parser, count: 4)
+35 |         await parser.complete(3, text: "Latest visibility")
+36 |         try await eventually { interaction.notePreview(note.id)?.document?.blocks == [.paragraph([.text("Latest visibility")])] }
+   |                                                                                                    `- error: type 'Any' has no member 'text'
+37 |         await parser.complete(2, text: "Hidden session preview")
+38 |         try await Task.sleep(for: .milliseconds(20))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:39:61: error: cannot convert value of type 'Optional<_>' to expected argument type 'Array<Optional<_>>'
+37 |         await parser.complete(2, text: "Hidden session preview")
+38 |         try await Task.sleep(for: .milliseconds(20))
+39 |         #expect(interaction.notePreview(note.id)?.document?.blocks == [.paragraph([.text("Latest visibility")])])
+   |                                                             `- error: cannot convert value of type 'Optional<_>' to expected argument type 'Array<Optional<_>>'
+40 |         try await interaction.noteSession(note.id)?.flush()
+41 |         await store.close()
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/NotePreviewTests.swift:39:85: error: type 'Any' has no member 'text'
+37 |         await parser.complete(2, text: "Hidden session preview")
+38 |         try await Task.sleep(for: .milliseconds(20))
+39 |         #expect(interaction.notePreview(note.id)?.document?.blocks == [.paragraph([.text("Latest visibility")])])
+   |                                                                                     `- error: type 'Any' has no member 'text'
+40 |         try await interaction.noteSession(note.id)?.flush()
+41 |         await store.close()
+error: fatalError

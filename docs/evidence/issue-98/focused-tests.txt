@@ -1,0 +1,48 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests NotePreviewTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.51s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NoteWindowTests started.
+◇ Suite MarkdownPreviewTests started.
+◇ Suite NotePreviewTests started.
+◇ Test supportedConstructsBecomeReadOnlyPresentationValues() started.
+◇ Test unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() started.
+◇ Test aReferenceDefinitionBeforeAnUnsupportedImageIsNotDropped() started.
+◇ Test case passing 1 argument fixture → remote image to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → task list to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → table to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → reference image to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → block HTML to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → strike after Unicode to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → inline HTML to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → thematic break to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → unused definition to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → footnote-like text to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → CRLF to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → CR to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → nested quote to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → tabbed code to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → nested list to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+✔ Test aReferenceDefinitionBeforeAnUnsupportedImageIsNotDropped() passed after 0.001 seconds.
+✔ Test supportedConstructsBecomeReadOnlyPresentationValues() passed after 0.001 seconds.
+✔ Test unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) with 15 test cases passed after 0.001 seconds.
+✔ Suite MarkdownPreviewTests passed after 0.001 seconds.
+✔ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() passed after 0.390 seconds.
+◇ Test aOneMegabyteFixtureCanOpenEditAndFlush() started.
+NOTE_PROFILE bytes=1140000 open=0.0967355 seconds insert=0.146262375 seconds flush=0.323533834 seconds
+✔ Test aOneMegabyteFixtureCanOpenEditAndFlush() passed after 0.631 seconds.
+✔ Suite NoteWindowTests passed after 1.022 seconds.
+◇ Test staleParsesCannotReplaceNewTextOrAReopenedPreview() started.
+✔ Test staleParsesCannotReplaceNewTextOrAReopenedPreview() passed after 0.233 seconds.
+◇ Test nativeToggleKeepsSavedBytesAndLinksOpenOnlyOnExplicitClick() started.
+✔ Test nativeToggleKeepsSavedBytesAndLinksOpenOnlyOnExplicitClick() passed after 0.176 seconds.
+✔ Suite NotePreviewTests passed after 1.432 seconds.
+✔ Test run with 7 tests in 3 suites passed after 1.432 seconds.

@@ -1,0 +1,182 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/7] Emitting module Hana
+[4/7] Compiling Hana MacInteraction.swift
+[4/9] Write Objects.LinkFileList
+[5/9] Linking Hana
+[6/9] Applying Hana
+[8/10] Emitting module HanaTests
+[8/10] Write Objects.LinkFileList
+[9/10] Linking HanaPackageTests
+Build complete! (4.05s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CaptureSafetyNativeTests started.
+◇ Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "-", outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "-", outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "-", outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "[", outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "[", outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "[", outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+✔ Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) with 6 test cases passed after 1.605 seconds.
+◇ Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+✔ Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) with 2 test cases passed after 0.189 seconds.
+◇ Test anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+✔ Test anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) with 2 test cases passed after 0.709 seconds.
+✔ Suite CaptureSafetyNativeTests passed after 2.504 seconds.
+◇ Suite CaptureSafetyTests started.
+◇ Test dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) started.
+✔ Test dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) with 2 test cases passed after 0.001 seconds.
+◇ Test failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) started.
+✔ Test failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) with 2 test cases passed after 0.001 seconds.
+◇ Test editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test case passing 2 arguments prefix → "-", text → "edited" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test case passing 2 arguments prefix → "-", text → "Café" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test case passing 2 arguments prefix → "[", text → "edited" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test case passing 2 arguments prefix → "[", text → "Café" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+✔ Test editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) with 4 test cases passed after 0.001 seconds.
+◇ Test changingAFailedTasksDestinationStartsANewOperation() started.
+✔ Test changingAFailedTasksDestinationStartsANewOperation() passed after 0.001 seconds.
+◇ Test changingAFailedNotesModeStartsANewOperation() started.
+✔ Test changingAFailedNotesModeStartsANewOperation() passed after 0.001 seconds.
+◇ Test aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) started.
+✔ Test aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) with 2 test cases passed after 0.063 seconds.
+◇ Test aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) started.
+✔ Test aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) with 2 test cases passed after 0.051 seconds.
+◇ Test aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) started.
+✔ Test aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) with 2 test cases passed after 0.472 seconds.
+✔ Suite CaptureSafetyTests passed after 0.589 seconds.
+◇ Suite CaptureSubmissionTests started.
+◇ Test submittingANoteSavesItsExactTextOnceUnderTheSessionOperation() started.
+✔ Test submittingANoteSavesItsExactTextOnceUnderTheSessionOperation() passed after 0.001 seconds.
+◇ Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+◇ Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+◇ Test case passing 1 argument text → " " to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+◇ Test case passing 1 argument text → "
+	  
+" to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+✔ Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) with 3 test cases passed after 0.001 seconds.
+◇ Test submittedTextIsFrozenWhileSaving() started.
+✔ Test submittedTextIsFrozenWhileSaving() passed after 0.001 seconds.
+◇ Test aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) started.
+◇ Test case passing 1 argument notice → .failed to aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) started.
+◇ Test case passing 1 argument notice → .collectionUnavailable to aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) started.
+✔ Test aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) with 2 test cases passed after 0.001 seconds.
+◇ Test outcomesOutsideASaveChangeNothing() started.
+✔ Test outcomesOutsideASaveChangeNothing() passed after 0.001 seconds.
+◇ Test searchEnterIsNotACapture() started.
+✔ Test searchEnterIsNotACapture() passed after 0.001 seconds.
+◇ Test eachInvocationHasANewOperation() started.
+✔ Test eachInvocationHasANewOperation() passed after 0.001 seconds.
+✔ Suite CaptureSubmissionTests passed after 0.001 seconds.
+◇ Suite NoteSaveTests started.
+◇ Test enterCommitsExactlyOneNoteAndClosesAfterTheConfirmation() started.
+✔ Test enterCommitsExactlyOneNoteAndClosesAfterTheConfirmation() passed after 0.409 seconds.
+◇ Test repeatedEnterWhileTheSaveIsPausedCommitsExactlyOneNote() started.
+✔ Test repeatedEnterWhileTheSaveIsPausedCommitsExactlyOneNote() passed after 0.101 seconds.
+◇ Test enterDuringCompositionCommitsItWithoutSaving() started.
+✔ Test enterDuringCompositionCommitsItWithoutSaving() passed after 0.109 seconds.
+◇ Test aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
+◇ Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
+◇ Test case passing 1 argument text → "\x20\x20
+	  " to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
+✔ Test aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) with 2 test cases passed after 0.240 seconds.
+◇ Test dismissingBeforeASaveWritesNothing(reason:) started.
+◇ Test case passing 1 argument reason → .escape to dismissingBeforeASaveWritesNothing(reason:) started.
+◇ Test case passing 1 argument reason → .outsideClick to dismissingBeforeASaveWritesNothing(reason:) started.
+✔ Test dismissingBeforeASaveWritesNothing(reason:) with 2 test cases passed after 0.269 seconds.
+◇ Test aFailureBeforeCommitKeepsTheTextAndModeWithAnExplanation() started.
+✔ Test aFailureBeforeCommitKeepsTheTextAndModeWithAnExplanation() passed after 0.399 seconds.
+◇ Test whenTheStoreCannotOpenSearchStillWorksAndCaptureExplainsAndKeepsTheText() started.
+✔ Test whenTheStoreCannotOpenSearchStillWorksAndCaptureExplainsAndKeepsTheText() passed after 0.216 seconds.
+◇ Test withoutACollectionCaptureExplainsAndKeepsTheText() started.
+✔ Test withoutACollectionCaptureExplainsAndKeepsTheText() passed after 0.050 seconds.
+◇ Test returningToSearchLeavesTheNoteNoticeBehind() started.
+✔ Test returningToSearchLeavesTheNoteNoticeBehind() passed after 0.054 seconds.
+◇ Test diagnosticsNeverRecordCapturedText() started.
+✔ Test diagnosticsNeverRecordCapturedText() passed after 0.084 seconds.
+◇ Test anOwnedOriginWindowGetsItsKeyStatusAndResponderBack(reason:) started.
+◇ Test case passing 1 argument reason → .saved to anOwnedOriginWindowGetsItsKeyStatusAndResponderBack(reason:) started.
+◇ Test case passing 1 argument reason → .escape to anOwnedOriginWindowGetsItsKeyStatusAndResponderBack(reason:) started.
+✔ Test anOwnedOriginWindowGetsItsKeyStatusAndResponderBack(reason:) with 2 test cases passed after 0.175 seconds.
+✔ Suite NoteSaveTests passed after 2.110 seconds.
+◇ Suite NoteWindowTests started.
+◇ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() started.
+✔ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() passed after 0.202 seconds.
+◇ Test aOneMegabyteFixtureCanOpenEditAndFlush() started.
+NOTE_PROFILE bytes=1140000 open=0.105100458 seconds insert=0.142549375 seconds flush=0.338942084 seconds
+✔ Test aOneMegabyteFixtureCanOpenEditAndFlush() passed after 0.653 seconds.
+✔ Suite NoteWindowTests passed after 0.855 seconds.
+◇ Suite OpenNoteCaptureSessionTests started.
+◇ Test openInWindowSubmitsTheExactNoteOnceAndRetriesTheSameReceipt() started.
+✔ Test openInWindowSubmitsTheExactNoteOnceAndRetriesTheSameReceipt() passed after 0.001 seconds.
+◇ Test blankNotesAreRefusedWithoutASaveEffect(text:) started.
+◇ Test case passing 1 argument text → "" to blankNotesAreRefusedWithoutASaveEffect(text:) started.
+◇ Test case passing 1 argument text → "\x20
+	 " to blankNotesAreRefusedWithoutASaveEffect(text:) started.
+✔ Test blankNotesAreRefusedWithoutASaveEffect(text:) with 2 test cases passed after 0.001 seconds.
+◇ Test searchAndTaskNeverSubmitAnOpenNote() started.
+✔ Test searchAndTaskNeverSubmitAnOpenNote() passed after 0.001 seconds.
+◇ Test explicitOpeningRetryAfterADismissedFailureOwnsTheNewAttempt() started.
+✔ Test explicitOpeningRetryAfterADismissedFailureOwnsTheNewAttempt() passed after 0.001 seconds.
+✔ Suite OpenNoteCaptureSessionTests passed after 0.001 seconds.
+◇ Suite OpenNoteCaptureTests started.
+◇ Test pausedRepeatedOpeningCommitsOnceAndFocusesTheSavedNotesEnd() started.
+✔ Test pausedRepeatedOpeningCommitsOnceAndFocusesTheSavedNotesEnd() passed after 0.120 seconds.
+◇ Test noteControlAndCommandReturnSubmitThroughTheSameIntent() started.
+✔ Test noteControlAndCommandReturnSubmitThroughTheSameIntent() passed after 0.122 seconds.
+◇ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) started.
+◇ Test case passing 1 argument lostAcknowledgement → false to failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) started.
+◇ Test case passing 1 argument lostAcknowledgement → true to failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) started.
+✔ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) with 2 test cases passed after 0.317 seconds.
+◇ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() started.
+✔ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() passed after 0.135 seconds.
+◇ Test compositionKeepsTheOpenControlDisabledAndSavesNothing() started.
+✔ Test compositionKeepsTheOpenControlDisabledAndSavesNothing() passed after 0.065 seconds.
+◇ Test dismissalDuringACommittedOpeningKeepsTheUsersNewDestination() started.
+✔ Test dismissalDuringACommittedOpeningKeepsTheUsersNewDestination() passed after 0.083 seconds.
+✔ Suite OpenNoteCaptureTests passed after 0.845 seconds.
+◇ Suite TaskSaveTests started.
+◇ Test enterCommitsExactlyOneTaskAtTheTopOfTheChosenList(destination:) started.
+◇ Test case passing 1 argument destination → .inbox to enterCommitsExactlyOneTaskAtTheTopOfTheChosenList(destination:) started.
+◇ Test case passing 1 argument destination → .today to enterCommitsExactlyOneTaskAtTheTopOfTheChosenList(destination:) started.
+✔ Test enterCommitsExactlyOneTaskAtTheTopOfTheChosenList(destination:) with 2 test cases passed after 0.753 seconds.
+◇ Test repeatedEnterWhileTheSaveIsPausedCommitsExactlyOneTask() started.
+✔ Test repeatedEnterWhileTheSaveIsPausedCommitsExactlyOneTask() passed after 0.080 seconds.
+◇ Test dismissingBeforeASaveWritesNothingAndTheNextInvocationStartsInInbox(reason:) started.
+◇ Test case passing 1 argument reason → .escape to dismissingBeforeASaveWritesNothingAndTheNextInvocationStartsInInbox(reason:) started.
+◇ Test case passing 1 argument reason → .outsideClick to dismissingBeforeASaveWritesNothingAndTheNextInvocationStartsInInbox(reason:) started.
+✔ Test dismissingBeforeASaveWritesNothingAndTheNextInvocationStartsInInbox(reason:) with 2 test cases passed after 0.248 seconds.
+◇ Test aWhitespaceOnlyTitleIsRefusedWithoutReachingTheStore(title:) started.
+◇ Test case passing 1 argument title → "" to aWhitespaceOnlyTitleIsRefusedWithoutReachingTheStore(title:) started.
+◇ Test case passing 1 argument title → " 	 " to aWhitespaceOnlyTitleIsRefusedWithoutReachingTheStore(title:) started.
+✔ Test aWhitespaceOnlyTitleIsRefusedWithoutReachingTheStore(title:) with 2 test cases passed after 0.535 seconds.
+◇ Test shiftEnterInTaskDoesNothing() started.
+✔ Test shiftEnterInTaskDoesNothing() passed after 0.020 seconds.
+◇ Test clickingTheSelectorChoosesTheDestinationAndKeepsTypingFocus() started.
+✔ Test clickingTheSelectorChoosesTheDestinationAndKeepsTypingFocus() passed after 0.083 seconds.
+◇ Test switchingToTaskWithMultilineSearchTextIsRefusedWithAnExplanation() started.
+✔ Test switchingToTaskWithMultilineSearchTextIsRefusedWithAnExplanation() passed after 0.024 seconds.
+◇ Test anOpenInProgressOutranksTheRefusedSwitchExplanation() started.
+✔ Test anOpenInProgressOutranksTheRefusedSwitchExplanation() passed after 0.052 seconds.
+◇ Test aFailureKeepsTheTitleModeAndDestinationWithAnExplanation() started.
+✔ Test aFailureKeepsTheTitleModeAndDestinationWithAnExplanation() passed after 0.068 seconds.
+✔ Suite TaskSaveTests passed after 1.867 seconds.
+✔ Test run with 50 tests in 8 suites passed after 8.776 seconds.

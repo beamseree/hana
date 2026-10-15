@@ -6,6 +6,10 @@ enum NoteSaveAction: Equatable { case retry, copyText, discardChanges }
 @MainActor
 final class NoteWindowController: NSWindowController, NSTextViewDelegate {
     let session: NoteEditingSession
+    let preview: NotePreviewSession
+    let previewToggle = NSButton(checkboxWithTitle: "Preview", target: nil, action: nil)
+    private let previewSurface: MarkdownPreviewSurface
+    private let editorScroll = NSScrollView()
     let editor = NoteEditor(frame: .zero)
     private let message = NSTextField(wrappingLabelWithString: "")
     private let retryButton = NSButton(title: "Retry", target: nil, action: nil)
@@ -21,6 +25,7 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
     var onTitleChange: (() -> Void)?
     var allowsClose = false
     private var renderedTextRevision: UInt64 = 0
+    private var renderedPreviewVisible = false
     private var closeTask: Task<Void, Never>?
     private enum ClosePurpose { case close, quit }
     private var closePurpose: ClosePurpose?
@@ -28,8 +33,11 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
     private var closePromptID: UUID?
     var closeIsHeld: Bool { closePurpose != nil }
 
-    init(session: NoteEditingSession) {
+    init(session: NoteEditingSession, previewParser: @escaping MarkdownPreviewParser = MarkdownPreview.parse,
+         openPreviewLink: @escaping @MainActor (URL) -> Bool = { NSWorkspace.shared.open($0) }) {
         self.session = session
+        preview = NotePreviewSession(editing: session, parser: previewParser)
+        previewSurface = MarkdownPreviewSurface(openLink: openPreviewLink)
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 660, height: 560),
                               styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         super.init(window: window)
@@ -37,7 +45,7 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
         window.minSize = NSSize(width: 360, height: 260)
         window.appearance = NSAppearance(named: .aqua)
         window.backgroundColor = HanaColor.Surface.window
-        let scroll = NSScrollView()
+        let scroll = editorScroll
         scroll.hasVerticalScroller = true
         scroll.borderType = .noBorder
         editor.isRichText = false
@@ -77,7 +85,11 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
         status.alignment = .centerY
         status.spacing = 8
         message.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        let stack = NSStackView(views: [scroll, status])
+        previewToggle.target = self
+        previewToggle.action = #selector(togglePreview)
+        previewToggle.font = HanaFont.label.nsFont
+        previewToggle.setAccessibilityLabel("Show Markdown preview")
+        let stack = NSStackView(views: [previewToggle, scroll, previewSurface.scroll, status])
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.spacing = 8
@@ -90,6 +102,8 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
             stack.topAnchor.constraint(equalTo: content.topAnchor),
             stack.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -12),
             scroll.widthAnchor.constraint(equalTo: stack.widthAnchor),
+            previewSurface.scroll.widthAnchor.constraint(equalTo: stack.widthAnchor),
+            previewToggle.leadingAnchor.constraint(equalTo: stack.leadingAnchor, constant: 20),
             status.leadingAnchor.constraint(equalTo: stack.leadingAnchor, constant: 20),
             status.trailingAnchor.constraint(lessThanOrEqualTo: stack.trailingAnchor, constant: -20)
         ])
@@ -134,7 +148,12 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
     func focus(atEnd: Bool = false) {
         guard let window else { return }
         if atEnd { editor.setSelectedRange(NSRange(location: editor.string.utf16.count, length: 0)) }
-        window.makeFirstResponder(editor)
+        window.makeFirstResponder(preview.isVisible ? previewSurface.reader : editor)
+    }
+
+    @objc private func togglePreview() {
+        guard !session.isEditingSuspended else { return }
+        preview.setVisible(!preview.isVisible)
     }
 
     func textDidChange(_ notification: Notification) { changed() }
@@ -154,6 +173,7 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
     func suspendEditing(_ suspended: Bool) {
         session.suspendEditing(suspended)
         editor.isEditable = session.isEditable
+        previewToggle.isEnabled = !suspended
     }
 
     func commitComposition() {
@@ -241,6 +261,14 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
     private func refresh() {
         withObservationTracking {
             window?.title = session.committed.title ?? "Untitled"
+            previewToggle.state = preview.isVisible ? .on : .off
+            editorScroll.isHidden = preview.isVisible
+            previewSurface.scroll.isHidden = !preview.isVisible
+            if renderedPreviewVisible != preview.isVisible {
+                renderedPreviewVisible = preview.isVisible
+                window?.makeFirstResponder(preview.isVisible ? previewSurface.reader : editor)
+            }
+            previewSurface.show(preview.document, isParsing: preview.isParsing)
             editor.isEditable = session.isEditable
             if renderedTextRevision != session.textRevision, !editor.hasMarkedText() {
                 editor.string = session.text

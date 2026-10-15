@@ -192,3 +192,7 @@ Components are built only from the roles above.
 
 Choosing a segment never takes keyboard focus: in the Search bar, typing stays in the editor.
 
+
+### Markdown preview type roles
+
+Note windows' optional native Markdown preview adds `note.code` (15/22 regular, system monospaced) for inline and block code, and `note.previewHeading` (17/24 medium, −1% tracking) for subordinate headings. The first heading level uses `heading.window`; prose uses `note.body`. Emphasis uses the system italic trait of the current role, and strong text keeps the medium weight. Quote text uses `text.secondary`, code uses `control.fill`, and explicit links retain primary text with a native underline. Preview surfaces use the same light working-window roles and native scrollbars.

@@ -1,0 +1,181 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Write sources
+[2/8] Write swift-version--1AB21518FC5DEDBE.txt
+[4/13] Compiling Hana CaptureSession.swift
+[5/13] Compiling Hana HanaApp.swift
+[6/13] Compiling Hana OpenNoteCaptureValidation.swift
+[7/13] Emitting module Hana
+[8/13] Compiling Hana MacInteraction.swift
+[9/26] Compiling Hana NoteWindowValidation.swift
+[10/26] Compiling Hana PerformanceValidation.swift
+[11/26] Compiling Hana TaskWorkspace.swift
+[12/26] Compiling Hana MixedSearchValidation.swift
+[13/26] Compiling Hana SearchCorrectnessValidation.swift
+[14/26] Compiling Hana FocusedWindowGeometry.swift
+[15/26] Compiling Hana CollectionSnapshots.swift
+[16/26] Compiling Hana CollectionStore.swift
+[17/26] Compiling Hana CollectionExport.swift
+[18/26] Compiling Hana CollectionFixtureHarness.swift
+[19/26] Compiling Hana MainWindowValidation.swift
+[20/26] Compiling Hana CoverageValidation.swift
+[21/26] Compiling Hana DisplayPlacement.swift
+[21/26] Write Objects.LinkFileList
+[22/26] Linking Hana
+[23/26] Applying Hana
+[25/63] Compiling HanaTests NoteOrganizationTests.swift
+[26/63] Compiling HanaTests NotePreviewTests.swift
+[27/63] Compiling HanaTests NoteSaveTests.swift
+[28/63] Compiling HanaTests NoteWindowTests.swift
+[29/67] Compiling HanaTests SpotlightStageTests.swift
+[30/67] Compiling HanaTests SuggestionInteractionTests.swift
+[31/67] Compiling HanaTests TaskLifecycleTests.swift
+[32/67] Compiling HanaTests TaskOrderingTests.swift
+[33/67] Compiling HanaTests SearchRankingTests.swift
+[34/67] Compiling HanaTests SearchResponsivenessTests.swift
+[35/67] Compiling HanaTests SearchTests.swift
+[36/67] Compiling HanaTests SearchTypingGapTests.swift
+[37/67] Compiling HanaTests CollectionStoreOpeningTests.swift
+[38/67] Compiling HanaTests CollectionStoreTests.swift
+[39/67] Compiling HanaTests DisplayPlacementTests.swift
+[40/67] Compiling HanaTests IndependentExportDecoder.swift
+[41/67] Compiling HanaTests CaptureSafetyNativeTests.swift
+[42/67] Compiling HanaTests CaptureSafetyTests.swift
+[43/67] Compiling HanaTests CaptureSessionTests.swift
+[44/67] Compiling HanaTests CollectionExportHarnessTests.swift
+[45/67] Emitting module HanaTests
+[46/67] Compiling HanaTests CollectionExportTests.swift
+[47/67] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[48/67] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[49/67] Compiling HanaTests CollectionSnapshotTests.swift
+[50/67] Compiling HanaTests OpenNoteCaptureTests.swift
+[51/67] Compiling HanaTests OrganizedCollectionFixture.swift
+[52/67] Compiling HanaTests ResultIconsTests.swift
+[53/67] Compiling HanaTests SearchExclusionTests.swift
+[54/67] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[55/67] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[56/67] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[57/67] Compiling HanaTests MarkdownPreviewTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[58/67] Compiling HanaTests ModeIconTests.swift
+[59/67] Compiling HanaTests NativeEditingTests.swift
+[60/67] Compiling HanaTests NoteEditingTests.swift
+[61/67] Compiling HanaTests NoteModeTests.swift
+[62/67] Compiling HanaTests TaskSaveTests.swift
+[63/67] Compiling HanaTests TaskWorkspaceOrderTests.swift
+[64/67] Compiling HanaTests TaskWorkspaceTests.swift
+[65/67] Compiling HanaTests TestClock.swift
+[65/67] Write Objects.LinkFileList
+[66/67] Linking HanaPackageTests
+Build complete! (11.25s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NoteWindowTests started.
+◇ Suite MarkdownPreviewTests started.
+◇ Suite NotePreviewTests started.
+◇ Test aReferenceDefinitionBeforeAnUnsupportedImageIsNotDropped() started.
+◇ Test supportedConstructsBecomeReadOnlyPresentationValues() started.
+◇ Test unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → table to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → strike after Unicode to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → task list to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → remote image to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() started.
+◇ Test case passing 1 argument fixture → reference image to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → inline HTML to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → block HTML to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → thematic break to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → unused definition to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → footnote-like text to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → CRLF to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → nested quote to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → CR to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → tabbed code to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → nested list to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+✔ Test supportedConstructsBecomeReadOnlyPresentationValues() passed after 0.001 seconds.
+✔ Test aReferenceDefinitionBeforeAnUnsupportedImageIsNotDropped() passed after 0.001 seconds.
+✔ Test unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) with 15 test cases passed after 0.001 seconds.
+✔ Suite MarkdownPreviewTests passed after 0.001 seconds.
+✔ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() passed after 0.357 seconds.
+◇ Test aOneMegabyteFixtureCanOpenEditAndFlush() started.
+NOTE_PROFILE bytes=1140000 open=0.110018667 seconds insert=0.148005084 seconds flush=0.316947791 seconds
+✔ Test aOneMegabyteFixtureCanOpenEditAndFlush() passed after 0.649 seconds.
+✔ Suite NoteWindowTests passed after 1.007 seconds.
+◇ Test staleParsesCannotReplaceNewTextOrAReopenedPreview() started.
+✔ Test staleParsesCannotReplaceNewTextOrAReopenedPreview() passed after 0.239 seconds.
+◇ Test nativeToggleKeepsSavedBytesAndLinksOpenOnlyOnExplicitClick() started.
+✔ Test nativeToggleKeepsSavedBytesAndLinksOpenOnlyOnExplicitClick() passed after 0.175 seconds.
+✔ Suite NotePreviewTests passed after 1.422 seconds.
+✔ Test run with 7 tests in 3 suites passed after 1.422 seconds.
