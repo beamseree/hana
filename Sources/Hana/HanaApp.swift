@@ -28,6 +28,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        if CommandLine.arguments.contains("--validate-open-note-capture") {
+            Task { await validateOpenNoteCapture { self.interaction = $0 } }
+            return
+        }
         if CommandLine.arguments.contains("--validate-note-window") {
             Task { await validateNoteWindow { self.interaction = $0 } }
             return
