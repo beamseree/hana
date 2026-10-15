@@ -45,9 +45,10 @@ struct AutomaticSwitchInteractionTests {
         let fixture = try Fixture()
         defer { fixture.remove() }
         var options = fixture.options.read(); options.isEnabled = enabled; fixture.options.write(options)
-        let apps = CatalogFeed()
+        let apps = CatalogFeed(), fake = ScriptedClassifier()
         let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
-            automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log)
+            automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log,
+            classifierFactory: { _ in fake })
         var invocation = interaction.presentBar()
         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
         let editor = try await editor()
@@ -68,7 +69,304 @@ struct AutomaticSwitchInteractionTests {
         if enabled {
             let data = try String(contentsOf: fixture.log.url, encoding: .utf8)
             #expect(!data.contains("private search"))
-        } else { #expect(!FileManager.default.fileExists(atPath: fixture.log.url.path)) }
+        } else {
+            #expect(!FileManager.default.fileExists(atPath: fixture.log.url.path))
+            #expect(fake.inputs.isEmpty)
+        }
+    }
+
+    @Test(arguments: [ClassifierVerdict.Label.note, .task], AutomaticSwitchOptions.EnterBehavior.allCases)
+    func automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label: ClassifierVerdict.Label, enter: AutomaticSwitchOptions.EnterBehavior) async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture()
+        let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; options.enterBehavior = enter
+        fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store }, confirmationDuration: .zero, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        let input = "private capture บ้าน"
+        editor.insertText(input, replacementRange: NSRange(location: NSNotFound, length: 0))
+        let selection = NSRange(location: 2, length: 4); editor.setSelectedRange(selection)
+        await apps.send([])
+        try await eventually { fake.pendingCount == 1 }
+        fake.reply(label)
+        try await eventually { interaction.mode != .search }
+        #expect(editor.string == input && editor.selectedRange() == selection)
+        #expect(!interaction.resultsVisible && interaction.rows.isEmpty)
+        if enter == .ignoreFor300Milliseconds {
+            editor.keyDown(with: try returnKey())
+            #expect(interaction.modeLabelText != "Saving…" && interaction.currentInvocation == invocation)
+            let before = try await store.read(.allRecords, in: store.generation)
+            #expect(before.notes.isEmpty && before.tasks.isEmpty)
+            try await Task.sleep(for: .milliseconds(310))
+        }
+        editor.keyDown(with: try returnKey())
+        editor.keyDown(with: try returnKey())
+        try await eventually { interaction.currentInvocation == nil }
+        let records = try await store.read(.allRecords, in: store.generation)
+        #expect(records.notes.count + records.tasks.count == 1)
+        #expect(records.notes.first?.body == input || records.tasks.first?.title == input)
+        #expect(fixture.log.counts().switches == 1 && fixture.log.counts().ambiguous == 0)
+        let rows = try String(contentsOf: fixture.log.url, encoding: .utf8)
+        #expect(!rows.contains(input) && rows.contains("autoswitch.ended"))
+        await store.close()
+    }
+
+    @Test(arguments: [AutomaticSwitchDiagnostics.ReversalMethod.escape, .backspace])
+    func automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method: AutomaticSwitchDiagnostics.ReversalMethod) async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store }, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.insertText("call mom tomorrow", replacementRange: NSRange(location: NSNotFound, length: 0))
+        await apps.send([])
+        try await eventually { fake.pendingCount == 1 }; fake.reply(.task)
+        try await eventually { interaction.mode == .task }
+        if method == .backspace { editor.setSelectedRange(NSRange(location: 0, length: 0)) }
+        let selection = editor.selectedRange()
+        editor.keyDown(with: try method == .escape ? escapeKey() : backspaceKey())
+        #expect(interaction.mode == .search && editor.string == "call mom tomorrow" && editor.selectedRange() == selection)
+        #expect(interaction.currentInvocation != nil && fixture.log.counts().wrongSwitches == 1)
+        // Choosing a suggestion with the unchanged, previously switched text is not missed.
+        try await eventually { apps.subscriptionCount >= 2 }
+        await apps.send([]); try await eventually { !interaction.isLoading }
+        interaction.requestSelectedOpen()
+        #expect(interaction.mode == .note && fixture.log.counts().missed == 0)
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
+        editor.keyDown(with: try backspaceKey())
+        try await eventually { apps.subscriptionCount >= 3 }
+        // Return-to-Search disarms prefixes: a changed buffer receives a literal dash.
+        editor.insertText("-", replacementRange: NSRange(location: NSNotFound, length: 0))
+        #expect(interaction.mode == .search && editor.string == "-call mom tomorrow")
+        try await eventually { apps.subscriptionCount >= 4 }
+        await apps.send([]); try await eventually { !interaction.isLoading }
+        interaction.requestSelectedOpen()
+        #expect(interaction.mode == .note && fixture.log.counts().missed == 1)
+        await store.close()
+    }
+
+    @Test func heldEnterCancelsClassificationAndCannotTurnIntoAnAutomaticCapture() async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed(), files = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; options.wait = .none
+        fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero),
+            collection: Task { store }, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.insertText("call mom tomorrow", replacementRange: NSRange(location: NSNotFound, length: 0))
+        try await eventually { fake.pendingCount == 1 }
+        interaction.requestSelectedOpen()
+        #expect(interaction.statusMessage == "Opening selected destination…")
+        fake.reply(.task)
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(interaction.mode == .search && fixture.log.counts().switches == 0)
+        await apps.send([]); await files.send([])
+        try await eventually { interaction.mode == .note }
+        #expect(fixture.log.counts().switches == 0)
+        await store.close()
+    }
+
+    @Test func pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch() async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; fixture.options.write(options)
+        var release: (() -> Void)?
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            launchApplication: { _ in
+                await withCheckedContinuation { continuation in release = { continuation.resume() } }
+                return .init(activate: { false })
+            }, collection: Task { store }, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.insertText("call mom", replacementRange: NSRange(location: NSNotFound, length: 0))
+        let weak = SearchResult(name: "My call mom tool", url: URL(fileURLWithPath: "/fixture/Weak.app"))
+        await apps.send([weak]); try await eventually { interaction.selectedResult == weak && fake.pendingCount == 1 }
+        let opening = interaction.requestSelectedOpen()
+        try await eventually { release != nil }
+        fake.reply(.task)
+        try await Task.sleep(for: .milliseconds(50))
+        #expect(interaction.mode == .search && fixture.log.counts().switches == 0)
+        release?(); await opening?.value
+        await store.close()
+    }
+
+    @Test func taskVerdictCannotFlattenPastedMultilineText() async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store }, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.string = "a thought\nwith two lines"
+        interaction.textDidChange(Notification(name: NSText.didChangeNotification, object: editor))
+        await apps.send([]); try await eventually { fake.pendingCount == 1 }
+        fake.reply(.task)
+        try await eventually {
+            (try? String(contentsOf: fixture.log.url, encoding: .utf8).contains("multiline")) == true
+        }
+        #expect(interaction.mode == .search && editor.string == "a thought\nwith two lines")
+        #expect(fixture.log.counts().switches == 0)
+        await store.close()
+    }
+
+    @Test func everyBehaviorSubmenuPersistsARadioChoiceForTheNextInvocation() throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let interaction = MacInteraction(automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log)
+        let previousMenu = NSApp.mainMenu, previousWindows = NSApp.windowsMenu
+        interaction.start()
+        defer { interaction.stop(); NSApp.mainMenu = previousMenu; NSApp.windowsMenu = previousWindows }
+        let menu = try #require(interaction.automaticSwitchMenu)
+        let groups = menu.items.compactMap(\.submenu)
+        #expect(groups.count == 12)
+        #expect(groups.allSatisfy { $0.items.filter { $0.state == .on }.count == 1 })
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let snapshot = interaction.automaticSwitchSessionOptions
+        let policy = NSApp.activationPolicy(), working = interaction.window(for: .main)
+        for group in groups {
+            group.performActionForItem(at: group.items.count - 1)
+            #expect(group.items.last?.state == .on && group.items.filter { $0.state == .on }.count == 1)
+        }
+        #expect(interaction.automaticSwitchSessionOptions == snapshot)
+        let stored = fixture.options.read()
+        #expect(stored.classifier == .jev && stored.firing == .onPause && stored.jevThreshold == .p95)
+        #expect(!stored.foundationModelsUnsure && stored.agreeingVerdicts == .two && stored.afterSwitch == .keepClassifying)
+        #expect(!stored.navigationSuspends && stored.enterBehavior == .ignoreFor300Milliseconds && stored.escapeBehavior == .dismisses)
+        #expect(!stored.reversalSuspends && stored.wait == .none && stored.lateStrongMatch == .stay)
+        #expect(NSApp.activationPolicy() == policy && interaction.window(for: .main) === working)
+        interaction.dismiss(invocation, reason: .outsideClick)
+        _ = interaction.presentBar()
+        #expect(interaction.automaticSwitchSessionOptions == stored)
+    }
+
+    @Test(arguments: AutomaticSwitchOptions.LateStrongMatch.allCases)
+    func lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option: AutomaticSwitchOptions.LateStrongMatch) async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; options.wait = .none; options.lateStrongMatch = option
+        fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store }, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.insertText("call mom", replacementRange: NSRange(location: NSNotFound, length: 0))
+        try await eventually { fake.pendingCount == 1 }; fake.reply(.note)
+        try await eventually { interaction.mode == .note }
+        let selection = editor.selectedRange()
+        await apps.send([SearchResult(name: "Call Mom Helper", url: URL(fileURLWithPath: "/fixture/Call.app"))])
+        try await eventually {
+            (try? String(contentsOf: fixture.log.url, encoding: .utf8).contains("autoswitch.late-strong-match")) == true
+        }
+        #expect(editor.string == "call mom" && editor.selectedRange() == selection)
+        #expect(interaction.mode == (option == .returnToSearch ? .search : .note))
+        #expect(fixture.log.counts().wrongSwitches == (option == .returnToSearch ? 1 : 0))
+        if option == .stay { #expect(!interaction.resultsVisible && interaction.rows.isEmpty && interaction.results.isEmpty) }
+        await store.close()
+    }
+
+    @Test func keepClassifyingMovesCaptureModesAndBackToSearchWithoutEditingTextOrSelection() async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; options.afterSwitch = .keepClassifying
+        fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store }, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.insertText("call mom", replacementRange: NSRange(location: NSNotFound, length: 0))
+        await apps.send([]); try await eventually { fake.pendingCount == 1 }; fake.reply(.note)
+        try await eventually { interaction.mode == .note }
+        for (suffix, label, expected) in [(" tomorrow", ClassifierVerdict.Label.task, CaptureSession.Mode.task),
+                                          (" details", .search, .search)] {
+            let subscriptions = apps.subscriptionCount
+            editor.insertText(suffix, replacementRange: NSRange(location: NSNotFound, length: 0))
+            let text = editor.string, selection = editor.selectedRange()
+            try await eventually { apps.subscriptionCount > subscriptions }
+            await apps.send([]); try await eventually { fake.pendingCount == 1 }
+            #expect(interaction.rows.isEmpty && !interaction.resultsVisible)
+            fake.reply(label); try await eventually { interaction.mode == expected }
+            #expect(editor.string == text && editor.selectedRange() == selection)
+        }
+        #expect(fixture.log.counts().switches == 3)
+        await store.close()
+    }
+
+    @Test(arguments: AutomaticSwitchOptions.EscapeBehavior.allCases)
+    func escapeAfterAnAutomaticSwitchReversesOnceOrDismissesAsConfigured(option: AutomaticSwitchOptions.EscapeBehavior) async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; options.escapeBehavior = option
+        fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store }, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.insertText("call mom", replacementRange: NSRange(location: NSNotFound, length: 0))
+        await apps.send([]); try await eventually { fake.pendingCount == 1 }; fake.reply(.note)
+        try await eventually { interaction.mode == .note }
+        editor.keyDown(with: try escapeKey())
+        if option == .returnsToSearch {
+            #expect(interaction.mode == .search && interaction.currentInvocation == invocation && editor.string == "call mom")
+            editor.keyDown(with: try escapeKey())
+            #expect(fixture.log.counts().wrongSwitches == 1 && fixture.log.counts().ambiguous == 0)
+        } else { #expect(fixture.log.counts().wrongSwitches == 0 && fixture.log.counts().ambiguous == 1) }
+        #expect(interaction.currentInvocation == nil)
+        await store.close()
+    }
+
+    @Test func missedManualCaptureRecordsTheLastSearchVerdictLabel() async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store }, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.insertText("private unmatched lookup", replacementRange: NSRange(location: NSNotFound, length: 0))
+        await apps.send([]); try await eventually { fake.pendingCount == 1 }; fake.reply(.search)
+        try await eventually { (try? String(contentsOf: fixture.log.url, encoding: .utf8).contains("autoswitch.verdict")) == true }
+        interaction.requestSelectedOpen()
+        #expect(interaction.mode == .note && fixture.log.counts().missed == 1)
+        let lines = try String(contentsOf: fixture.log.url, encoding: .utf8).split(separator: "\n")
+        let rows = try lines.map { try #require(JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any]) }
+        #expect(rows.first { $0["event"] as? String == "autoswitch.missed" }?["lastVerdict"] as? String == "search")
+        await store.close()
     }
 
     private func editor() async throws -> NSTextView {

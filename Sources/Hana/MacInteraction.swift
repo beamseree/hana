@@ -129,6 +129,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private var automaticSwitchToggle: NSMenuItem?
     private var automaticSwitchCountItems: [NSMenuItem] = []
     private var automaticSwitchReset: NSMenuItem?
+    /// Nil by default: persisted preferences cannot make tests call real models.
+    private let classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)?
+    private var classifier: (any Classifier)?
+    private var automaticSwitch: AutomaticSwitch?
+    private var classificationTasks: [UUID: Task<Void, Never>] = [:]
+    private var automaticSwitchTicker: Task<Void, Never>?
+    private var titleObservation: Task<Void, Never>?
+    private var titleSource: CollectionTitleSource?
+    private var gateTitles = StrongMatchGate.Titles(status: .unavailable)
+    private var gateResults: [SearchResult] = []
+    private var automaticSwitchChoices: [(NSMenuItem, (AutomaticSwitchOptions) -> Bool)] = []
+    private var automaticSwitchMutations: [(inout AutomaticSwitchOptions) -> Void] = []
     private var origin: NSRunningApplication?
     private weak var originWindow: NSWindow?
     private weak var originResponder: NSResponder?
@@ -153,10 +165,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
          collection: Task<CollectionStore, any Error>? = nil, confirmationDuration: Duration = .milliseconds(500),
          automaticSwitchOptions: AutomaticSwitchOptionsStore = AutomaticSwitchOptionsStore(),
          automaticSwitchDiagnostics: AutomaticSwitchDiagnostics = AutomaticSwitchDiagnostics(),
+         classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)? = nil,
          frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
         self.diagnostics = diagnostics
         self.automaticSwitchOptions = automaticSwitchOptions
         self.automaticSwitchDiagnostics = automaticSwitchDiagnostics
+        self.classifierFactory = classifierFactory
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -217,6 +231,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             originResponder = originWindow?.firstResponder
             currentInvocation = invocation
             automaticSwitchSessionOptions = automaticSwitchOptions.read()
+            beginAutomaticSwitch(invocation)
             _ = capture.handle(.invoked)
             clearEditor()
             observeSession(invocation)
@@ -277,6 +292,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             return
         }
         record("dismiss.\(reason.rawValue)")
+        endAutomaticSwitch(reason == .saved ? .saved : .dismissed)
         currentInvocation = nil
         placementTask?.cancel()
         placementTask = nil
@@ -485,9 +501,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         editor.delegate = self
         editor.escape = { [weak self] in
             guard let self, let invocation = self.currentInvocation else { return }
-            self.dismiss(invocation, reason: .escape)
+            let effects = self.automaticSwitch?.handle(.reversed(.escape)) ?? []
+            if effects.contains(where: { if case .returnToSearch = $0 { true } else { false } }) {
+                self.performAutomaticSwitch(effects)
+            } else { self.dismiss(invocation, reason: .escape) }
         }
-        editor.compositionChanged = { [weak self] in self?.updateModeIcon() }
+        editor.compositionChanged = { [weak self] in
+            self?.updateModeIcon()
+            self?.updateAutomaticSwitchBuffer()
+        }
         editor.shouldInsert = { [weak self] text, range, provenance in
             self?.shouldInsert(text, replacing: range, provenance: provenance) ?? true
         }
@@ -515,9 +537,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
 
     private func show(_ mode: CaptureSession.Mode) {
         record("capture.mode", extra: ["mode": mode.rawValue])
-        resetSearch()
+        let keepGate = automaticSwitch?.lastModeChangeWasAutomatic == true && mode != .search
+        if keepGate {
+            results = []; icons = [:]; selectedRow = nil
+        } else { resetSearch() }
         applyModePresentation(animated: panel.isVisible)
-        // Search shows the results for the text it kept.
+        // Search shows the results for the text it kept; automatic capture keeps a gate-only stream.
         if mode == .search { updateQuery(editor.string) } else { renderResults() }
     }
 
@@ -675,6 +700,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         toggle.target = self
         automaticSwitchToggle = toggle
         submenu.addItem(toggle)
+        addAutomaticSwitchBehaviorMenus(to: submenu)
         submenu.addItem(.separator())
         automaticSwitchCountItems = (0..<4).map { _ in
             let item = NSMenuItem(title: "", action: nil, keyEquivalent: "")
@@ -700,6 +726,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private func refreshAutomaticSwitchMenu() {
         let options = automaticSwitchOptions.read()
         automaticSwitchToggle?.state = options.isEnabled ? .on : .off
+        for (item, matches) in automaticSwitchChoices { item.state = matches(options) ? .on : .off }
         automaticSwitchReset?.isEnabled = options.isEnabled
         let counts = automaticSwitchDiagnostics.counts()
         let titles = [
@@ -711,6 +738,55 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             return "\(name): median \(latency.medianMilliseconds.formatted(.number.precision(.fractionLength(0)))) ms · max \(latency.maximumMilliseconds.formatted(.number.precision(.fractionLength(0)))) ms"
         }
         for (item, title) in zip(automaticSwitchCountItems, titles) { item.title = title }
+    }
+
+    private func addAutomaticSwitchBehaviorMenus(to menu: NSMenu) {
+        automaticSwitchChoices = []; automaticSwitchMutations = []
+        addOptionMenu("Classifier", to: menu, keyPath: \.classifier,
+            choices: [(.foundationModels, "Foundation Models"), (.jev, "Jev")])
+        addOptionMenu("Fires", to: menu, keyPath: \.firing,
+            choices: [(.everyKeystroke, "Every keystroke"), (.debounced, "Debounced (150 ms)"), (.onPause, "On pause (500 ms)")])
+        addOptionMenu("Jev threshold", to: menu, keyPath: \.jevThreshold,
+            choices: AutomaticSwitchOptions.Threshold.allCases.map { ($0, String(format: "%.2f", $0.rawValue)) })
+        addOptionMenu("Foundation Models unsure", to: menu, keyPath: \.foundationModelsUnsure,
+            choices: [(true, "On"), (false, "Off")])
+        addOptionMenu("Agreeing verdicts needed", to: menu, keyPath: \.agreeingVerdicts, choices: [(.one, "1"), (.two, "2")])
+        addOptionMenu("After a switch", to: menu, keyPath: \.afterSwitch,
+            choices: [(.stay, "Stay in that mode"), (.keepClassifying, "Keep classifying")])
+        addOptionMenu("Navigating results stops switching", to: menu, keyPath: \.navigationSuspends,
+            choices: [(true, "On"), (false, "Off")])
+        addOptionMenu("Enter just after a switch", to: menu, keyPath: \.enterBehavior,
+            choices: [(.saves, "Saves"), (.ignoreFor300Milliseconds, "Ignored for 300 ms")])
+        addOptionMenu("Escape right after a switch", to: menu, keyPath: \.escapeBehavior,
+            choices: [(.returnsToSearch, "Returns to Search"), (.dismisses, "Dismisses")])
+        addOptionMenu("Reversing stops switching", to: menu, keyPath: \.reversalSuspends,
+            choices: [(true, "On"), (false, "Off")])
+        addOptionMenu("Wait before switching", to: menu, keyPath: \.wait,
+            choices: [(.allSources, "For all Search sources"), (.appsAndCollection, "For apps and collection only"), (.none, "Don't wait")])
+        addOptionMenu("Strong match lands after a switch", to: menu, keyPath: \.lateStrongMatch,
+            choices: [(.returnToSearch, "Return to Search"), (.stay, "Stay")])
+    }
+
+    private func addOptionMenu<Value: Equatable>(_ title: String, to menu: NSMenu,
+        keyPath: WritableKeyPath<AutomaticSwitchOptions, Value>, choices: [(Value, String)]) {
+        let root = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        let submenu = NSMenu(title: title); submenu.autoenablesItems = false
+        for (value, label) in choices {
+            let item = NSMenuItem(title: label, action: #selector(selectAutomaticSwitchOption(_:)), keyEquivalent: "")
+            item.target = self; item.tag = automaticSwitchMutations.count
+            automaticSwitchMutations.append { $0[keyPath: keyPath] = value }
+            automaticSwitchChoices.append((item, { $0[keyPath: keyPath] == value }))
+            submenu.addItem(item)
+        }
+        root.submenu = submenu; menu.addItem(root)
+    }
+
+    @objc private func selectAutomaticSwitchOption(_ sender: NSMenuItem) {
+        guard automaticSwitchMutations.indices.contains(sender.tag) else { return }
+        var options = automaticSwitchOptions.read()
+        automaticSwitchMutations[sender.tag](&options)
+        automaticSwitchOptions.write(options)
+        refreshAutomaticSwitchMenu()
     }
 
     @objc private func toggleAutomaticSwitch() {
@@ -741,6 +817,108 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         menu.addItem(item)
     }
 
+    private func beginAutomaticSwitch(_ invocation: Invocation) {
+        let epoch = ContinuousClock.now
+        automaticSwitch = AutomaticSwitch(options: automaticSwitchSessionOptions,
+            now: { epoch.duration(to: ContinuousClock.now) })
+        performAutomaticSwitch(automaticSwitch?.handle(.invoked) ?? [])
+        guard automaticSwitchSessionOptions.isEnabled else { return }
+        classifier = classifierFactory?(automaticSwitchSessionOptions)
+        gateTitles = StrongMatchGate.Titles(status: collection == nil ? .unavailable : .loading)
+        let collection = collection
+        titleObservation = Task { [weak self] in
+            let store = try? await collection?.value
+            guard let self, self.currentInvocation == invocation, !Task.isCancelled else { return }
+            let source = CollectionTitleSource(store: store)
+            self.titleSource = source
+            for await titles in source.snapshots() {
+                guard self.currentInvocation == invocation, !Task.isCancelled else { return }
+                self.gateTitles = titles
+                self.refreshAutomaticSwitchGate()
+            }
+        }
+        automaticSwitchTicker = Task { [weak self] in
+            while !Task.isCancelled {
+                do { try await Task.sleep(for: .milliseconds(25)) } catch { return }
+                guard let self, self.currentInvocation == invocation else { return }
+                self.performAutomaticSwitch(self.automaticSwitch?.handle(.tick) ?? [])
+            }
+        }
+    }
+
+    private func endAutomaticSwitch(_ end: AutomaticSwitchDiagnostics.End) {
+        performAutomaticSwitch(automaticSwitch?.handle(.dismissed(end)) ?? [])
+        automaticSwitchTicker?.cancel(); automaticSwitchTicker = nil
+        titleObservation?.cancel(); titleObservation = nil; titleSource = nil
+        classificationTasks.values.forEach { $0.cancel() }; classificationTasks = [:]
+        classifier = nil; automaticSwitch = nil; gateResults = []
+    }
+
+    private func automaticSwitchGate() -> StrongMatchGate.Evaluation {
+        StrongMatchGate.evaluate(rawBuffer: editor.string, results: gateResults,
+            appStatus: sourceStatus, fileStatus: fileStatus, titles: gateTitles)
+    }
+
+    private func updateAutomaticSwitchBuffer() {
+        guard currentInvocation != nil else { return }
+        updateAutomaticSwitchEligibility()
+        performAutomaticSwitch(automaticSwitch?.handle(.bufferChanged(text: editor.string,
+            composing: editor.hasMarkedText(), gate: automaticSwitchGate())) ?? [])
+    }
+
+    private func refreshAutomaticSwitchGate() {
+        guard currentInvocation != nil else { return }
+        updateAutomaticSwitchEligibility()
+        performAutomaticSwitch(automaticSwitch?.handle(.gateChanged(automaticSwitchGate())) ?? [])
+    }
+
+    private func updateAutomaticSwitchEligibility() {
+        let eligible = heldEnter == nil && pendingLaunch == nil && capture.state.phase == .editing
+        performAutomaticSwitch(automaticSwitch?.handle(.eligibilityChanged(eligible)) ?? [])
+    }
+
+    private func performAutomaticSwitch(_ effects: [AutomaticSwitch.Effect]) {
+        for effect in effects {
+            switch effect {
+            case .record(let event):
+                automaticSwitchDiagnostics.record(event, options: automaticSwitchSessionOptions)
+            case .cancel(let id):
+                classificationTasks.removeValue(forKey: id)?.cancel()
+            case .classify(let id, let text):
+                guard let invocation = currentInvocation else { continue }
+                let classifier = classifier
+                classificationTasks[id] = Task { [weak self] in
+                    let started = ContinuousClock.now
+                    let event: AutomaticSwitch.Event
+                    do {
+                        guard let classifier else { throw ClassifierFailure(kind: .unavailable) }
+                        let verdict = try await classifier.classify(text)
+                        let duration = started.duration(to: ContinuousClock.now)
+                        let latency = Double(duration.components.seconds) * 1000 + Double(duration.components.attoseconds) / 1e15
+                        event = .verdict(id: id, verdict, latencyMilliseconds: latency)
+                    } catch {
+                        let duration = started.duration(to: ContinuousClock.now)
+                        let latency = Double(duration.components.seconds) * 1000 + Double(duration.components.attoseconds) / 1e15
+                        event = .failed(id: id, (error as? ClassifierFailure)?.kind ?? .other, latencyMilliseconds: latency)
+                    }
+                    guard let self, self.currentInvocation == invocation else { return }
+                    self.classificationTasks[id] = nil
+                    self.updateAutomaticSwitchEligibility()
+                    self.performAutomaticSwitch(self.automaticSwitch?.handle(event) ?? [])
+                }
+            case .enterMode(let mode):
+                guard heldEnter == nil, pendingLaunch == nil, !editor.hasMarkedText(),
+                      capture.state.phase == .editing else { continue }
+                capture.handle(.automaticMode(mode)).forEach(perform)
+            case .returnToSearch:
+                guard heldEnter == nil, pendingLaunch == nil, !editor.hasMarkedText(),
+                      capture.state.phase == .editing else { continue }
+                capture.handle(.automaticMode(.search)).forEach(perform)
+            case .swallowEnter: break
+            }
+        }
+    }
+
     /// A click on Task's selector. The session decides; the selector then shows its choice.
     private func destinationChosen(_ index: Int) {
         guard currentInvocation != nil, TaskPlacement.allCases.indices.contains(index) else { return }
@@ -753,7 +931,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     func textDidChange(_ notification: Notification) {
         record("editor.changed")
         _ = capture.handle(.edited(text: editor.string, selection: editor.selectedRange()))
-        if mode == .search { updateQuery(editor.string) } else { renderResults() }
+        if mode == .search || automaticSwitch?.lastModeChangeWasAutomatic == true {
+            updateQuery(editor.string)
+        } else { renderResults() }
     }
 
     func textViewDidChangeSelection(_ notification: Notification) {
@@ -787,6 +967,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     /// confirmation, do nothing: the session has already frozen the text.
     private func submitCapture() {
         let effects = capture.handle(.submit)
+        updateAutomaticSwitchEligibility()
         if effects.isEmpty, capture.state.notice == .blank { record("capture.refused-blank") }
         effects.forEach(perform)
         renderResults()
@@ -855,6 +1036,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             record("capture.saved")
         }
         capture.handle(outcome).forEach(perform)
+        updateAutomaticSwitchEligibility()
         renderResults()
     }
 
@@ -873,8 +1055,19 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         default: nil
         }
         if let event {
+            if event == .deleteBackward, mode != .search,
+               capture.state.selection == NSRange(location: 0, length: 0), capture.state.phase == .editing {
+                let effects = automaticSwitch?.handle(.reversed(.backspace)) ?? []
+                if effects.contains(where: { if case .returnToSearch = $0 { true } else { false } }) {
+                    performAutomaticSwitch(effects)
+                    return true
+                }
+            }
             let effects = capture.handle(event)
             if !effects.isEmpty {
+                if event == .deleteBackward {
+                    performAutomaticSwitch(automaticSwitch?.handle(.manualModeChanged(.search)) ?? [])
+                }
                 if event == .tab { record("capture.destination", extra: ["destination": capture.state.destination.rawValue]) }
                 effects.forEach(perform)
                 renderResults()
@@ -882,6 +1075,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             }
             // Ordinary deletion, tab or line break.
             if event == .deleteBackward || mode != .search { return false }
+        }
+        if commandSelector == #selector(NSResponder.insertNewline(_:)), !editor.shiftHeld {
+            let effects = automaticSwitch?.handle(.enter) ?? []
+            if effects.contains(where: { if case .swallowEnter = $0 { true } else { false } }) { return true }
         }
         if mode != .search {
             // Plain Enter saves.
@@ -906,8 +1103,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             editor.string = text
             _ = capture.handle(.edited(text: text, selection: editor.selectedRange()))
         }
-        // Note's text is not a query.
-        guard mode == .search else { return renderResults() }
+        // Automatic capture uses Search only as a gate, never as visible rows.
+        guard mode == .search || automaticSwitch?.lastModeChangeWasAutomatic == true else { return renderResults() }
         updateModeIcon()
         searchTask?.cancel()
         // A new query owns a new open intent; an old acknowledgment cannot
@@ -919,10 +1116,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         userMovedSelection = false
         openFailure = nil
         let stream = search.search(request)
+        gateResults = stream.initial.results
         currentMatchIDs = Set(stream.initial.results.map(\.id))
         // Keep the displayed snapshot intact until a source delivers its
         // replacement. An edit alone must not remove nonmatching rows.
-        if results.isEmpty || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if mode == .search, results.isEmpty || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             results = stream.initial.results
             displayedResultsGeneration = request.generation
         }
@@ -930,6 +1128,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         icons = icons.filter { id, _ in results.contains { $0.id == id } }
         sourceStatus = stream.initial.appStatus
         fileStatus = stream.initial.fileStatus
+        updateAutomaticSwitchBuffer()
         // Interrupt a preceding finished batch's shrink at the actual current
         // height; holding its smaller target would keep shrinking during typing.
         let editorGrowth = editorScroll.frame.height - BarStyle.editorHeight
@@ -942,10 +1141,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                       self.currentInvocation != nil, !Task.isCancelled else { continue }
                 self.sourceStatus = batch.appStatus
                 self.fileStatus = batch.fileStatus
+                self.gateResults = batch.results
                 self.currentMatchIDs.formUnion(batch.results.map(\.id))
                 // Empty or cache-only intermediate batches are not a
                 // replacement: a source has yet to deliver fresh matches.
-                if batch.hasFreshResults || (batch.appStatus != .loading && batch.fileStatus != .loading) {
+                if self.mode == .search, batch.hasFreshResults || (batch.appStatus != .loading && batch.fileStatus != .loading) {
                     self.results = batch.results
                     self.displayedResultsGeneration = batch.generation
                     self.icons = self.icons.filter { id, _ in batch.results.contains { $0.id == id } }
@@ -956,6 +1156,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                 }
                 self.renderResults()
                 if self.heldEnter != nil { self.releaseHeldEnter() }
+                self.refreshAutomaticSwitchGate()
                 self.record("search.batch", extra: ["resultCount": batch.results.count, "appStatus": batch.appStatus.rawValue, "fileStatus": batch.fileStatus.rawValue,
                     "applicationCount": batch.results.filter { $0.kind == .application }.count,
                     "fileCount": batch.results.filter { $0.kind != .application }.count,
@@ -971,6 +1172,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let next = index.map { min(rows.count - 1, max(0, $0 + offset)) } ?? (offset < 0 ? rows.count - 1 : 0)
         selectedRow = rows[next].id
         userMovedSelection = true
+        performAutomaticSwitch(automaticSwitch?.handle(.navigated) ?? [])
         renderResults()
         record("search.selection", extra: ["index": next])
     }
@@ -1004,6 +1206,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
 
     private func hold(_ held: HeldEnter, destinationKind: String) {
         heldEnter = held
+        updateAutomaticSwitchEligibility()
         openFailure = nil
         renderResults()
         record("launch.held", extra: ["destinationKind": destinationKind])
@@ -1024,12 +1227,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     private func recordMissedSwitch(previousMode: CaptureSession.Mode, effects: [CaptureSession.Effect]) {
-        guard previousMode == .search, Note.isNonblank(capture.state.text) else { return }
+        guard previousMode == .search else { return }
         for effect in effects {
             guard case .enterMode(let mode) = effect, mode != .search,
                   let recordedMode = AutomaticSwitchDiagnostics.Mode(rawValue: mode.rawValue) else { continue }
-            automaticSwitchDiagnostics.record(.missed(mode: recordedMode, lastVerdict: .none),
-                                              options: automaticSwitchSessionOptions)
+            if Note.isNonblank(capture.state.text), automaticSwitch?.hasActedOnCurrentBuffer != true {
+                automaticSwitchDiagnostics.record(.missed(mode: recordedMode, lastVerdict: automaticSwitch?.lastVerdict ?? .none),
+                                                  options: automaticSwitchSessionOptions)
+            }
+            performAutomaticSwitch(automaticSwitch?.handle(.manualModeChanged(mode)) ?? [])
         }
     }
 
@@ -1056,6 +1262,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private func openResult(_ destination: SearchResult, from invocation: Invocation) -> Task<Void, Never> {
         let operation = UUID()
         pendingLaunch = operation
+        updateAutomaticSwitchEligibility()
         let generation = request?.generation
         openFailure = nil
         renderResults()
@@ -1068,6 +1275,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             } catch {
                 guard currentInvocation == invocation, pendingLaunch == operation else { return }
                 pendingLaunch = nil
+                updateAutomaticSwitchEligibility()
                 if request?.generation == generation {
                     openFailure = Self.openFailureMessage(error)
                 }

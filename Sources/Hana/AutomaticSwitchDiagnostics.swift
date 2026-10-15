@@ -26,7 +26,7 @@ final class AutomaticSwitchDiagnostics {
         var label: Label
         var probability: Double? = nil
         var unsure: Bool = false
-        var latencyMilliseconds: Double
+        var latencyMilliseconds: Double?
         var outcome: Outcome
         var errorKind: ErrorKind? = nil
         var gateReason: GateReason? = nil
