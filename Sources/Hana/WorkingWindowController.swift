@@ -32,7 +32,7 @@ final class WorkingWindowController: NSWindowController {
                                       y: window.frame.minY - CGFloat(destination.rawValue - 1) * 35))
 
         let title = NSTextField(labelWithString: "\(destination.title) · Validation only")
-        title.font = .systemFont(ofSize: 22, weight: .semibold)
+        title.font = HanaFont.Heading.window.nsFont
         let disclaimer = NSTextField(wrappingLabelWithString:
             "Mock content. Nothing is saved. No note editing or organizer.")
         let probeLabel = NSTextField(wrappingLabelWithString:
@@ -40,7 +40,7 @@ final class WorkingWindowController: NSWindowController {
         focusProbe.placeholderString = "Type here to check destination focus"
         focusProbe.setAccessibilityLabel("\(destination.title) keyboard focus probe")
         let shortcuts = NSTextField(labelWithString: "Window menu: ⌘1 Main · ⌘2 Mock Note A · ⌘3 Mock Note B")
-        shortcuts.font = .systemFont(ofSize: 11)
+        shortcuts.font = HanaFont.caption.nsFont
         let stack = NSStackView(views: [title, disclaimer, probeLabel, focusProbe, shortcuts])
         stack.orientation = .vertical
         stack.alignment = .leading

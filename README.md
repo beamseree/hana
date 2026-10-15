@@ -10,6 +10,7 @@ Product scope was confirmed on 2026-10-13. The current bounded milestone impleme
 
 - [Product specification](docs/product-spec.md): accepted behavior, references, acceptance criteria, and interview decision history.
 - [Glossary](GLOSSARY.md): shared domain language.
+- [Design system](docs/design-system.md): color roles on Vercel Geist's palette; other sections to follow.
 - [ADR 0001 — Own tasks and notes](docs/adr/0001-own-tasks-and-notes.md): the ownership decision and its rationale.
 - [Technical design](docs/technical-design.md): architecture, environment evidence, source links, recovery contracts, validation strategy, and phased implementation plan.
 - [ADR 0002 — Native windows and text](docs/adr/0002-appkit-windows-and-native-text.md), [ADR 0003 — Transactional collection](docs/adr/0003-transactional-local-collection.md), and [ADR 0004 — Direct installation](docs/adr/0004-direct-installed-personal-app.md): selected engineering decisions.

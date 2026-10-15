@@ -9,12 +9,14 @@ enum BarStyle {
     static let inset: CGFloat = 4
     static let inputHeight: CGFloat = 60
     static let collapsedHeight = inputHeight + 2 * inset
-    static let bezelRadius: CGFloat = 26
-    static let cardRadius = bezelRadius - inset
+    static let bezelRadius = HanaRadius.bar
+    static let cardRadius = HanaRadius.nested(in: bezelRadius, inset: inset)
     /// Card padding around the input row and the results, and the gap between them.
     static let cardPadding: CGFloat = 8
+    /// The selected result's highlight, concentric with the card.
+    static let rowRadius = HanaRadius.nested(in: cardRadius, inset: cardPadding)
+    /// Search results and Note share one scroll thumb, colored `scroll.thumb`.
     static let scrollThumbWidth: CGFloat = 3
-    static let scrollThumbOpacity: CGFloat = 0.16
     /// Card height changes. Short because Search is invoked many times a day.
     static let resizeDuration: TimeInterval = 0.15
     /// Strong ease-out, cubic-bezier(0.23, 1, 0.32, 1).
@@ -36,22 +38,16 @@ enum BarStyle {
     /// A capture's one-line explanation below the writing surface.
     static let noticeHeight: CGFloat = 24
 
-    static let font = NSFont.systemFont(ofSize: 26)
-    static let textColor = NSColor(srgbRed: 0x17 / 255, green: 0x17 / 255, blue: 0x17 / 255, alpha: 1)
-    static let secondaryColor = NSColor(srgbRed: 0x66 / 255, green: 0x66 / 255, blue: 0x66 / 255, alpha: 1)
-    static let iconColor = NSColor(srgbRed: 0x77 / 255, green: 0x77 / 255, blue: 0x77 / 255, alpha: 1)
-    /// The bar's logo and magnifier match the query text.
-    static let modeIconColor = textColor
-    static let textAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: textColor, .kern: -0.26]
-    static let modeLabelFont = NSFont.systemFont(ofSize: 13, weight: .medium)
-    static let placeholderAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: secondaryColor, .kern: -0.26]
+    /// Colors and type are `HanaColor` and `HanaFont` roles; see docs/design-system.md.
+    static let textAttributes = HanaFont.Bar.input.attributes(color: HanaColor.Text.primary)
+    static let placeholderAttributes = HanaFont.Bar.input.attributes(color: HanaColor.Text.placeholder)
 }
 
 extension NSView {
     static func card(frame: NSRect) -> NSView {
         let card = NSView(frame: frame)
         card.wantsLayer = true
-        card.layer?.backgroundColor = NSColor.white.cgColor
+        card.layer?.backgroundColor = HanaColor.Surface.card.cgColor
         card.layer?.cornerRadius = BarStyle.cardRadius
         card.layer?.masksToBounds = true
         return card
