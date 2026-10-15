@@ -1,0 +1,64 @@
+Fetching https://github.com/swiftlang/swift-cmark.git from cache
+Fetching https://github.com/groue/GRDB.swift from cache
+Fetching https://github.com/swiftlang/swift-markdown.git from cache
+Fetched https://github.com/groue/GRDB.swift from cache (0.02s)
+Fetched https://github.com/swiftlang/swift-markdown.git from cache (0.02s)
+Fetched https://github.com/swiftlang/swift-cmark.git from cache (0.02s)
+Creating working copy for https://github.com/swiftlang/swift-cmark.git
+Creating working copy for https://github.com/groue/GRDB.swift
+Creating working copy for https://github.com/swiftlang/swift-markdown.git
+Working copy of https://github.com/swiftlang/swift-cmark.git resolved at 0.9.0
+Working copy of https://github.com/swiftlang/swift-markdown.git resolved at 0.9.0
+Working copy of https://github.com/groue/GRDB.swift resolved at 7.11.1
+Building for production...
+[0/43] Write swift-version--1AB21518FC5DEDBE.txt
+[1/43] Compiling cmark-gfm cmark_ctype.c
+[2/43] Compiling cmark-gfm cmark.c
+[3/43] Compiling cmark-gfm footnotes.c
+[4/43] Compiling cmark-gfm-extensions tagfilter.c
+[5/43] Compiling cmark-gfm-extensions strikethrough.c
+[6/43] Compiling cmark-gfm arena.c
+[7/43] Compiling cmark-gfm-extensions core-extensions.c
+[8/43] Compiling cmark-gfm commonmark.c
+[9/43] Compiling cmark-gfm buffer.c
+[10/43] Compiling cmark-gfm-extensions ext_scanners.c
+[11/43] Compiling cmark-gfm syntax_extension.c
+[12/43] Compiling cmark-gfm xml.c
+[13/43] Compiling cmark-gfm registry.c
+[14/43] Compiling cmark-gfm render.c
+[15/43] Compiling cmark-gfm references.c
+[16/43] Compiling cmark-gfm plugin.c
+[17/43] Compiling cmark-gfm map.c
+[18/43] Compiling cmark-gfm-extensions tasklist.c
+[19/43] Compiling cmark-gfm plaintext.c
+[20/43] Compiling cmark-gfm man.c
+[21/43] Compiling cmark-gfm linked_list.c
+[22/43] Compiling cmark-gfm-extensions table.c
+[23/43] Compiling cmark-gfm iterator.c
+[24/43] Compiling cmark-gfm latex.c
+[25/43] Compiling cmark-gfm node.c
+[26/43] Write sources
+[26/43] Copying PrivacyInfo.xcprivacy
+[26/43] Copying Info.plist
+[26/43] Write sources
+[31/43] Compiling cmark-gfm houdini_html_e.c
+[32/43] Compiling cmark-gfm houdini_href_e.c
+[33/43] Compiling cmark-gfm blocks.c
+[34/43] Compiling cmark-gfm html.c
+[35/43] Compiling cmark-gfm houdini_html_u.c
+[36/43] Compiling CAtomic CAtomic.c
+[37/43] Compiling cmark-gfm-extensions autolink.c
+[38/44] Compiling cmark-gfm inlines.c
+[39/44] Compiling cmark-gfm scanners.c
+[40/44] Compiling cmark-gfm utf8.c
+[42/45] Compiling Markdown ChildIndexPath.swift
+[43/45] Compiling GRDB Configuration.swift
+[44/46] Compiling Hana ApplicationCatalog.swift
+[44/46] Write Objects.LinkFileList
+[45/46] Linking Hana
+Build complete! (73.56s)
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/build/Hana.app/Contents/Info.plist: OK
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/build/Hana.app: replacing existing signature
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/build/Hana.app: valid on disk
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/build/Hana.app: satisfies its Designated Requirement
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/build/Hana.app

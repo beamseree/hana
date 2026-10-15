@@ -139,6 +139,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private var latestWindowOpen = UUID()
     private var noteFocusRequests: [UUID: NoteFocusRequest] = [:]
     private var noteEditing: NoteEditing?
+    private let previewParser: MarkdownPreviewParser
+    private let openPreviewLink: @MainActor (URL) -> Bool
+    func notePreview(_ id: UUID) -> NotePreviewSession? { noteWindows[id]?.preview }
+    func toggleNotePreview(_ id: UUID) {
+        guard let button = noteWindows[id]?.previewToggle, let action = button.action else { return }
+        button.sendAction(action, to: button.target)
+    }
     func noteSession(_ id: UUID) -> NoteEditingSession? { noteWindows[id]?.session }
     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
     func window(for destination: WorkingWindow) -> NSWindow? {
@@ -207,8 +214,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
          openFile: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.openFileDestination,
          loadIcon: (@MainActor (URL, CGFloat) async -> ResultIcon?)? = nil,
          collection: Task<CollectionStore, any Error>? = nil, confirmationDuration: Duration = .milliseconds(500),
-         frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
+         frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication },
+         previewParser: @escaping MarkdownPreviewParser = MarkdownPreview.parse,
+         openPreviewLink: @escaping @MainActor (URL) -> Bool = { NSWorkspace.shared.open($0) }) {
         self.diagnostics = diagnostics
+        self.previewParser = previewParser
+        self.openPreviewLink = openPreviewLink
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -429,7 +440,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                     record("note.open-focus-superseded")
                     return
                 }
-                let controller = NoteWindowController(session: session)
+                let controller = NoteWindowController(session: session, previewParser: previewParser, openPreviewLink: openPreviewLink)
                 controller.window?.delegate = self
                 controller.onTitleChange = { [weak self] in self?.refreshNoteMenu() }
                 noteWindows[id] = controller
