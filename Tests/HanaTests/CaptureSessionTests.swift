@@ -135,12 +135,12 @@ struct CaptureSessionReturnTests {
         #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
     }
 
-    @Test(arguments: [CaptureSession.Provenance.paste, .drop, .undo, .programmatic])
-    func untypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance: CaptureSession.Provenance) {
+    @Test(arguments: [CaptureSession.Provenance.paste, .drop, .undo, .redo, .programmatic, .composition, .compositionCommit])
+    func aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance: CaptureSession.Provenance) {
         var session = noteSession(text: "", selection: start)
         _ = session.handle(.deleteBackward)
         #expect(session.handle(.insert("-", replacing: start, provenance: provenance)).isEmpty)
-        #expect(session.state.mode == .search && session.state.text == "-")
+        #expect(session.state == .init(mode: .search, text: "-", selection: NSRange(location: 1, length: 0), prefixesArmed: true))
     }
 
     @Test(arguments: [CaptureSession.Event.invoked, .dismissed])

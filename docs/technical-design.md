@@ -502,7 +502,7 @@ Search receives `CaptureSession.searchQuery(for:)`: whitespace runs, including l
 
 The editor's height follows its text in every mode, from one line up to Note's 240-point maximum, and Search places results below it. Returning from a multiline note therefore keeps every line visible and the input in place. A long search query that soft-wraps now grows the bar the same way instead of scrolling inside one line. The height is measured from the laid-out lines because the text view's frame lags behind the text and kept the bar tall after a cleared note. #66 measured with TextKit 1's used rect, because `SearchEditor` then overrode `draw(_:)` for its placeholder and AppKit gave it TextKit 1. #78 removed that override and that fallback.
 
-Native editing tests send a synthesized Backspace key event (key code 51) through `keyDown`, which reaches the session through the real `deleteBackward:` command. A fixture Search records the file source's query text. A physical Backspace is still an interactive check.
+Native editing tests send a synthesized Backspace key event (key code 51) through `keyDown`, which reaches the session through the real `deleteBackward:` command. A fixture Search records the file source's query text. A physical Backspace is still an interactive check. #81 adds native tests for a typed `-`, a synthesized Backspace and a typed `-` ending in Note with an empty buffer, and for an undo that empties returned text re-arming prefixes; the physical key sequence remains an interactive check. Redo can bring back returned text while prefixes are armed, so a typed `-` before it then selects Note; the rule depends only on the buffer having been empty.
 
 ## TextKit 2 for the bar's editor — issue #78
 

@@ -63,11 +63,14 @@ struct CaptureSession {
 
     struct State: Equatable {
         var mode = Mode.search
-        var text = ""
+        /// An emptied buffer arms mode prefixes again, however it was emptied.
+        var text = "" {
+            didSet { if text.isEmpty { prefixesArmed = true } }
+        }
         /// UTF-16 range, as the native editor reports it.
         var selection = NSRange(location: 0, length: 0)
-        /// Whether a typed prefix at the start of Search selects a mode. Off only
-        /// after a return to Search kept text, and on again once the buffer is empty.
+        /// Whether a typed mode prefix at the start of Search selects a mode. Off
+        /// only after a return to Search kept text, until the buffer is empty.
         var prefixesArmed = true
         /// Where Task saves. Inbox for each invocation until changed.
         var destination = TaskPlacement.inbox
@@ -113,7 +116,6 @@ struct CaptureSession {
                 return [.consumeInsertion]
             }
             state.text = (state.text as NSString).replacingCharacters(in: range, with: text)
-            if state.text.isEmpty { state.prefixesArmed = true }
             if !text.isEmpty || range.length > 0 { state.notice = nil }
             state.selection = NSRange(location: range.location + (text as NSString).length, length: 0)
             return []
@@ -144,8 +146,6 @@ struct CaptureSession {
             guard state.phase == .editing else { return [] }
             if text != state.text { state.notice = nil }
             state.text = text
-            // An emptied buffer arms prefixes again, however it was emptied.
-            if text.isEmpty { state.prefixesArmed = true }
             state.selection = selection
             return []
         case .invoked, .dismissed:

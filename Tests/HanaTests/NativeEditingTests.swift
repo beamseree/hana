@@ -240,6 +240,22 @@ struct NativeEditingTests {
         #expect(interaction.query == "milk")
     }
 
+    @Test func undoThatEmptiesReturnedTextLetsATypedDashEnterNote() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let none = NSRange(location: NSNotFound, length: 0)
+        editor.insertText("-", replacementRange: none)
+        editor.insertText("milk", replacementRange: none)
+        editor.breakUndoCoalescing()
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
+        editor.keyDown(with: try backspaceKey())
+        editor.undoManager?.undo()
+        #expect(interaction.mode == .search && editor.string.isEmpty)
+        editor.insertText("-", replacementRange: none)
+        #expect(interaction.mode == .note)
+        #expect(editor.string.isEmpty)
+    }
+
     @Test func typedBracketAtTheStartSwitchesToTaskAndKeepsThaiText() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
