@@ -21,3 +21,5 @@ The organization checks cover pending native source committed before Pin; the ne
 ## Limits
 
 These are automated AppKit events and fixture observations. Physical keyboard, input-method interaction, full-screen Space routing, rendered visual polish and integrated quit/relaunch acceptance remain #99. No screenshot or physical acceptance is claimed. The existing app-loop harness was extended; no new broad harness or persistence schema was introduced.
+
+Post-merge primary integration `87599d6`: `integration-tests.txt` records a fresh-scratch run of 24 tests in 5 suites passing in 7.601 seconds, covering both organization seams, main Notes and both save-safety suites.

@@ -1,0 +1,486 @@
+Fetching https://github.com/swiftlang/swift-markdown.git from cache
+Fetching https://github.com/swiftlang/swift-cmark.git from cache
+Fetching https://github.com/groue/GRDB.swift from cache
+Fetched https://github.com/swiftlang/swift-cmark.git from cache (0.02s)
+Fetched https://github.com/groue/GRDB.swift from cache (0.02s)
+Fetched https://github.com/swiftlang/swift-markdown.git from cache (0.02s)
+Creating working copy for https://github.com/swiftlang/swift-markdown.git
+Creating working copy for https://github.com/groue/GRDB.swift
+Creating working copy for https://github.com/swiftlang/swift-cmark.git
+Working copy of https://github.com/swiftlang/swift-cmark.git resolved at 0.9.0
+Working copy of https://github.com/swiftlang/swift-markdown.git resolved at 0.9.0
+Working copy of https://github.com/groue/GRDB.swift resolved at 7.11.1
+Building for debugging...
+[0/50] /tmp/hana-spec-88-build-93-integration/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[1/50] Write sources
+[2/50] Write swift-version--1AB21518FC5DEDBE.txt
+[3/50] Compiling cmark-gfm-extensions tagfilter.c
+[4/50] Compiling cmark-gfm blocks.c
+[5/50] Compiling cmark-gfm utf8.c
+[6/50] Compiling cmark-gfm buffer.c
+[7/50] Compiling cmark-gfm-extensions strikethrough.c
+[8/50] Compiling cmark-gfm-extensions ext_scanners.c
+[9/50] Compiling cmark-gfm syntax_extension.c
+[10/50] Compiling cmark-gfm-extensions core-extensions.c
+[11/50] Compiling cmark-gfm xml.c
+[12/50] Compiling cmark-gfm-extensions table.c
+[13/50] Compiling cmark-gfm references.c
+[14/50] Compiling cmark-gfm render.c
+[15/50] Compiling cmark-gfm registry.c
+[16/50] Compiling cmark-gfm plugin.c
+[17/50] Compiling cmark-gfm plaintext.c
+[18/50] Compiling cmark-gfm man.c
+[19/50] Compiling cmark-gfm arena.c
+[20/50] Compiling cmark-gfm map.c
+[21/50] Compiling cmark-gfm scanners.c
+[22/50] Compiling cmark-gfm node.c
+[23/50] Compiling cmark-gfm linked_list.c
+[24/50] Compiling cmark-gfm iterator.c
+[25/50] Compiling cmark-gfm cmark.c
+[26/50] Compiling cmark-gfm houdini_html_e.c
+[27/50] Compiling cmark-gfm latex.c
+[28/50] Compiling cmark-gfm houdini_href_e.c
+[29/50] Write sources
+[31/50] Write Hana-entitlement.plist
+[31/50] Copying PrivacyInfo.xcprivacy
+[31/50] Write sources
+[35/50] Copying Info.plist
+[36/50] Compiling cmark-gfm html.c
+[37/50] Compiling cmark-gfm houdini_html_u.c
+[38/50] Compiling cmark-gfm footnotes.c
+[39/50] Compiling cmark-gfm cmark_ctype.c
+[40/50] Compiling cmark-gfm commonmark.c
+[41/50] Compiling CAtomic CAtomic.c
+[42/50] Compiling cmark-gfm inlines.c
+[43/50] Compiling cmark-gfm-extensions tasklist.c
+[44/203] Compiling cmark-gfm-extensions autolink.c
+[46/267] Compiling Markdown CodeBlock.swift
+[47/267] Compiling Markdown HTMLBlock.swift
+[48/267] Compiling Markdown Heading.swift
+[49/267] Compiling Markdown ThematicBreak.swift
+[50/267] Compiling Markdown Table.swift
+[51/267] Compiling Markdown TableBody.swift
+[52/267] Compiling Markdown TableCell.swift
+[53/274] Compiling Markdown InlineAttributes.swift
+[54/274] Compiling Markdown Link.swift
+[55/274] Compiling Markdown Strikethrough.swift
+[56/274] Compiling Markdown Strong.swift
+[57/274] Compiling Markdown CustomInline.swift
+[58/274] Compiling Markdown InlineCode.swift
+[59/274] Compiling Markdown InlineHTML.swift
+[60/274] Compiling Markdown ChildIndexPath.swift
+[61/274] Compiling Markdown DirectiveArgument.swift
+[62/274] Compiling Markdown Document.swift
+[63/274] Compiling Markdown LiteralMarkup.swift
+[64/274] Compiling Markdown Markup.swift
+[65/274] Compiling Markdown MarkupChildren.swift
+[66/274] Compiling Markdown MarkupData.swift
+[67/274] Compiling Markdown PlainTextConvertibleMarkup.swift
+[68/274] Compiling Markdown RawMarkup.swift
+[69/274] Compiling Markdown BlockDirective.swift
+[70/274] Compiling Markdown BlockQuote.swift
+[71/274] Compiling Markdown CustomBlock.swift
+[72/274] Compiling Markdown DoxygenAbstract.swift
+[73/274] Compiling Markdown DoxygenDiscussion.swift
+[74/274] Compiling Markdown DoxygenNote.swift
+[75/274] Compiling Markdown DoxygenParameter.swift
+[76/274] Compiling Markdown DoxygenReturns.swift
+[77/274] Compiling Markdown ListItem.swift
+[78/274] Compiling Markdown OrderedList.swift
+[79/274] Compiling Markdown UnorderedList.swift
+[80/274] Compiling Markdown Paragraph.swift
+[81/274] Compiling Markdown LazySplitLines.swift
+[82/274] Compiling Markdown ParseOptions.swift
+[83/274] Compiling Markdown RangeAdjuster.swift
+[84/274] Compiling Markdown RangerTracker.swift
+[85/274] Compiling Markdown MarkupRewriter.swift
+[86/274] Compiling Markdown BasicBlockContainer.swift
+[87/274] Compiling Markdown BasicInlineContainer.swift
+[88/274] Compiling Markdown BlockContainer.swift
+[89/274] Compiling Markdown BlockMarkup.swift
+[90/274] Compiling Markdown InlineContainer.swift
+[91/274] Compiling Markdown InlineMarkup.swift
+[92/274] Compiling Markdown ListItemContainer.swift
+[93/274] Compiling Markdown AtomicCounter.swift
+[94/274] Compiling Markdown CharacterExtensions.swift
+[95/274] Compiling Markdown TableCellContainer.swift
+[96/274] Compiling Markdown TableHead.swift
+[97/274] Compiling Markdown TableRow.swift
+[98/274] Compiling Markdown Replacement.swift
+[99/274] Compiling Markdown SourceLocation.swift
+[100/274] Compiling Markdown Emphasis.swift
+[101/274] Compiling Markdown Image.swift
+[102/274] Emitting module Markdown
+[103/274] Compiling Markdown LineBreak.swift
+[104/274] Compiling Markdown SoftBreak.swift
+[105/274] Compiling Markdown SymbolLink.swift
+[106/274] Compiling Markdown Text.swift
+[107/274] Compiling Markdown Aside.swift
+[108/274] Compiling Markdown BlockDirectiveParser.swift
+[109/274] Compiling Markdown CommonMarkConverter.swift
+[110/274] Compiling Markdown CollectionExtensions.swift
+[111/274] Compiling Markdown StringExtensions.swift
+[112/274] Compiling Markdown MarkupVisitor.swift
+[113/274] Compiling Markdown MarkupWalker.swift
+[114/274] Compiling Markdown HTMLFormatter.swift
+[115/274] Compiling Markdown MarkupFormatter.swift
+[116/274] Compiling Markdown MarkupTreeDumper.swift
+[117/274] Compiling GRDB Database+SchemaDefinition.swift
+[118/274] Compiling GRDB ForeignKeyDefinition.swift
+[119/274] Compiling GRDB IndexDefinition.swift
+[120/274] Compiling GRDB TableAlteration.swift
+[121/274] Compiling GRDB TableDefinition.swift
+[122/274] Compiling GRDB VirtualTableModule.swift
+[123/274] Compiling GRDB TableRecord+Association.swift
+[124/274] Compiling GRDB TableRecord+QueryInterfaceRequest.swift
+[125/274] Compiling GRDB EncodableRecord+Encodable.swift
+[126/274] Compiling GRDB EncodableRecord.swift
+[127/274] Compiling GRDB FetchableRecord+Decodable.swift
+[128/274] Compiling GRDB FetchableRecord+TableRecord.swift
+[129/274] Compiling GRDB FetchableRecord.swift
+[130/274] Compiling GRDB MutablePersistableRecord+DAO.swift
+[131/274] Compiling GRDB MutablePersistableRecord+Delete.swift
+[132/274] Compiling GRDB MutablePersistableRecord+Insert.swift
+[133/274] Compiling GRDB MutablePersistableRecord+Save.swift
+[134/274] Compiling GRDB ForeignKey.swift
+[135/274] Compiling GRDB Association.swift
+[136/274] Compiling GRDB AssociationAggregate.swift
+[137/274] Compiling GRDB BelongsToAssociation.swift
+[138/274] Compiling GRDB HasManyAssociation.swift
+[139/274] Compiling GRDB HasManyThroughAssociation.swift
+[140/274] Compiling GRDB HasOneAssociation.swift
+[141/274] Compiling GRDB HasOneThroughAssociation.swift
+[142/274] Compiling GRDB JoinAssociation.swift
+[143/274] Compiling GRDB CommonTableExpression.swift
+[144/274] Compiling GRDB QueryInterfaceRequest.swift
+[145/274] Compiling GRDB RequestProtocols.swift
+[146/274] Compiling GRDB Column.swift
+[147/274] Compiling GRDB DatabasePromise.swift
+[148/274] Compiling GRDB SQLAssociation.swift
+[149/274] Compiling GRDB SQLCollection.swift
+[150/274] Compiling GRDB SQLExpression.swift
+[151/274] Emitting module GRDB
+[152/290] Compiling GRDB MutablePersistableRecord+Update.swift
+[153/290] Compiling GRDB MutablePersistableRecord+Upsert.swift
+[154/290] Compiling GRDB MutablePersistableRecord.swift
+[155/290] Compiling GRDB PersistableRecord+Insert.swift
+[156/290] Compiling GRDB PersistableRecord+Save.swift
+[157/290] Compiling GRDB PersistableRecord+Upsert.swift
+[158/290] Compiling GRDB PersistableRecord.swift
+[159/290] Compiling GRDB Record.swift
+[160/290] Compiling GRDB TableRecord.swift
+[161/290] Compiling GRDB CaseInsensitiveIdentifier.swift
+[162/290] Compiling GRDB Inflections+English.swift
+[163/290] Compiling GRDB Inflections.swift
+[164/290] Compiling GRDB Mutex.swift
+[165/290] Compiling GRDB OnDemandFuture.swift
+[166/290] Compiling GRDB OrderedDictionary.swift
+[167/290] Compiling GRDB Pool.swift
+[170/290] Compiling GRDB Optional.swift
+[171/290] Compiling GRDB StandardLibrary.swift
+[172/290] Compiling GRDB TransactionClock.swift
+[173/290] Compiling GRDB TransactionObserver.swift
+[174/290] Compiling GRDB WALSnapshot.swift
+[175/290] Compiling GRDB WALSnapshotTransaction.swift
+[176/290] Compiling GRDB Database+Dump.swift
+[177/290] Compiling GRDB DatabaseReader+dump.swift
+[178/290] Compiling GRDB DumpFormat.swift
+[179/290] Compiling GRDB DebugDumpFormat.swift
+[180/290] Compiling GRDB JSONDumpFormat.swift
+[181/290] Compiling GRDB LineDumpFormat.swift
+[182/290] Compiling GRDB ListDumpFormat.swift
+[183/290] Compiling GRDB QuoteDumpFormat.swift
+[184/290] Compiling GRDB FTS3.swift
+[219/290] Compiling GRDB DatabaseSchemaSource.swift
+[220/290] Compiling GRDB DatabaseSnapshot.swift
+[221/290] Compiling GRDB DatabaseSnapshotPool.swift
+[222/290] Compiling GRDB DatabaseValue.swift
+[223/290] Compiling GRDB DatabaseValueConvertible.swift
+[224/290] Compiling GRDB DatabaseWriter.swift
+[225/290] Compiling GRDB DispatchQueueActor.swift
+[226/290] Compiling GRDB FetchRequest.swift
+[227/290] Compiling GRDB Row.swift
+[228/290] Compiling GRDB RowAdapter.swift
+[229/290] Compiling GRDB RowDecodingError.swift
+[230/290] Compiling GRDB SQL.swift
+[231/290] Compiling GRDB SQLInterpolation.swift
+[232/290] Compiling GRDB SQLRequest.swift
+[233/290] Compiling GRDB SchedulingWatchdog.swift
+[234/290] Compiling GRDB SerializedDatabase.swift
+[235/290] Compiling GRDB Statement.swift
+[253/290] Compiling GRDB ReadWriteLock.swift
+[254/290] Compiling GRDB ReceiveValuesOn.swift
+[255/290] Compiling GRDB Refinable.swift
+[256/290] Compiling GRDB Utils.swift
+[257/290] Compiling GRDB DatabaseCancellable.swift
+[258/290] Compiling GRDB ValueConcurrentObserver.swift
+[259/290] Compiling GRDB ValueWriteOnlyObserver.swift
+[260/290] Compiling GRDB Fetch.swift
+[261/290] Compiling GRDB Map.swift
+[262/290] Compiling GRDB RemoveDuplicates.swift
+[263/290] Compiling GRDB Trace.swift
+[264/290] Compiling GRDB ValueReducer.swift
+[265/290] Compiling GRDB SharedValueObservation.swift
+[266/290] Compiling GRDB ValueObservation.swift
+[267/290] Compiling GRDB ValueObservationScheduler.swift
+[268/290] Compiling GRDB resource_bundle_accessor.swift
+[286/331] Compiling Hana CollectionFixtureHarness.swift
+[287/331] Compiling Hana CollectionLocation.swift
+[288/331] Compiling Hana CollectionRecovery.swift
+[289/331] Compiling Hana CollectionSchema.swift
+[290/331] Compiling Hana CollectionSnapshotFixture.swift
+[291/335] Compiling Hana ApplicationCatalog.swift
+[292/335] Compiling Hana BarStyle.swift
+[293/335] Compiling Hana CaptureSession.swift
+[294/335] Compiling Hana CollectionExport.swift
+[295/335] Compiling Hana CollectionExportFixture.swift
+[296/335] Compiling Hana MarkdownPreviewRenderer.swift
+[297/335] Compiling Hana MixedSearchValidation.swift
+[298/335] Compiling Hana ModeIcon.swift
+[299/335] Compiling Hana NoteEditing.swift
+[300/335] Emitting module Hana
+[301/335] Compiling Hana NotePreview.swift
+[302/335] Compiling Hana NotePreviewSession.swift
+[303/335] Compiling Hana NoteScroller.swift
+[304/335] Compiling Hana NoteWindowController.swift
+[305/335] Compiling Hana Search.swift
+[306/335] Compiling Hana SearchCorrectnessValidation.swift
+[307/335] Compiling Hana SearchName.swift
+[308/335] Compiling Hana SearchResultsView.swift
+[309/335] Compiling Hana CollectionSnapshots.swift
+[310/335] Compiling Hana CollectionStore.swift
+[311/335] Compiling Hana CoverageValidation.swift
+[312/335] Compiling Hana Diagnostics.swift
+[313/335] Compiling Hana DisplayPlacement.swift
+[314/335] Compiling Hana FocusedWindowGeometry.swift
+[315/335] Compiling Hana GlobalShortcut.swift
+[316/335] Compiling Hana HanaApp.swift
+[317/335] Compiling Hana HanaColor.swift
+[318/335] Compiling Hana HanaFont.swift
+[319/335] Compiling Hana NoteWindowValidation.swift
+[320/335] Compiling Hana OpenNoteCaptureValidation.swift
+[321/335] Compiling Hana PerformanceValidation.swift
+[322/335] Compiling Hana ResultIcons.swift
+[323/335] Compiling Hana HanaRadius.swift
+[324/335] Compiling Hana HanaShadow.swift
+[325/335] Compiling Hana MacInteraction.swift
+[326/335] Compiling Hana MainWindowValidation.swift
+[327/335] Compiling Hana SegmentedControl.swift
+[328/335] Compiling Hana SpotlightSource.swift
+[329/335] Compiling Hana TaskWorkspace.swift
+[330/335] Compiling Hana WorkingWindowController.swift
+[330/335] Write Objects.LinkFileList
+[331/335] Linking Hana
+[332/335] Applying Hana
+[334/376] Compiling HanaTests SearchRankingTests.swift
+[335/376] Compiling HanaTests SearchResponsivenessTests.swift
+[336/376] Compiling HanaTests SearchTests.swift
+[337/376] Compiling HanaTests SearchTypingGapTests.swift
+[338/380] Compiling HanaTests NoteSaveSafetyTests.swift
+[339/380] Compiling HanaTests NoteSaveTests.swift
+[340/380] Compiling HanaTests NoteWindowTests.swift
+[341/380] Compiling HanaTests OpenNoteCaptureTests.swift
+[342/380] Emitting module HanaTests
+[343/380] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[344/380] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[345/380] Compiling HanaTests CollectionSnapshotTests.swift
+[346/380] Compiling HanaTests CollectionStoreOpeningTests.swift
+[347/380] Compiling HanaTests CollectionStoreTests.swift
+[348/380] Compiling HanaTests CaptureSafetyNativeTests.swift
+[349/380] Compiling HanaTests CaptureSafetyTests.swift
+[350/380] Compiling HanaTests CaptureSessionTests.swift
+[351/380] Compiling HanaTests CollectionExportHarnessTests.swift
+[352/380] Compiling HanaTests CollectionExportTests.swift
+[353/380] Compiling HanaTests MarkdownPreviewTests.swift
+[354/380] Compiling HanaTests ModeIconTests.swift
+[355/380] Compiling HanaTests NativeEditingTests.swift
+[356/380] Compiling HanaTests NativeWindowSlot.swift
+[357/380] Compiling HanaTests NoteEditingTests.swift
+[358/380] Compiling HanaTests NoteModeTests.swift
+[359/380] Compiling HanaTests NoteOrganizationTests.swift
+[360/380] Compiling HanaTests NotePreviewTests.swift
+[361/380] Compiling HanaTests NoteSaveSafetyNativeTests.swift
+[362/380] Compiling HanaTests OpenNoteOrganizationTests.swift
+[363/380] Compiling HanaTests OrganizedCollectionFixture.swift
+[364/380] Compiling HanaTests ResultIconsTests.swift
+[365/380] Compiling HanaTests SearchExclusionTests.swift
+[366/380] Compiling HanaTests DisplayPlacementTests.swift
+/Users/beamsereeyothin/.codex/worktrees/f42d/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[367/380] Compiling HanaTests IndependentExportDecoder.swift
+/Users/beamsereeyothin/.codex/worktrees/f42d/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[368/380] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/f42d/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[369/380] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/f42d/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[370/380] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/f42d/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[371/380] Compiling HanaTests TaskSaveTests.swift
+[372/380] Compiling HanaTests TaskWorkspaceOrderTests.swift
+[373/380] Compiling HanaTests TaskWorkspaceTests.swift
+[374/380] Compiling HanaTests TestClock.swift
+[375/380] Compiling HanaTests SpotlightStageTests.swift
+[376/380] Compiling HanaTests SuggestionInteractionTests.swift
+[377/380] Compiling HanaTests TaskLifecycleTests.swift
+[378/380] Compiling HanaTests TaskOrderingTests.swift
+[379/382] Emitting module HanaPackageTests
+[380/382] Compiling HanaPackageTests runner.swift
+[380/382] Write Objects.LinkFileList
+[381/382] Linking HanaPackageTests
+Build complete! (55.17s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite OpenNoteOrganizationTests started.
+◇ Suite NoteSaveSafetyTests started.
+◇ Suite MainNoteOrganizationTests started.
+◇ Suite NoteSessionOrganizationTests started.
+◇ Suite NoteSaveSafetyNativeTests started.
+◇ Test failureKeepsLatestTextAndRetryCommitsItOnce() started.
+◇ Test closingFreezesEditsBeforeSuspendingAndRestoresOnlyItsOwnFreeze(fails:) started.
+◇ Test pinFlushesWritingAndTheNextAutosaveUsesTheAdoptedRevision() started.
+◇ Test aPausedArchiveFreezesWritingWithoutReleasingQuitSuspension() started.
+◇ Test aLostAcknowledgmentCanRetryWithoutASecondEditOrStaleRevision() started.
+◇ Test case passing 1 argument fails → false to closingFreezesEditsBeforeSuspendingAndRestoresOnlyItsOwnFreeze(fails:) started.
+◇ Test explicitDiscardRollsBackAPausedUncommittedSave() started.
+◇ Test closingTheStoreInvalidatesAPausedSaveBeforeItCanCommit() started.
+◇ Test metadataOnlyObservationAdoptsRevisionAndPeerRestoreReturnsToSaved() started.
+◇ Test mainWindowPinFlushesItsOpenNativeEditorBeforeChangingMetadata() started.
+◇ Test lateMetadataAcknowledgmentCannotReviveAnInvalidatedSession() started.
+◇ Test case passing 1 argument fails → true to closingFreezesEditsBeforeSuspendingAndRestoresOnlyItsOwnFreeze(fails:) started.
+✔ Test failureKeepsLatestTextAndRetryCommitsItOnce() passed after 0.158 seconds.
+✔ Test pinFlushesWritingAndTheNextAutosaveUsesTheAdoptedRevision() passed after 0.181 seconds.
+✔ Test closingFreezesEditsBeforeSuspendingAndRestoresOnlyItsOwnFreeze(fails:) with 2 test cases passed after 0.202 seconds.
+✔ Test aPausedArchiveFreezesWritingWithoutReleasingQuitSuspension() passed after 0.217 seconds.
+✔ Test mainWindowPinFlushesItsOpenNativeEditorBeforeChangingMetadata() passed after 0.535 seconds.
+◇ Test archiveFlushesAndLocksTheNativeNoteUntilWindowRestore() started.
+✔ Test aLostAcknowledgmentCanRetryWithoutASecondEditOrStaleRevision() passed after 0.555 seconds.
+✔ Test closingTheStoreInvalidatesAPausedSaveBeforeItCanCommit() passed after 0.567 seconds.
+✔ Test explicitDiscardRollsBackAPausedUncommittedSave() passed after 0.567 seconds.
+✔ Suite NoteSaveSafetyTests passed after 0.568 seconds.
+✔ Test lateMetadataAcknowledgmentCannotReviveAnInvalidatedSession() passed after 0.569 seconds.
+✔ Test metadataOnlyObservationAdoptsRevisionAndPeerRestoreReturnsToSaved() passed after 0.588 seconds.
+✔ Suite NoteSessionOrganizationTests passed after 0.589 seconds.
+✔ Test archiveFlushesAndLocksTheNativeNoteUntilWindowRestore() passed after 0.234 seconds.
+◇ Test failedFlushStopsArchiveAndKeepsTheNativeFailureVisible() started.
+✔ Test failedFlushStopsArchiveAndKeepsTheNativeFailureVisible() passed after 0.187 seconds.
+◇ Test organizingRefusesNativeMarkedTextUntilCompositionFinishes() started.
+✔ Test organizingRefusesNativeMarkedTextUntilCompositionFinishes() passed after 0.189 seconds.
+✔ Suite OpenNoteOrganizationTests passed after 1.147 seconds.
+◇ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() started.
+✔ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() passed after 0.156 seconds.
+◇ Test archiveRemovesTheRowAndPreservesWritingAndPin() started.
+✔ Test archiveRemovesTheRowAndPreservesWritingAndPin() passed after 0.148 seconds.
+◇ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .setPinned(true) to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .archive to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+✔ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) with 2 test cases passed after 0.335 seconds.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+✔ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 0.259 seconds.
+✔ Suite MainNoteOrganizationTests passed after 2.049 seconds.
+◇ Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() started.
+✔ Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() passed after 0.182 seconds.
+◇ Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+◇ Test case passing 1 argument action → .retry to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+◇ Test case passing 1 argument action → .discardChanges to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+✔ Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) with 2 test cases passed after 1.544 seconds.
+◇ Test quitCancelsOnFailureThenCommitsEveryNoteAndCompositionBeforeClosingTheStore() started.
+✔ Test quitCancelsOnFailureThenCommitsEveryNoteAndCompositionBeforeClosingTheStore() passed after 0.863 seconds.
+◇ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() started.
+✔ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() passed after 0.245 seconds.
+◇ Test pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+◇ Test case passing 1 argument discard → false to pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+◇ Test case passing 1 argument discard → true to pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+✔ Test pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) with 2 test cases passed after 1.572 seconds.
+◇ Test invalidatedDirtyEditorKeepsCopyableTextAndCannotApproveQuit() started.
+✔ Test invalidatedDirtyEditorKeepsCopyableTextAndCannotApproveQuit() passed after 0.773 seconds.
+◇ Test quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+◇ Test case passing 1 argument fails → false to quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+◇ Test case passing 1 argument fails → true to quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+✔ Test quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) with 2 test cases passed after 0.368 seconds.
+✔ Suite NoteSaveSafetyNativeTests passed after 7.601 seconds.
+✔ Test run with 24 tests in 5 suites passed after 7.601 seconds.
