@@ -3,7 +3,7 @@ import Foundation
 @MainActor
 struct JevClassifier: Classifier {
     typealias Transport = @MainActor (URLRequest) async throws -> (Data, Int)
-    static let model = "jev-1.13.0"
+    nonisolated static let model = "jev-1.13.0"
     private let key: String
     private let transport: Transport
     init(key: String, transport: @escaping Transport = liveTransport) {
