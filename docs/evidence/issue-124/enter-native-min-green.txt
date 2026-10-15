@@ -1,0 +1,22 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Compiling HanaTests JevWordPacedDeletionNativeTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (3.59s)
+Test Suite 'Selected tests' started at 2026-10-15 22:23:34.891.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:23:34.892.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:23:34.892.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:23:34.892.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite JevWordPacedDeletionNativeTests started.
+􀟈  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() started.
+􁁛  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() passed after 0.527 seconds.
+􁁛  Suite JevWordPacedDeletionNativeTests passed after 0.527 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 0.527 seconds.

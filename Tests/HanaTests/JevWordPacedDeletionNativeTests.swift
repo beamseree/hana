@@ -84,6 +84,7 @@ struct JevWordPacedDeletionNativeTests {
         let expected = "call mom tomorrow บ้า"
         let selection = NSRange(location: (expected as NSString).length, length: 0)
         #expect(interaction.mode == .search && editor.string == expected)
+        try #require(interaction.selectedRow == .suggestion(.note))
         editor.keyDown(with: try returnKey())
         fake.reply(.task)
         try await eventually { interaction.mode == .note }
@@ -166,7 +167,11 @@ struct JevWordPacedDeletionNativeTests {
             log = AutomaticSwitchDiagnostics(file: directory.appendingPathComponent("automatic-switch.jsonl"))
         }
         func interaction(store: CollectionStore, classifier: any Classifier) -> MacInteraction {
-            MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, typingGap: .zero),
+            // A terminal batch releases an Enter held for Search to settle.
+            // Finishing without one leaves the fixture source loading.
+            MacInteraction(search: Search(source: { AsyncStream {
+                $0.yield(.init(results: [], status: .ready)); $0.finish()
+            } }, typingGap: .zero),
                 collection: Task { store }, confirmationDuration: .zero,
                 automaticSwitchOptions: options, automaticSwitchDiagnostics: log,
                 classifierFactory: { _ in classifier }, jevLaunchMemory: JevLaunchMemory())
