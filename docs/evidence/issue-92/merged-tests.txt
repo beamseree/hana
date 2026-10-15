@@ -73,8 +73,9 @@ Build complete! (5.11s)
 ◇ Test case passing 1 argument fixture → tabbed code to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
 ◇ Test case passing 1 argument fixture → nested list to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
 ◇ Test case passing 1 argument text → "" to blankNotesAreRefusedWithoutASaveEffect(text:) started.
-◇ Test case passing 1 argument text → " 
-	 " to blankNotesAreRefusedWithoutASaveEffect(text:) started.
+◇ Test case passing 1 argument text → "
+
+" to blankNotesAreRefusedWithoutASaveEffect(text:) started.
 ◇ Test case passing 1 argument fixture → nested quote to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
 ✔ Test openInWindowSubmitsTheExactNoteOnceAndRetriesTheSameReceipt() passed after 0.001 seconds.
 ✔ Test searchAndTaskNeverSubmitAnOpenNote() passed after 0.001 seconds.
