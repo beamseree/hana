@@ -1,10 +1,10 @@
 # Native macOS shapeshifting search bar
 
-Personal macOS app combining app/file search, quick note capture, and task management in a solid-white transforming bar, with a main organizer and separate note windows. The directory name is descriptive; no product name has been chosen.
+Hana is a personal native macOS app combining app/file search, quick note and task capture, and a collection organizer. The transforming bar has an opaque white card inside a translucent bezel.
 
 ## Status
 
-Product scope was confirmed on 2026-10-13. The current bounded milestone implements native invocation, mixed application/filename Search, exact-destination opening and three validation-only working windows. PR #17's visual design is retained. See [build/run/test instructions](docs/native-shell.md), [coverage and permissions](docs/evidence/issue-9/validation.md), and [integrated acceptance](docs/evidence/issue-10/validation.md). Capture, persistence and the organizer remain future work. The private repository is [beamseree/hana](https://github.com/beamseree/hana); the isolated prototype remains on `prototype/window-focus`.
+Product scope was confirmed on 2026-10-13. The app supports native invocation, mixed application/filename Search, exact-destination opening, and durable Note and Task capture. The main window shows saved notes as they commit. Working-window organization and note editing are tracked in [#88](https://github.com/beamseree/hana/issues/88). See [build/run/test instructions](docs/native-shell.md), the [product specification](docs/product-spec.md), and the per-ticket records under [docs/evidence](docs/evidence). Automatic backups and restore remain deferred; Hana is not yet a safe sole home for important content. The isolated prototype remains on `prototype/window-focus`.
 
 ## Start here
 
@@ -22,11 +22,11 @@ These project-local documents are the working source of truth from this handoff 
 
 The window/focus prototype supports continuing with a single-process design on the tested Mac. Full-screen invocation, Dock/Command-Tab access, minimized windows and three-display pointer placement have user-observed evidence. The reported minimize anomaly did not recur in three follow-up checks; its original cause remains unknown. Candidate-based IME testing is explicitly deferred for current English/Thai use.
 
-The bounded milestone is tracked in spec #2. Issue #10 assesses the integrated native behavior and performance; its evidence distinguishes automated checks, runtime traces, physical observations and outstanding acceptance. Ad-hoc signing is local development evidence only. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
+Working windows and organization are tracked in [#88](https://github.com/beamseree/hana/issues/88). Notes/tasks in Search, Settings, automatic backups and restore belong to later work. Ad-hoc signing is local development evidence only. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
 
-## Working-window validation
+## Working windows
 
-The native shell now includes Main and two separately identified mock note windows for [issue #4](https://github.com/beamseree/hana/issues/4). All content is validation-only. See [controls and run instructions](docs/native-shell.md) and the [current runtime matrix](docs/evidence/issue-4/validation.md).
+Open **Hana → Open Hana** from the menu-bar menu, **Window → Open Hana** (Command+1), or the Dock icon to reach the single main window. Working windows retain Dock and Command-Tab membership while open or minimized; closing the last window returns to accessory mode. The mock windows used in the earlier shell milestone were removed in [#89](https://github.com/beamseree/hana/issues/89). See its [evidence](docs/evidence/issue-89/validation.md).
 
 ## Tracker
 
