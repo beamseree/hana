@@ -347,6 +347,28 @@ struct AutomaticSwitchInteractionTests {
         await store.close()
     }
 
+    @Test func missedManualCaptureRecordsTheLastSearchVerdictLabel() async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store }, automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.insertText("private unmatched lookup", replacementRange: NSRange(location: NSNotFound, length: 0))
+        await apps.send([]); try await eventually { fake.pendingCount == 1 }; fake.reply(.search)
+        try await eventually { (try? String(contentsOf: fixture.log.url, encoding: .utf8).contains("autoswitch.verdict")) == true }
+        interaction.requestSelectedOpen()
+        #expect(interaction.mode == .note && fixture.log.counts().missed == 1)
+        let lines = try String(contentsOf: fixture.log.url, encoding: .utf8).split(separator: "\n")
+        let rows = try lines.map { try #require(JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any]) }
+        #expect(rows.first { $0["event"] as? String == "autoswitch.missed" }?["lastVerdict"] as? String == "search")
+        await store.close()
+    }
+
     private func editor() async throws -> NSTextView {
         try await eventually { NSApp.keyWindow?.firstResponder is NSTextView }
         return try #require(NSApp.keyWindow?.firstResponder as? NSTextView)
