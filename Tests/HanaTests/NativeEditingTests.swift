@@ -42,6 +42,41 @@ struct NativeEditingTests {
         #expect(window.firstResponder === responder)
     }
 
+    @Test func theBarsEditorUsesTextKit2() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        #expect(editor.textLayoutManager != nil)
+    }
+
+    @Test func placeholderShowsOnlyInEmptySearchAndHidesWhileComposing() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let none = NSRange(location: NSNotFound, length: 0)
+        #expect(interaction.placeholderText == "Search")
+
+        editor.setMarkedText("ก", selectedRange: NSRange(location: 1, length: 0), replacementRange: none)
+        #expect(editor.hasMarkedText())
+        #expect(interaction.placeholderText == nil)
+        editor.unmarkText()
+        editor.selectAll(nil)
+        editor.delete(nil)
+        #expect(interaction.placeholderText == "Search")
+
+        editor.insertText("milk", replacementRange: none)
+        #expect(interaction.placeholderText == nil)
+        editor.selectAll(nil)
+        editor.delete(nil)
+        #expect(interaction.placeholderText == "Search")
+
+        // An empty Note has no placeholder; returning to Search restores it.
+        editor.insertText("-", replacementRange: none)
+        #expect(interaction.mode == .note && editor.string.isEmpty)
+        #expect(interaction.placeholderText == nil)
+        editor.keyDown(with: try backspaceKey())
+        #expect(interaction.mode == .search)
+        #expect(interaction.placeholderText == "Search")
+    }
+
     @Test func typedDashAtTheStartSwitchesToNoteAndKeepsTheText() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
