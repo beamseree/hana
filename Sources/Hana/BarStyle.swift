@@ -15,6 +15,8 @@ enum BarStyle {
     static let cardPadding: CGFloat = 8
     /// The selected result's highlight, concentric with the card.
     static let rowRadius = HanaRadius.nested(in: cardRadius, inset: cardPadding)
+    /// Search results and Note share one scroll thumb, colored `scroll.thumb`.
+    static let scrollThumbWidth: CGFloat = 3
     /// Card height changes. Short because Search is invoked many times a day.
     static let resizeDuration: TimeInterval = 0.15
     /// Strong ease-out, cubic-bezier(0.23, 1, 0.32, 1).

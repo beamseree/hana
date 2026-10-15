@@ -109,7 +109,7 @@ struct SearchResultsView: View {
         }
     }
 
-    private static let thumbWidth: CGFloat = 3
+    private static let thumbWidth = BarStyle.scrollThumbWidth
     private static let thumbMinHeight: CGFloat = 24
     private static let thumbTrailing = (BarStyle.cardPadding - thumbWidth) / 2
 
