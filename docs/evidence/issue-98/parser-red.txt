@@ -1,0 +1,274 @@
+Fetching https://github.com/swiftlang/swift-markdown.git
+[1/7768] Fetching swift-markdown
+Updating https://github.com/groue/GRDB.swift
+Fetched https://github.com/swiftlang/swift-markdown.git from cache (1.67s)
+Updated https://github.com/groue/GRDB.swift (0.73s)
+Computing version for https://github.com/swiftlang/swift-markdown.git
+Computed https://github.com/swiftlang/swift-markdown.git at 0.9.0 (3.14s)
+Fetching https://github.com/swiftlang/swift-cmark.git
+[1/18649] Fetching swift-cmark
+Fetched https://github.com/swiftlang/swift-cmark.git from cache (3.32s)
+Computing version for https://github.com/groue/GRDB.swift
+Computed https://github.com/groue/GRDB.swift at 7.11.1 (3.78s)
+Computing version for https://github.com/swiftlang/swift-cmark.git
+Computed https://github.com/swiftlang/swift-cmark.git at 0.9.0 (1.61s)
+Creating working copy for https://github.com/swiftlang/swift-cmark.git
+Working copy of https://github.com/swiftlang/swift-cmark.git resolved at 0.9.0
+Creating working copy for https://github.com/swiftlang/swift-markdown.git
+Working copy of https://github.com/swiftlang/swift-markdown.git resolved at 0.9.0
+[0/1] Planning build
+Building for debugging...
+[0/44] Write sources
+[2/44] Write swift-version--1AB21518FC5DEDBE.txt
+[3/44] Compiling cmark-gfm linked_list.c
+[4/44] Compiling cmark-gfm cmark_ctype.c
+[5/44] Compiling cmark-gfm arena.c
+[6/44] Compiling cmark-gfm buffer.c
+[7/44] Compiling cmark-gfm man.c
+[8/44] Compiling cmark-gfm-extensions tagfilter.c
+[9/44] Compiling cmark-gfm blocks.c
+[10/44] Compiling cmark-gfm-extensions strikethrough.c
+[11/44] Compiling cmark-gfm-extensions ext_scanners.c
+[12/44] Compiling cmark-gfm-extensions core-extensions.c
+[13/44] Compiling cmark-gfm xml.c
+[14/44] Compiling cmark-gfm registry.c
+[15/44] Compiling cmark-gfm syntax_extension.c
+[16/44] Compiling cmark-gfm references.c
+[17/44] Compiling cmark-gfm-extensions tasklist.c
+[18/44] Compiling cmark-gfm render.c
+[19/44] Compiling cmark-gfm-extensions table.c
+[20/44] Compiling cmark-gfm plugin.c
+[21/44] Compiling cmark-gfm cmark.c
+[22/44] Compiling cmark-gfm plaintext.c
+[23/44] Compiling cmark-gfm utf8.c
+[24/44] Compiling cmark-gfm iterator.c
+[25/44] Compiling cmark-gfm latex.c
+[26/44] Compiling cmark-gfm map.c
+[27/44] Compiling cmark-gfm node.c
+[27/44] Compiling cmark-gfm houdini_html_e.c
+[27/44] Write sources
+[30/44] Compiling cmark-gfm houdini_href_e.c
+[31/44] Compiling cmark-gfm html.c
+[32/44] Compiling cmark-gfm houdini_html_u.c
+[33/44] Compiling cmark-gfm commonmark.c
+[34/44] Compiling CAtomic CAtomic.c
+[35/44] Compiling cmark-gfm footnotes.c
+[36/44] Compiling cmark-gfm scanners.c
+[37/44] Compiling cmark-gfm inlines.c
+[38/44] Compiling cmark-gfm-extensions autolink.c
+[40/108] Compiling Markdown InlineAttributes.swift
+[41/108] Compiling Markdown Link.swift
+[42/108] Compiling Markdown Strikethrough.swift
+[43/108] Compiling Markdown Strong.swift
+[44/108] Compiling Markdown CustomInline.swift
+[45/108] Compiling Markdown InlineCode.swift
+[46/108] Compiling Markdown InlineHTML.swift
+[47/115] Compiling Markdown BlockContainer.swift
+[48/115] Compiling Markdown BlockMarkup.swift
+[49/115] Compiling Markdown InlineContainer.swift
+[50/115] Compiling Markdown InlineMarkup.swift
+[51/115] Compiling Markdown ListItemContainer.swift
+[52/115] Compiling Markdown AtomicCounter.swift
+[53/115] Compiling Markdown CharacterExtensions.swift
+[54/115] Compiling Markdown LazySplitLines.swift
+[55/115] Compiling Markdown ParseOptions.swift
+[56/115] Compiling Markdown RangeAdjuster.swift
+[57/115] Compiling Markdown RangerTracker.swift
+[58/115] Compiling Markdown MarkupRewriter.swift
+[59/115] Compiling Markdown BasicBlockContainer.swift
+[60/115] Compiling Markdown BasicInlineContainer.swift
+[61/115] Compiling Markdown TableCellContainer.swift
+[62/115] Compiling Markdown TableHead.swift
+[63/115] Compiling Markdown TableRow.swift
+[64/115] Compiling Markdown Replacement.swift
+[65/115] Compiling Markdown SourceLocation.swift
+[66/115] Compiling Markdown Emphasis.swift
+[67/115] Compiling Markdown Image.swift
+[68/115] Compiling Markdown ChildIndexPath.swift
+[69/115] Compiling Markdown DirectiveArgument.swift
+[70/115] Compiling Markdown Document.swift
+[71/115] Compiling Markdown LiteralMarkup.swift
+[72/115] Compiling Markdown Markup.swift
+[73/115] Compiling Markdown MarkupChildren.swift
+[74/115] Compiling Markdown MarkupData.swift
+[75/115] Compiling Markdown CollectionExtensions.swift
+[76/115] Compiling Markdown StringExtensions.swift
+[77/115] Compiling Markdown MarkupVisitor.swift
+[78/115] Compiling Markdown MarkupWalker.swift
+[79/115] Compiling Markdown HTMLFormatter.swift
+[80/115] Compiling Markdown MarkupFormatter.swift
+[81/115] Compiling Markdown MarkupTreeDumper.swift
+[82/115] Compiling Markdown CodeBlock.swift
+[83/115] Compiling Markdown HTMLBlock.swift
+[84/115] Compiling Markdown Heading.swift
+[85/115] Compiling Markdown ThematicBreak.swift
+[86/115] Compiling Markdown Table.swift
+[87/115] Compiling Markdown TableBody.swift
+[88/115] Compiling Markdown TableCell.swift
+[89/115] Compiling Markdown DoxygenNote.swift
+[90/115] Compiling Markdown DoxygenParameter.swift
+[91/115] Compiling Markdown DoxygenReturns.swift
+[92/115] Compiling Markdown ListItem.swift
+[93/115] Compiling Markdown OrderedList.swift
+[94/115] Compiling Markdown UnorderedList.swift
+[95/115] Compiling Markdown Paragraph.swift
+[96/115] Emitting module Markdown
+[97/115] Compiling Markdown LineBreak.swift
+[98/115] Compiling Markdown SoftBreak.swift
+[99/115] Compiling Markdown SymbolLink.swift
+[100/115] Compiling Markdown Text.swift
+[101/115] Compiling Markdown Aside.swift
+[102/115] Compiling Markdown BlockDirectiveParser.swift
+[103/115] Compiling Markdown CommonMarkConverter.swift
+[104/115] Compiling Markdown PlainTextConvertibleMarkup.swift
+[105/115] Compiling Markdown RawMarkup.swift
+[106/115] Compiling Markdown BlockDirective.swift
+[107/115] Compiling Markdown BlockQuote.swift
+[108/115] Compiling Markdown CustomBlock.swift
+[109/115] Compiling Markdown DoxygenAbstract.swift
+[110/115] Compiling Markdown DoxygenDiscussion.swift
+[111/152] Compiling Hana CoverageValidation.swift
+[112/152] Compiling Hana Diagnostics.swift
+[113/152] Compiling Hana DisplayPlacement.swift
+[114/152] Compiling Hana FocusedWindowGeometry.swift
+[115/156] Compiling Hana ApplicationCatalog.swift
+[116/156] Compiling Hana BarStyle.swift
+[117/156] Compiling Hana CaptureSession.swift
+[118/156] Compiling Hana CollectionExport.swift
+[119/156] Compiling Hana GlobalShortcut.swift
+[120/156] Compiling Hana HanaApp.swift
+[121/156] Compiling Hana HanaColor.swift
+[122/156] Compiling Hana HanaFont.swift
+[123/156] Compiling Hana Search.swift
+[124/156] Compiling Hana SearchCorrectnessValidation.swift
+[125/156] Compiling Hana SearchName.swift
+[126/156] Compiling Hana SearchResultsView.swift
+[127/156] Compiling Hana MixedSearchValidation.swift
+[128/156] Compiling Hana ModeIcon.swift
+[129/156] Compiling Hana NoteEditing.swift
+[130/156] Compiling Hana NoteScroller.swift
+[131/156] Compiling Hana NoteWindowController.swift
+[132/156] Compiling Hana NoteWindowValidation.swift
+[133/156] Compiling Hana PerformanceValidation.swift
+[134/156] Compiling Hana ResultIcons.swift
+[135/156] Compiling Hana CollectionExportFixture.swift
+[136/156] Compiling Hana CollectionFixtureHarness.swift
+[137/156] Compiling Hana CollectionLocation.swift
+[138/156] Compiling Hana CollectionRecovery.swift
+[139/156] Compiling Hana CollectionSchema.swift
+[140/156] Compiling Hana CollectionSnapshotFixture.swift
+[141/156] Compiling Hana CollectionSnapshots.swift
+[142/156] Compiling Hana CollectionStore.swift
+[143/156] Emitting module Hana
+[144/156] Compiling Hana HanaRadius.swift
+[145/156] Compiling Hana HanaShadow.swift
+[146/156] Compiling Hana MacInteraction.swift
+[147/156] Compiling Hana MainWindowValidation.swift
+[148/156] Compiling Hana SegmentedControl.swift
+[149/156] Compiling Hana SpotlightSource.swift
+[150/156] Compiling Hana TaskWorkspace.swift
+[151/156] Compiling Hana WorkingWindowController.swift
+[151/156] Write Objects.LinkFileList
+[152/156] Linking Hana
+[153/156] Applying Hana
+[155/193] Compiling HanaTests OrganizedCollectionFixture.swift
+[156/193] Compiling HanaTests ResultIconsTests.swift
+[157/193] Compiling HanaTests SearchExclusionTests.swift
+[158/193] Compiling HanaTests SearchRankingTests.swift
+[159/196] Compiling HanaTests CollectionStoreOpeningTests.swift
+[160/196] Compiling HanaTests CollectionStoreTests.swift
+[161/196] Compiling HanaTests DisplayPlacementTests.swift
+[162/196] Compiling HanaTests IndependentExportDecoder.swift
+[163/196] Compiling HanaTests SearchResponsivenessTests.swift
+[164/196] Compiling HanaTests SearchTests.swift
+[165/196] Compiling HanaTests SearchTypingGapTests.swift
+[166/196] Compiling HanaTests SpotlightStageTests.swift
+[167/196] Compiling HanaTests CollectionExportTests.swift
+[168/196] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[169/196] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[170/196] Compiling HanaTests CollectionSnapshotTests.swift
+[171/196] Compiling HanaTests CaptureSafetyNativeTests.swift
+[172/196] Compiling HanaTests CaptureSafetyTests.swift
+[173/196] Compiling HanaTests CaptureSessionTests.swift
+[174/196] Compiling HanaTests CollectionExportHarnessTests.swift
+[175/196] Compiling HanaTests ModeIconTests.swift
+[176/196] Compiling HanaTests NativeEditingTests.swift
+[177/196] Compiling HanaTests NativeWindowSlot.swift
+[178/196] Compiling HanaTests NoteEditingTests.swift
+[179/196] Emitting module HanaTests
+[180/196] Compiling HanaTests NoteModeTests.swift
+[181/196] Compiling HanaTests NoteOrganizationTests.swift
+[182/196] Compiling HanaTests NoteSaveTests.swift
+[183/196] Compiling HanaTests NoteWindowTests.swift
+[184/196] Compiling HanaTests TaskWorkspaceOrderTests.swift
+[185/196] Compiling HanaTests TaskWorkspaceTests.swift
+[186/196] Compiling HanaTests TestClock.swift
+[187/196] Compiling HanaTests SuggestionInteractionTests.swift
+[188/196] Compiling HanaTests TaskLifecycleTests.swift
+[189/196] Compiling HanaTests TaskOrderingTests.swift
+[190/196] Compiling HanaTests TaskSaveTests.swift
+[191/196] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MarkdownPreviewTests.swift:23:29: error: cannot find 'MarkdownPreview' in scope
+21 |         ```
+22 |         """
+23 |         let preview = await MarkdownPreview.parse(source)
+   |                             `- error: cannot find 'MarkdownPreview' in scope
+24 |         #expect(preview.blocks == [
+25 |             .heading(1, [.text("Title ไทย🌸")]),
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MarkdownPreviewTests.swift:24:9: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+22 |         """
+23 |         let preview = await MarkdownPreview.parse(source)
+24 |         #expect(preview.blocks == [
+   |         `- error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+25 |             .heading(1, [.text("Title ไทย🌸")]),
+26 |             .paragraph([.text("A "), .emphasis([.text("soft")]), .text(" and "), .strong([.text("strong")]),
+[192/196] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MarkdownPreviewTests.swift:23:29: error: cannot find 'MarkdownPreview' in scope
+21 |         ```
+22 |         """
+23 |         let preview = await MarkdownPreview.parse(source)
+   |                             `- error: cannot find 'MarkdownPreview' in scope
+24 |         #expect(preview.blocks == [
+25 |             .heading(1, [.text("Title ไทย🌸")]),
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MarkdownPreviewTests.swift:24:9: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+22 |         """
+23 |         let preview = await MarkdownPreview.parse(source)
+24 |         #expect(preview.blocks == [
+   |         `- error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+25 |             .heading(1, [.text("Title ไทย🌸")]),
+26 |             .paragraph([.text("A "), .emphasis([.text("soft")]), .text(" and "), .strong([.text("strong")]),
+[193/196] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MarkdownPreviewTests.swift:23:29: error: cannot find 'MarkdownPreview' in scope
+21 |         ```
+22 |         """
+23 |         let preview = await MarkdownPreview.parse(source)
+   |                             `- error: cannot find 'MarkdownPreview' in scope
+24 |         #expect(preview.blocks == [
+25 |             .heading(1, [.text("Title ไทย🌸")]),
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MarkdownPreviewTests.swift:24:9: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+22 |         """
+23 |         let preview = await MarkdownPreview.parse(source)
+24 |         #expect(preview.blocks == [
+   |         `- error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+25 |             .heading(1, [.text("Title ไทย🌸")]),
+26 |             .paragraph([.text("A "), .emphasis([.text("soft")]), .text(" and "), .strong([.text("strong")]),
+[194/196] Compiling HanaTests MarkdownPreviewTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MarkdownPreviewTests.swift:23:29: error: cannot find 'MarkdownPreview' in scope
+21 |         ```
+22 |         """
+23 |         let preview = await MarkdownPreview.parse(source)
+   |                             `- error: cannot find 'MarkdownPreview' in scope
+24 |         #expect(preview.blocks == [
+25 |             .heading(1, [.text("Title ไทย🌸")]),
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MarkdownPreviewTests.swift:24:9: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+22 |         """
+23 |         let preview = await MarkdownPreview.parse(source)
+24 |         #expect(preview.blocks == [
+   |         `- error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+25 |             .heading(1, [.text("Title ไทย🌸")]),
+26 |             .paragraph([.text("A "), .emphasis([.text("soft")]), .text(" and "), .strong([.text("strong")]),
+error: fatalError
