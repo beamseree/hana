@@ -3,7 +3,7 @@ import Foundation
 /// The bar's capture rules as pure transitions: `handle(event)` updates the
 /// state and returns the effects window code performs. No disk or window work.
 struct CaptureSession {
-    enum Mode: String { case search, note }
+    enum Mode: String { case search, note, task }
 
     /// Where an insertion came from, as identified by the native editor. Only
     /// `typed` can select a mode; anything uncertain is reported as `programmatic`.
@@ -24,6 +24,11 @@ struct CaptureSession {
         /// Backspace, before the editor deletes anything. Without an effect it
         /// is ordinary deletion, which the editor performs and reports as `edited`.
         case deleteBackward
+        /// Tab and Shift+Enter outside composition, before the editor inserts
+        /// anything. Without an effect the editor inserts the tab or line break.
+        case tab, newline
+        /// A click on Task's destination selector.
+        case chooseDestination(TaskPlacement)
         /// A new invocation, or a dismissal discarding any unsaved capture.
         case invoked, dismissed
         /// Enter outside composition.
@@ -33,11 +38,14 @@ struct CaptureSession {
     }
 
     enum Effect: Equatable {
-        /// The editor drops the insertion: it became the mode label, not text.
+        /// The editor drops the insertion: it became the mode label or a
+        /// destination change, or Task refused it.
         case consumeInsertion
         case enterMode(Mode)
         /// Create the note once, idempotently under `operation`.
-        case save(operation: UUID, body: String)
+        case saveNote(operation: UUID, body: String)
+        /// Create the task once at the top of `placement`, idempotently under `operation`.
+        case saveTask(operation: UUID, title: String, placement: TaskPlacement)
         /// Show the confirmation, then close and return focus.
         case confirmSaved
     }
@@ -46,8 +54,12 @@ struct CaptureSession {
     /// save fails (back to editing) or succeeds (confirmation, then dismissal).
     enum Phase: Equatable { case editing, saving, saved }
 
-    /// Why the capture wasn't saved. The text and mode are always kept.
-    enum Notice: Equatable { case blank, collectionUnavailable, failed }
+    /// Why the capture wasn't saved, or why Task refused text. The text and mode are always kept.
+    enum Notice: Equatable {
+        case blank, collectionUnavailable, failed
+        /// Task titles are one line: a switch to Task or an insertion with a line break was refused whole.
+        case multilineTask
+    }
 
     struct State: Equatable {
         var mode = Mode.search
@@ -56,13 +68,18 @@ struct CaptureSession {
         var selection = NSRange(location: 0, length: 0)
         /// Whether a typed prefix at the start of Search selects a mode.
         var prefixesArmed = true
+        /// Where Task saves. Inbox for each invocation until changed.
+        var destination = TaskPlacement.inbox
         var phase = Phase.editing
         var notice: Notice?
     }
 
+    /// The typed prefixes that select a capture mode from Search.
+    private static let prefixes: [String: Mode] = ["-": .note, "[": .task]
+
     private(set) var state = State()
     /// Identifies this invocation's capture to the Store, so every save of it
-    /// creates at most one note. Each invocation gets a new one.
+    /// creates at most one note or task. Each invocation gets a new one.
     private(set) var operation = UUID()
 
     /// The query Search receives for the buffer: whitespace runs, line breaks
@@ -76,12 +93,23 @@ struct CaptureSession {
         case .insert(let text, let range, let provenance):
             // Once submitted, nothing reaches the frozen text.
             guard state.phase == .editing else { return [.consumeInsertion] }
-            // Only a deliberately typed `-` replacing an empty selection at the
-            // start selects Note; the selection stays put relative to the text.
+            // Only a deliberately typed `-` or `[` replacing an empty selection at
+            // the start selects Note or Task; the selection stays put relative to the text.
             if state.mode == .search, state.prefixesArmed, provenance == .typed,
-               text == "-", range == NSRange(location: 0, length: 0) {
-                state.mode = .note
-                return [.consumeInsertion, .enterMode(.note)]
+               let mode = Self.prefixes[text], range == NSRange(location: 0, length: 0) {
+                // Multiline text never becomes a task: it would have to be flattened or cut.
+                if mode == .task, TaskItem.isMultiline(state.text) {
+                    state.notice = .multilineTask
+                    return [.consumeInsertion]
+                }
+                state.mode = mode
+                state.notice = nil
+                return [.consumeInsertion, .enterMode(mode)]
+            }
+            // A task title is never silently flattened or cut: a line break refuses the whole insertion.
+            if state.mode == .task, TaskItem.isMultiline(text) {
+                state.notice = .multilineTask
+                return [.consumeInsertion]
             }
             state.text = (state.text as NSString).replacingCharacters(in: range, with: text)
             if !text.isEmpty || range.length > 0 { state.notice = nil }
@@ -97,6 +125,18 @@ struct CaptureSession {
             state.prefixesArmed = false
             state.notice = nil
             return [.enterMode(.search)]
+        case .tab:
+            // A typed Tab never enters a title: it toggles the destination.
+            guard state.mode == .task else { return [] }
+            if state.phase == .editing { state.destination = state.destination == .inbox ? .today : .inbox }
+            return [.consumeInsertion]
+        case .newline:
+            // Task titles are one line; Note writes the line break.
+            return state.mode == .task ? [.consumeInsertion] : []
+        case .chooseDestination(let destination):
+            guard state.mode == .task, state.phase == .editing else { return [] }
+            state.destination = destination
+            return []
         case .edited(let text, let selection):
             guard state.phase == .editing else { return [] }
             if text != state.text { state.notice = nil }
@@ -108,15 +148,22 @@ struct CaptureSession {
             operation = UUID()
             return []
         case .submit:
-            guard state.mode == .note, state.phase == .editing else { return [] }
+            guard state.mode != .search, state.phase == .editing else { return [] }
             // Refused before any save; other content is saved byte for byte.
+            // Undo can bring back multiline text without an insertion, so check again.
+            if state.mode == .task, TaskItem.isMultiline(state.text) {
+                state.notice = .multilineTask
+                return []
+            }
             guard Note.isNonblank(state.text) else {
                 state.notice = .blank
                 return []
             }
             state.phase = .saving
             state.notice = nil
-            return [.save(operation: operation, body: state.text)]
+            return state.mode == .task
+                ? [.saveTask(operation: operation, title: state.text, placement: state.destination)]
+                : [.saveNote(operation: operation, body: state.text)]
         case .saved:
             guard state.phase == .saving else { return [] }
             state.phase = .saved

@@ -226,6 +226,74 @@ struct NativeEditingTests {
         #expect(interaction.query == "milk")
     }
 
+    @Test func typedBracketAtTheStartSwitchesToTaskAndKeepsThaiText() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let none = NSRange(location: NSNotFound, length: 0)
+        editor.insertText("โทรหาแม่", replacementRange: none)
+        editor.breakUndoCoalescing()
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
+        editor.insertText("[", replacementRange: none)
+        #expect(interaction.mode == .task && interaction.modeLabelText == "Task")
+        #expect(editor.string == "โทรหาแม่")
+        #expect(editor.selectedRange() == NSRange(location: 0, length: 0))
+        // The consumed prefix left no undo step: the first undo removes the text.
+        editor.undoManager?.undo()
+        #expect(editor.string == "" && interaction.mode == .task)
+        // An empty Task has no Search placeholder.
+        #expect(interaction.placeholderText == nil)
+    }
+
+    @Test func aRealCRLFPasteInTaskIsRefusedWithTheBufferUnchanged() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let none = NSRange(location: NSNotFound, length: 0)
+        editor.insertText("[", replacementRange: none)
+        editor.insertText("buy ", replacementRange: none)
+        editor.breakUndoCoalescing()
+        try withPasteboardString("milk\r\neggs") { editor.paste(nil) }
+        #expect(interaction.mode == .task)
+        #expect(editor.string == "buy ")
+        #expect(editor.selectedRange() == NSRange(location: 4, length: 0))
+        #expect(interaction.captureMessage == "Tasks are one line, so text with line breaks can’t be pasted here.")
+        // The refused paste left no undo step.
+        editor.undoManager?.undo()
+        #expect(editor.string == "")
+        // A single line with a tab pastes literally.
+        editor.undoManager?.redo()
+        try withPasteboardString("milk\teggs") { editor.paste(nil) }
+        #expect(editor.string == "buy milk\teggs" && interaction.captureMessage == nil)
+    }
+
+    @Test func aRefusedSwitchToTaskKeepsTheTextSelectionAndUndoHistory() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        try withPasteboardString("one\ntwo") { editor.paste(nil) }
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
+        editor.insertText("[", replacementRange: NSRange(location: NSNotFound, length: 0))
+        #expect(interaction.mode == .search && editor.string == "one\ntwo")
+        #expect(editor.selectedRange() == NSRange(location: 0, length: 0))
+        editor.undoManager?.undo()
+        #expect(editor.string == "")
+        #expect(editor.undoManager?.canUndo == false)
+    }
+
+    @Test func aTypedTabInTaskTogglesTheDestinationAndInSearchIsText() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let none = NSRange(location: NSNotFound, length: 0)
+        editor.insertText("[", replacementRange: none)
+        editor.insertText("a", replacementRange: none)
+        editor.keyDown(with: try tabKey())
+        #expect(editor.string == "a" && interaction.taskDestination == .today)
+        #expect(interaction.destinationSelectorTitle == "Today")
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
+        editor.keyDown(with: try backspaceKey())
+        #expect(interaction.mode == .search && interaction.destinationSelectorTitle == nil)
+        editor.keyDown(with: try tabKey())
+        #expect(editor.string == "\ta")
+    }
+
     /// A real paste reads the general pasteboard; put back what was there.
     private func withPasteboardString(_ string: String, _ body: () -> Void) throws {
         let pasteboard = NSPasteboard.general

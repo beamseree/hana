@@ -157,7 +157,7 @@ struct CaptureSubmissionTests {
         let text = "  # Groceries\n\n- milk บันทึก  \n"
         var session = note(text)
         let operation = session.operation
-        #expect(session.handle(.submit) == [.save(operation: operation, body: text)])
+        #expect(session.handle(.submit) == [.saveNote(operation: operation, body: text)])
         #expect(session.state.phase == .saving)
         #expect(session.handle(.submit).isEmpty)
         #expect(session.state.phase == .saving)
@@ -201,7 +201,7 @@ struct CaptureSubmissionTests {
         #expect(session.state.text == "keep me!" && session.state.notice == nil)
         // Enter again submits under the same operation, so a save that did
         // commit can never be duplicated.
-        #expect(session.handle(.submit) == [.save(operation: operation, body: "keep me!")])
+        #expect(session.handle(.submit) == [.saveNote(operation: operation, body: "keep me!")])
     }
 
     @Test func outcomesOutsideASaveChangeNothing() {
@@ -225,5 +225,223 @@ struct CaptureSubmissionTests {
         let second = session.operation
         _ = session.handle(.invoked)
         #expect(Set([first, second, session.operation]).count == 3)
+    }
+}
+
+/// Task mode: the `[` prefix, the single-line rule and the Inbox/Today destination.
+struct CaptureTaskTests {
+    private let start = NSRange(location: 0, length: 0)
+
+    private func task(_ text: String) -> CaptureSession {
+        var session = CaptureSession()
+        _ = session.handle(.insert("[", replacing: start, provenance: .typed))
+        _ = session.handle(.edited(text: text, selection: NSRange(location: (text as NSString).length, length: 0)))
+        return session
+    }
+
+    @Test func typedBracketOnAnEmptyBufferEntersTaskWithoutBecomingText() {
+        var session = CaptureSession()
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+        #expect(session.state == .init(mode: .task, text: "", selection: start))
+    }
+
+    @Test func typedBracketBeforeExistingSearchTextKeepsTheTextAndSelection() {
+        var session = CaptureSession()
+        _ = session.handle(.edited(text: "call mum บ้าน", selection: start))
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+        #expect(session.state == .init(mode: .task, text: "call mum บ้าน", selection: start))
+    }
+
+    @Test func typedBracketAfterTheStartIsLiteralText() {
+        var session = CaptureSession()
+        _ = session.handle(.edited(text: "x", selection: NSRange(location: 1, length: 0)))
+        #expect(session.handle(.insert("[", replacing: NSRange(location: 1, length: 0), provenance: .typed)).isEmpty)
+        #expect(session.state == .init(mode: .search, text: "x[", selection: NSRange(location: 2, length: 0)))
+    }
+
+    @Test func typedBracketReplacingASelectionAtTheStartIsLiteralText() {
+        var session = CaptureSession()
+        _ = session.handle(.edited(text: "draft", selection: NSRange(location: 0, length: 2)))
+        #expect(session.handle(.insert("[", replacing: NSRange(location: 0, length: 2), provenance: .typed)).isEmpty)
+        #expect(session.state == .init(mode: .search, text: "[aft", selection: NSRange(location: 1, length: 0)))
+    }
+
+    @Test(arguments: [CaptureSession.Provenance.paste, .drop, .undo, .redo, .programmatic, .composition, .compositionCommit])
+    func untypedBracketAtTheStartIsLiteralText(provenance: CaptureSession.Provenance) {
+        var session = CaptureSession()
+        #expect(session.handle(.insert("[", replacing: start, provenance: provenance)).isEmpty)
+        #expect(session.state == .init(mode: .search, text: "[", selection: NSRange(location: 1, length: 0)))
+    }
+
+    @Test(arguments: ["-", "["])
+    func typedPrefixesInTaskAreLiteralText(prefix: String) {
+        var session = task("")
+        #expect(session.handle(.insert(prefix, replacing: start, provenance: .typed)).isEmpty)
+        #expect(session.state == .init(mode: .task, text: prefix, selection: NSRange(location: 1, length: 0)))
+    }
+
+    @Test(arguments: ["one\rtwo", "one\ntwo", "one\r\ntwo", "one\u{2028}two", "one\u{2029}two", "trailing\n"])
+    func switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text: String) {
+        var session = CaptureSession()
+        let selection = NSRange(location: 0, length: 0)
+        _ = session.handle(.edited(text: text, selection: selection))
+        // Consumed, so the bracket is neither text nor an undo step.
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion])
+        #expect(session.state == .init(mode: .search, text: text, selection: selection, notice: .multilineTask))
+        // Editing clears the explanation; prefixes stay armed.
+        _ = session.handle(.edited(text: "one", selection: start))
+        #expect(session.state.notice == nil)
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+    }
+
+    @Test func aLongSingleLineThatSoftWrapsEntersTask() {
+        var session = CaptureSession()
+        let text = String(repeating: "a long title that wraps ", count: 40)
+        _ = session.handle(.edited(text: text, selection: start))
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+        #expect(session.state.text == text)
+    }
+
+    @Test(arguments: [CaptureSession.Provenance.paste, .drop, .programmatic, .typed],
+          ["a\rb", "a\nb", "a\r\nb", "a\u{2028}b", "a\u{2029}b", "\n"])
+    func aMultilineInsertionInTaskIsRefusedWhole(provenance: CaptureSession.Provenance, pasted: String) {
+        var session = task("buy ")
+        let selection = NSRange(location: 4, length: 0)
+        #expect(session.handle(.insert(pasted, replacing: selection, provenance: provenance)) == [.consumeInsertion])
+        #expect(session.state == .init(mode: .task, text: "buy ", selection: selection, notice: .multilineTask))
+        // A single line pastes as it is, tabs included, and clears the explanation.
+        #expect(session.handle(.insert("milk\tx", replacing: selection, provenance: .paste)).isEmpty)
+        #expect(session.state == .init(mode: .task, text: "buy milk\tx", selection: NSRange(location: 10, length: 0)))
+    }
+
+    @Test func aMultilineInsertionInNoteIsText() {
+        var session = CaptureSession()
+        _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+        #expect(session.handle(.insert("a\r\nb", replacing: start, provenance: .paste)).isEmpty)
+        #expect(session.state.text == "a\r\nb")
+    }
+
+    @Test func theDestinationDefaultsToInboxAndTabTogglesItWithoutEnteringText() {
+        var session = task("call mum")
+        #expect(session.state.destination == .inbox)
+        #expect(session.handle(.tab) == [.consumeInsertion])
+        #expect(session.state.destination == .today && session.state.text == "call mum")
+        #expect(session.handle(.tab) == [.consumeInsertion])
+        #expect(session.state.destination == .inbox)
+    }
+
+    @Test func choosingADestinationSelectsIt() {
+        var session = task("call mum")
+        _ = session.handle(.chooseDestination(.today))
+        #expect(session.state.destination == .today)
+        _ = session.handle(.chooseDestination(.today))
+        #expect(session.state.destination == .today)
+        _ = session.handle(.chooseDestination(.inbox))
+        #expect(session.state.destination == .inbox)
+    }
+
+    @Test func tabOutsideTaskIsOrdinaryInputAndKeepsTheDestination() {
+        var session = CaptureSession()
+        #expect(session.handle(.tab).isEmpty)
+        _ = session.handle(.chooseDestination(.today))
+        _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+        #expect(session.handle(.tab).isEmpty)
+        #expect(session.state.destination == .inbox)
+    }
+
+    @Test(arguments: [CaptureSession.Event.invoked, .dismissed])
+    func aNewInvocationResetsTheDestinationToInbox(event: CaptureSession.Event) {
+        var session = task("call mum")
+        _ = session.handle(.tab)
+        _ = session.handle(event)
+        #expect(session.state.destination == .inbox)
+        _ = session.handle(.insert("[", replacing: start, provenance: .typed))
+        #expect(session.state.destination == .inbox)
+    }
+
+    @Test func theDestinationIsFrozenWhileSaving() {
+        var session = task("call mum")
+        _ = session.handle(.submit)
+        #expect(session.handle(.tab) == [.consumeInsertion])
+        _ = session.handle(.chooseDestination(.today))
+        #expect(session.state.destination == .inbox)
+    }
+
+    @Test func shiftEnterInTaskDoesNothing() {
+        var session = task("call mum")
+        let before = session.state
+        #expect(session.handle(.newline) == [.consumeInsertion])
+        #expect(session.state == before)
+    }
+
+    @Test func shiftEnterInNoteIsAnOrdinaryLineBreak() {
+        var session = CaptureSession()
+        _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+        #expect(session.handle(.newline).isEmpty)
+    }
+
+    @Test(arguments: [TaskPlacement.inbox, .today])
+    func submittingATaskSavesItsExactTitleToTheDestinationOnce(destination: TaskPlacement) {
+        let title = "  call mum บ้าน\t[x] "
+        var session = task(title)
+        _ = session.handle(.chooseDestination(destination))
+        let operation = session.operation
+        #expect(session.handle(.submit) == [.saveTask(operation: operation, title: title, placement: destination)])
+        #expect(session.state.phase == .saving)
+        #expect(session.handle(.submit).isEmpty)
+        #expect(session.handle(.saved) == [.confirmSaved])
+        #expect(session.state.destination == destination && session.state.text == title)
+    }
+
+    @Test(arguments: ["", " ", "\t \u{00A0}"])
+    func aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title: String) {
+        var session = task(title)
+        #expect(session.handle(.submit).isEmpty)
+        #expect(session.state.phase == .editing && session.state.notice == .blank)
+        #expect(session.state.mode == .task && session.state.text == title)
+    }
+
+    @Test func aTitleThatBecameMultilineOutsideAnInsertionIsRefusedBeforeAnySave() {
+        // Undo can restore earlier Search text without asking the session.
+        var session = task("one")
+        _ = session.handle(.edited(text: "one\ntwo", selection: NSRange(location: 7, length: 0)))
+        #expect(session.handle(.submit).isEmpty)
+        #expect(session.state.phase == .editing && session.state.notice == .multilineTask)
+        #expect(session.state.text == "one\ntwo")
+    }
+
+    @Test func enteringNoteAfterARefusedSwitchLeavesTheTaskExplanationBehind() {
+        var session = CaptureSession()
+        _ = session.handle(.edited(text: "one\ntwo", selection: start))
+        _ = session.handle(.insert("[", replacing: start, provenance: .typed))
+        #expect(session.state.notice == .multilineTask)
+        #expect(session.handle(.insert("-", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.note)])
+        #expect(session.state == .init(mode: .note, text: "one\ntwo", selection: start))
+    }
+
+    @Test func typedBracketAfterReturningAndClearingTheTextIsLiteralText() {
+        var session = task("milk")
+        _ = session.handle(.edited(text: "milk", selection: start))
+        _ = session.handle(.deleteBackward)
+        _ = session.handle(.edited(text: "", selection: start))
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)).isEmpty)
+        #expect(session.state == .init(mode: .search, text: "[", selection: NSRange(location: 1, length: 0), prefixesArmed: false))
+    }
+
+    @Test(arguments: [CaptureSession.Event.invoked, .dismissed])
+    func theNextInvocationArmsTheBracketAgain(event: CaptureSession.Event) {
+        var session = task("milk")
+        _ = session.handle(.edited(text: "milk", selection: start))
+        _ = session.handle(.deleteBackward)
+        _ = session.handle(event)
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+    }
+
+    @Test func typedBracketAfterReturningToSearchIsLiteralText() {
+        var session = task("milk")
+        _ = session.handle(.edited(text: "milk", selection: start))
+        #expect(session.handle(.deleteBackward) == [.enterMode(.search)])
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)).isEmpty)
+        #expect(session.state == .init(mode: .search, text: "[milk", selection: NSRange(location: 1, length: 0), prefixesArmed: false))
     }
 }
