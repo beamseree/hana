@@ -1,0 +1,28 @@
+{
+  "sourceCommit": "bdf9e6add294b28964297400c350bc4f978b3ae4",
+  "baseCommit": "becc0ee80504c4f2d75ab7a78a9cd5e84ace6c4f",
+  "mergedIntegration": "49c72b2",
+  "build": "provisional debug; root final release pending",
+  "bundleIdentifier": "com.beamseree.hana.validation.issue99",
+  "bundleDisplayName": "Hana Working Windows Fixture",
+  "version": "0.1.0 (1)",
+  "signedExecutableSHA256": "c0a015f7f7248daef3cb1cd37cbdb19757208693674c250d59d83090598c4223",
+  "cuaSignedExecutableSHA256": "399cded438eb0db1bc62305a9ea679e4a2d94d33d3d515acc716f7a039b3e7b7",
+  "cuaSource": "99fb6d9 (before smoke-only UTF8 assertion correction)",
+  "lockfileSHA256": "73b55b3d3de58e45668b776c88a502de20f3d09c2482e778da5dc53d01ffd6e0",
+  "macOS": "ProductName:\t\tmacOS\nProductVersion:\t\t26.5.1\nBuildVersion:\t\t25F80",
+  "architecture": "arm64",
+  "swift": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx26.0",
+  "sdk": "26.5",
+  "developerDirectory": "/Library/Developer/CommandLineTools",
+  "shortcutStatus": -9878,
+  "appAXTrusted": false,
+  "display": {
+    "width": 1920,
+    "height": 1080,
+    "scale": 2
+  },
+  "longFixtureUTF8Bytes": 1260022,
+  "signatureDetails": "Identifier=com.beamseree.hana.validation.issue99\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20400 size=31966 flags=0x2(adhoc) hashes=992+3 location=embedded\nSignature=adhoc\nInfo.plist entries=10\nTeamIdentifier=not set\nSealed Resources version=2 rules=13 files=2\nInternal requirements count=0 size=12",
+  "strictSignatureExit": 0
+}
