@@ -51,6 +51,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     /// Internal so tests can click it.
     let destinationSelector = NSHostingView(rootView: SegmentedControl(
         labels: TaskPlacement.allCases.map(\.title), accessibilityTitle: "Task destination"))
+    let openInWindowButton: NSButton = CaptureOpenButton(title: "Open in window", target: nil, action: nil)
     /// The live collection, opened in the background at launch. Nil, or a
     /// failed opening, leaves Search working and capture unavailable.
     private let collection: Task<CollectionStore, any Error>?
@@ -130,6 +131,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
     private var noteWindows: [UUID: NoteWindowController] = [:]
     private var noteOpenings: [UUID: Task<Void, Never>] = [:]
+    private struct NoteFocusRequest {
+        let token: UUID
+        let frontmostProcess: pid_t?
+        let atEnd: Bool
+    }
+    private var latestWindowOpen = UUID()
+    private var noteFocusRequests: [UUID: NoteFocusRequest] = [:]
     private var noteEditing: NoteEditing?
     private let previewParser: MarkdownPreviewParser
     private let openPreviewLink: @MainActor (URL) -> Bool
@@ -255,6 +263,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     func stop() {
+        latestWindowOpen = UUID()
         if let invocation = currentInvocation { dismiss(invocation, reason: .environmentChange) }
         for controller in Array(workingWindows.values) { controller.close() }
         for controller in Array(noteWindows.values) { controller.window?.performClose(nil) }
@@ -270,6 +279,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let existing = currentInvocation != nil
         let invocation = currentInvocation ?? Invocation()
         if !existing {
+            latestWindowOpen = UUID()
             origin = frontmostApplication()
             originWindow = origin?.processIdentifier == ProcessInfo.processInfo.processIdentifier ? NSApp.keyWindow : nil
             originResponder = originWindow?.firstResponder
@@ -364,13 +374,17 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
 
     /// An invocation-bound destination must not steal focus from a newer session.
     @discardableResult
-    func open(_ destination: WorkingWindow, section: MainSection? = nil, from invocation: Invocation? = nil) -> Bool {
+    func open(_ destination: WorkingWindow, section: MainSection? = nil, from invocation: Invocation? = nil,
+              focusAtEnd: Bool = false) -> Bool {
         if let invocation, currentInvocation != invocation {
             record("destination.stale-ignored")
             return false
         }
+        latestWindowOpen = UUID()
+        let focus = NoteFocusRequest(token: latestWindowOpen,
+                                    frontmostProcess: frontmostApplication()?.processIdentifier, atEnd: focusAtEnd)
         if let currentInvocation { dismiss(currentInvocation, reason: .destination) }
-        if case .note(let id) = destination { return openNote(id) }
+        if case .note(let id) = destination { return openNote(id, focus: focus) }
         if workingWindows[destination] == nil {
             let controller = WorkingWindowController(collection: collection)
             controller.window?.delegate = self
@@ -404,25 +418,34 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         record("policy.changed", extra: ["accepted": accepted])
     }
 
-    private func openNote(_ id: UUID) -> Bool {
+    private func openNote(_ id: UUID, focus: NoteFocusRequest) -> Bool {
         if let controller = noteWindows[id] {
-            showNote(controller)
+            showNote(controller, atEnd: focus.atEnd)
             return true
         }
-        guard noteOpenings[id] == nil, let collection else { return noteOpenings[id] != nil }
+        guard let collection else { return false }
+        noteFocusRequests[id] = focus
+        guard noteOpenings[id] == nil else { return true }
         noteOpenings[id] = Task { [weak self] in
             guard let self else { return }
-            defer { noteOpenings[id] = nil }
+            defer { noteOpenings[id] = nil; noteFocusRequests[id] = nil }
             do {
                 let store = try await collection.value
                 if noteEditing == nil { noteEditing = NoteEditing(store: store) }
                 guard let session = try await noteEditing?.open(id) else { return }
+                let frontmost = frontmostApplication()?.processIdentifier
+                guard let focus = noteFocusRequests[id], focus.token == latestWindowOpen,
+                      currentInvocation == nil,
+                      frontmost == focus.frontmostProcess || frontmost == ProcessInfo.processInfo.processIdentifier else {
+                    record("note.open-focus-superseded")
+                    return
+                }
                 let controller = NoteWindowController(session: session, previewParser: previewParser, openPreviewLink: openPreviewLink)
                 controller.window?.delegate = self
                 controller.onTitleChange = { [weak self] in self?.refreshNoteMenu() }
                 noteWindows[id] = controller
                 refreshNoteMenu()
-                showNote(controller)
+                showNote(controller, atEnd: focus.atEnd)
             } catch {
                 record("note.open-failed")
             }
@@ -430,13 +453,16 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         return true
     }
 
-    private func showNote(_ controller: NoteWindowController) {
+    private func showNote(_ controller: NoteWindowController, atEnd: Bool = false) {
         updateActivationPolicy()
         if let window = controller.window {
             if window.isMiniaturized { window.deminiaturize(nil) }
-            NSApp.activate()
+            if let source = NSWorkspace.shared.frontmostApplication {
+                let allowed = NSRunningApplication.current.activate(from: source, options: [])
+                record("working.activation-request", extra: ["allowed": allowed])
+            } else { NSApp.activate() }
             window.makeKeyAndOrderFront(nil)
-            controller.focus()
+            controller.focus(atEnd: atEnd)
         }
     }
 
@@ -495,6 +521,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
 
     private func configurePanel() {
         panel.delegate = self
+        panel.openCapture = { [weak self] in
+            guard let self, self.mode == .note, !self.editor.hasMarkedText() else { return false }
+            self.openCaptureInWindow()
+            return true
+        }
         panel.openDestination = { [weak self] destination in
             guard let self, let invocation = self.currentInvocation else { return }
             self.open(destination, from: invocation)
@@ -563,6 +594,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         destinationSelector.isHidden = true
         card.addSubview(destinationSelector)
 
+        openInWindowButton.target = self
+        openInWindowButton.action = #selector(openCapturedNote)
+        openInWindowButton.bezelStyle = .rounded
+        openInWindowButton.controlSize = .small
+        openInWindowButton.font = HanaFont.detail.nsFont
+        openInWindowButton.sizeToFit()
+        openInWindowButton.autoresizingMask = [.minXMargin, .minYMargin]
+        openInWindowButton.setAccessibilityLabel("Open in window")
+        openInWindowButton.toolTip = "Save this note and continue writing in its window (⌘Return)"
+        openInWindowButton.isHidden = true
+        card.addSubview(openInWindowButton)
+
         captureNotice.font = HanaFont.label.nsFont
         captureNotice.textColor = HanaColor.Text.secondary
         captureNotice.maximumNumberOfLines = 1
@@ -612,7 +655,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             guard let self, let invocation = self.currentInvocation else { return }
             self.dismiss(invocation, reason: .escape)
         }
-        editor.compositionChanged = { [weak self] in self?.updateModeIcon() }
+        editor.compositionChanged = { [weak self] in
+            guard let self else { return }
+            self.updateModeIcon()
+            self.openInWindowButton.isEnabled = self.capture.state.phase == .editing && !self.editor.hasMarkedText()
+        }
         editor.shouldInsert = { [weak self] text, range, provenance in
             self?.shouldInsert(text, replacing: range, provenance: provenance) ?? true
         }
@@ -887,12 +934,26 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         renderResults()
     }
 
+    /// Explicitly continue this Note capture after its one committed save.
+    func openCaptureInWindow() {
+        guard currentInvocation != nil, !editor.hasMarkedText() else { return }
+        let effects = capture.handle(.openInWindow)
+        if effects.isEmpty, capture.state.notice == .blank { record("capture.refused-blank") }
+        effects.forEach(perform)
+        renderResults()
+    }
+
+    @objc private func openCapturedNote() { openCaptureInWindow() }
+
     private func perform(_ effect: CaptureSession.Effect) {
         guard let invocation = currentInvocation else { return }
         switch effect {
         case .enterMode(let mode): show(mode)
         case .saveNote(let operation, let body):
             save(.createNote(operation: operation, body: body), operation: operation, from: invocation)
+        case .saveNoteInWindow(let operation, let body):
+            save(.createNote(operation: operation, body: body), operation: operation, from: invocation,
+                 noteWindow: { $0.id })
         case .saveTask(let operation, let title, let placement):
             save(.createTask(operation: operation, title: title, placement: placement), operation: operation, from: invocation)
         case .confirmSaved:
@@ -914,7 +975,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
 
     /// Issues the session's one save. Its outcome reaches only the invocation
     /// and operation that requested it.
-    private func save<Saved: Sendable>(_ command: CollectionCommand<Saved>, operation: UUID, from invocation: Invocation) {
+    private func save<Saved: Sendable>(_ command: CollectionCommand<Saved>, operation: UUID, from invocation: Invocation,
+                                      noteWindow: (@Sendable (Saved) -> UUID)? = nil) {
         record("capture.save-request", extra: ["mode": mode.rawValue])
         let collection = collection
         Task { [weak self] in
@@ -927,15 +989,17 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                 return
             }
             do {
-                _ = try await store.perform(command, in: store.generation)
-                self?.finishSave(.saved, operation: operation, invocation: invocation, error: nil)
+                let saved = try await store.perform(command, in: store.generation)
+                self?.finishSave(.saved, operation: operation, invocation: invocation, error: nil,
+                                 noteWindow: noteWindow?(saved))
             } catch {
                 self?.finishSave(.saveFailed(.failed), operation: operation, invocation: invocation, error: error)
             }
         }
     }
 
-    private func finishSave(_ outcome: CaptureSession.Event, operation: UUID, invocation: Invocation, error: (any Error)?) {
+    private func finishSave(_ outcome: CaptureSession.Event, operation: UUID, invocation: Invocation, error: (any Error)?,
+                            noteWindow: UUID? = nil) {
         guard currentInvocation == invocation, capture.operation == operation else {
             record("capture.stale-outcome")
             return
@@ -949,7 +1013,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         } else {
             record("capture.saved")
         }
-        capture.handle(outcome).forEach(perform)
+        let wasDismissed = capture.state.dismissalRequested
+        let effects = capture.handle(outcome)
+        if outcome == .saved, let noteWindow, !wasDismissed {
+            open(.note(noteWindow), from: invocation, focusAtEnd: true)
+        } else {
+            effects.forEach(perform)
+        }
         renderResults()
     }
 
@@ -1360,6 +1430,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         retainedContentHeight = 0
         // Submitted text and destination are frozen until a failure returns them for editing.
         editor.isEditable = capture.state.phase == .editing
+        openInWindowButton.isEnabled = capture.state.phase == .editing && !editor.hasMarkedText()
         destinationSelector.rootView.isEnabled = capture.state.phase == .editing
         switch capture.state.phase {
         case .saving: setModeLabel("Saving…")
@@ -1426,8 +1497,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         destinationSelector.isHidden = mode != .task || capture.state.phase == .saved
         destinationSelector.frame.origin = NSPoint(x: modeLabel.frame.minX - 8 - destinationSelector.frame.width,
                                                    y: midY - destinationSelector.frame.height / 2)
+        openInWindowButton.isHidden = mode != .note || capture.state.phase == .saved
+        openInWindowButton.frame.origin = NSPoint(x: modeLabel.frame.minX - 8 - openInWindowButton.frame.width,
+                                                  y: midY - openInWindowButton.frame.height / 2)
         let trailing = mode == .search ? card.bounds.width - 44
-            : (destinationSelector.isHidden ? modeLabel.frame.minX : destinationSelector.frame.minX) - 8
+            : (!openInWindowButton.isHidden ? openInWindowButton.frame.minX
+               : destinationSelector.isHidden ? modeLabel.frame.minX : destinationSelector.frame.minX) - 8
         editorScroll.frame = NSRect(x: BarStyle.textInset, y: editorScroll.frame.minY,
                                     width: trailing - BarStyle.textInset, height: editorScroll.frame.height)
     }
@@ -1491,8 +1566,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
 @MainActor
 private final class SearchPanel: NSPanel {
     var openDestination: ((WorkingWindow) -> Void)?
+    var openCapture: (() -> Bool)?
 
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+           event.keyCode == 36, openCapture?() == true { return true }
         if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
            event.charactersIgnoringModifiers == "1" {
             openDestination?(.main)
@@ -1503,6 +1581,11 @@ private final class SearchPanel: NSPanel {
 
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
+}
+
+@MainActor
+private final class CaptureOpenButton: NSButton {
+    override var acceptsFirstResponder: Bool { false }
 }
 
 @MainActor
