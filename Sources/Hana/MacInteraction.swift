@@ -37,6 +37,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private let modeLabel = NSTextField(labelWithString: "Note")
     /// Explains why a capture wasn't saved, below the writing surface.
     private let captureNotice = NSTextField(wrappingLabelWithString: "")
+    /// Task's Inbox/Today choice, before its mode label. Tab toggles it too.
+    /// Internal so tests can click it.
+    let destinationSelector = NSSegmentedControl(labels: TaskPlacement.allCases.map(\.title),
+                                                 trackingMode: .selectOne, target: nil, action: nil)
     /// The live collection, opened in the background at launch. Nil, or a
     /// failed opening, leaves Search working and capture unavailable.
     private let collection: Task<CollectionStore, any Error>?
@@ -81,6 +85,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     var modeIconShowsQuery: Bool { modeIcon.showsQuery }
     var mode: CaptureSession.Mode { capture.state.mode }
     var modeIconShowsNote: Bool { modeIcon.glyph == .note }
+    var modeIconShowsTask: Bool { modeIcon.glyph == .task }
+    var taskDestination: TaskPlacement { capture.state.destination }
+    var destinationSelectorTitle: String? {
+        destinationSelector.isHidden ? nil : destinationSelector.label(forSegment: destinationSelector.selectedSegment)
+    }
     var modeLabelText: String? { modeLabel.isHidden ? nil : modeLabel.stringValue }
     var captureMessage: String? { captureNotice.isHidden ? nil : captureNotice.stringValue }
     var resultsVisible: Bool { resultSurface?.isHidden == false }
@@ -372,6 +381,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         modeLabel.isHidden = true
         card.addSubview(modeLabel)
 
+        destinationSelector.target = self
+        destinationSelector.action = #selector(destinationChosen(_:))
+        destinationSelector.controlSize = .small
+        destinationSelector.font = BarStyle.modeLabelFont
+        // Clicking it must leave typing in the editor.
+        destinationSelector.refusesFirstResponder = true
+        destinationSelector.setAccessibilityLabel("Task destination")
+        destinationSelector.sizeToFit()
+        destinationSelector.autoresizingMask = [.minXMargin, .minYMargin]
+        destinationSelector.isHidden = true
+        card.addSubview(destinationSelector)
+
         captureNotice.font = BarStyle.modeLabelFont
         captureNotice.textColor = BarStyle.secondaryColor
         captureNotice.maximumNumberOfLines = 1
@@ -453,20 +474,21 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     private func applyModePresentation(animated: Bool) {
-        let note = mode == .note
-        editor.placeholder = note ? nil : "Search"
-        editor.setAccessibilityLabel(note ? "Note" : "Search")
-        editor.setAccessibilityPlaceholderValue(note ? nil : "Search")
-        modeLabel.isHidden = !note
-        setModeLabel("Note")
+        let capturing = mode != .search
+        let name = mode == .task ? "Task" : "Note"
+        editor.placeholder = capturing ? nil : "Search"
+        editor.setAccessibilityLabel(capturing ? name : "Search")
+        editor.setAccessibilityPlaceholderValue(capturing ? nil : "Search")
+        modeLabel.isHidden = !capturing
+        switch mode {
         // Search's glyph follows its query; clearing the editor restores the logo.
-        if note { modeIcon.setGlyph(.note, animated: animated) } else { updateModeIcon() }
-        editorScroll.hasVerticalScroller = note
-        guard let card = editorScroll.superview else { return }
-        // Note leaves room for its label. The height follows the text; layout sets it.
-        let trailing = note ? card.bounds.width - modeLabel.frame.minX + 8 : 44
-        editorScroll.frame = NSRect(x: BarStyle.textInset, y: editorScroll.frame.minY,
-                                    width: card.bounds.width - BarStyle.textInset - trailing, height: editorScroll.frame.height)
+        case .search: updateModeIcon()
+        case .note: modeIcon.setGlyph(.note, animated: animated)
+        case .task: modeIcon.setGlyph(.task, animated: animated)
+        }
+        // Only Note is a multiline surface.
+        editorScroll.hasVerticalScroller = mode == .note
+        setModeLabel(name)
     }
 
     private func applyPlacement(displays: [Display], pointer: CGPoint, focus: WindowFocus) {
@@ -609,6 +631,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         }
     }
 
+    /// A click on Task's selector. The session decides; the selector then shows its choice.
+    @objc private func destinationChosen(_ sender: NSSegmentedControl) {
+        guard currentInvocation != nil, TaskPlacement.allCases.indices.contains(sender.selectedSegment) else { return }
+        _ = capture.handle(.chooseDestination(TaskPlacement.allCases[sender.selectedSegment]))
+        record("capture.destination", extra: ["destination": capture.state.destination.rawValue])
+        renderResults()
+        panel.makeFirstResponder(editor)
+    }
+
     func textDidChange(_ notification: Notification) {
         record("editor.changed")
         _ = capture.handle(.edited(text: editor.string, selection: editor.selectedRange()))
@@ -623,6 +654,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// the session consumed it, so it never becomes text or an undoable edit.
     private func shouldInsert(_ text: String, replacing range: NSRange, provenance: CaptureSession.Provenance) -> Bool {
         guard currentInvocation != nil else { return true }
+        let notice = capture.state.notice
         var applies = true
         for effect in capture.handle(.insert(text, replacing: range, provenance: provenance)) {
             switch effect {
@@ -630,10 +662,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             default: perform(effect)
             }
         }
+        // A refused insertion changes no text, so only its explanation needs showing.
+        if !applies, capture.state.notice != notice {
+            record("capture.refused-multiline", extra: ["mode": mode.rawValue])
+            renderResults()
+        }
         return applies
     }
 
-    /// Enter in Note. Repeated Enter while saving, and Enter during the
+    /// Enter in Note or Task. Repeated Enter while saving, and Enter during the
     /// confirmation, do nothing: the session has already frozen the text.
     private func submitCapture() {
         let effects = capture.handle(.submit)
@@ -646,9 +683,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         guard let invocation = currentInvocation else { return }
         switch effect {
         case .enterMode(let mode): show(mode)
-        case .save(let operation, let body): save(body, operation: operation, from: invocation)
+        case .saveNote(let operation, let body):
+            save(.createNote(operation: operation, body: body), operation: operation, from: invocation)
+        case .saveTask(let operation, let title, let placement):
+            save(.createTask(operation: operation, title: title, placement: placement), operation: operation, from: invocation)
         case .confirmSaved:
-            setModeLabel("Saved")
+            // A task's confirmation says which list it went to.
+            setModeLabel(mode == .task ? "Saved to \(capture.state.destination.title)" : "Saved")
             let duration = confirmationDuration
             // Focus returns to the invocation origin when the confirmation ends.
             confirmationTask = Task { [weak self] in
@@ -663,8 +704,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     /// Issues the session's one save. Its outcome reaches only the invocation
     /// and operation that requested it.
-    private func save(_ body: String, operation: UUID, from invocation: Invocation) {
-        record("capture.save-request")
+    private func save<Saved: Sendable>(_ command: CollectionCommand<Saved>, operation: UUID, from invocation: Invocation) {
+        record("capture.save-request", extra: ["mode": mode.rawValue])
         let collection = collection
         Task { [weak self] in
             let store: CollectionStore
@@ -676,7 +717,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 return
             }
             do {
-                _ = try await store.perform(.createNote(operation: operation, body: body), in: store.generation)
+                _ = try await store.perform(command, in: store.generation)
                 self?.finishSave(.saved, operation: operation, invocation: invocation, error: nil)
             } catch {
                 self?.finishSave(.saveFailed(.failed), operation: operation, invocation: invocation, error: error)
@@ -704,15 +745,32 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         guard !textView.hasMarkedText() else { return false }
-        // Backspace at the start of a capture returns to Search instead of deleting.
-        if commandSelector == #selector(NSResponder.deleteBackward(_:)) {
-            let effects = capture.handle(.deleteBackward)
-            effects.forEach(perform)
-            return !effects.isEmpty
+        // The session may take these before the editor acts: Backspace at the
+        // start of a capture returns to Search, and in Task, Tab chooses the
+        // destination and a line break does nothing.
+        let event: CaptureSession.Event? = switch commandSelector {
+        case #selector(NSResponder.deleteBackward(_:)): .deleteBackward
+        case #selector(NSResponder.insertTab(_:)), #selector(NSResponder.insertBacktab(_:)),
+             #selector(NSResponder.insertTabIgnoringFieldEditor(_:)): .tab
+        case #selector(NSResponder.insertNewline(_:)) where editor.shiftHeld: .newline
+        case #selector(NSResponder.insertLineBreak(_:)), #selector(NSResponder.insertParagraphSeparator(_:)),
+             #selector(NSResponder.insertNewlineIgnoringFieldEditor(_:)): .newline
+        default: nil
         }
-        if mode == .note {
-            // Shift+Enter writes a new line; plain Enter saves.
-            guard commandSelector == #selector(NSResponder.insertNewline(_:)), !editor.shiftHeld else { return false }
+        if let event {
+            let effects = capture.handle(event)
+            if !effects.isEmpty {
+                if event == .tab { record("capture.destination", extra: ["destination": capture.state.destination.rawValue]) }
+                effects.forEach(perform)
+                renderResults()
+                return true
+            }
+            // Ordinary deletion, tab or line break.
+            if event == .deleteBackward || mode != .search { return false }
+        }
+        if mode != .search {
+            // Plain Enter saves.
+            guard commandSelector == #selector(NSResponder.insertNewline(_:)) else { return false }
             submitCapture()
             return true
         }
@@ -969,17 +1027,20 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     private func renderResults() {
-        guard mode == .search else { return layoutNote() }
-        // Capture notices belong to Note; returning to Search leaves them behind.
+        guard mode == .search else { return layoutCapture() }
+        // A capture's notices show below its text. Search shows only a refused
+        // switch to Task, as its status; returning leaves the others behind.
         captureNotice.isHidden = true
+        let notice = capture.state.notice.map { Self.noticeMessage($0, mode: mode) }
         let hasQuery = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let loading = hasQuery && (sourceStatus == .loading || fileStatus == .loading)
         loadingIndicator.isHidden = !loading
         if loading { loadingIndicator.startAnimation(nil) } else { loadingIndicator.stopAnimation(nil) }
         let status: String?
-        if !hasQuery { status = nil }
+        if !hasQuery { status = notice }
         else if let openFailure { status = openFailure }
         else if pendingLaunch != nil || heldEnter { status = "Opening selected destination…" }
+        else if let notice { status = notice }
         else if sourceStatus == .failed || fileStatus == .failed {
             status = !results.isEmpty && displayedResultsGeneration == request?.generation
                 ? "A search source reported a failure. Available results are shown; retry the search."
@@ -990,7 +1051,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         else { status = results.isEmpty ? "No matches returned. Indexing and access can limit results." : nil }
         // Results extend the card downward below the input row, so the input
         // position never moves while expanding.
-        let needed = hasQuery ? SearchResultsView.height(rowCount: results.count, hasStatus: status != nil) : 0
+        let needed = hasQuery || notice != nil ? SearchResultsView.height(rowCount: results.count, hasStatus: status != nil) : 0
         let finished = sourceStatus != .loading && fileStatus != .loading
         retainedContentHeight = !hasQuery || finished ? needed : max(retainedContentHeight, needed)
         let content = retainedContentHeight
@@ -1025,17 +1086,22 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             }, rowAppeared: { [weak self] id in self?.requestIcon(id) })
     }
 
-    /// Note grows with its text to a maximum height and then scrolls. Like the
-    /// results, it extends the card downward so the input never moves; placement
-    /// shifts the bar only to keep it on screen.
-    private func layoutNote() {
+    /// Note grows with its text to a maximum height and then scrolls; Task stays
+    /// one line unless its title soft-wraps. Like the results, a capture extends
+    /// the card downward so the input never moves; placement shifts the bar only
+    /// to keep it on screen.
+    private func layoutCapture() {
         loadingIndicator.isHidden = true
         loadingIndicator.stopAnimation(nil)
         resultSurface?.isHidden = true
         retainedContentHeight = 0
-        // Submitted text is frozen until a failure returns it for editing.
+        // Submitted text and destination are frozen until a failure returns them for editing.
         editor.isEditable = capture.state.phase == .editing
-        let notice = capture.state.notice.map(Self.noticeMessage)
+        destinationSelector.isEnabled = capture.state.phase == .editing
+        if let index = TaskPlacement.allCases.firstIndex(of: capture.state.destination) {
+            destinationSelector.selectedSegment = index
+        }
+        let notice = capture.state.notice.map { Self.noticeMessage($0, mode: mode) }
         captureNotice.stringValue = notice ?? ""
         captureNotice.isHidden = notice == nil
         let noticeHeight = notice == nil ? 0 : BarStyle.noticeHeight
@@ -1064,24 +1130,38 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                                     width: editorScroll.frame.width, height: height)
     }
 
-    private static func noticeMessage(_ notice: CaptureSession.Notice) -> String {
-        switch notice {
-        case .blank: "Write something to save this note."
-        case .collectionUnavailable: "The collection couldn’t be opened, so notes can’t be saved right now. Your text is kept."
-        case .failed: "This note couldn’t be saved. Your text is kept."
+    /// Search shows only the refused switch to Task; the rest belong to the capture mode.
+    private static func noticeMessage(_ notice: CaptureSession.Notice, mode: CaptureSession.Mode) -> String {
+        let kind = mode == .task ? "task" : "note"
+        return switch notice {
+        case .blank: "Write something to save this \(kind)."
+        case .collectionUnavailable: "The collection couldn’t be opened, so \(kind)s can’t be saved right now. Your text is kept."
+        case .failed: "This \(kind) couldn’t be saved. Your text is kept."
+        case .multilineTask: mode == .task
+            ? "Tasks are one line, so text with line breaks can’t be pasted here."
+            : "Tasks are one line. Remove the line breaks to make this a task."
         }
     }
 
-    /// The label ends where the results' type labels end; Note's text stops short of it.
+    /// The label ends where the results' type labels end, with Task's selector
+    /// before it. A capture's text stops short of both; Search's leaves room for
+    /// the spinner. The height follows the text; layout sets it.
     private func setModeLabel(_ text: String) {
         guard let card = modeLabel.superview else { return }
         modeLabel.stringValue = text
         modeLabel.sizeToFit()
         let labelTrailing = BarStyle.cardPadding + BarStyle.resultIconInset
+        let midY = card.bounds.height - BarStyle.inputHeight + 30
         modeLabel.frame.origin = NSPoint(x: card.bounds.width - labelTrailing - modeLabel.frame.width,
-                                         y: card.bounds.height - BarStyle.inputHeight + 30 - modeLabel.frame.height / 2)
-        guard mode == .note else { return }
-        editorScroll.frame.size.width = modeLabel.frame.minX - 8 - BarStyle.textInset
+                                         y: midY - modeLabel.frame.height / 2)
+        // The confirmation names the destination, so the selector steps aside.
+        destinationSelector.isHidden = mode != .task || capture.state.phase == .saved
+        destinationSelector.frame.origin = NSPoint(x: modeLabel.frame.minX - 8 - destinationSelector.frame.width,
+                                                   y: midY - destinationSelector.frame.height / 2)
+        let trailing = mode == .search ? card.bounds.width - 44
+            : (destinationSelector.isHidden ? modeLabel.frame.minX : destinationSelector.frame.minX) - 8
+        editorScroll.frame = NSRect(x: BarStyle.textInset, y: editorScroll.frame.minY,
+                                    width: trailing - BarStyle.textInset, height: editorScroll.frame.height)
     }
 
     private var textHeight: CGFloat {
@@ -1250,5 +1330,15 @@ private final class SearchEditor: NSTextView {
         super.unmarkText()
         needsDisplay = true
         compositionChanged?()
+    }
+}
+
+private extension TaskPlacement {
+    /// The list's name in the bar.
+    var title: String {
+        switch self {
+        case .inbox: "Inbox"
+        case .today: "Today"
+        }
     }
 }

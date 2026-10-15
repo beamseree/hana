@@ -61,10 +61,14 @@ struct TaskItem: Identifiable, Sendable {
     /// PARAGRAPH SEPARATOR. The schema checks the subset LF, CR, NEL, LS, PS.
     private static let lineBreaks: Set<UInt32> = [0x0A, 0x0B, 0x0C, 0x0D, 0x85, 0x2028, 0x2029]
 
+    /// Whether the text has a line break by the single-line rule. Soft wrapping is layout, not text.
+    static func isMultiline(_ title: String) -> Bool {
+        title.unicodeScalars.contains { lineBreaks.contains($0.value) }
+    }
+
     /// Accepts a title only as it stands; nothing is trimmed or flattened.
     static func validate(title: String) throws {
-        guard !title.unicodeScalars.contains(where: { lineBreaks.contains($0.value) })
-        else { throw CollectionStoreError.multilineTaskTitle }
+        guard !isMultiline(title) else { throw CollectionStoreError.multilineTaskTitle }
         guard Note.isNonblank(title) else { throw CollectionStoreError.blankTaskTitle }
     }
 }
