@@ -1,0 +1,18 @@
+Test Suite 'Selected tests' started at 2026-10-15 22:30:53.151.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:30:53.152.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:30:53.152.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:30:53.152.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchWithdrawalTests started.
+􀟈  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() started.
+􁁛  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() passed after 0.003 seconds.
+􀟈  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() started.
+􀢄  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() recorded an issue at AutomaticSwitchWithdrawalTests.swift:38:9: Expectation failed: !(returns(h.policy.handle(.gateChanged(gate)) → [Hana.AutomaticSwitch.Effect.record(Hana.AutomaticSwitchDiagnostics.Event.lateStrongMatch(kind: Hana.AutomaticSwitchDiagnostics.MatchedKind.application, outcome: Hana.AutomaticSwitchDiagnostics.LateOutcome.returnedToSearch)), Hana.AutomaticSwitch.Effect.returnToSearch, Hana.AutomaticSwitch.Effect.record(Hana.AutomaticSwitchDiagnostics.Event.ended(Hana.AutomaticSwitchDiagnostics.End.reversed))]) → true)
+􀢄  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() recorded an issue at AutomaticSwitchWithdrawalTests.swift:42:9: Expectation failed: returns(h.policy.handle(.tick) → [])
+􀢄  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() failed after 0.001 seconds with 2 issues.
+􀢄  Suite AutomaticSwitchWithdrawalTests failed after 0.004 seconds with 2 issues.
+􀢄  Test run with 2 tests in 1 suite failed after 0.005 seconds with 2 issues.

@@ -79,6 +79,11 @@ struct AutomaticSwitch {
     /// A non-append edit starts a burst. Even appended corrections stay in
     /// that burst until the adaptive pause, holding answers and sends.
     private var deletionPause: Duration?
+    private var deletionWasAtEnd = false
+    /// The answer's normalized prefix, rather than everything typed by the
+    /// time its reply arrived, is the reason for the current switch.
+    private var switchPoint: String?
+    private var vetoes: [ClassifierVerdict.Label: String] = [:]
     /// Arrival order is already constrained by newestHandledSequence. Keep
     /// earlier answers for confidence, while only the newest may switch.
     private var heldWordAnswers: [Candidate] = []
@@ -143,6 +148,8 @@ struct AutomaticSwitch {
             mode = .search; candidate = nil; due = nil; agreements = 0; agreementLabel = nil
             waitingText = nil; answeredText = nil; lastInsertAt = nil; requestsSent = 0
             deletionPause = nil; heldWordAnswers = []; failureReturnPending = false
+            deletionWasAtEnd = false; switchPoint = nil
+            vetoes = [:]
             switchedAt = nil; enterGraceEnds = nil; hadSwitch = false; actedOnText = nil; ended = false
             lastVerdict = .none; lateKind = nil
             return effects
@@ -181,17 +188,15 @@ struct AutomaticSwitch {
         case .gateChanged(let value):
             let wasBlocked = gate.decision != .allowed
             gate = value
-            if switchedAt != nil, mode != .search, case .blocked(.strongMatch(let kind)) = gate.decision,
-               lateKind != kind {
-                if options.lateStrongMatch == .returnToSearch, !eligible || composing { return [] }
-                lateKind = kind
-                var effects: [Effect] = [.record(.lateStrongMatch(kind: diagnosticKind(kind),
-                    outcome: options.lateStrongMatch == .stay ? .stayed : .returnedToSearch))]
-                if options.lateStrongMatch == .returnToSearch, eligible, !composing {
-                    effects += returnToSearch()
-                }
+            if isWordPaced, deletionPause != nil {
+                guard gate.decision != .allowed else { return [] }
+                due = nil; candidate = nil
+                let failurePending = failureReturnPending
+                let effects = cancel()
+                failureReturnPending = failurePending
                 return effects
             }
+            if let late = lateStrongMatchIfNeeded() { return late }
             if isWordPaced, gate.decision != .allowed {
                 due = nil; candidate = nil
                 return cancel()
@@ -235,10 +240,16 @@ struct AutomaticSwitch {
         case .reversed(let method):
             guard eligible, !composing, let switchedAt, mode != .search,
                   method == .backspace || options.escapeBehavior == .returnsToSearch else { return [] }
-            return returnToSearch(recording: .reversed(method: method,
+            if isWordPaced, options.reversalBehavior == .blockModeForText, !text.isEmpty {
+                vetoes[mode == .note ? .note : .task] = Self.normalized(text)
+            }
+            let effects = returnToSearch(recording: .reversed(method: method,
                 millisecondsSinceSwitch: milliseconds(now() - switchedAt)))
+            if isWordPaced { suspended = options.reversalBehavior == .stopUntilCleared && !text.isEmpty }
+            return effects
         case .manualModeChanged(let mode):
             self.mode = mode; switchedAt = nil; enterGraceEnds = nil; candidate = nil; due = nil
+            switchPoint = nil
             return cancel()
         case .tick:
             if let enterGraceEnds, now() >= enterGraceEnds { self.enterGraceEnds = nil }
@@ -252,14 +263,28 @@ struct AutomaticSwitch {
         }
     }
 
+    private mutating func lateStrongMatchIfNeeded() -> [Effect]? {
+        guard switchedAt != nil, mode != .search,
+              case .blocked(.strongMatch(let kind)) = gate.decision, lateKind != kind else { return nil }
+        if options.lateStrongMatch == .returnToSearch, !eligible || composing { return [] }
+        lateKind = kind
+        var effects: [Effect] = [.record(.lateStrongMatch(kind: diagnosticKind(kind),
+            outcome: options.lateStrongMatch == .stay ? .stayed : .returnedToSearch))]
+        if options.lateStrongMatch == .returnToSearch, eligible, !composing { effects += returnToSearch() }
+        return effects
+    }
+
     /// Both reversal routes reset the same session state and end a switch once.
-    private mutating func returnToSearch(recording event: AutomaticSwitchDiagnostics.Event? = nil) -> [Effect] {
+    private mutating func returnToSearch(recording event: AutomaticSwitchDiagnostics.Event? = nil,
+                                         end: AutomaticSwitchDiagnostics.End = .reversed) -> [Effect] {
         var effects = cancel()
         switchedAt = nil; enterGraceEnds = nil; mode = .search; candidate = nil; due = nil
+        switchPoint = nil
+        if isWordPaced { answeredText = nil }
         suspended = options.reversalSuspends && (!isWordPaced || !text.isEmpty); agreements = 0; agreementLabel = nil
         effects.append(.returnToSearch)
         if let event { effects.append(.record(event)) }
-        if !ended { effects.append(.record(.ended(.reversed))); ended = true }
+        if !ended { effects.append(.record(.ended(end))); ended = true }
         return effects
     }
 
@@ -328,6 +353,10 @@ struct AutomaticSwitch {
         guard !suspended else { candidate = nil; return [diagnostic(value, .suspended)] }
         guard eligible, !composing, canClassify else { candidate = nil; return [diagnostic(value, .blocked)] }
         guard gate.decision == .allowed else { candidate = nil; agreements = 0; return [diagnostic(value, .blocked)] }
+        if isWordPaced, let veto = vetoes[value.verdict.label], Self.normalized(text).utf8.starts(with: veto.utf8) {
+            candidate = nil; agreements = 0; agreementLabel = nil
+            return [diagnostic(value, .blocked)]
+        }
         if isWordPaced, value.agreementCount == nil {
             let accepts = value.verdict.label != .unsure
                 && (value.verdict.probability.map { $0.isFinite && $0 >= options.jevThreshold.rawValue } ?? false)
@@ -365,6 +394,7 @@ struct AutomaticSwitch {
             return [diagnostic(value, .awaitingAgreement)]
         }
         mode = target; switchedAt = target == .search ? nil : now(); hadSwitch = true; actedOnText = text; ended = false
+        switchPoint = isWordPaced && target != .search ? value.prefix ?? Self.normalized(text) : nil
         enterGraceEnds = options.enterBehavior == .ignoreFor300Milliseconds ? switchedAt.map { $0 + .milliseconds(300) } : nil
         agreements = 0; agreementLabel = nil
         let transition: Effect = target == .search ? .returnToSearch : .enterMode(target)
@@ -383,6 +413,11 @@ struct AutomaticSwitch {
         let replaced: Bool = if case .replacement = edit { true } else { false }
         let appending = !replaced && !composing && !newComposing && newText.utf8.count > text.utf8.count
             && newText.utf8.starts(with: text.utf8)
+        if !appending {
+            let atEnd: Bool = if case .replacement(let caretAtEnd) = edit { caretAtEnd }
+                else { text.utf8.starts(with: newText.utf8) }
+            deletionWasAtEnd = deletionPause == nil ? atEnd : deletionWasAtEnd && atEnd
+        }
         let time = now()
         // Gaps are measured only between consecutive insertions in this session.
         if appending {
@@ -394,6 +429,8 @@ struct AutomaticSwitch {
             && newText.dropLast().last.map { !Self.endsWord($0) } == true
         if let newGate { gate = newGate }
         text = newText; composing = newComposing; changedAt = time; lateKind = nil
+        let current = Self.normalized(text)
+        vetoes = vetoes.filter { current.utf8.starts(with: $0.value.utf8) }
         if !appending || deletionPause != nil { deletionPause = time + memory.pauseThreshold }
         if deletionPause != nil, let candidate {
             heldWordAnswers.append(candidate); self.candidate = nil
@@ -412,11 +449,12 @@ struct AutomaticSwitch {
         if gate.decision != .allowed { candidate = nil; agreements = 0; agreementLabel = nil }
         due = nil
         if text.isEmpty {
-            deletionPause = nil; heldWordAnswers = []; candidate = nil; agreements = 0; agreementLabel = nil
-            if eligible, !composing, switchedAt != nil, mode != .search {
-                effects += returnToSearch()
-            }
+            vetoes = [:]; answeredText = nil
+            heldWordAnswers = []; candidate = nil; agreements = 0; agreementLabel = nil
             suspended = false
+            // An automatically entered mode remains visible until this
+            // deletion's pause, including when the last character is removed.
+            if switchedAt == nil || mode == .search { deletionPause = nil }
             return effects
         }
         if suspended, !composing { return effects + [diagnostic(nil, .suspended)] }
@@ -539,9 +577,16 @@ struct AutomaticSwitch {
             suspended = false
             return effects
         }
+        let current = Self.normalized(text)
+        if deletionWasAtEnd, let switchPoint, current.utf8.count < switchPoint.utf8.count,
+           switchPoint.utf8.starts(with: current.utf8), switchedAt != nil, mode != .search {
+            let effects = returnToSearch(recording: .withdrawn(mode: .init(rawValue: mode.rawValue)!), end: .withdrawn)
+            suspended = false
+            return effects
+        }
+        if let late = lateStrongMatchIfNeeded() { return late }
         let held = heldWordAnswers
         heldWordAnswers = []
-        let current = Self.normalized(text)
         let applicable = held.filter { $0.prefix.map { current.utf8.starts(with: $0.utf8) } ?? true }
         var effects = held.filter { value in
             value.prefix.map { !current.utf8.starts(with: $0.utf8) } ?? false

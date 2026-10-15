@@ -18,7 +18,7 @@ final class AutomaticSwitchDiagnostics {
     enum GateReason: String, Codable, Sendable { case oneWord, strongMatch, collectionUnavailable }
     enum MatchedKind: String, Codable, Sendable { case application, note, task, file, folder }
     enum ReversalMethod: String, Codable, Sendable { case escape, backspace }
-    enum End: String, Codable, Sendable { case saved, reversed, dismissed }
+    enum End: String, Codable, Sendable { case saved, reversed, withdrawn, dismissed }
     enum LateOutcome: String, Codable, Sendable { case returnedToSearch, stayed }
 
     struct Verdict: Sendable {
@@ -40,6 +40,7 @@ final class AutomaticSwitchDiagnostics {
         case verdict(Verdict)
         case switched(mode: Mode)
         case reversed(method: ReversalMethod, millisecondsSinceSwitch: Double)
+        case withdrawn(mode: Mode)
         case lateStrongMatch(kind: MatchedKind, outcome: LateOutcome)
         case missed(mode: Mode, lastVerdict: Label)
         case ended(End)
@@ -64,6 +65,7 @@ final class AutomaticSwitchDiagnostics {
         var switches = 0
         var wrongSwitches = 0
         var reversals = 0
+        var withdrawn = 0
         var ambiguous = 0
         var missed = 0
         var errors = 0
@@ -88,6 +90,7 @@ final class AutomaticSwitchDiagnostics {
             case "autoswitch.reset": result = Counts(); samples = [:]
             case "autoswitch.switched": result.switches += 1
             case "autoswitch.reversed": result.reversals += 1; result.wrongSwitches += 1
+            case "autoswitch.withdrawn": result.withdrawn += 1
             case "autoswitch.late-strong-match" where row.lateOutcome == .returnedToSearch:
                 result.wrongSwitches += 1
             case "autoswitch.missed": result.missed += 1
@@ -175,6 +178,7 @@ final class AutomaticSwitchDiagnostics {
             case .switched(let mode): self.event = "autoswitch.switched"; self.mode = mode
             case .reversed(let method, let milliseconds):
                 self.event = "autoswitch.reversed"; reversalMethod = method; millisecondsSinceSwitch = milliseconds
+            case .withdrawn(let mode): self.event = "autoswitch.withdrawn"; self.mode = mode
             case .lateStrongMatch(let kind, let outcome):
                 self.event = "autoswitch.late-strong-match"; matchedKind = kind; lateOutcome = outcome
             case .missed(let mode, let lastVerdict):

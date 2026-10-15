@@ -133,6 +133,8 @@ struct JevWordPacedNativeTests {
     @Test func backspaceAtTheStartKeepsTextAndSuspendsUntilTheBufferIsCleared() async throws {
         _ = NSApplication.shared
         let fixture = try Fixture(); defer { fixture.remove() }
+        var options = fixture.options.read(); options.reversalBehavior = .stopUntilCleared
+        fixture.options.write(options)
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
