@@ -1,6 +1,6 @@
 # Issue #89 — Main window and live Notes
 
-2026-10-15, Asia/Bangkok. Comparison base: `4d1a57c4a8f579dd156201e77edc896aa611330a`.
+2026-10-15, Asia/Bangkok. Comparison base: `4d1a57c4a8f579dd156201e77edc896aa611330a`. Implementation commit: `80264c8` (the native run used this exact source; subsequent changes are evidence only).
 
 ## Delivered behavior
 
@@ -13,7 +13,7 @@ Mac Interaction exposes presentation and registered native windows. Main identit
 - `initial-red.txt`: the first Notes integration test failed to compile because Mac Interaction had no main-window presentation API. The same test passed after the implementation.
 - `focused-tests.txt`: four MainWindowTests passed (five executions, including the missing/failed Store parameter cases). Real disposable SQLite Stores verify active note ordering, pin priority, first-line titles, a newly committed note arriving while open, Store-close unavailability, empty versus unavailable state, section selection, singleton reuse, minimization policy, close/reopen, menu-bar/Window menu and Dock delegate routing. Unavailable windows contain no editable native text controls.
 - `build.txt`: release build, bundle property-list validation and ad-hoc signature verification passed with Swift 6.3.3 / Xcode 26.6.
-- Full-suite result is recorded in `full-tests.txt` after the final regression run.
+- `full-tests.txt`: `xcrun swift test --no-parallel` passed all 311 tests in 40 suites (47.754 seconds). This includes existing capture, native editor, destination and Search regressions; no default suite was excluded. Opt-in environment-dependent tests retain their existing conditions. In the saved log, literal carriage returns and trailing spaces/tabs in parameter values are escaped for readable, whitespace-clean evidence; the original test output is otherwise preserved.
 
 ## Native app run and visual inspection
 
@@ -36,4 +36,4 @@ CUA screenshot and accessibility inspection showed all five sidebar labels, both
 
 SwiftPM's test runner does not establish key-window state for ordinary working windows in this environment. Initial combined key-window/capture checks failed there; no product focus change was made to force a runner pass. Those checks run instead in the real app event loop through the opt-in, fixture-only `--validate-main-window` harness. Runner minimization assertions required waiting for completion, and window tests now use Mac Interaction's registered window identity rather than matching stale closed windows retained by AppKit. The final native app rerun ran alone, after the runner tests finished.
 
-These are automated AppKit state and CUA visual/accessibility observations. No new human-observed physical typing, foreign-app/full-screen/Spaces, Command-Tab or IME acceptance is claimed. Earlier evidence and deferred physical timing remain unchanged; ADR 0005 remains proposed. Inbox/Today/Completed/Archive behavior, note windows, organization actions, autosave and automatic backups/restore remain outside #89. The issue remains open pending normal review/merge; no PR, tracker closure or push is performed by this implementation request.
+These are automated AppKit state and CUA visual/accessibility observations. No new human-observed physical typing, foreign-app/full-screen/Spaces, Command-Tab or IME acceptance is claimed. Earlier evidence and deferred physical timing remain unchanged; ADR 0005 remains proposed. Inbox/Today/Completed/Archive behavior, note windows, organization actions, autosave and automatic backups/restore remain outside #89. The fixture app quit and the native testing slot was explicitly released after the full-suite run. The issue remains open pending normal review/merge; no PR, tracker closure or push is performed by this implementation request.
