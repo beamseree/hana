@@ -1,0 +1,27 @@
+[0/1] Planning build
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (3.78s)
+Test Suite 'Selected tests' started at 2026-10-15 18:39:01.451.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 18:39:01.452.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 18:39:01.452.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 18:39:01.452.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchInteractionTests started.
+􀟈  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀟈  Test case passing 1 argument saved → false to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀟈  Test case passing 1 argument saved → true to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → true at AutomaticSwitchInteractionTests.swift:395:9: Expectation failed: (fixture.log.counts().ambiguous → 1) == 0
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → true at AutomaticSwitchInteractionTests.swift:399:9: Expectation failed: (rows.first { $0["event"] as? String == "autoswitch.ended" }?["end"] as? String → "dismissed") == "saved"
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) with 2 test cases failed after 0.703 seconds with 2 issues.
+􀢄  Suite AutomaticSwitchInteractionTests failed after 0.703 seconds with 2 issues.
+􀢄  Test run with 1 test in 1 suite failed after 0.703 seconds with 2 issues.

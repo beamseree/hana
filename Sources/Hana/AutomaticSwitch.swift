@@ -25,7 +25,17 @@ struct AutomaticSwitch {
         case record(AutomaticSwitchDiagnostics.Event)
     }
     private struct Request { let id: UUID; let started: Duration }
-    private struct Candidate { let verdict: ClassifierVerdict; let latency: Double }
+    private struct Candidate {
+        let verdict: ClassifierVerdict
+        let latency: Double?
+        var prefix: String? = nil
+    }
+    private struct PipelineRequest {
+        let started: Duration
+        let text: String
+        let sequence: UInt64
+        var valid = true
+    }
     let options: AutomaticSwitchOptions
     private let now: () -> Duration
     private var active = false
@@ -36,6 +46,16 @@ struct AutomaticSwitch {
     private var mode = CaptureSession.Mode.search
     private var gate = StrongMatchGate.Evaluation(decision: .blocked(.collectionUnavailable), settled: false, allSourcesSettled: false)
     private var request: Request?
+    // Invalidated work retains its slot until its terminal callback acknowledges cancellation.
+    private var pipelineRequests: [UUID: PipelineRequest] = [:]
+    private var sequence: UInt64 = 0
+    private var newestHandledSequence: UInt64 = 0
+    private var lastPipelineStart: Duration?
+    private var lastPipelineText: String?
+    private var agreementRetry = false
+    private var isPipelined: Bool { options.classifier == .jev && options.firing == .pipelinedJev }
+    // A timeout already sampled latency; retain the later stale row without sampling it again.
+    private var timedOutRequests: Set<UUID> = []
     private var due: Duration?
     private var changedAt: Duration = .zero
     private var candidate: Candidate?
@@ -61,6 +81,8 @@ struct AutomaticSwitch {
             let effects = cancel()
             active = true; text = ""; composing = false; eligible = true; suspended = false
             mode = .search; candidate = nil; due = nil; agreements = 0; agreementLabel = nil
+            timedOutRequests = []
+            lastPipelineText = nil; agreementRetry = false
             switchedAt = nil; hadSwitch = false; actedOnText = nil; ended = false; lastVerdict = .none; lateKind = nil
             return effects
         case .dismissed(let end):
@@ -68,10 +90,20 @@ struct AutomaticSwitch {
             var effects = cancel()
             if hadSwitch, !ended { effects.append(.record(.ended(end))); ended = true }
             return effects
-        default: guard active else { return [] }
+        default:
+            guard active else {
+                if isPipelined {
+                    switch event {
+                    case .verdict(let id, _, _), .failed(let id, _, _): pipelineRequests[id] = nil
+                    default: break
+                    }
+                }
+                return []
+            }
         }
         switch event {
         case .bufferChanged(let text, let composing, let newGate):
+            if isPipelined { return pipelineBufferChanged(text: text, composing: composing, gate: newGate) }
             guard !self.text.utf8.elementsEqual(text.utf8) || self.composing != composing else { return [] }
             if let newGate { gate = newGate }
             self.text = text; self.composing = composing; changedAt = now(); candidate = nil; lateKind = nil
@@ -92,14 +124,15 @@ struct AutomaticSwitch {
                 var effects: [Effect] = [.record(.lateStrongMatch(kind: diagnosticKind(kind),
                     outcome: options.lateStrongMatch == .stay ? .stayed : .returnedToSearch))]
                 if options.lateStrongMatch == .returnToSearch, eligible, !composing {
-                    self.switchedAt = nil; mode = .search; candidate = nil; due = nil
-                    suspended = options.reversalSuspends
-                    effects += cancel(); effects.append(.returnToSearch)
-                    if !ended { effects.append(.record(.ended(.reversed))); ended = true }
+                    effects += returnToSearch()
                 }
                 return effects
             }
-            if let candidate { return apply(candidate) }
+            if isPipelined, gate.decision != .allowed {
+                due = nil; candidate = nil
+                return cancel()
+            }
+            if let candidate { return apply(candidate) + fireIfDue() }
             if wasBlocked, gate.decision == .allowed, due == nil, request == nil,
                !text.isEmpty, !composing, canClassify {
                 due = max(now(), changedAt + firingDelay)
@@ -110,16 +143,18 @@ struct AutomaticSwitch {
             if !value { due = nil; candidate = nil; return cancel() }
             return []
         case .verdict(let id, let verdict, let latency):
+            if isPipelined { return pipelineCompleted(id: id, verdict: verdict, error: nil, latency: latency) }
             let value = Candidate(verdict: verdict, latency: latency)
-            guard request?.id == id else { return [diagnostic(value, .stale)] }
+            guard request?.id == id else { return [staleDiagnostic(id: id, value: value)] }
             if let timeout = timeoutIfDue() { return timeout }
             request = nil
             lastVerdict = diagnosticLabel(verdict.label)
             candidate = value
             return apply(value)
         case .failed(let id, let kind, let latency):
+            if isPipelined { return pipelineCompleted(id: id, verdict: .init(label: .unsure), error: kind, latency: latency) }
             guard request?.id == id else {
-                return [diagnostic(Candidate(verdict: .init(label: .unsure), latency: latency), .stale)]
+                return [staleDiagnostic(id: id, value: Candidate(verdict: .init(label: .unsure), latency: latency))]
             }
             if let timeout = timeoutIfDue() { return timeout }
             request = nil; candidate = nil; agreements = 0; agreementLabel = nil
@@ -133,43 +168,73 @@ struct AutomaticSwitch {
                   now() - switchedAt < .milliseconds(300) else { return [] }
             return [.swallowEnter]
         case .reversed(let method):
-            guard let switchedAt, mode != .search,
+            guard eligible, !composing, let switchedAt, mode != .search,
                   method == .backspace || options.escapeBehavior == .returnsToSearch else { return [] }
-            var effects = cancel()
-            effects += [.returnToSearch, .record(.reversed(method: method,
-                millisecondsSinceSwitch: milliseconds(now() - switchedAt)))]
-            if !ended { effects.append(.record(.ended(.reversed))); ended = true }
-            self.switchedAt = nil; mode = .search; candidate = nil; due = nil
-            suspended = options.reversalSuspends; agreements = 0; agreementLabel = nil
-            return effects
+            return returnToSearch(recording: .reversed(method: method,
+                millisecondsSinceSwitch: milliseconds(now() - switchedAt)))
         case .manualModeChanged(let mode):
             self.mode = mode; switchedAt = nil; candidate = nil; due = nil
             return cancel()
         case .tick:
-            if let timeout = timeoutIfDue() { return timeout }
-            if let candidate { return apply(candidate) }
+            if let timeout = timeoutIfDue() { return timeout + fireIfDue() }
+            if let candidate { return apply(candidate) + fireIfDue() }
             return fireIfDue()
         case .invoked, .dismissed: return []
         }
     }
 
+    /// Both reversal routes reset the same session state and end a switch once.
+    private mutating func returnToSearch(recording event: AutomaticSwitchDiagnostics.Event? = nil) -> [Effect] {
+        var effects = cancel()
+        switchedAt = nil; mode = .search; candidate = nil; due = nil
+        suspended = options.reversalSuspends && (!isPipelined || !text.isEmpty); agreements = 0; agreementLabel = nil
+        effects.append(.returnToSearch)
+        if let event { effects.append(.record(event)) }
+        if !ended { effects.append(.record(.ended(.reversed))); ended = true }
+        return effects
+    }
+
     private mutating func timeoutIfDue() -> [Effect]? {
+        if isPipelined {
+            var effects: [Effect] = []
+            for (id, request) in pipelineRequests.sorted(by: { $0.value.sequence < $1.value.sequence })
+                where request.valid && now() - request.started >= .milliseconds(1500) {
+                pipelineRequests[id]?.valid = false
+                timedOutRequests.insert(id)
+                effects += [.cancel(id), diagnostic(Candidate(verdict: .init(label: .unsure),
+                    latency: milliseconds(now() - request.started)), .timeout)]
+            }
+            return effects.isEmpty ? nil : effects
+        }
         guard let request, now() - request.started >= .milliseconds(1500) else { return nil }
         self.request = nil; candidate = nil
+        timedOutRequests.insert(request.id)
         return [.cancel(request.id), diagnostic(Candidate(verdict: .init(label: .unsure),
             latency: milliseconds(now() - request.started)), .timeout)]
     }
 
     private var firingDelay: Duration {
-        switch options.firing { case .everyKeystroke: .zero; case .debounced: .milliseconds(150); case .onPause: .milliseconds(500) }
+        switch options.firing {
+        case .everyKeystroke: .zero
+        case .debounced: .milliseconds(150)
+        case .onPause: .milliseconds(500)
+        case .pipelinedJev: isPipelined ? .zero : .milliseconds(150)
+        }
     }
     private var canClassify: Bool { eligible && !suspended && (mode == .search || options.afterSwitch == .keepClassifying && switchedAt != nil) }
     private mutating func cancel() -> [Effect] {
+        if isPipelined {
+            lastPipelineText = nil; agreementRetry = false
+            let ids = pipelineRequests.filter { $0.value.valid }.sorted { $0.value.sequence < $1.value.sequence }.map(\.key)
+            for id in ids { pipelineRequests[id]?.valid = false }
+            return ids.map(Effect.cancel)
+        }
         guard let request else { return [] }
         self.request = nil
         return [.cancel(request.id)]
     }
     private mutating func fireIfDue() -> [Effect] {
+        if isPipelined { return firePipelineIfDue() }
         guard let due, now() >= due, request == nil, !composing, canClassify else { return [] }
         self.due = nil
         guard gate.decision == .allowed else {
@@ -179,6 +244,10 @@ struct AutomaticSwitch {
         return [.classify(id: id, text: text)]
     }
     private mutating func apply(_ value: Candidate) -> [Effect] {
+        if let prefix = value.prefix, !text.utf8.starts(with: prefix.utf8) {
+            candidate = nil
+            return [diagnostic(value, .stale)]
+        }
         guard !suspended else { candidate = nil; return [diagnostic(value, .suspended)] }
         guard eligible, !composing, canClassify else { candidate = nil; return [diagnostic(value, .blocked)] }
         guard gate.decision == .allowed else { candidate = nil; agreements = 0; return [diagnostic(value, .blocked)] }
@@ -199,15 +268,93 @@ struct AutomaticSwitch {
         if agreementLabel == value.verdict.label { agreements += 1 }
         else { agreementLabel = value.verdict.label; agreements = 1 }
         if agreements < options.agreeingVerdicts.rawValue {
+            agreementRetry = isPipelined
             due = now() + max(firingDelay, .milliseconds(150))
             return [diagnostic(value, .awaitingAgreement)]
         }
         mode = target; switchedAt = target == .search ? nil : now(); hadSwitch = true; actedOnText = text; ended = false
         agreements = 0; agreementLabel = nil
         let transition: Effect = target == .search ? .returnToSearch : .enterMode(target)
-        return [diagnostic(value, .switched), transition,
+        var effects = [diagnostic(value, .switched), transition,
                 .record(.switched(mode: AutomaticSwitchDiagnostics.Mode(rawValue: target.rawValue)!))]
+        if isPipelined, target != .search, options.afterSwitch == .stay {
+            due = nil
+            effects += cancel()
+        }
+        return effects
     }
+    private mutating func pipelineBufferChanged(text newText: String, composing newComposing: Bool,
+                                               gate newGate: StrongMatchGate.Evaluation?) -> [Effect] {
+        guard !text.utf8.elementsEqual(newText.utf8) || composing != newComposing else { return [] }
+        let appending = !text.isEmpty && !composing && !newComposing && newText.utf8.starts(with: text.utf8)
+        if let newGate { gate = newGate }
+        text = newText; composing = newComposing; changedAt = now(); lateKind = nil
+        var effects: [Effect] = []
+        if !appending || gate.decision != .allowed {
+            effects += cancel()
+            candidate = nil; agreements = 0; agreementLabel = nil
+        }
+        due = nil
+        if text.isEmpty {
+            if eligible, !composing, switchedAt != nil, mode != .search {
+                effects += returnToSearch()
+            }
+            suspended = false
+            return effects
+        }
+        if suspended, !composing { return effects + [diagnostic(nil, .suspended)] }
+        guard !composing, canClassify else { return effects }
+        due = max(now(), (lastPipelineStart ?? now() - .milliseconds(100)) + .milliseconds(100))
+        effects += fireIfDue()
+        return effects
+    }
+
+    private mutating func firePipelineIfDue() -> [Effect] {
+        guard let due, now() >= due, pipelineRequests.count < 3, !text.isEmpty,
+              !composing, canClassify else { return [] }
+        self.due = nil
+        guard gate.decision == .allowed else { return [diagnostic(nil, .blocked)] }
+        guard agreementRetry || !(lastPipelineText?.utf8.elementsEqual(text.utf8) ?? false) else { return [] }
+        // Edits and agreement retries share the same provider-start spacing.
+        if let lastPipelineStart, now() - lastPipelineStart < .milliseconds(100) {
+            self.due = lastPipelineStart + .milliseconds(100)
+            return []
+        }
+        sequence += 1
+        let id = UUID()
+        pipelineRequests[id] = PipelineRequest(started: now(), text: text, sequence: sequence)
+        lastPipelineStart = now(); lastPipelineText = text; agreementRetry = false
+        return [.classify(id: id, text: text)]
+    }
+
+    private mutating func pipelineCompleted(id: UUID, verdict: ClassifierVerdict,
+                                            error: AutomaticSwitchDiagnostics.ErrorKind?, latency: Double) -> [Effect] {
+        let value = Candidate(verdict: verdict, latency: latency)
+        guard let request = pipelineRequests.removeValue(forKey: id), request.valid,
+              request.sequence > newestHandledSequence, text.utf8.starts(with: request.text.utf8) else {
+            return [staleDiagnostic(id: id, value: value)] + fireIfDue()
+        }
+        if now() - request.started >= .milliseconds(1500) {
+            timedOutRequests.insert(id)
+            return [.cancel(id), diagnostic(Candidate(verdict: .init(label: .unsure),
+                latency: milliseconds(now() - request.started)), .timeout)] + fireIfDue()
+        }
+        newestHandledSequence = request.sequence
+        if let error {
+            candidate = nil; agreements = 0; agreementLabel = nil
+            return [diagnostic(value, .error, error: error)] + fireIfDue()
+        }
+        lastVerdict = diagnosticLabel(verdict.label)
+        let prefixed = Candidate(verdict: verdict, latency: latency, prefix: request.text)
+        candidate = prefixed
+        return apply(prefixed) + fireIfDue()
+    }
+
+    private func staleDiagnostic(id: UUID, value: Candidate) -> Effect {
+        diagnostic(Candidate(verdict: value.verdict,
+            latency: timedOutRequests.contains(id) ? nil : value.latency), .stale)
+    }
+
     private func diagnostic(_ value: Candidate?, _ outcome: AutomaticSwitchDiagnostics.Outcome,
                             error: AutomaticSwitchDiagnostics.ErrorKind? = nil) -> Effect {
         var row = AutomaticSwitchDiagnostics.Verdict(classifier: options.classifier,

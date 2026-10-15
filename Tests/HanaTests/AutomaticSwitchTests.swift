@@ -17,6 +17,160 @@ struct AutomaticSwitchTests {
         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
     }
 
+    @Test func jevPipelineRetainsPrefixesAndStartsAtMostThreeRequests100MillisecondsApart() throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        h.clock.advance(by: .milliseconds(99))
+        let early = h.policy.handle(.bufferChanged(text: "call mom t", composing: false))
+        #expect(requests(early).isEmpty)
+        #expect(!early.contains { if case .cancel = $0 { true } else { false } })
+        h.clock.advance(by: .milliseconds(1))
+        #expect(requests(h.policy.handle(.tick)).map(\.text) == ["call mom t"])
+        h.clock.advance(by: .milliseconds(100))
+        #expect(requests(h.policy.handle(.bufferChanged(text: "call mom to", composing: false))).count == 1)
+        h.clock.advance(by: .milliseconds(100))
+        #expect(requests(h.policy.handle(.bufferChanged(text: "call mom tomorrow", composing: false))).isEmpty)
+        let completed = h.policy.handle(.verdict(id: first, .init(label: .task, probabilities: [.task: 0.9]), latencyMilliseconds: 300))
+        #expect(modes(completed) == [.task])
+        #expect(completed.filter { if case .cancel = $0 { true } else { false } }.count == 2)
+        #expect(requests(h.policy.handle(.tick)).isEmpty)
+    }
+
+    @Test func cancelledPipelineSlotsDrainWhileTheSessionIsDismissed() throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
+        var ids: [UUID] = []
+        for text in ["call mom", "call mom t", "call mom to"] {
+            ids.append(try #require(requests(h.policy.handle(.bufferChanged(text: text, composing: false))).first?.id))
+            h.clock.advance(by: .milliseconds(100))
+        }
+        _ = h.policy.handle(.dismissed(.dismissed))
+        for id in ids { _ = h.policy.handle(.failed(id: id, .network, latencyMilliseconds: 300)) }
+        _ = h.policy.handle(.invoked)
+        #expect(requests(h.policy.handle(.bufferChanged(text: "buy milk", composing: false))).map(\.text) == ["buy milk"])
+    }
+
+    @Test func pipelineCoalescesQueuedEditsAndDoesNotRepeatUnchangedSnapshots() throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
+        var ids: [UUID] = []
+        for text in ["find my", "find my r", "find my re"] {
+            ids.append(try #require(requests(h.policy.handle(.bufferChanged(text: text, composing: false))).first?.id))
+            h.clock.advance(by: .milliseconds(100))
+        }
+        #expect(requests(h.policy.handle(.bufferChanged(text: "find my rec", composing: false))).isEmpty)
+        h.clock.advance(by: .milliseconds(100))
+        #expect(requests(h.policy.handle(.bufferChanged(text: "find my recipes", composing: false))).isEmpty)
+        let completed = h.policy.handle(.verdict(id: ids[0], .init(label: .search, probabilities: [.search: 0.9]), latencyMilliseconds: 400))
+        let latest = try #require(requests(completed).first)
+        #expect(latest.text == "find my recipes")
+        _ = h.policy.handle(.verdict(id: latest.id, .init(label: .search, probabilities: [.search: 0.9]), latencyMilliseconds: 10))
+        for id in ids.dropFirst() { _ = h.policy.handle(.failed(id: id, .network, latencyMilliseconds: 400)) }
+        h.clock.advance(by: .seconds(1))
+        #expect(requests(h.policy.handle(.tick)).isEmpty)
+        #expect(requests(h.policy.handle(.bufferChanged(text: "find my recipes", composing: false))).isEmpty)
+    }
+
+    @Test(arguments: [false, true])
+    func pipelineOlderAnswersCannotOverrideANewerHandledAnswer(newerFails: Bool) throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        h.clock.advance(by: .milliseconds(100))
+        let second = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom recipes", composing: false))).first?.id)
+        _ = h.policy.handle(newerFails ? .failed(id: second, .network, latencyMilliseconds: 20)
+            : .verdict(id: second, .init(label: .search, probabilities: [.search: 0.9]), latencyMilliseconds: 20))
+        let old = h.policy.handle(.verdict(id: first, .init(label: .task, probabilities: [.task: 0.9]), latencyMilliseconds: 200))
+        #expect(outcomes(old) == [.stale])
+        #expect(modes(old).isEmpty)
+    }
+
+    @Test(arguments: ["call mo", "buy milk", "call mo\u{301}m"])
+    func pipelineDeletionAndReplacementInvalidateEarlierPrefixes(replacement: String) throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        let changed = h.policy.handle(.bufferChanged(text: replacement, composing: false))
+        #expect(changed.contains { if case .cancel(first) = $0 { true } else { false } })
+        #expect(outcomes(h.policy.handle(.verdict(id: first, .init(label: .task, probabilities: [.task: 0.9]), latencyMilliseconds: 20))) == [.stale])
+    }
+
+    @Test func pipelineUnicodeNormalizationIsAReplacementAndCompositionInvalidatesRequests() throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "café notes", composing: false))).first?.id)
+        _ = h.policy.handle(.bufferChanged(text: "cafe\u{301} notes", composing: false))
+        #expect(outcomes(h.policy.handle(.verdict(id: first, .init(label: .note, probabilities: [.note: 0.9]), latencyMilliseconds: 20))) == [.stale])
+        h.clock.advance(by: .milliseconds(100))
+        let second = try #require(requests(h.policy.handle(.tick)).first?.id)
+        _ = h.policy.handle(.bufferChanged(text: "cafe\u{301} notes", composing: true))
+        #expect(outcomes(h.policy.handle(.verdict(id: second, .init(label: .note, probabilities: [.note: 0.9]), latencyMilliseconds: 20))) == [.stale])
+        #expect(requests(h.policy.handle(.tick)).isEmpty)
+    }
+
+    @Test func pipelineCurrentGateAndEligibilityInvalidateRequests() throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        _ = h.policy.handle(.gateChanged(.init(decision: .blocked(.strongMatch(.note)), settled: true, allSourcesSettled: true)))
+        _ = h.policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+        #expect(outcomes(h.policy.handle(.verdict(id: first, .init(label: .task, probabilities: [.task: 0.9]), latencyMilliseconds: 20))) == [.stale])
+        h.clock.advance(by: .milliseconds(150))
+        let second = try #require(requests(h.policy.handle(.tick)).first?.id)
+        _ = h.policy.handle(.eligibilityChanged(false))
+        _ = h.policy.handle(.eligibilityChanged(true))
+        #expect(outcomes(h.policy.handle(.verdict(id: second, .init(label: .task, probabilities: [.task: 0.9]), latencyMilliseconds: 20))) == [.stale])
+    }
+
+    @Test func pipelineTimeoutKeepsItsSlotUntilTheProviderAcknowledgesCancellation() throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        for text in ["call mom t", "call mom to"] {
+            h.clock.advance(by: .milliseconds(100))
+            #expect(requests(h.policy.handle(.bufferChanged(text: text, composing: false))).count == 1)
+        }
+        h.clock.advance(by: .milliseconds(100))
+        _ = h.policy.handle(.bufferChanged(text: "call mom tomorrow", composing: false))
+        h.clock.advance(by: .milliseconds(1200))
+        let timeout = h.policy.handle(.tick)
+        #expect(outcomes(timeout) == [.timeout])
+        #expect(requests(timeout).isEmpty)
+        let acknowledged = h.policy.handle(.failed(id: first, .network, latencyMilliseconds: 1500))
+        #expect(outcomes(acknowledged) == [.stale])
+        #expect(requests(acknowledged).map(\.text) == ["call mom tomorrow"])
+        let staleRows = acknowledged.compactMap { if case .record(.verdict(let value)) = $0 { value } else { nil } }
+        #expect(staleRows.first?.latencyMilliseconds == nil)
+    }
+
+    @Test(arguments: [false, true])
+    func clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst: Bool) throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev; $0.reversalSuspends = true }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        _ = h.policy.handle(.verdict(id: first, .init(label: .task, probabilities: [.task: 0.9]), latencyMilliseconds: 20))
+        if reverseFirst {
+            #expect(returns(h.policy.handle(.reversed(.backspace))))
+            #expect(requests(h.policy.handle(.bufferChanged(text: "call mom tomorrow", composing: false))).isEmpty)
+        }
+        let cleared = h.policy.handle(.bufferChanged(text: "", composing: false))
+        #expect(returns(cleared) == !reverseFirst)
+        #expect(!h.policy.lastModeChangeWasAutomatic)
+        h.clock.advance(by: .milliseconds(100))
+        #expect(requests(h.policy.handle(.bufferChanged(text: "buy milk", composing: false))).map(\.text) == ["buy milk"])
+    }
+
+    @Test func pipelineAgreementMayRetryTheUnchangedSnapshot() throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev; $0.agreeingVerdicts = .two }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        #expect(outcomes(h.policy.handle(.verdict(id: first, .init(label: .task, probabilities: [.task: 0.9]), latencyMilliseconds: 20))) == [.awaitingAgreement])
+        h.clock.advance(by: .milliseconds(150))
+        let second = try #require(requests(h.policy.handle(.tick)).first)
+        #expect(second.text == "call mom")
+        #expect(modes(h.policy.handle(.verdict(id: second.id, .init(label: .task, probabilities: [.task: 0.9]), latencyMilliseconds: 20))) == [.task])
+    }
+
+    @Test func pipelineStartsAsSoonAsTheGateAllowsWithoutAnExtraDebounce() {
+        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
+        let unavailable = StrongMatchGate.Evaluation(decision: .blocked(.collectionUnavailable), settled: false, allSourcesSettled: false)
+        #expect(requests(h.policy.handle(.bufferChanged(text: "buy milk", composing: false, gate: unavailable))).isEmpty)
+        h.clock.advance(by: .milliseconds(10))
+        let ready = h.policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+        #expect(requests(ready).map(\.text) == ["buy milk"])
+    }
+
     @Test func lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() throws {
         var h = Harness { $0.lateStrongMatch = .returnToSearch }
         let id = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
@@ -30,6 +184,18 @@ struct AutomaticSwitchTests {
         let completed = h.policy.handle(.gateChanged(match))
         #expect(returns(completed))
         #expect(lateOutcomes(completed) == [.returnedToSearch])
+    }
+
+    @Test(arguments: [AutomaticSwitchDiagnostics.ReversalMethod.escape, .backspace])
+    func ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method: AutomaticSwitchDiagnostics.ReversalMethod) throws {
+        var h = Harness()
+        let id = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        _ = h.policy.handle(.verdict(id: id, .init(label: .note), latencyMilliseconds: 12))
+        _ = h.policy.handle(.eligibilityChanged(false))
+        #expect(h.policy.handle(.reversed(method)).isEmpty)
+        #expect(h.policy.lastModeChangeWasAutomatic)
+        let finished = h.policy.handle(.dismissed(.saved))
+        #expect(finished.contains { if case .record(.ended(.saved)) = $0 { true } else { false } })
     }
 
     @Test func responseAtTheTimeoutCannotSwitchBeforeTheNextTick() throws {
@@ -47,7 +213,7 @@ struct AutomaticSwitchTests {
         let initial = h.policy.handle(.bufferChanged(text: "buy milk", composing: false))
         if firing == .everyKeystroke { #expect(requests(initial).map(\.text) == ["buy milk"]); return }
         #expect(requests(initial).isEmpty)
-        h.clock.advance(by: firing == .debounced ? .milliseconds(149) : .milliseconds(499))
+        h.clock.advance(by: (firing == .debounced || firing == .pipelinedJev) ? .milliseconds(149) : .milliseconds(499))
         #expect(requests(h.policy.handle(.tick)).isEmpty)
         h.clock.advance(by: .milliseconds(1))
         #expect(requests(h.policy.handle(.tick)).map(\.text) == ["buy milk"])
@@ -242,6 +408,36 @@ struct AutomaticSwitchTests {
         let rows = try String(contentsOf: log.url, encoding: .utf8)
         #expect(!rows.contains(secret) && !rows.contains("private policy"))
         #expect(rows.contains("suspended") && rows.contains("blocked") && rows.contains("autoswitch.ended"))
+    }
+
+    @Test(arguments: [false, true])
+    func timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict: Bool) throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let log = AutomaticSwitchDiagnostics(file: directory.appendingPathComponent("automatic-switch.jsonl"))
+        var h = Harness()
+        func record(_ effects: [AutomaticSwitch.Effect]) {
+            for effect in effects { if case .record(let event) = effect { log.record(event, options: h.policy.options) } }
+        }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        h.clock.advance(by: .milliseconds(1500))
+        record(h.policy.handle(.tick))
+        let stale = h.policy.handle(lateVerdict
+            ? .verdict(id: first, .init(label: .task), latencyMilliseconds: 1700)
+            : .failed(id: first, .other, latencyMilliseconds: 1700))
+        #expect(outcomes(stale) == [.stale])
+        record(stale)
+        let second = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom tomorrow", composing: false))).first?.id)
+        record(h.policy.handle(.verdict(id: second, .init(label: .search), latencyMilliseconds: 100)))
+        let counts = AutomaticSwitchDiagnostics(file: log.url).counts()
+        #expect(counts.timeouts == 1 && counts.errors == 0)
+        // Exactly two observations: the 1500 ms abandonment and the 100 ms normal verdict.
+        #expect(counts.latencies[.foundationModels]?.medianMilliseconds == 800)
+        #expect(counts.latencies[.foundationModels]?.maximumMilliseconds == 1500)
+        let rows = try String(contentsOf: log.url, encoding: .utf8).split(separator: "\n")
+            .map { try #require(JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any]) }
+        #expect(rows.filter { $0["latencyMilliseconds"] != nil }.count == 2)
+        #expect(rows.filter { $0["outcome"] as? String == "stale" }.count == 1)
     }
 
     private func outcomes(_ effects: [AutomaticSwitch.Effect]) -> [AutomaticSwitchDiagnostics.Outcome] {

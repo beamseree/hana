@@ -1,0 +1,244 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Write sources
+[2/8] Write swift-version--112E4EF74740DA65.txt
+[4/11] Compiling Hana JevPipelineTransport.swift
+[5/11] Emitting module Hana
+[6/11] Compiling Hana AutomaticSwitch.swift
+[6/11] Write Objects.LinkFileList
+[7/11] Linking Hana
+[8/11] Applying Hana
+[10/53] Compiling HanaTests OrganizedCollectionFixture.swift
+[11/53] Compiling HanaTests ResultIconsTests.swift
+[12/53] Compiling HanaTests ScriptedClassifier.swift
+[13/53] Compiling HanaTests SearchExclusionTests.swift
+[14/56] Compiling HanaTests DisplayPlacementTests.swift
+[15/56] Compiling HanaTests IndependentExportDecoder.swift
+[16/56] Compiling HanaTests JevKeychainTests.swift
+[17/56] Compiling HanaTests JevPipelineNativeTests.swift
+[18/56] Compiling HanaTests TaskSaveTests.swift
+[19/56] Compiling HanaTests TestClock.swift
+[20/56] Compiling HanaTests TrickyInputCheckTests.swift
+[21/56] Compiling HanaTests SuggestionInteractionTests.swift
+[22/56] Compiling HanaTests TaskLifecycleTests.swift
+[23/56] Compiling HanaTests TaskOrderingTests.swift
+[24/56] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+[25/56] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[26/56] Compiling HanaTests AutomaticSwitchTests.swift
+[27/56] Compiling HanaTests CaptureSafetyNativeTests.swift
+[28/56] Compiling HanaTests JevPipelineTransportTests.swift
+/Users/beamsereeyothin/.codex/worktrees/126b/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[29/56] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/126b/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[30/56] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/126b/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[31/56] Compiling HanaTests ModeIconTests.swift
+/Users/beamsereeyothin/.codex/worktrees/126b/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[32/56] Compiling HanaTests SearchTypingGapTests.swift
+[33/56] Compiling HanaTests SpotlightStageTests.swift
+[34/56] Compiling HanaTests StrongMatchGateTests.swift
+[35/56] Compiling HanaTests SearchRankingTests.swift
+[36/56] Compiling HanaTests SearchResponsivenessTests.swift
+[37/56] Compiling HanaTests SearchTests.swift
+[38/56] Compiling HanaTests CaptureSafetyTests.swift
+[39/56] Compiling HanaTests CaptureSessionTests.swift
+[40/56] Compiling HanaTests ClassifierAdapterTests.swift
+[41/56] Compiling HanaTests ClassifierMenuTests.swift
+[42/56] Compiling HanaTests CollectionSnapshotTests.swift
+[43/56] Compiling HanaTests CollectionStoreOpeningTests.swift
+[44/56] Compiling HanaTests CollectionStoreTests.swift
+[45/56] Compiling HanaTests CollectionTitleSourceTests.swift
+[46/56] Compiling HanaTests CollectionExportHarnessTests.swift
+[47/56] Compiling HanaTests CollectionExportTests.swift
+[48/56] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[49/56] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[50/56] Emitting module HanaTests
+[51/56] Compiling HanaTests NativeEditingTests.swift
+[52/56] Compiling HanaTests NoteModeTests.swift
+[53/56] Compiling HanaTests NoteOrganizationTests.swift
+[54/56] Compiling HanaTests NoteSaveTests.swift
+[54/56] Write Objects.LinkFileList
+[55/56] Linking HanaPackageTests
+Build complete! (17.28s)
+Test Suite 'Selected tests' started at 2026-10-15 19:58:05.961.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 19:58:05.963.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 19:58:05.963.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 19:58:05.963.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() started.
+􁁛  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() passed after 0.001 seconds.
+􀟈  Test jevPipelineRetainsPrefixesAndStartsAtMostThreeRequests100MillisecondsApart() started.
+􁁛  Test jevPipelineRetainsPrefixesAndStartsAtMostThreeRequests100MillisecondsApart() passed after 0.001 seconds.
+􀟈  Test cancelledPipelineSlotsDrainWhileTheSessionIsDismissed() started.
+􁁛  Test cancelledPipelineSlotsDrainWhileTheSessionIsDismissed() passed after 0.001 seconds.
+􀟈  Test pipelineCoalescesQueuedEditsAndDoesNotRepeatUnchangedSnapshots() started.
+􁁛  Test pipelineCoalescesQueuedEditsAndDoesNotRepeatUnchangedSnapshots() passed after 0.001 seconds.
+􀟈  Test pipelineOlderAnswersCannotOverrideANewerHandledAnswer(newerFails:) started.
+􀟈  Test case passing 1 argument newerFails → false to pipelineOlderAnswersCannotOverrideANewerHandledAnswer(newerFails:) started.
+􀟈  Test case passing 1 argument newerFails → true to pipelineOlderAnswersCannotOverrideANewerHandledAnswer(newerFails:) started.
+􁁛  Test pipelineOlderAnswersCannotOverrideANewerHandledAnswer(newerFails:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test pipelineDeletionAndReplacementInvalidateEarlierPrefixes(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "call mo" to pipelineDeletionAndReplacementInvalidateEarlierPrefixes(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "buy milk" to pipelineDeletionAndReplacementInvalidateEarlierPrefixes(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "call móm" to pipelineDeletionAndReplacementInvalidateEarlierPrefixes(replacement:) started.
+􁁛  Test pipelineDeletionAndReplacementInvalidateEarlierPrefixes(replacement:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test pipelineUnicodeNormalizationIsAReplacementAndCompositionInvalidatesRequests() started.
+􁁛  Test pipelineUnicodeNormalizationIsAReplacementAndCompositionInvalidatesRequests() passed after 0.001 seconds.
+􀟈  Test pipelineCurrentGateAndEligibilityInvalidateRequests() started.
+􁁛  Test pipelineCurrentGateAndEligibilityInvalidateRequests() passed after 0.001 seconds.
+􀟈  Test pipelineTimeoutKeepsItsSlotUntilTheProviderAcknowledgesCancellation() started.
+􁁛  Test pipelineTimeoutKeepsItsSlotUntilTheProviderAcknowledgesCancellation() passed after 0.001 seconds.
+􀟈  Test clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) started.
+􀟈  Test case passing 1 argument reverseFirst → false to clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) started.
+􀟈  Test case passing 1 argument reverseFirst → true to clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) started.
+􁁛  Test clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test pipelineAgreementMayRetryTheUnchangedSnapshot() started.
+􁁛  Test pipelineAgreementMayRetryTheUnchangedSnapshot() passed after 0.001 seconds.
+􀟈  Test pipelineStartsAsSoonAsTheGateAllowsWithoutAnExtraDebounce() started.
+􁁛  Test pipelineStartsAsSoonAsTheGateAllowsWithoutAnExtraDebounce() passed after 0.001 seconds.
+􀟈  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() started.
+􁁛  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() passed after 0.001 seconds.
+􀟈  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .escape to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .backspace to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􁁛  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() started.
+􁁛  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() passed after 0.001 seconds.
+􀟈  Test firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .debounced to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .onPause to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .pipelinedJev to firingStrategiesRespectTheirDelay(firing:) started.
+􁁛  Test firingStrategiesRespectTheirDelay(firing:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() started.
+􁁛  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() passed after 0.001 seconds.
+􀟈  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() started.
+􁁛  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() passed after 0.001 seconds.
+􀟈  Test jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p50 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p60 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p70 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p80 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p90 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p95 to jevNeedsTheSelectedThreshold(threshold:) started.
+􁁛  Test jevNeedsTheSelectedThreshold(threshold:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() started.
+􁁛  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() passed after 0.001 seconds.
+􀟈  Test afterSwitchStaysOrKeepsClassifying(option:) started.
+􀟈  Test case passing 1 argument option → .stay to afterSwitchStaysOrKeepsClassifying(option:) started.
+􀟈  Test case passing 1 argument option → .keepClassifying to afterSwitchStaysOrKeepsClassifying(option:) started.
+􁁛  Test afterSwitchStaysOrKeepsClassifying(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → true to navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → false to navigationSuspensionIsAnOption(suspends:) started.
+􁁛  Test navigationSuspensionIsAnOption(suspends:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􁁛  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .saves to enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .ignoreFor300Milliseconds to enterGraceEndsAt300Milliseconds(option:) started.
+􁁛  Test enterGraceEndsAt300Milliseconds(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .allSources to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .appsAndCollection to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .none to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􁁛  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .returnToSearch to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .stay to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􁁛  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() started.
+􁁛  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() passed after 0.001 seconds.
+􀟈  Test disabledAndIneligibleSessionsNeverSwitch() started.
+􁁛  Test disabledAndIneligibleSessionsNeverSwitch() passed after 0.001 seconds.
+􀟈  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() started.
+􁁛  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() passed after 0.001 seconds.
+􀟈  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() started.
+􁁛  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() passed after 0.001 seconds.
+􀟈  Test escapeDismissOptionDoesNotReverseAndReinvocationClearsSuspension() started.
+􁁛  Test escapeDismissOptionDoesNotReverseAndReinvocationClearsSuspension() passed after 0.001 seconds.
+􀟈  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() started.
+􁁛  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() passed after 0.005 seconds.
+􀟈  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → false to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → true to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􁁛  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) with 2 test cases passed after 0.003 seconds.
+􁁛  Suite AutomaticSwitchTests passed after 0.019 seconds.
+􁁛  Test run with 33 tests in 1 suite passed after 0.019 seconds.

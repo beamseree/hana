@@ -36,6 +36,31 @@ struct CollectionTitleSourceTests {
         #expect(decision("call mom", source.snapshot) == .blocked(.collectionUnavailable))
     }
 
+    @Test func rapidCommittedEditsPublishLatestPreparedNamesBeforeStoreClosure() async throws {
+        let fixture = try TemporaryFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.directory) }
+        let store = try await CollectionStore.open(fixture.location)
+        let source = CollectionTitleSource(store: store)
+        var updates = source.snapshots().makeAsyncIterator()
+        _ = try await nextSnapshot(&updates) { $0.status == .ready }
+        let original = try await store.perform(.createNote(operation: UUID(), body: "Café old title"), in: store.generation)
+        // Observation may coalesce commits, but an older prepared snapshot may never replace the final one.
+        let edited = try await store.perform(.editNote(original.id, expectedRevision: original.revision,
+            body: "Café final title"), in: store.generation)
+        _ = try await store.perform(.createTask(operation: UUID(), title: "โทรหา แม่"), in: store.generation)
+        let latest = try await nextSnapshot(&updates) {
+            decision("cafe\u{301} final", $0) == .blocked(.strongMatch(.note)) &&
+            decision("โทรหา แม่", $0) == .blocked(.strongMatch(.task))
+        }
+        #expect(decision("Café old", latest) == .allowed)
+        #expect(latest.notes.count == 1 && latest.tasks.count == 1)
+        _ = try await store.perform(.archiveNote(edited.id, expectedRevision: edited.revision), in: store.generation)
+        _ = try await nextSnapshot(&updates) { $0.notes.isEmpty && $0.tasks.count == 1 }
+        await store.close()
+        _ = try await nextSnapshot(&updates) { $0.status == .unavailable }
+        #expect(source.snapshot.status == .unavailable)
+    }
+
     @Test func missingStoreIsUnavailableImmediately() {
         let source = CollectionTitleSource(store: nil)
         #expect(source.snapshot.status == .unavailable)

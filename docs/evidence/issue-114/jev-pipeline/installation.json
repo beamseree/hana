@@ -1,0 +1,32 @@
+{
+  "installed_at": "2026-10-15T20:04:07.910032+07:00",
+  "candidate_commit": "de98347dcf9e7fd270598bc54f0f56bd47684dbe",
+  "tested_source_commit": "de98347dcf9e7fd270598bc54f0f56bd47684dbe",
+  "included_main_commit": "ced5e5f4fa5d7a9561ae5d298201bb897961882b",
+  "binary_sha256": "eddc754a8e33ddcb097d65667e22005cf8e37152028f74cc3956d8deba4593c6",
+  "signature_verified": true,
+  "settings": {
+    "jevThreshold": 0.7,
+    "navigationSuspends": true,
+    "isEnabled": true,
+    "reversalSuspends": true,
+    "firing": "pipelinedJev",
+    "foundationModelsUnsure": true,
+    "classifier": "jev",
+    "enterBehavior": "saves",
+    "wait": "none",
+    "lateStrongMatch": "stay",
+    "agreeingVerdicts": 1,
+    "escapeBehavior": "returnsToSearch",
+    "afterSwitch": "stay"
+  },
+  "setting_keys_changed": [
+    "firing",
+    "afterSwitch"
+  ],
+  "launch_verified_at": "2026-10-15T20:05:09.081207+07:00",
+  "ui_verification": "Native Hana main window and navigation visible; no physical focus or live classifier result claimed",
+  "native_testing_slot": "released",
+  "human_responsiveness_observations": "pending",
+  "installed_path": "~/Applications/Hana.app"
+}

@@ -1,0 +1,37 @@
+Hana tricky-input check
+Classifier: Foundation Models
+Wording: automatic-switch-v1
+Jev threshold: 0.7
+Foundation Models unsure: true
+Fixed fixture collection; no live content. Requests ignore the gate; a timeout stops remaining requests.
+Input	Gate	Label	Probability/unsure	Latency ms
+term	blocked:one-word	search	n/a	1237.8
+remind m	allowed	search	n/a	297.8
+remind 	allowed	search	n/a	283.3
+Visual S	blocked:strong-match:application	search	n/a	281.6
+call mom	allowed	search	n/a	268.5
+call mom tomorrow	allowed	search	n/a	292.7
+buy milk	allowed	search	n/a	299.7
+I noticed the light on the river. It changes every evening.	allowed	unsure	unsure	292.2
+https://example.com	blocked:one-word	search	n/a	266.6
+pasted paragraph\nSecond line	allowed	search	n/a	290.0
+Weekend ideas	blocked:strong-match:note	search	n/a	289.7
+Weekend i	blocked:strong-match:note	search	n/a	284.7
+Book dentist	blocked:strong-match:task	search	n/a	274.3
+Send invoice	allowed	search	n/a	281.9
+Old travel notes	allowed	unsure	unsure	288.9
+open budget.xlsx	allowed	search	n/a	293.4
+budget.xlsx 	blocked:strong-match:file	search	n/a	281.4
+Visual Studio Code	blocked:strong-match:application	search	n/a	285.6
+find my notes	allowed	search	n/a	270.5
+remember this idea	allowed	unsure	unsure	271.9
+the meeting went well	allowed	unsure	unsure	282.3
+schedule a call	allowed	search	n/a	271.1
+write a thank you	allowed	unsure	unsure	286.8
+milk	blocked:one-word	search	n/a	271.2
+do	blocked:one-word	search	n/a	279.6
+a new thought	allowed	search	n/a	278.1
+pick up parcel tomorrow	allowed	search	n/a	277.8
+What if we try a different route?	allowed	search	n/a	272.3
+finish the report	allowed	search	n/a	278.9
+Read the design proposal	allowed	unsure	unsure	273.0

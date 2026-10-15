@@ -235,7 +235,12 @@ struct AutomaticSwitchInteractionTests {
     @Test func everyBehaviorSubmenuPersistsARadioChoiceForTheNextInvocation() throws {
         _ = NSApplication.shared
         let fixture = try Fixture(); defer { fixture.remove() }
-        let interaction = MacInteraction(automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log)
+        let keychain = JevKeychainStore(service: "com.beamsereeyothin.hana.tests.\(UUID().uuidString)")
+        try keychain.save("test-only-menu-key")
+        defer { try? keychain.remove() }
+        let services = ClassifierServices(keychain: keychain, availability: { .available })
+        let interaction = MacInteraction(automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log,
+            classifierServices: services)
         let previousMenu = NSApp.mainMenu, previousWindows = NSApp.windowsMenu
         interaction.start()
         defer { interaction.stop(); NSApp.mainMenu = previousMenu; NSApp.windowsMenu = previousWindows }
@@ -253,7 +258,7 @@ struct AutomaticSwitchInteractionTests {
         }
         #expect(interaction.automaticSwitchSessionOptions == snapshot)
         let stored = fixture.options.read()
-        #expect(stored.classifier == .jev && stored.firing == .onPause && stored.jevThreshold == .p95)
+        #expect(stored.classifier == .jev && stored.firing == .pipelinedJev && stored.jevThreshold == .p95)
         #expect(!stored.foundationModelsUnsure && stored.agreeingVerdicts == .two && stored.afterSwitch == .keepClassifying)
         #expect(!stored.navigationSuspends && stored.enterBehavior == .ignoreFor300Milliseconds && stored.escapeBehavior == .dismisses)
         #expect(!stored.reversalSuspends && stored.wait == .none && stored.lateStrongMatch == .stay)
@@ -344,6 +349,54 @@ struct AutomaticSwitchInteractionTests {
             #expect(fixture.log.counts().wrongSwitches == 1 && fixture.log.counts().ambiguous == 0)
         } else { #expect(fixture.log.counts().wrongSwitches == 0 && fixture.log.counts().ambiguous == 1) }
         #expect(interaction.currentInvocation == nil)
+        await store.close()
+    }
+
+    @Test(arguments: [false, true])
+    func escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved: Bool) async throws {
+        _ = NSApplication.shared
+        let fixture = try Fixture(); defer { fixture.remove() }
+        let storage = try TemporaryFixture()
+        let gate = CommitGate(); defer { gate.open() }
+        let store = try await CollectionStore.open(storage.location,
+            faults: .init(beforeCommit: { _ in gate.pass() }))
+        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        var options = fixture.options.read(); options.isEnabled = true; options.enterBehavior = .saves
+        fixture.options.write(options)
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store }, confirmationDuration: .seconds(30), automaticSwitchOptions: fixture.options,
+            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await editor()
+        editor.insertText("call mom tomorrow", replacementRange: NSRange(location: NSNotFound, length: 0))
+        await apps.send([]); try await eventually { fake.pendingCount == 1 }; fake.reply(.note)
+        try await eventually { interaction.mode == .note }
+        editor.keyDown(with: try returnKey())
+        try await eventually { gate.arrivals == 1 }
+        #expect(interaction.modeLabelText == "Saving…")
+        if saved {
+            gate.open()
+            try await eventually { interaction.modeLabelText == "Saved" }
+        }
+        editor.keyDown(with: try escapeKey())
+        #expect(fixture.log.counts().wrongSwitches == 0 && fixture.log.counts().reversals == 0)
+        if saved {
+            #expect(interaction.currentInvocation == nil)
+        } else {
+            #expect(interaction.currentInvocation == invocation && interaction.modeLabelText == "Saving…")
+            #expect(editor.window?.isKeyWindow == false)
+            gate.open()
+            // Deferred dismissal closes as soon as the outcome is known, without the 30-second confirmation.
+            try await eventually { interaction.currentInvocation == nil }
+        }
+        let records = try await store.read(.allRecords, in: store.generation)
+        #expect(records.notes.map(\.body) == ["call mom tomorrow"] && records.tasks.isEmpty)
+        #expect(fixture.log.counts().ambiguous == 0)
+        let rows = try String(contentsOf: fixture.log.url, encoding: .utf8).split(separator: "\n")
+            .map { try #require(JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any]) }
+        #expect(rows.filter { $0["event"] as? String == "autoswitch.ended" }.count == 1)
+        #expect(rows.first { $0["event"] as? String == "autoswitch.ended" }?["end"] as? String == "saved")
         await store.close()
     }
 

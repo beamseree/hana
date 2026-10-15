@@ -131,6 +131,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private var automaticSwitchReset: NSMenuItem?
     /// Nil by default: persisted preferences cannot make tests call real models.
     private let classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)?
+    private let classifierServices: ClassifierServices?
+    private var classifierMenuController: ClassifierMenuController?
     private var classifier: (any Classifier)?
     private var automaticSwitch: AutomaticSwitch?
     private var classificationTasks: [UUID: Task<Void, Never>] = [:]
@@ -165,12 +167,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
          collection: Task<CollectionStore, any Error>? = nil, confirmationDuration: Duration = .milliseconds(500),
          automaticSwitchOptions: AutomaticSwitchOptionsStore = AutomaticSwitchOptionsStore(),
          automaticSwitchDiagnostics: AutomaticSwitchDiagnostics = AutomaticSwitchDiagnostics(),
+         classifierServices: ClassifierServices? = nil,
          classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)? = nil,
          frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
         self.diagnostics = diagnostics
         self.automaticSwitchOptions = automaticSwitchOptions
         self.automaticSwitchDiagnostics = automaticSwitchDiagnostics
         self.classifierFactory = classifierFactory
+        self.classifierServices = classifierServices
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -292,7 +296,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             return
         }
         record("dismiss.\(reason.rawValue)")
-        endAutomaticSwitch(reason == .saved ? .saved : .dismissed)
+        endAutomaticSwitch(reason == .saved || capture.state.phase == .saved ? .saved : .dismissed)
         currentInvocation = nil
         placementTask?.cancel()
         placementTask = nil
@@ -501,6 +505,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         editor.delegate = self
         editor.escape = { [weak self] in
             guard let self, let invocation = self.currentInvocation else { return }
+            self.updateAutomaticSwitchEligibility()
             let effects = self.automaticSwitch?.handle(.reversed(.escape)) ?? []
             if effects.contains(where: { if case .returnToSearch = $0 { true } else { false } }) {
                 self.performAutomaticSwitch(effects)
@@ -701,6 +706,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         automaticSwitchToggle = toggle
         submenu.addItem(toggle)
         addAutomaticSwitchBehaviorMenus(to: submenu)
+        if let classifierServices {
+            classifierMenuController = ClassifierMenuController(menu: submenu, services: classifierServices, options: automaticSwitchOptions)
+        } else { submenu.item(withTitle: "Classifier")?.submenu?.item(withTitle: "Jev")?.isEnabled = false }
         submenu.addItem(.separator())
         automaticSwitchCountItems = (0..<4).map { _ in
             let item = NSMenuItem(title: "", action: nil, keyEquivalent: "")
@@ -724,9 +732,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     private func refreshAutomaticSwitchMenu() {
+        classifierMenuController?.refresh()
         let options = automaticSwitchOptions.read()
         automaticSwitchToggle?.state = options.isEnabled ? .on : .off
         for (item, matches) in automaticSwitchChoices { item.state = matches(options) ? .on : .off }
+        automaticSwitchMenu?.item(withTitle: "Fires")?.submenu?
+            .item(withTitle: "Jev pipeline (100 ms, up to 3)")?.isEnabled = options.classifier == .jev
         automaticSwitchReset?.isEnabled = options.isEnabled
         let counts = automaticSwitchDiagnostics.counts()
         let titles = [
@@ -745,7 +756,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         addOptionMenu("Classifier", to: menu, keyPath: \.classifier,
             choices: [(.foundationModels, "Foundation Models"), (.jev, "Jev")])
         addOptionMenu("Fires", to: menu, keyPath: \.firing,
-            choices: [(.everyKeystroke, "Every keystroke"), (.debounced, "Debounced (150 ms)"), (.onPause, "On pause (500 ms)")])
+            choices: [(.everyKeystroke, "Every keystroke"), (.debounced, "Debounced (150 ms)"),
+                      (.onPause, "On pause (500 ms)"), (.pipelinedJev, "Jev pipeline (100 ms, up to 3)")])
         addOptionMenu("Jev threshold", to: menu, keyPath: \.jevThreshold,
             choices: AutomaticSwitchOptions.Threshold.allCases.map { ($0, String(format: "%.2f", $0.rawValue)) })
         addOptionMenu("Foundation Models unsure", to: menu, keyPath: \.foundationModelsUnsure,
@@ -784,7 +796,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     @objc private func selectAutomaticSwitchOption(_ sender: NSMenuItem) {
         guard automaticSwitchMutations.indices.contains(sender.tag) else { return }
         var options = automaticSwitchOptions.read()
+        let previousClassifier = options.classifier
         automaticSwitchMutations[sender.tag](&options)
+        if options.classifier != previousClassifier, options.classifier == .foundationModels,
+           options.firing == .pipelinedJev {
+            options.firing = .debounced
+        }
         automaticSwitchOptions.write(options)
         refreshAutomaticSwitchMenu()
     }
@@ -824,6 +841,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         performAutomaticSwitch(automaticSwitch?.handle(.invoked) ?? [])
         guard automaticSwitchSessionOptions.isEnabled else { return }
         classifier = classifierFactory?(automaticSwitchSessionOptions)
+        classifier?.prewarm()
         gateTitles = StrongMatchGate.Titles(status: collection == nil ? .unavailable : .loading)
         let collection = collection
         titleObservation = Task { [weak self] in

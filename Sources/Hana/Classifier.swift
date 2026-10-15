@@ -4,6 +4,7 @@ import Foundation
 /// Production adapters are installed explicitly by HanaApp, never by a test's default constructor.
 @MainActor
 protocol Classifier {
+    func prewarm()
     func classify(_ text: String) async throws -> ClassifierVerdict
 }
 
@@ -19,3 +20,5 @@ struct ClassifierVerdict: Sendable {
 struct ClassifierFailure: Error {
     let kind: AutomaticSwitchDiagnostics.ErrorKind
 }
+
+extension Classifier { func prewarm() {} }
