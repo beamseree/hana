@@ -4,7 +4,7 @@ import Testing
 
 @MainActor
 struct JevKeychainTests {
-    @Test func keySavesReadsReplacesAndRemovesInAnIsolatedService() throws {
+    @Test func keySavesReadsReplacesAndRemovesInAnIsolatedService() async throws {
         let service = "com.beamseree.hana.tests.\(UUID().uuidString)"
         let store = JevKeychainStore(service: service)
         defer { try? store.remove() }
@@ -22,7 +22,16 @@ struct JevKeychainTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         let diagnostics = AutomaticSwitchDiagnostics(file: url)
         var options = AutomaticSwitchOptions(); options.isEnabled = true
-        diagnostics.resetCounts(options: options)
+        let key = try #require(store.read())
+        let adapter = JevClassifier(key: key, transport: { request in
+            #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer replacement-test-secret")
+            return (Data(ClassifierAdapterTests.taskResponse.utf8), 200)
+        })
+        let verdict = try await adapter.classify("fixed private input")
+        diagnostics.record(.verdict(.init(classifier: .jev, label: .task,
+            probability: verdict.probability, latencyMilliseconds: 1, outcome: .switched)), options: options)
+        #expect(!String(describing: defaults.dictionaryRepresentation()).contains("test-secret"))
+        #expect(!String(describing: UserDefaults.standard.dictionaryRepresentation()).contains("replacement-test-secret"))
         #expect(!String(decoding: try Data(contentsOf: url), as: UTF8.self).contains("test-secret"))
         try store.remove()
         #expect(try store.read() == nil)

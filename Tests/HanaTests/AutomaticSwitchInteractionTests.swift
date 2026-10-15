@@ -235,7 +235,12 @@ struct AutomaticSwitchInteractionTests {
     @Test func everyBehaviorSubmenuPersistsARadioChoiceForTheNextInvocation() throws {
         _ = NSApplication.shared
         let fixture = try Fixture(); defer { fixture.remove() }
-        let interaction = MacInteraction(automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log)
+        let keychain = JevKeychainStore(service: "com.beamsereeyothin.hana.tests.\(UUID().uuidString)")
+        try keychain.save("test-only-menu-key")
+        defer { try? keychain.remove() }
+        let services = ClassifierServices(keychain: keychain, availability: { .available })
+        let interaction = MacInteraction(automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log,
+            classifierServices: services)
         let previousMenu = NSApp.mainMenu, previousWindows = NSApp.windowsMenu
         interaction.start()
         defer { interaction.stop(); NSApp.mainMenu = previousMenu; NSApp.windowsMenu = previousWindows }
