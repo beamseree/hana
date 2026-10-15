@@ -4,7 +4,7 @@ Hana looks clean, minimal and Mac-native: near-monochrome grays, one near-black 
 
 Each section defines named **roles**, and views use only roles: never a raw color, a Geist step or a font size. To change how something looks, change or add a role.
 
-Spacing, radius, elevation, motion and iconography are not written yet. Until they are, [`BarStyle`](../Sources/Hana/BarStyle.swift) remains the source for the Search bar's geometry and motion.
+Elevation, motion and iconography are not written yet; until they are, [`BarStyle`](../Sources/Hana/BarStyle.swift) remains the source for the Search bar's motion. Spacing is deliberately not a section: each layout keeps its own numbers, as `BarStyle` does for the Search bar.
 
 ## Color
 
@@ -120,3 +120,35 @@ Sizes and line heights are in points. Tracking is a fraction of the size; in App
 ### Typography history
 
 Before this section, the validation windows' title was 22-point semibold. The Search bar's sizes, weights and tracking are unchanged by it.
+
+## Radius
+
+Code: [`HanaRadius.swift`](../Sources/Hana/HanaRadius.swift). The role `radius.bar` is `HanaRadius.bar`.
+
+### Base radii
+
+For shapes that do not sit inside another rounded shape:
+
+| Role | Radius | Use |
+| --- | --- | --- |
+| `radius.bar` | 26 | The Search bar's bezel |
+| `radius.group` | 16 | Grouped lists in working windows |
+| `radius.control` | 12 | Fields, segmented controls, buttons |
+| `radius.chip` | 6 | Key hints and small tags |
+| `radius.capsule` | Half the height | Scroll thumbs, task circles, pills |
+
+### Concentric rule
+
+A rounded shape inside another takes the outer radius minus the gap between them, never less than 0: `HanaRadius.nested(in:inset:)`. Nested radii are derived this way, never chosen:
+
+| Shape | Derivation | Radius |
+| --- | --- | --- |
+| Search bar card | `radius.bar` − 4 inset | 22 |
+| Search bar result row | card − 8 padding | 14 |
+| Row inside a group | `radius.group` − 6 padding | 10 |
+| Selected segment | `radius.control` − 3 padding | 9 |
+
+### Windows
+
+Main window and Note window corners belong to macOS. Hana uses the system window shape and never sets a window's radius.
+

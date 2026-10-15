@@ -162,7 +162,7 @@ struct SearchResultsView: View {
         }
         .padding(.horizontal, Self.rowInset).frame(height: Self.rowHeight)
         .background(selectedID == id ? Color(nsColor: HanaColor.Row.selected) : Color.clear)
-        .clipShape(RoundedRectangle(cornerRadius: BarStyle.cardRadius - BarStyle.cardPadding))
+        .clipShape(RoundedRectangle(cornerRadius: BarStyle.rowRadius))
         .contentShape(Rectangle())
     }
 
