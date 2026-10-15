@@ -411,7 +411,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         loadingIndicator.setAccessibilityLabel("Searching")
         card.addSubview(loadingIndicator)
 
-        modeLabel.font = BarStyle.modeLabelFont
+        modeLabel.font = HanaFont.label.nsFont
         modeLabel.textColor = HanaColor.Text.secondary
         modeLabel.sizeToFit()
         modeLabel.frame.origin = NSPoint(x: card.frame.width - labelTrailing - modeLabel.frame.width,
@@ -423,7 +423,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         destinationSelector.target = self
         destinationSelector.action = #selector(destinationChosen(_:))
         destinationSelector.controlSize = .small
-        destinationSelector.font = BarStyle.modeLabelFont
+        destinationSelector.font = HanaFont.label.nsFont
         // Clicking it must leave typing in the editor.
         destinationSelector.refusesFirstResponder = true
         destinationSelector.setAccessibilityLabel("Task destination")
@@ -432,7 +432,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         destinationSelector.isHidden = true
         card.addSubview(destinationSelector)
 
-        captureNotice.font = BarStyle.modeLabelFont
+        captureNotice.font = HanaFont.label.nsFont
         captureNotice.textColor = HanaColor.Text.secondary
         captureNotice.maximumNumberOfLines = 1
         captureNotice.lineBreakMode = .byTruncatingTail
@@ -456,7 +456,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.textContainer?.widthTracksTextView = true
         editor.textContainer?.lineFragmentPadding = 0
         editor.textContainerInset = NSSize(width: 0, height: 4)
-        editor.font = BarStyle.font
+        editor.font = HanaFont.Bar.input.nsFont
         editor.textColor = HanaColor.Text.primary
         editor.typingAttributes = BarStyle.textAttributes
         editor.insertionPointColor = HanaColor.Text.primary

@@ -34,11 +34,9 @@ enum BarStyle {
     /// A capture's one-line explanation below the writing surface.
     static let noticeHeight: CGFloat = 24
 
-    /// Colors are `HanaColor` roles; see docs/design-system.md.
-    static let font = NSFont.systemFont(ofSize: 26)
-    static let textAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: HanaColor.Text.primary, .kern: -0.26]
-    static let modeLabelFont = NSFont.systemFont(ofSize: 13, weight: .medium)
-    static let placeholderAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: HanaColor.Text.placeholder, .kern: -0.26]
+    /// Colors and type are `HanaColor` and `HanaFont` roles; see docs/design-system.md.
+    static let textAttributes = HanaFont.Bar.input.attributes(color: HanaColor.Text.primary)
+    static let placeholderAttributes = HanaFont.Bar.input.attributes(color: HanaColor.Text.placeholder)
 }
 
 extension NSView {

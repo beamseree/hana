@@ -2,9 +2,9 @@
 
 Hana looks clean, minimal and Mac-native: near-monochrome grays, one near-black anchor, translucent black for states, and large concentric corners. The visual reference is [Anish's lab](https://lab.anishfn.ink/); the palette is [Vercel Geist's colors](https://vercel.com/geist/colors).
 
-The system has two layers. Geist's scales are the only raw palette. Views use named **roles**, each pointing to one Geist step or to a value Geist does not have. Code never uses a raw color or a Geist step directly; to change how something looks, change or add a role.
+Each section defines named **roles**, and views use only roles: never a raw color, a Geist step or a font size. To change how something looks, change or add a role.
 
-Typography, spacing, radius, elevation, motion and iconography are not written yet. Until they are, [`BarStyle`](../Sources/Hana/BarStyle.swift) remains the source for the Search bar's geometry, type and motion.
+Spacing, radius, elevation, motion and iconography are not written yet. Until they are, [`BarStyle`](../Sources/Hana/BarStyle.swift) remains the source for the Search bar's geometry and motion.
 
 ## Color
 
@@ -81,6 +81,42 @@ Only the chromatic steps a role uses are in code: red-900 `#c62128`, amber-900 `
 - **Text and icons share steps.** Secondary text and icons sit next to each other, so they take adjacent or equal steps.
 - **Light only.** The Search bar forces the light appearance (see the [technical design](technical-design.md)), and working windows follow until dark mode is decided. Geist defines dark values for every step, so adding dark mode changes role values, not views.
 
-### History
+### Color history
 
 PR #17's original colors, before the move to Geist: text `#171717`, secondary text and placeholder `#666666`, icons `#777777`, selected result 6% black, scroll thumb 16% black.
+
+## Typography
+
+Code: [`HanaFont.swift`](../Sources/Hana/HanaFont.swift). The role `bar.input` is `HanaFont.Bar.input`; `body` is `HanaFont.body`.
+
+### Font
+
+Hana uses the system font, SF Pro, through `NSFont.systemFont` and SwiftUI's `.system`. Nothing is bundled. SF Pro has no Thai letters, so macOS substitutes a system Thai font that is designed to sit beside it; a bundled Latin font such as Geist or Public Sans would get the same Thai font without that match. The system font also switches between its text and display designs by size on its own.
+
+### Roles
+
+| Role | Size / line height | Weight | Tracking | Use |
+| --- | --- | --- | --- | --- |
+| `bar.input` | 26 / 40 | Regular | −1% | Search query, Note and Task text, placeholder |
+| `heading.window` | 20 / 26 | Medium | −1% | Main window list titles |
+| `row.title` | 16 / 20 | Regular | −1% | Search bar result names |
+| `note.body` | 15 / 22 | Regular | 0 | Writing in a Note window |
+| `body` | 13 / 18 | Regular | 0 | List rows, task titles, controls, fields |
+| `label` | 13 / 16 | Medium | 0 | Mode label, notices, buttons, the task destination selector |
+| `heading.section` | 12 / 16 | Medium | 0 | Group labels in working windows |
+| `detail` | 12 / 16 | Regular | 0 | Paths, type labels, the results status line |
+| `caption` | 11 / 14 | Regular, tabular digits | 0 | Counts, dates, key hints, shortcuts |
+
+Sizes and line heights are in points. Tracking is a fraction of the size; in AppKit it is the `.kern` attribute in points, so −1% of 26 is −0.26.
+
+### Rules
+
+- **Two weights.** Regular for reading, medium for labels and headings. No semibold or bold.
+- **Tighten large text only.** −1% tracking from 16 points up; smaller text keeps the font's own spacing.
+- **Hierarchy comes from color first.** Within a size, use `text.secondary` or `text.tertiary` before reaching for another size or weight.
+- **Tabular digits for numbers that change.** Counts and dates use `caption` so lists do not shift as values change.
+- **Line height is for wrapped text.** Single-line text sits in fixed geometry; the Search bar's editor height (`BarStyle.editorHeight`) equals `bar.input`'s 40-point line.
+
+### Typography history
+
+Before this section, the validation windows' title was 22-point semibold. The Search bar's sizes, weights and tracking are unchanged by it.

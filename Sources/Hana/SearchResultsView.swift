@@ -80,7 +80,7 @@ struct SearchResultsView: View {
                 .id(scrollResetID)
             }
             if let status {
-                Text(status).font(.system(size: 12)).foregroundStyle(Color(nsColor: HanaColor.Text.secondary))
+                Text(status).font(HanaFont.detail).foregroundStyle(Color(nsColor: HanaColor.Text.secondary))
                     .lineLimit(2)
                     .padding(.horizontal, 8).frame(maxWidth: .infinity, minHeight: Self.statusHeight, alignment: .leading)
                     .padding(.trailing, BarStyle.cardPadding)
@@ -149,14 +149,14 @@ struct SearchResultsView: View {
                 // Arrival swaps the image in place, never animated.
                 .transaction { $0.animation = nil }
             VStack(alignment: .leading, spacing: 1) {
-                Text(name).font(.system(size: 16)).tracking(-0.16).lineLimit(1)
-                Text(subtitle).font(.system(size: 12))
+                Text(name).font(HanaFont.Row.title).lineLimit(1)
+                Text(subtitle).font(HanaFont.detail)
                     .foregroundStyle(Color(nsColor: HanaColor.Text.secondary))
                     .lineLimit(1).truncationMode(.middle)
             }
             Spacer(minLength: 8)
             if let typeLabel {
-                Text(typeLabel).font(.system(size: 12))
+                Text(typeLabel).font(HanaFont.detail)
                     .foregroundStyle(Color(nsColor: HanaColor.Text.tertiary))
             }
         }
