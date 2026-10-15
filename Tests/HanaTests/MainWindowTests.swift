@@ -98,7 +98,7 @@ struct MainWindowTests {
         menu.performActionForItem(at: index)
         let window = try #require(interaction.window(for: .main))
         let statusMenu = try #require(interaction.menuBarMenu)
-        #expect(statusMenu.items.filter { !$0.isSeparatorItem }.map(\.title) == ["Search", statusMenu.items[1].title, "Open Hana", "Quit Hana"])
+        #expect(statusMenu.items.filter { !$0.isSeparatorItem }.map(\.title) == ["Search", statusMenu.items[1].title, "Open Hana", "Automatic switch (prototype)", "Quit Hana"])
         statusMenu.performActionForItem(at: statusMenu.indexOfItem(withTitle: "Open Hana"))
         let delegate = AppDelegate(interaction: interaction)
         #expect(!delegate.applicationShouldHandleReopen(NSApp, hasVisibleWindows: true))

@@ -5,7 +5,7 @@ import SwiftUI
 /// Owns the native Search lifetime. Callers carry Invocation into any delayed
 /// completion so an obsolete operation cannot dismiss a newer session.
 @MainActor
-final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
+final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMenuDelegate {
     struct Invocation: Equatable {
         fileprivate let id = UUID()
     }
@@ -122,6 +122,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
     private var hasQuery: Bool { !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     private let diagnostics: Diagnostics
+    let automaticSwitchOptions: AutomaticSwitchOptionsStore
+    let automaticSwitchDiagnostics: AutomaticSwitchDiagnostics
+    private(set) var automaticSwitchSessionOptions = AutomaticSwitchOptions()
+    private(set) var automaticSwitchMenu: NSMenu?
+    private var automaticSwitchToggle: NSMenuItem?
+    private var automaticSwitchCountItems: [NSMenuItem] = []
+    private var automaticSwitchReset: NSMenuItem?
     private var origin: NSRunningApplication?
     private weak var originWindow: NSWindow?
     private weak var originResponder: NSResponder?
@@ -144,8 +151,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
          openFile: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.openFileDestination,
          loadIcon: (@MainActor (URL, CGFloat) async -> ResultIcon?)? = nil,
          collection: Task<CollectionStore, any Error>? = nil, confirmationDuration: Duration = .milliseconds(500),
+         automaticSwitchOptions: AutomaticSwitchOptionsStore = AutomaticSwitchOptionsStore(),
+         automaticSwitchDiagnostics: AutomaticSwitchDiagnostics = AutomaticSwitchDiagnostics(),
          frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
         self.diagnostics = diagnostics
+        self.automaticSwitchOptions = automaticSwitchOptions
+        self.automaticSwitchDiagnostics = automaticSwitchDiagnostics
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -205,6 +216,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             originWindow = origin?.processIdentifier == ProcessInfo.processInfo.processIdentifier ? NSApp.keyWindow : nil
             originResponder = originWindow?.firstResponder
             currentInvocation = invocation
+            automaticSwitchSessionOptions = automaticSwitchOptions.read()
             _ = capture.handle(.invoked)
             clearEditor()
             observeSession(invocation)
@@ -617,6 +629,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         menu.addItem(.separator())
         addOpenMainWindow(to: menu, shortcut: false)
         menu.addItem(.separator())
+        addAutomaticSwitchMenu(to: menu)
         let quit = NSMenuItem(title: "Quit Hana", action: #selector(quit), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
@@ -647,6 +660,78 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         main.addItem(windowItem)
         NSApp.windowsMenu = windows
         NSApp.mainMenu = main
+    }
+
+    private func addAutomaticSwitchMenu(to menu: NSMenu) {
+        let title = "Automatic switch (prototype)"
+        let root = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        let submenu = NSMenu(title: title)
+        submenu.autoenablesItems = false
+        submenu.delegate = self
+        automaticSwitchMenu = submenu
+        root.submenu = submenu
+        menu.addItem(root)
+        let toggle = NSMenuItem(title: "On", action: #selector(toggleAutomaticSwitch), keyEquivalent: "")
+        toggle.target = self
+        automaticSwitchToggle = toggle
+        submenu.addItem(toggle)
+        submenu.addItem(.separator())
+        automaticSwitchCountItems = (0..<4).map { _ in
+            let item = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+            item.isEnabled = false
+            submenu.addItem(item)
+            return item
+        }
+        submenu.addItem(.separator())
+        let reset = NSMenuItem(title: "Reset Counts", action: #selector(resetAutomaticSwitchCounts), keyEquivalent: "")
+        reset.target = self
+        automaticSwitchReset = reset
+        submenu.addItem(reset)
+        let reveal = NSMenuItem(title: "Reveal Log", action: #selector(revealAutomaticSwitchLog), keyEquivalent: "")
+        reveal.target = self
+        submenu.addItem(reveal)
+        refreshAutomaticSwitchMenu()
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        if menu === automaticSwitchMenu { refreshAutomaticSwitchMenu() }
+    }
+
+    private func refreshAutomaticSwitchMenu() {
+        let options = automaticSwitchOptions.read()
+        automaticSwitchToggle?.state = options.isEnabled ? .on : .off
+        automaticSwitchReset?.isEnabled = options.isEnabled
+        let counts = automaticSwitchDiagnostics.counts()
+        let titles = [
+            "Switches \(counts.switches) · Wrong \(counts.wrongSwitches) · Ambiguous \(counts.ambiguous)",
+            "Reversals \(counts.reversals) · Missed \(counts.missed) · Errors \(counts.errors) · Timeouts \(counts.timeouts)"
+        ] + AutomaticSwitchOptions.Classifier.allCases.map { classifier in
+            let name = classifier == .foundationModels ? "Foundation Models" : "Jev"
+            guard let latency = counts.latencies[classifier] else { return "\(name): median 0 ms · max 0 ms" }
+            return "\(name): median \(latency.medianMilliseconds.formatted(.number.precision(.fractionLength(0)))) ms · max \(latency.maximumMilliseconds.formatted(.number.precision(.fractionLength(0)))) ms"
+        }
+        for (item, title) in zip(automaticSwitchCountItems, titles) { item.title = title }
+    }
+
+    @objc private func toggleAutomaticSwitch() {
+        var options = automaticSwitchOptions.read()
+        options.isEnabled.toggle()
+        automaticSwitchOptions.write(options)
+        refreshAutomaticSwitchMenu()
+    }
+
+    @objc private func resetAutomaticSwitchCounts() {
+        automaticSwitchDiagnostics.resetCounts(options: automaticSwitchOptions.read())
+        refreshAutomaticSwitchMenu()
+    }
+
+    @objc private func revealAutomaticSwitchLog() {
+        let url = automaticSwitchDiagnostics.url
+        if FileManager.default.fileExists(atPath: url.path) {
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        } else {
+            NSWorkspace.shared.activateFileViewerSelecting([url.deletingLastPathComponent()])
+        }
     }
 
     private func addOpenMainWindow(to menu: NSMenu, shortcut: Bool) {
@@ -681,7 +766,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         guard currentInvocation != nil else { return true }
         let notice = capture.state.notice
         var applies = true
-        for effect in capture.handle(.insert(text, replacing: range, provenance: provenance)) {
+        let previousMode = mode
+        let effects = capture.handle(.insert(text, replacing: range, provenance: provenance))
+        recordMissedSwitch(previousMode: previousMode, effects: effects)
+        for effect in effects {
             switch effect {
             case .consumeInsertion: applies = false
             default: perform(effect)
@@ -925,12 +1013,24 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// multiline text can't become a task. Never saves.
     private func choose(_ suggestion: CaptureSession.Suggestion) {
         record("search.suggestion", extra: ["mode": suggestion.mode.rawValue])
+        let previousMode = mode
         let effects = capture.handle(.chooseSuggestion(suggestion))
+        recordMissedSwitch(previousMode: previousMode, effects: effects)
         if effects.isEmpty, capture.state.notice == .multilineTask {
             record("capture.refused-multiline", extra: ["mode": mode.rawValue])
             renderResults()
         }
         effects.forEach(perform)
+    }
+
+    private func recordMissedSwitch(previousMode: CaptureSession.Mode, effects: [CaptureSession.Effect]) {
+        guard previousMode == .search, Note.isNonblank(capture.state.text) else { return }
+        for effect in effects {
+            guard case .enterMode(let mode) = effect, mode != .search,
+                  let recordedMode = AutomaticSwitchDiagnostics.Mode(rawValue: mode.rawValue) else { continue }
+            automaticSwitchDiagnostics.record(.missed(mode: recordedMode, lastVerdict: .none),
+                                              options: automaticSwitchSessionOptions)
+        }
     }
 
     /// Opens the row selected under the usual rules once it matches the
