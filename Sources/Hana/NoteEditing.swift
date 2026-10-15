@@ -1,6 +1,20 @@
 import Foundation
 import Observation
 
+enum NoteOrganizationAction: Sendable {
+    case setPinned(Bool), archive, restore
+
+    func command(_ id: UUID, revision: Int64) -> CollectionCommand<Note> {
+        switch self {
+        case .setPinned(let pinned): .setNotePinned(id, pinned, expectedRevision: revision)
+        case .archive: .archiveNote(id, expectedRevision: revision)
+        case .restore: .restoreNote(id, expectedRevision: revision)
+        }
+    }
+}
+
+enum NoteOrganizationError: Error, Equatable { case unavailable, compositionActive }
+
 /// The collection's public editing boundary: one revision-owning session per note.
 @MainActor
 final class NoteEditing {
@@ -42,6 +56,11 @@ final class NoteEditing {
         }
         if let firstFailure { throw firstFailure }
     }
+
+    func existingSession(_ id: UUID) -> NoteEditingSession? {
+        guard let session = sessions[id], !session.isClosed else { return nil }
+        return session
+    }
 }
 
 @MainActor @Observable
@@ -60,13 +79,16 @@ final class NoteEditingSession {
     private(set) var state: SaveState
     private(set) var isComposing = false
     private(set) var isClosed = false
+    private(set) var isOrganizing = false
+    var canOrganize: Bool { !isOrganizing && !isEditingSuspended && !isClosing && !isClosed && state != .invalidated }
     private(set) var isEditingSuspended = false
     private(set) var isClosing = false
-    var isEditable: Bool { !isEditingSuspended && !isClosing && !isClosed && state != .invalidated && committed.archivedAt == nil }
+    var isEditable: Bool { !isOrganizing && !isEditingSuspended && !isClosing && !isClosed && state != .invalidated && committed.archivedAt == nil }
     var hasUnsavedChanges: Bool { !sameBytes(text, committed.body) && Note.isNonblank(text) }
     var canRetry: Bool { if case .failed = state { true } else { false } }
     var status: String {
-        switch state {
+        if isOrganizing, state != .invalidated { return "Organizing…" }
+        return switch state {
         case .saved: "Saved"
         case .dirty: "Unsaved changes"
         case .saving: "Saving…"
@@ -219,6 +241,26 @@ final class NoteEditingSession {
         observation?.cancel()
     }
 
+    /// Freeze before flushing: no edit can arrive between the body commit and
+    /// the metadata command. Quit suspension is a separate editing reason.
+    func organize(_ action: NoteOrganizationAction) async throws {
+        guard canOrganize else { throw NoteOrganizationError.unavailable }
+        guard !isComposing else { throw NoteOrganizationError.compositionActive }
+        isOrganizing = true
+        defer { isOrganizing = false }
+        try await flush()
+        guard !isClosed, state != .invalidated else { throw CollectionStoreError.closed }
+        let note = try await store.perform(action.command(committed.id, revision: committed.revision), in: generation)
+        guard !isClosed, state != .invalidated else { throw CollectionStoreError.closed }
+        if note.revision >= committed.revision { committed = note }
+        if committed.archivedAt != nil {
+            if !sameBytes(text, committed.body) { text = committed.body; textRevision += 1 }
+            state = .readOnly
+        } else {
+            state = Note.isNonblank(text) ? .saved : .blank
+        }
+    }
+
     private func receive(_ note: Note) {
         guard !isClosed, state != .invalidated, note.revision > committed.revision else { return }
         // Our own commit may be observed before perform returns. Preserve every
@@ -235,6 +277,9 @@ final class NoteEditingSession {
             text = note.body
         }
         if note.archivedAt != nil { state = .readOnly; timer?.cancel() }
+        else if state == .readOnly {
+            state = !Note.isNonblank(text) ? .blank : (sameBytes(text, note.body) ? .saved : .dirty)
+        }
     }
 
     private func invalidate() {
