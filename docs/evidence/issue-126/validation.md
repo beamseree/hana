@@ -51,4 +51,4 @@ xcrun swift test --no-parallel --filter 'JevBackoffTests|ClassifierAdapterTests|
 git diff --check
 ```
 
-118 tests in eleven suites passed after integration. Native window suites remain reserved for the integration owner.
+116 tests in eleven suites passed after integration. Native window suites remain reserved for the integration owner.
