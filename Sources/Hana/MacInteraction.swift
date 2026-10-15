@@ -206,6 +206,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     private func showBar(existing: Bool, started: TimeInterval) {
+        if existing, localMouse == nil, let invocation = currentInvocation { observeSession(invocation) }
         // Do not activate the process: the nonactivating panel takes key focus
         // while the foreign invocation origin keeps its ordinary activation.
         panel.makeKeyAndOrderFront(nil)
@@ -219,6 +220,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     func dismiss(_ invocation: Invocation, reason: DismissalReason) {
         guard currentInvocation == invocation else {
             record("dismiss.stale-ignored")
+            return
+        }
+        if capture.state.phase == .saving {
+            _ = capture.handle(.dismissed)
+            record("capture.dismiss-deferred", extra: ["reason": reason.rawValue])
+            // Release keyboard control on Escape, but retain the visible save
+            // and its text. No callback may later restore the old destination.
+            removeSessionObservers()
+            origin = nil
+            originWindow = nil
+            originResponder = nil
+            if reason == .escape { panel.resignKey() }
             return
         }
         record("dismiss.\(reason.rawValue)")
@@ -299,9 +312,17 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         record("working.closed", extra: ["destination": destination.rawValue])
     }
 
+    func windowDidBecomeKey(_ notification: Notification) {
+        // Clicking a retained failure resumes its ordinary session observers.
+        if notification.object as? NSWindow === panel {
+            if localMouse == nil, let invocation = currentInvocation { observeSession(invocation) }
+        } else {
+            record("working.becameKey")
+        }
+    }
+
     func windowDidMiniaturize(_ notification: Notification) { record("working.minimized") }
     func windowDidDeminiaturize(_ notification: Notification) { record("working.deminiaturized") }
-    func windowDidBecomeKey(_ notification: Notification) { record("working.becameKey") }
 
     @objc private func openWorkingWindow(_ sender: NSMenuItem) {
         guard let destination = WorkingWindow(rawValue: sender.tag) else { return }
@@ -321,6 +342,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     private func configurePanel() {
+        panel.delegate = self
         panel.openDestination = { [weak self] destination in
             guard let self, let invocation = self.currentInvocation else { return }
             self.open(destination, from: invocation)
@@ -698,6 +720,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 guard let self, !Task.isCancelled, self.currentInvocation == invocation else { return }
                 self.dismiss(invocation, reason: .saved)
             }
+        case .closeSaved:
+            dismiss(invocation, reason: .saved)
         // Only `shouldInsert` can drop an insertion.
         case .consumeInsertion: break
         }
@@ -1099,6 +1123,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // Submitted text and destination are frozen until a failure returns them for editing.
         editor.isEditable = capture.state.phase == .editing
         destinationSelector.isEnabled = capture.state.phase == .editing
+        switch capture.state.phase {
+        case .saving: setModeLabel("Saving…")
+        case .editing: setModeLabel(mode == .task ? "Task" : "Note")
+        case .saved: break
+        }
         if let index = TaskPlacement.allCases.firstIndex(of: capture.state.destination) {
             destinationSelector.selectedSegment = index
         }
@@ -1137,7 +1166,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         return switch notice {
         case .blank: "Write something to save this \(kind)."
         case .collectionUnavailable: "The collection couldn’t be opened, so \(kind)s can’t be saved right now. Your text is kept."
-        case .failed: "This \(kind) couldn’t be saved. Your text is kept."
+        case .failed: "Save not confirmed. Your text is kept. Press Enter to retry."
         case .multilineTask: mode == .task
             ? "Tasks are one line, so text with line breaks can’t be pasted here."
             : "Tasks are one line. Remove the line breaks to make this a task."

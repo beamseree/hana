@@ -224,9 +224,9 @@ struct CaptureSubmissionTests {
                                        phase: .editing, notice: notice))
         _ = session.handle(.insert("!", replacing: NSRange(location: 7, length: 0), provenance: .typed))
         #expect(session.state.text == "keep me!" && session.state.notice == nil)
-        // Enter again submits under the same operation, so a save that did
-        // commit can never be duplicated.
-        #expect(session.handle(.submit) == [.saveNote(operation: operation, body: "keep me!")])
+        // A changed payload cannot reuse a receipt for the failed attempt.
+        #expect(session.operation != operation)
+        #expect(session.handle(.submit) == [.saveNote(operation: session.operation, body: "keep me!")])
     }
 
     @Test func outcomesOutsideASaveChangeNothing() {
