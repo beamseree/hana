@@ -105,7 +105,7 @@ func validateOpenNoteCapture(register: (MacInteraction) -> Void) async {
         platform.stop()
         try FileManager.default.removeItem(at: root)
         diagnostics.record("open-note-capture.validation-passed", state: [:])
-        NSApp.terminate(nil)
+        RunLoop.main.perform(inModes: [.common]) { MainActor.assumeIsolated { NSApp.terminate(nil) } }
     } catch {
         gate.signal()
         diagnostics.record("open-note-capture.validation-failed", state: ["step": (error as? OpenNoteCaptureCheck)?.step ?? "storage"])

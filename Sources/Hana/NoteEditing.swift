@@ -61,7 +61,8 @@ final class NoteEditingSession {
     private(set) var isComposing = false
     private(set) var isClosed = false
     private(set) var isEditingSuspended = false
-    var isEditable: Bool { !isEditingSuspended && !isClosed && state != .invalidated && committed.archivedAt == nil }
+    private(set) var isClosing = false
+    var isEditable: Bool { !isEditingSuspended && !isClosing && !isClosed && state != .invalidated && committed.archivedAt == nil }
     var hasUnsavedChanges: Bool { !sameBytes(text, committed.body) && Note.isNonblank(text) }
     var canRetry: Bool { if case .failed = state { true } else { false } }
     var status: String {
@@ -210,6 +211,8 @@ final class NoteEditingSession {
     }
 
     func close() async throws {
+        isClosing = true
+        defer { isClosing = false }
         try await flush()
         isClosed = true
         timer?.cancel()

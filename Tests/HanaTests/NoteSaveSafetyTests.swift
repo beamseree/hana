@@ -112,4 +112,43 @@ struct NoteSaveSafetyTests {
         await reopened.close()
     }
 
+    @Test(arguments: [false, true]) func closingFreezesEditsBeforeSuspendingAndRestoresOnlyItsOwnFreeze(fails: Bool) async throws {
+        let fixture = try TemporaryFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.directory) }
+        let gate = CommitGate()
+        let enabled = Mutex(false)
+        let store = try await CollectionStore.open(fixture.location, faults: .init(beforeCommit: { _ in
+            if enabled.withLock({ $0 }) {
+                gate.pass()
+                if fails { throw CollectionStoreError.storageFailure(code: 13) }
+            }
+        }))
+        let note = try await store.perform(.createNote(operation: UUID(), body: "Original"), in: store.generation)
+        let session = try await NoteEditing(store: store, clock: TestClock()).open(note.id)
+        session.edit("Closing text")
+        enabled.withLock { $0 = true }
+        let closing = Task { try await session.close() }
+        defer { gate.open() }
+        try await eventually { gate.arrivals == 1 }
+        #expect(!session.isEditable)
+        session.edit("Late edit must be refused")
+        #expect(session.text == "Closing text")
+        // Another lifecycle owner can freeze the session during this close.
+        if fails { session.suspendEditing(true) }
+        gate.open()
+        if fails {
+            await #expect(throws: CollectionStoreError.storageFailure(code: 13)) { try await closing.value }
+            #expect(!session.isClosed)
+            #expect(!session.isEditable)
+            session.suspendEditing(false)
+            #expect(session.isEditable)
+            #expect(session.text == "Closing text")
+        } else {
+            try await closing.value
+            #expect(session.isClosed)
+            #expect(session.committed.body == "Closing text")
+        }
+        await store.close()
+    }
+
 }
