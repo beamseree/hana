@@ -63,3 +63,8 @@ These are automated AppKit action/state and filesystem observations. No installe
 app was launched or replaced, no real classifier was invoked, and no human
 physical focus, menu appearance, persistence across an installed-app relaunch or
 Finder reveal observation is claimed. This ticket builds no classifier or policy.
+
+Evidence text logs escape literal CR, VT, FF and Unicode line-separator test
+arguments and trim trailing ASCII whitespace for a clean committed range diff.
+Test results and source are unchanged. `git diff --check f81450a...HEAD` was
+checked after this normalization.

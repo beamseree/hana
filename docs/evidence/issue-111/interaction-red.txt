@@ -14,7 +14,7 @@ Building for debugging...
 
 /Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Sources/Hana/MacInteraction.swift:142:5: note: 'init(diagnostics:search:launchApplication:openFile:loadIcon:collection:confirmationDuration:frontmostApplication:)' declared here
  140 |     private var currentPlacement: Placement?
- 141 | 
+ 141 |
  142 |     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
      |     `- note: 'init(diagnostics:search:launchApplication:openFile:loadIcon:collection:confirmationDuration:frontmostApplication:)' declared here
  143 |          launchApplication: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.launch,
@@ -42,7 +42,7 @@ Building for debugging...
 39 |         #expect(interaction.window(for: .main) == nil && interaction.currentInvocation == nil)
    |                                          `- error: cannot infer contextual base in reference to member 'main'
 40 |     }
-41 | 
+41 |
 
 /Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:21:20: warning: no calls to throwing functions occur within 'try' expression
 19 |         let policy = NSApp.activationPolicy()
@@ -78,7 +78,7 @@ Building for debugging...
 
 /Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Sources/Hana/MacInteraction.swift:142:5: note: 'init(diagnostics:search:launchApplication:openFile:loadIcon:collection:confirmationDuration:frontmostApplication:)' declared here
  140 |     private var currentPlacement: Placement?
- 141 | 
+ 141 |
  142 |     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
      |     `- note: 'init(diagnostics:search:launchApplication:openFile:loadIcon:collection:confirmationDuration:frontmostApplication:)' declared here
  143 |          launchApplication: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.launch,
@@ -109,12 +109,12 @@ Building for debugging...
 90 |         func remove() {
 
 /Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Sources/Hana/AutomaticSwitchDiagnostics.swift:46:5: note: calls to initializer 'init(file:)' from outside of its actor context are implicitly asynchronous
- 44 | 
+ 44 |
  45 |     let url: URL
  46 |     init(file: URL = FileManager.default.homeDirectoryForCurrentUser
     |     `- note: calls to initializer 'init(file:)' from outside of its actor context are implicitly asynchronous
  47 |         .appendingPathComponent("Library/Logs/Hana/automatic-switch.jsonl")) { url = file }
- 48 | 
+ 48 |
 
 [#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
 error: fatalError

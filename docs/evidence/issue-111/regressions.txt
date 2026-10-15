@@ -123,7 +123,7 @@ Test Suite 'Selected tests' passed at 2026-10-15 17:46:43.282.
 􀟈  Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
 􀟈  Test case passing 1 argument text → " " to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
 􀟈  Test case passing 1 argument text → "
-	  
+	 \u2028\r
 " to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
 􁁛  Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) with 3 test cases passed after 0.001 seconds.
 􀟈  Test submittedTextIsFrozenWhileSaving() started.
@@ -162,53 +162,53 @@ Test Suite 'Selected tests' passed at 2026-10-15 17:46:43.282.
 􀟈  Test case passing 1 argument prefix → "[" to typedPrefixesInTaskAreLiteralText(prefix:) started.
 􁁛  Test typedPrefixesInTaskAreLiteralText(prefix:) with 2 test cases passed after 0.001 seconds.
 􀟈  Test switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
-􀟈  Test case passing 1 argument text → "onetwo" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "one\rtwo" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 􀟈  Test case passing 1 argument text → "one
 two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
-􀟈  Test case passing 1 argument text → "one
+􀟈  Test case passing 1 argument text → "one\r
 two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
-􀟈  Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
-􀟈  Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "one\u2028two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "one\u2029two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 􀟈  Test case passing 1 argument text → "trailing
 " to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 􁁛  Test switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) with 6 test cases passed after 0.001 seconds.
 􀟈  Test aLongSingleLineThatSoftWrapsEntersTask() started.
 􁁛  Test aLongSingleLineThatSoftWrapsEntersTask() passed after 0.001 seconds.
 􀟈  Test aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .paste, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a\rb" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a\r
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a\u2028b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a\u2029b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .paste, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .drop, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a\rb" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a\r
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a\u2028b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a\u2029b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .drop, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a\rb" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a\r
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a\u2028b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a\u2029b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .typed, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a\rb" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a\r
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a\u2028b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a\u2029b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .typed, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􁁛  Test aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) with 24 test cases passed after 0.001 seconds.
@@ -262,9 +262,9 @@ b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
 􀟈  Test case passing 1 argument text → "one
 two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
-􀟈  Test case passing 1 argument text → "one
+􀟈  Test case passing 1 argument text → "one\r
 two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
-􀟈  Test case passing 1 argument text → "one two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+􀟈  Test case passing 1 argument text → "one\u2029two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
 􀟈  Test case passing 1 argument text → "trailing
 " to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
 􁁛  Test choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) with 4 test cases passed after 0.001 seconds.
