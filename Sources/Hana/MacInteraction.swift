@@ -157,6 +157,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     func noteSaveStatus(_ id: UUID) -> String? { noteWindows[id]?.statusText }
     func noteActions(_ id: UUID) -> [NoteSaveAction] { noteWindows[id]?.availableActions ?? [] }
     func performNoteAction(_ action: NoteSaveAction, id: UUID) async { await noteWindows[id]?.perform(action) }
+    var mainCloseIsHeld: Bool { workingWindows[.main]?.closeIsHeld ?? false }
     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
     func window(for destination: WorkingWindow) -> NSWindow? {
         switch destination {
@@ -164,6 +165,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         case .note(let id): noteWindows[id]?.window
         }
     }
+    func selectArchived(_ id: ArchiveWorkspacePresentation.Row.ID?) { archiveWorkspacePresentation?.selectedID = id }
+    @discardableResult
+    func restoreArchived(_ row: ArchiveWorkspacePresentation.Row) async -> Bool {
+        guard !isPreparingForQuit else { return false }
+        return await archiveWorkspacePresentation?.restore(row) ?? false
+    }
+    @discardableResult
+    func openArchivedNote(_ row: ArchiveWorkspacePresentation.Row) -> Bool {
+        guard case .note(let note) = row else { return false }
+        return open(.note(note.id))
+    }
+    var archiveWorkspacePresentation: ArchiveWorkspacePresentation? { workingWindows[.main]?.archiveWorkspace }
     var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
     func canPerformTaskAction(_ action: TaskWorkspaceAction) -> Bool {
         guard currentInvocation == nil, let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
@@ -419,7 +432,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         }
         updateActivationPolicy()
         guard let controller = workingWindows[destination], let window = controller.window else { return false }
-        if let section { controller.presentation.select(section) }
+        if let section { controller.selectSection(section) }
         if window.isMiniaturized { window.deminiaturize(nil) }
         // Only explicit destination opening activates the process. Ordinary bar
         // invocation never orders unrelated working windows or changes policy.
@@ -559,7 +572,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        noteWindows.values.first(where: { $0.window === sender })?.shouldClose() ?? true
+        if let controller = workingWindows.values.first(where: { $0.window === sender }) { return controller.shouldClose() }
+        return noteWindows.values.first(where: { $0.window === sender })?.shouldClose() ?? true
     }
 
     func windowWillClose(_ notification: Notification) {
@@ -928,6 +942,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let noteItem = NSMenuItem(title: "Note", action: nil, keyEquivalent: "")
         noteItem.submenu = noteMenu
         main.addItem(noteItem)
+        let archiveMenu = NSMenu(title: "Archive")
+        let restore = NSMenuItem(title: "Restore Selected Item", action: #selector(restoreSelectedArchiveItem), keyEquivalent: "r")
+        restore.keyEquivalentModifierMask = [.command, .shift]
+        restore.target = self
+        archiveMenu.addItem(restore)
+        let openArchived = NSMenuItem(title: "Open Archived Note", action: #selector(openSelectedArchiveNote), keyEquivalent: "\r")
+        openArchived.keyEquivalentModifierMask = []
+        openArchived.target = self
+        archiveMenu.addItem(openArchived)
+        let archiveItem = NSMenuItem(title: "Archive", action: nil, keyEquivalent: "")
+        archiveItem.submenu = archiveMenu
+        main.addItem(archiveItem)
         let windows = NSMenu(title: "Window")
         addOpenMainWindow(to: windows, shortcut: true)
         windows.addItem(.separator())
@@ -955,6 +981,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(restoreSelectedArchiveItem) { return selectedArchiveRow != nil }
+        if menuItem.action == #selector(openSelectedArchiveNote) {
+            if case .note = selectedArchiveRow { return true }
+            return false
+        }
         if menuItem.action == #selector(toggleSelectedNotePin) {
             menuItem.title = selectedOrganizerNote?.isPinned == true ? "Unpin Note" : "Pin Note"
             return selectedOrganizerNote != nil
@@ -972,6 +1003,23 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     @objc private func archiveSelectedNote() {
         guard let row = selectedOrganizerNote else { return }
         Task { await organizeNote(row, action: .archive) }
+    }
+
+    private var selectedArchiveRow: ArchiveWorkspacePresentation.Row? {
+        guard !isPreparingForQuit, currentInvocation == nil, NSApp.keyWindow === window(for: .main),
+              mainWindowPresentation?.selectedSection == .archive,
+              let archive = archiveWorkspacePresentation, let row = archive.selectedRow, archive.canRestore(row) else { return nil }
+        return row
+    }
+
+    @objc private func restoreSelectedArchiveItem() {
+        guard let row = selectedArchiveRow else { return }
+        Task { await restoreArchived(row) }
+    }
+
+    @objc private func openSelectedArchiveNote() {
+        guard let row = selectedArchiveRow else { return }
+        _ = openArchivedNote(row)
     }
 
     private var selectedArchivedNote: UUID? {
