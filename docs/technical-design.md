@@ -193,8 +193,9 @@ A save is explicit commitment intent. Before submission Escape/outside click dis
 
 Issue #67 implements this policy for Note and Task with a “Saving…” label,
 deferred dismissal, and operation IDs reused only for unchanged retries. The
-Capture Session and real temporary Store fault tests pass; AppKit and physical
-focus validation remain pending explicit native testing handover. See the
+Capture Session, real temporary Store fault tests, and automated AppKit
+key-window/responder checks pass; physical foreign-app typing and Space
+validation remain pending. See the
 [implementation and evidence status](evidence/issue-67/validation.md).
 
 ### Working-note editor and autosave

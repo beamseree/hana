@@ -56,11 +56,38 @@ roots and never the live collection.
 
 ## Native validation status
 
-`CaptureSafetyNativeTests` compiles but has **not been run**. Beam requested
-“Keep working; wait on native tests” on 2026-10-15. No native testing slot has
-been taken and no app has been installed or launched for this issue.
+Beam handed over the native testing slot on 2026-10-15 after the earlier request
+to wait. The automated runs below completed, and the slot was explicitly
+released. No production Hana app was installed or launched; these runs presented
+test panels through the Swift test executable.
 
-The prepared suite uses real AppKit panels and a real temporary Store. It covers
+- Tested implementation revision: `a8d3914fc5288c7990f75583b441acf666583866`.
+- Environment: macOS 26.4.1 (`25E253`), Apple Swift 6.3.3, arm64.
+- `xcrun swift test --filter CaptureSafetyNativeTests`: **3 tests / 10 parameter
+  cases passed**, including **12 paused-save dismissal scenarios** (two modes,
+  three outcomes, and both Escape and outside click). See [raw output](native-tests.txt).
+- The first full-suite run exposed test cleanup in the existing
+  `shiftEnterWritesANewLineInNoteAndEnterWithoutACollectionKeepsIt`: the test
+  returned before the asynchronous missing-collection failure. Its deferred
+  dismissal correctly retained the pending save, leaving that test's panel
+  visible and contaminating subsequent editor tests (32 assertions failed).
+  Running just that test and `noteKeepsMarkdownPunctuationAsTyped` reproduced
+  the retained `one\ntwo` buffer in the next test. The cleanup now waits for the
+  failure and verifies the editor is editable before dismissing. Production
+  behavior is unchanged.
+- `xcrun swift test --filter 'NativeEditingTests|CaptureSafetyNativeTests'`:
+  **22 tests passed in 2 suites** after that test-only cleanup. See
+  [regression output](native-regression-tests.txt).
+- `xcrun swift test`: **297 tests passed in 37 suites**, with **11 opt-in
+  live-index/performance tests skipped** by their existing gates. See
+  [full-suite summary](full-tests-summary.txt).
+- Initial #67 native test executable SHA-256:
+  `8e526c2e25750f4da88d4393ff375483d1868ca44b6c887fe4da273f35694f3b`.
+- Final regression/full-suite executable SHA-256 (same implementation plus the
+  test-only cleanup recorded in this evidence commit):
+  `9e4a018328f937cd49190208379fc3ee1ef78142389045cd9a199e5a6f5e22e7`.
+
+The executed suite uses real AppKit panels and a real temporary Store. It covers
 Escape and outside-click dismissal with success, rollback, and lost commit
 acknowledgment for both Note and Task; saving visibility; frozen input; retained
 failure text; unchanged retry; editing after rollback; and an obsolete
@@ -69,14 +96,7 @@ represents the user's later destination, checking key-window/first-responder
 state without activating an app. It does not establish physical typing focus
 in a foreign application or behavior across Spaces.
 
-Pending explicit native handover:
-
-```sh
-xcrun swift test --filter CaptureSafetyNativeTests
-xcrun swift test
-```
-
-Also physically check Note and Task from another app: during a paused save,
+Physical checks remain separate: for Note and Task from another app, during a paused save,
 Escape/outside click must release keyboard control; success must close without
 reactivation, and failure must preserve recoverable text without taking focus.
 Those observations are pending, so the issue is not marked complete or ready.
@@ -85,7 +105,8 @@ Those observations are pending, so the issue is not marked complete or ready.
 
 The code-review skill reviewed Standards and Spec separately against the pinned
 base revision. Standards: no actionable findings. Spec: no confirmed code defect
-or scope creep; native/physical validation is the remaining gate. The prepared
+or scope creep; physical validation is the remaining gate. The executed
 native test explicitly asserts gated reinvocation preserves the old invocation
 and frozen payload; its other stale-callback test is named for the confirmation
 timer it exercises.
+Both review axes also reviewed the follow-up test cleanup and found no issues.
