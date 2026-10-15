@@ -32,3 +32,5 @@ Beam's physical Thai/IME typing, long-note typing/scrolling, Dock and Command-Ta
 - The paused-writer test now holds both the first and second save transactions: after the older commit, the public session remains `saving` with the latest text, while the Store still contains the first body until the second gate is released.
 
 - `integration-tests.txt`: the post-merge release run passed 16 tests in 4 suites (Note Editing, native note editor/profile, Task Workspace and Main Window) in 4.029 seconds.
+
+- `final-merge-tests.txt`: after merging #95 as well, 10 debug tests in 3 suites passed in 3.154 seconds, including task keyboard/drag/stale-order checks. The optimized debug fixture measured open 98.996 ms, insertion 147.597 ms and flush 320.375 ms.
