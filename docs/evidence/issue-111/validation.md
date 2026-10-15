@@ -68,3 +68,9 @@ Evidence text logs escape literal CR, VT, FF and Unicode line-separator test
 arguments and trim trailing ASCII whitespace for a clean committed range diff.
 Test results and source are unchanged. `git diff --check f81450a...HEAD` was
 checked after this normalization.
+
+Before handoff, the latest integration tip `eace93fb870d40eb3b8fb9bf506492bbd75aedfe`
+(including merged #112) was merged without conflicts as `e8abf2e`.
+The [integrated build](integrated-build.txt) passed in 4.16 s, and the committed
+range diff check passed. Native results above retain their tested source revision;
+no new native test claim is made for the merged gate/store implementation.
