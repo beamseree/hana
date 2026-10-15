@@ -284,7 +284,7 @@ Building for debugging...
 26 |         #expect(verdict.wordingVersion == .v1)
    |                                            `- error: cannot infer contextual base in reference to member 'v1'
 27 |     }
-28 | 
+28 |
 [254/267] Compiling HanaTests CaptureSessionTests.swift
 <worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:8:23: error: cannot find 'JevClassifier' in scope
  6 | struct ClassifierAdapterTests {
@@ -316,7 +316,7 @@ Building for debugging...
 26 |         #expect(verdict.wordingVersion == .v1)
    |                                            `- error: cannot infer contextual base in reference to member 'v1'
 27 |     }
-28 | 
+28 |
 [255/267] Compiling HanaTests ClassifierAdapterTests.swift
 <worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:8:23: error: cannot find 'JevClassifier' in scope
  6 | struct ClassifierAdapterTests {
@@ -348,7 +348,7 @@ Building for debugging...
 26 |         #expect(verdict.wordingVersion == .v1)
    |                                            `- error: cannot infer contextual base in reference to member 'v1'
 27 |     }
-28 | 
+28 |
 [256/267] Compiling HanaTests CollectionExportHarnessTests.swift
 <worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:8:23: error: cannot find 'JevClassifier' in scope
  6 | struct ClassifierAdapterTests {
@@ -380,7 +380,7 @@ Building for debugging...
 26 |         #expect(verdict.wordingVersion == .v1)
    |                                            `- error: cannot infer contextual base in reference to member 'v1'
 27 |     }
-28 | 
+28 |
 [257/267] Compiling HanaTests IndependentExportDecoder.swift
 <worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
 407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")

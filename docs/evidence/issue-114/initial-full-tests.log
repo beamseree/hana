@@ -247,7 +247,8 @@ START  Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) starte
 START  Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
 START  Test case passing 1 argument text → " " to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
 START  Test case passing 1 argument text → "
-	  
+
+
 " to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
 PASS  Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) with 3 test cases passed after 0.001 seconds.
 START  Test submittedTextIsFrozenWhileSaving() started.
@@ -292,8 +293,10 @@ START  Test case passing 1 argument text → "one
 two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 START  Test case passing 1 argument text → "one
 two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
-START  Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
-START  Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+START  Test case passing 1 argument text → "one
+two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+START  Test case passing 1 argument text → "one
+two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 START  Test case passing 1 argument text → "trailing
 " to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 PASS  Test switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) with 6 test cases passed after 0.001 seconds.
@@ -306,8 +309,10 @@ START  Test case passing 2 arguments provenance → .paste, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .paste, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-START  Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-START  Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+START  Test case passing 2 arguments provenance → .paste, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+START  Test case passing 2 arguments provenance → .paste, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .paste, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .drop, pasted → "a
@@ -316,8 +321,10 @@ START  Test case passing 2 arguments provenance → .drop, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .drop, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-START  Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-START  Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+START  Test case passing 2 arguments provenance → .drop, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+START  Test case passing 2 arguments provenance → .drop, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .drop, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .programmatic, pasted → "a
@@ -326,8 +333,10 @@ START  Test case passing 2 arguments provenance → .programmatic, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .programmatic, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-START  Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-START  Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+START  Test case passing 2 arguments provenance → .programmatic, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+START  Test case passing 2 arguments provenance → .programmatic, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .programmatic, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .typed, pasted → "a
@@ -336,8 +345,10 @@ START  Test case passing 2 arguments provenance → .typed, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .typed, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-START  Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-START  Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+START  Test case passing 2 arguments provenance → .typed, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+START  Test case passing 2 arguments provenance → .typed, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 START  Test case passing 2 arguments provenance → .typed, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 PASS  Test aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) with 24 test cases passed after 0.001 seconds.
@@ -393,7 +404,8 @@ START  Test case passing 1 argument text → "one
 two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
 START  Test case passing 1 argument text → "one
 two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
-START  Test case passing 1 argument text → "one two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+START  Test case passing 1 argument text → "one
+two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
 START  Test case passing 1 argument text → "trailing
 " to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
 PASS  Test choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) with 4 test cases passed after 0.001 seconds.
@@ -888,8 +900,9 @@ START  Test enterDuringCompositionCommitsItWithoutSaving() started.
 PASS  Test enterDuringCompositionCommitsItWithoutSaving() passed after 0.135 seconds.
 START  Test aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
 START  Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
-START  Test case passing 1 argument text → "  
-	  " to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
+START  Test case passing 1 argument text → "
+
+ " to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
 PASS  Test aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) with 2 test cases passed after 0.288 seconds.
 START  Test dismissingBeforeASaveWritesNothing(reason:) started.
 START  Test case passing 1 argument reason → .escape to dismissingBeforeASaveWritesNothing(reason:) started.
@@ -1077,7 +1090,7 @@ START  Test case passing 2 arguments buffer → "remind ", allowed → true to r
 START  Test case passing 2 arguments buffer → "  remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 START  Test case passing 2 arguments buffer → "	 remind	", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 START  Test case passing 2 arguments buffer → "call mom", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
-START  Test case passing 2 arguments buffer → " 
+START  Test case passing 2 arguments buffer → "
 ", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 PASS  Test rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) with 6 test cases passed after 0.001 seconds.
 START  Test unavailableCollectionAlwaysBlocks(_:) started.

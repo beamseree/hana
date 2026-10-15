@@ -20,7 +20,7 @@ macro expansion #require:1:56: error: recursive expansion of macro 'require(_:_:
 14 |             #expect(body["state"] as? String == "call mom tomorrow")
 
 <worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:30:23: error: cannot find 'FoundationModelsClassifier' in scope
-28 | 
+28 |
 29 |     @Test func foundationUnavailableNeverRunsModel() async throws {
 30 |         let adapter = FoundationModelsClassifier(unsure: true, availability: { .appleIntelligenceOff }, makeSession: {
    |                       `- error: cannot find 'FoundationModelsClassifier' in scope
@@ -28,7 +28,7 @@ macro expansion #require:1:56: error: recursive expansion of macro 'require(_:_:
 32 |             return .init(prewarm: {}, respond: { _ in .task })
 
 <worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:30:81: error: cannot infer contextual base in reference to member 'appleIntelligenceOff'
-28 | 
+28 |
 29 |     @Test func foundationUnavailableNeverRunsModel() async throws {
 30 |         let adapter = FoundationModelsClassifier(unsure: true, availability: { .appleIntelligenceOff }, makeSession: {
    |                                                                                 `- error: cannot infer contextual base in reference to member 'appleIntelligenceOff'
@@ -57,7 +57,7 @@ macro expansion #require:1:56: error: recursive expansion of macro 'require(_:_:
 36 |         #expect(FoundationModelAvailability.appleIntelligenceOff.menuText == "Apple Intelligence is off")
    |                 `- error: cannot find 'FoundationModelAvailability' in scope
 37 |     }
-38 | 
+38 |
 
 <worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:35:9: warning: no 'async' operations occur within 'await' expression
 33 |         })
