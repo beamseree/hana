@@ -21,7 +21,7 @@ Building for debugging...
 25 |         store.write(store.read())
 
 /Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchReversalOptionsTests.swift:30:42: error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
-28 | 
+28 |
 29 |     @Test func freshWordPacedUsesModeBlocking() {
 30 |         #expect(AutomaticSwitchOptions().reversalBehavior == .blockModeForText)
    |                                          `- error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
@@ -29,7 +29,7 @@ Building for debugging...
 32 | }
 
 /Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchReversalOptionsTests.swift:30:63: error: cannot infer contextual base in reference to member 'blockModeForText'
-28 | 
+28 |
 29 |     @Test func freshWordPacedUsesModeBlocking() {
 30 |         #expect(AutomaticSwitchOptions().reversalBehavior == .blockModeForText)
    |                                                               `- error: cannot infer contextual base in reference to member 'blockModeForText'
@@ -37,7 +37,7 @@ Building for debugging...
 32 | }
 [5/7] Compiling HanaTests AutomaticSwitchWithdrawalTests.swift
 /Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:59:30: error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
- 57 | 
+ 57 |
  58 |     @Test func stopUntilClearedStillSuspendsBothModes() throws {
  59 |         var h = Harness { $0.reversalBehavior = .stopUntilCleared }
     |                              `- error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
@@ -45,7 +45,7 @@ Building for debugging...
  61 |         _ = h.answer(id, .task)
 
 /Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:59:50: error: cannot infer contextual base in reference to member 'stopUntilCleared'
- 57 | 
+ 57 |
  58 |     @Test func stopUntilClearedStillSuspendsBothModes() throws {
  59 |         var h = Harness { $0.reversalBehavior = .stopUntilCleared }
     |                                                  `- error: cannot infer contextual base in reference to member 'stopUntilCleared'
@@ -98,7 +98,7 @@ Building for debugging...
  68 |         #expect(modes(h.answer(fresh, .note)) == [.note])
     |                                        `- error: cannot infer contextual base in reference to member 'note'
  69 |     }
- 70 | 
+ 70 |
 
 /Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:60:18: warning: no calls to throwing functions occur within 'try' expression
  58 |     @Test func stopUntilClearedStillSuspendsBothModes() throws {
