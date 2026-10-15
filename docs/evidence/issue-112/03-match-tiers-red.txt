@@ -1,0 +1,48 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests StrongMatchGateTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.87s)
+Test Suite 'Selected tests' started at 2026-10-15 17:42:59.657.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 17:42:59.659.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 17:42:59.659.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 17:42:59.659.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite StrongMatchGateTests started.
+􀟈  Test onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "visual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Visual Studio", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Studio ", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "isual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "plan ", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget plan", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Call m", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "udget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Call mom", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "mom ", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "all m", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget p", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "plan ", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget.xlsx ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "xlsx ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "udget p", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀢄  Test onlyStrongNameTiersBlock(_:) recorded an issue with 1 argument item → MatchCase(buffer: "Call mom", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) at StrongMatchGateTests.swift:45:9: Expectation failed: (evaluation.decision → .allowed) == ((item.blocks ? .blocked(.strongMatch(item.kind)) : .allowed) → .blocked(Hana.StrongMatchGate.Reason.strongMatch(Hana.StrongMatchGate.Kind.task)))
+􀢄  Test onlyStrongNameTiersBlock(_:) recorded an issue with 1 argument item → MatchCase(buffer: "visual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) at StrongMatchGateTests.swift:45:9: Expectation failed: (evaluation.decision → .allowed) == ((item.blocks ? .blocked(.strongMatch(item.kind)) : .allowed) → .blocked(Hana.StrongMatchGate.Reason.strongMatch(Hana.StrongMatchGate.Kind.application)))
+􀢄  Test onlyStrongNameTiersBlock(_:) recorded an issue with 1 argument item → MatchCase(buffer: "Budget plan", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) at StrongMatchGateTests.swift:45:9: Expectation failed: (evaluation.decision → .allowed) == ((item.blocks ? .blocked(.strongMatch(item.kind)) : .allowed) → .blocked(Hana.StrongMatchGate.Reason.strongMatch(Hana.StrongMatchGate.Kind.note)))
+􀢄  Test onlyStrongNameTiersBlock(_:) recorded an issue with 1 argument item → MatchCase(buffer: "Budget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) at StrongMatchGateTests.swift:45:9: Expectation failed: (evaluation.decision → .allowed) == ((item.blocks ? .blocked(.strongMatch(item.kind)) : .allowed) → .blocked(Hana.StrongMatchGate.Reason.strongMatch(Hana.StrongMatchGate.Kind.note)))
+􀢄  Test onlyStrongNameTiersBlock(_:) recorded an issue with 1 argument item → MatchCase(buffer: "Visual Studio", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) at StrongMatchGateTests.swift:45:9: Expectation failed: (evaluation.decision → .allowed) == ((item.blocks ? .blocked(.strongMatch(item.kind)) : .allowed) → .blocked(Hana.StrongMatchGate.Reason.strongMatch(Hana.StrongMatchGate.Kind.application)))
+􀢄  Test onlyStrongNameTiersBlock(_:) recorded an issue with 1 argument item → MatchCase(buffer: "Call m", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) at StrongMatchGateTests.swift:45:9: Expectation failed: (evaluation.decision → .allowed) == ((item.blocks ? .blocked(.strongMatch(item.kind)) : .allowed) → .blocked(Hana.StrongMatchGate.Reason.strongMatch(Hana.StrongMatchGate.Kind.task)))
+􀢄  Test onlyStrongNameTiersBlock(_:) recorded an issue with 1 argument item → MatchCase(buffer: "budget ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) at StrongMatchGateTests.swift:45:9: Expectation failed: (evaluation.decision → .allowed) == ((item.blocks ? .blocked(.strongMatch(item.kind)) : .allowed) → .blocked(Hana.StrongMatchGate.Reason.strongMatch(Hana.StrongMatchGate.Kind.file)))
+􀢄  Test onlyStrongNameTiersBlock(_:) recorded an issue with 1 argument item → MatchCase(buffer: "budget.xlsx ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) at StrongMatchGateTests.swift:45:9: Expectation failed: (evaluation.decision → .allowed) == ((item.blocks ? .blocked(.strongMatch(item.kind)) : .allowed) → .blocked(Hana.StrongMatchGate.Reason.strongMatch(Hana.StrongMatchGate.Kind.file)))
+􀢄  Test onlyStrongNameTiersBlock(_:) with 18 test cases failed after 0.007 seconds with 8 issues.
+􀢄  Suite StrongMatchGateTests failed after 0.008 seconds with 8 issues.
+􀢄  Test run with 1 test in 1 suite failed after 0.008 seconds with 8 issues.

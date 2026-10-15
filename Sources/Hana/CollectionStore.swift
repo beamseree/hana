@@ -101,6 +101,12 @@ struct TaskSearchEntry: Equatable, Sendable {
     let isArchived: Bool
 }
 
+/// Default Search projections observed together from one committed read.
+struct CollectionSearchEntries: Equatable, Sendable {
+    let notes: [NoteSearchEntry]
+    let tasks: [TaskSearchEntry]
+}
+
 /// Every saved record from one committed state, archived notes included.
 struct CollectionRecords: Equatable, Sendable {
     let collectionID: UUID
@@ -236,6 +242,15 @@ extension CollectionQuery where Value == [TaskSearchEntry] {
                               [includingCompleted, includingArchived]).map {
                 TaskSearchEntry(id: $0.id, title: $0.title, isCompleted: $0.completedAt != nil, isArchived: $0.archivedAt != nil)
             }
+        }
+    }
+}
+
+extension CollectionQuery where Value == CollectionSearchEntries {
+    static var activeSearchEntries: Self {
+        Self { db in
+            try CollectionSearchEntries(notes: CollectionQuery<[NoteSearchEntry]>.noteSearchEntries().fetch(db),
+                                        tasks: CollectionQuery<[TaskSearchEntry]>.taskSearchEntries().fetch(db))
         }
     }
 }
