@@ -16,6 +16,38 @@ final class JevLaunchMemory {
     private static let answerLimit = 64
     private var gaps: [Duration] = []
     private var inFlight: Set<UUID> = []
+    private(set) var keyRejected = false
+    private(set) var keyRevision: UInt64 = 0
+    private var pausedUntil: Duration?
+    private var pauseReason: AutomaticSwitchDiagnostics.BackoffReason?
+    private var rateLimitDelay = Duration.seconds(1)
+    private var consecutiveNetworkErrors = 0
+
+    func backoffReason(at time: Duration) -> AutomaticSwitchDiagnostics.BackoffReason? {
+        if keyRejected { return .keyRejected }
+        guard let pausedUntil, time < pausedUntil else { return nil }
+        return pauseReason
+    }
+    func recordFailure(kind: AutomaticSwitchDiagnostics.ErrorKind, retryAfter: Duration? = nil, at time: Duration) {
+        if kind == .network {
+            consecutiveNetworkErrors += 1
+            if consecutiveNetworkErrors >= 2 {
+                pause(until: time + .seconds(2), reason: .network)
+            }
+        } else { consecutiveNetworkErrors = 0 }
+        if kind == .authentication { keyRejected = true }
+        if kind == .rateLimited {
+            let delay = retryAfter ?? rateLimitDelay
+            pause(until: time + delay, reason: .rateLimited)
+            if retryAfter == nil { rateLimitDelay = min(.seconds(30), rateLimitDelay * 2) }
+        }
+    }
+    func keySaved() { keyRejected = false; keyRevision &+= 1 }
+    func recordSuccess() { rateLimitDelay = .seconds(1); consecutiveNetworkErrors = 0 }
+    private func pause(until time: Duration, reason: AutomaticSwitchDiagnostics.BackoffReason) {
+        if let pausedUntil, time <= pausedUntil { return }
+        pausedUntil = time; pauseReason = reason
+    }
     private var answers: [CacheKey: ClassifierVerdict] = [:]
     private var recentAnswers: [CacheKey] = []
 

@@ -134,6 +134,9 @@ struct AutomaticSwitchWordCacheTests {
         let id = try #require(requests(first.edit("call mom ")).first?.id)
         _ = first.policy.handle(.failed(id: id, kind, latencyMilliseconds: 40))
         var second = Harness(memory: memory)
+        // This assertion isolates cache behavior from #126's launch-wide backoff.
+        memory.keySaved()
+        second.clock.advance(by: .seconds(30))
         let retry = second.edit("call mom ")
         #expect(modes(retry).isEmpty && requests(retry).map(\.text) == ["call mom"])
     }

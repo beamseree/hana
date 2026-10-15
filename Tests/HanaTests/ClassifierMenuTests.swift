@@ -30,7 +30,7 @@ struct ClassifierMenuTests {
         #expect(menu.item(withTitle: "No Jev API key saved") != nil)
         #expect(menu.item(withTitle: "Run Tricky-Input Check")?.isEnabled == false)
         #expect(menu.item(withTitle: "Set Jev API Key…")?.isEnabled == true)
-        try keychain.save("isolated-menu-secret")
+        try services.saveJevKey("isolated-menu-secret")
         menu.delegate?.menuWillOpen?(menu)
         #expect(choices.item(withTitle: "Jev")?.isEnabled == true)
         #expect(menu.item(withTitle: "Jev API key saved") != nil)

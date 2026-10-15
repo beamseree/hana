@@ -4,21 +4,37 @@ import AppKit
 @MainActor
 final class ClassifierServices {
     let keychain: JevKeychainStore
+    let jevLaunchMemory: JevLaunchMemory
+    private var jevKey: String?
     let availability: () -> FoundationModelAvailability
     init(keychain: JevKeychainStore = JevKeychainStore(),
+         jevLaunchMemory: JevLaunchMemory = JevLaunchMemory(),
          availability: @escaping () -> FoundationModelAvailability = FoundationModelAvailability.live) {
         self.keychain = keychain
+        self.jevLaunchMemory = jevLaunchMemory
+        jevKey = try? keychain.read()
         self.availability = availability
     }
-    var hasJevKey: Bool { (try? keychain.read())?.isEmpty == false }
+    var hasJevKey: Bool { (try? keychain.containsKey()) == true }
+    func saveJevKey(_ key: String) throws {
+        try keychain.save(key)
+        jevKey = nil
+        jevKey = try keychain.read()
+        jevLaunchMemory.keySaved()
+    }
+    func removeJevKey() throws {
+        try keychain.remove()
+        jevKey = nil
+        jevKey = try keychain.read()
+    }
     func makeClassifier(options: AutomaticSwitchOptions) -> (any Classifier)? {
         switch options.classifier {
         case .foundationModels: FoundationModelsClassifier(unsure: options.foundationModelsUnsure, availability: availability)
         case .jev:
-            if let key = try? keychain.read(), !key.isEmpty {
+            if jevKey?.isEmpty == false {
                 if options.firing == .wordPaced {
-                    JevClassifier(key: key, transport: { try await JevSharedTransport.live.perform($0) })
-                } else { JevClassifier(key: key) }
+                    JevClassifier(keyProvider: { self.jevKey }, transport: { try await JevSharedTransport.live.perform($0) })
+                } else { JevClassifier(keyProvider: { self.jevKey }) }
             } else { nil }
         }
     }
@@ -53,7 +69,7 @@ final class ClassifierMenuController: NSObject {
     }
     func refresh() {
         let hasKey = services.hasJevKey
-        keyStatus.title = hasKey ? "Jev API key saved" : "No Jev API key saved"
+        keyStatus.title = services.jevLaunchMemory.keyRejected ? "Jev key rejected" : hasKey ? "Jev API key saved" : "No Jev API key saved"
         jevItem?.isEnabled = hasKey; removeItem.isEnabled = hasKey
         let unavailable = services.availability().menuText
         availabilityItem.title = unavailable ?? ""
@@ -75,12 +91,12 @@ final class ClassifierMenuController: NSObject {
         guard response == .alertFirstButtonReturn else { return }
         let key = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty else { return }
-        do { try services.keychain.save(key) }
+        do { try services.saveJevKey(key) }
         catch { showFailure("The API key could not be saved to Keychain.") }
         refresh()
     }
     @objc private func removeKey() {
-        do { try services.keychain.remove() }
+        do { try services.removeJevKey() }
         catch { showFailure("The API key could not be removed from Keychain.") }
         refresh()
     }
