@@ -109,13 +109,38 @@ struct CaptureSessionReturnTests {
         #expect(session.state == .init(mode: .search, text: "-milk", selection: NSRange(location: 1, length: 0), prefixesArmed: false))
     }
 
-    @Test func typedDashAfterReturningAndClearingTheTextIsLiteralText() {
+    @Test func returningFromAnEmptyNoteArmsPrefixesSoATypedDashEntersNoteAgain() {
+        var session = noteSession(text: "", selection: start)
+        #expect(session.handle(.deleteBackward) == [.enterMode(.search)])
+        #expect(session.state == .init(mode: .search, text: "", selection: start, prefixesArmed: true))
+        #expect(session.handle(.insert("-", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.note)])
+        #expect(session.state == .init(mode: .note, text: "", selection: start))
+    }
+
+    @Test func clearingTheKeptTextAfterReturningArmsPrefixesAgain() {
         var session = noteSession(text: "milk", selection: start)
         _ = session.handle(.deleteBackward)
         _ = session.handle(.edited(text: "", selection: start))
-        let effects = session.handle(.insert("-", replacing: start, provenance: .typed))
-        #expect(effects.isEmpty)
-        #expect(session.state == .init(mode: .search, text: "-", selection: NSRange(location: 1, length: 0), prefixesArmed: false))
+        #expect(session.state == .init(mode: .search, text: "", selection: start, prefixesArmed: true))
+        #expect(session.handle(.insert("-", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.note)])
+        #expect(session.state == .init(mode: .note, text: "", selection: start))
+    }
+
+    @Test func deletingTheKeptTextAfterReturningArmsPrefixesAgain() {
+        // Ordinary deletion and cut ask about an empty insertion before the editor syncs.
+        var session = noteSession(text: "milk", selection: start)
+        _ = session.handle(.deleteBackward)
+        _ = session.handle(.insert("", replacing: NSRange(location: 0, length: 4), provenance: .programmatic))
+        #expect(session.state == .init(mode: .search, text: "", selection: start, prefixesArmed: true))
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+    }
+
+    @Test(arguments: [CaptureSession.Provenance.paste, .drop, .undo, .programmatic])
+    func untypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance: CaptureSession.Provenance) {
+        var session = noteSession(text: "", selection: start)
+        _ = session.handle(.deleteBackward)
+        #expect(session.handle(.insert("-", replacing: start, provenance: provenance)).isEmpty)
+        #expect(session.state.mode == .search && session.state.text == "-")
     }
 
     @Test(arguments: [CaptureSession.Event.invoked, .dismissed])
@@ -419,13 +444,20 @@ struct CaptureTaskTests {
         #expect(session.state == .init(mode: .note, text: "one\ntwo", selection: start))
     }
 
-    @Test func typedBracketAfterReturningAndClearingTheTextIsLiteralText() {
+    @Test func typedBracketAfterReturningAndClearingTheTextEntersTaskAgain() {
         var session = task("milk")
         _ = session.handle(.edited(text: "milk", selection: start))
         _ = session.handle(.deleteBackward)
         _ = session.handle(.edited(text: "", selection: start))
-        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)).isEmpty)
-        #expect(session.state == .init(mode: .search, text: "[", selection: NSRange(location: 1, length: 0), prefixesArmed: false))
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+        #expect(session.state == .init(mode: .task, text: "", selection: start))
+    }
+
+    @Test func returningFromAnEmptyTaskArmsPrefixesSoATypedBracketEntersTaskAgain() {
+        var session = task("")
+        #expect(session.handle(.deleteBackward) == [.enterMode(.search)])
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+        #expect(session.state == .init(mode: .task, text: "", selection: start))
     }
 
     @Test(arguments: [CaptureSession.Event.invoked, .dismissed])

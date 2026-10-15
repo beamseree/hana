@@ -191,6 +191,20 @@ struct NativeEditingTests {
         #expect(interaction.query == "-milk")
     }
 
+    @Test func dashBackspaceDashEntersNoteAgainWithAnEmptyBuffer() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let none = NSRange(location: NSNotFound, length: 0)
+        editor.insertText("-", replacementRange: none)
+        #expect(interaction.mode == .note)
+        editor.keyDown(with: try backspaceKey())
+        #expect(interaction.mode == .search)
+        editor.insertText("-", replacementRange: none)
+        #expect(interaction.mode == .note)
+        #expect(editor.string.isEmpty)
+        #expect(interaction.modeLabelText == "Note")
+    }
+
     @Test func backspaceAfterTheStartOfNoteDeletesNormally() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
