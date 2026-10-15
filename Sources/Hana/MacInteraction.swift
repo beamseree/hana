@@ -10,10 +10,20 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         fileprivate let id = UUID()
     }
 
-    /// The native open acknowledgment contains the exact running instance's
-    /// activation effect. Issuing that effect is fenced by invocation/query.
-    struct OpenedApplication {
-        let activate: @MainActor () -> Bool
+    /// A destination that passed revalidation, so the bar can close. `open`
+    /// issues the native open, whose acknowledgment can wait until a slow app
+    /// finishes launching; it yields the exact running instance's activation.
+    struct ValidatedDestination {
+        let open: @MainActor () async throws -> @MainActor () -> Bool
+
+        init(open: @escaping @MainActor () async throws -> @MainActor () -> Bool) {
+            self.open = open
+        }
+
+        /// One whose native open is already acknowledged.
+        init(activate: @escaping @MainActor () -> Bool) {
+            open = { activate }
+        }
     }
 
     enum DismissalReason: String {
@@ -51,8 +61,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var confirmationTask: Task<Void, Never>?
     private let loadingIndicator = NSProgressIndicator()
     private let search: Search
-    private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
-    private let openFile: @MainActor (URL) async throws -> OpenedApplication
+    private let launchApplication: @MainActor (URL) async throws -> ValidatedDestination
+    private let openFile: @MainActor (URL) async throws -> ValidatedDestination
     private let loadIcon: @MainActor (URL, CGFloat) async -> ResultIcon?
     private var iconRequests: Set<SearchResult.ID> = []
     /// Icons for current results only; Result Icons owns the bounded cache.
@@ -127,8 +137,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var currentPlacement: Placement?
 
     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
-         launchApplication: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.launch,
-         openFile: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.openFileDestination,
+         launchApplication: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.launch,
+         openFile: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.openFileDestination,
          loadIcon: (@MainActor (URL, CGFloat) async -> ResultIcon?)? = nil,
          collection: Task<CollectionStore, any Error>? = nil, confirmationDuration: Duration = .milliseconds(500),
          frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
@@ -974,22 +984,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         record("launch.request", extra: ["destinationKind": destination.typeLabel])
         return Task {
             guard currentInvocation == invocation, pendingLaunch == operation else { return }
+            let validated: ValidatedDestination
             do {
-                let opened = try await (destination.kind == .application ? launchApplication(destination.url) : openFile(destination.url))
-                guard currentInvocation == invocation, pendingLaunch == operation else {
-                    record("launch.stale-acknowledgment")
-                    return
-                }
-                pendingLaunch = nil
-                search.recordOpened(destination.id)
-                record("launch.acknowledged")
-                guard request?.generation == generation else { renderResults(); return }
-                // No await between the fence, dismissal, and activation. The
-                // workspace open itself requested no activation, so an obsolete
-                // completion cannot initiate a late focus/Space transfer.
-                dismiss(invocation, reason: .destination)
-                let accepted = opened.activate()
-                record("launch.activation-request", extra: ["accepted": accepted])
+                validated = try await (destination.kind == .application ? launchApplication(destination.url) : openFile(destination.url))
             } catch {
                 guard currentInvocation == invocation, pendingLaunch == operation else { return }
                 pendingLaunch = nil
@@ -998,6 +995,34 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 }
                 renderResults()
                 // Numeric classification only; localized errors may expose paths.
+                let failure = error as NSError
+                record("launch.failed", extra: ["errorDomain": failure.domain, "errorCode": failure.code])
+                return
+            }
+            guard currentInvocation == invocation, pendingLaunch == operation else {
+                record("launch.stale-validation")
+                return
+            }
+            pendingLaunch = nil
+            guard request?.generation == generation else { renderResults(); return }
+            // Close before the native open: a slow-launching app must not hold
+            // the bar. Its failures can no longer show here, so they only beep.
+            dismiss(invocation, reason: .destination)
+            let frontmost = frontmostApplication()?.processIdentifier
+            do {
+                let activate = try await validated.open()
+                search.recordOpened(destination.id)
+                record("launch.acknowledged")
+                // The workspace open requested no activation. Never activate it
+                // over a later user choice: a newer bar or another app in front.
+                guard currentInvocation == nil, frontmostApplication()?.processIdentifier == frontmost else {
+                    record("launch.activation-skipped")
+                    return
+                }
+                let accepted = activate()
+                record("launch.activation-request", extra: ["accepted": accepted])
+            } catch {
+                NSSound.beep()
                 let failure = error as NSError
                 record("launch.failed", extra: ["errorDomain": failure.domain, "errorCode": failure.code])
             }
@@ -1017,24 +1042,23 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         return "macOS couldn’t open this destination. Check it in Finder and its default app, then retry."
     }
 
-    private static func launch(_ url: URL) async throws -> OpenedApplication {
+    private static func launch(_ url: URL) async throws -> ValidatedDestination {
         guard FileManager.default.fileExists(atPath: url.path),
               let bundle = Bundle(url: url), let executable = bundle.executableURL,
               FileManager.default.isExecutableFile(atPath: executable.path) else {
             throw CocoaError(.fileNoSuchFile)
         }
-        let configuration = NSWorkspace.OpenConfiguration()
-        configuration.activates = false
-        configuration.allowsRunningApplicationSubstitution = false
-        configuration.promptsUserIfNeeded = false
-        let application = try await NSWorkspace.shared.openApplication(at: url, configuration: configuration)
-        return OpenedApplication {
-            guard let source = NSWorkspace.shared.frontmostApplication else { return application.activate(options: []) }
-            return application.activate(from: source, options: [])
+        return ValidatedDestination {
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.activates = false
+            configuration.allowsRunningApplicationSubstitution = false
+            configuration.promptsUserIfNeeded = false
+            let application = try await NSWorkspace.shared.openApplication(at: url, configuration: configuration)
+            return { requestActivation(application) }
         }
     }
 
-    private static func openFileDestination(_ url: URL) async throws -> OpenedApplication {
+    private static func openFileDestination(_ url: URL) async throws -> ValidatedDestination {
         // Revalidate off the input actor: a disconnected volume must not block typing.
         try await Task.detached(priority: .userInitiated) {
             guard Search.eligible(url) else { throw CocoaError(.fileReadUnknown) }
@@ -1042,14 +1066,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             // erase the distinction between missing resources and access denial.
             _ = try FileManager.default.attributesOfItem(atPath: url.path)
         }.value
-        let configuration = NSWorkspace.OpenConfiguration()
-        configuration.activates = false
-        configuration.promptsUserIfNeeded = false
-        let application = try await NSWorkspace.shared.open(url, configuration: configuration)
-        return OpenedApplication {
-            guard let source = NSWorkspace.shared.frontmostApplication else { return application.activate(options: []) }
-            return application.activate(from: source, options: [])
+        return ValidatedDestination {
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.activates = false
+            configuration.promptsUserIfNeeded = false
+            let application = try await NSWorkspace.shared.open(url, configuration: configuration)
+            return { requestActivation(application) }
         }
+    }
+
+    private static func requestActivation(_ application: NSRunningApplication) -> Bool {
+        guard let source = NSWorkspace.shared.frontmostApplication else { return application.activate(options: []) }
+        return application.activate(from: source, options: [])
     }
 
     /// Composition counts as a query: the placeholder is already hidden.
