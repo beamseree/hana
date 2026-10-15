@@ -364,7 +364,7 @@ struct MacInteractionTests {
         interaction.dismiss(old, reason: .escape)
         let fresh = interaction.presentBar()
         defer { interaction.dismiss(fresh, reason: .outsideClick) }
-        #expect(!interaction.open(.mockNoteA, from: old))
+        #expect(!interaction.open(.main, from: old))
         #expect(interaction.currentInvocation == fresh)
     }
 

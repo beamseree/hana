@@ -10,7 +10,7 @@ A personal native macOS app for quick capture without leaving the current activi
 
 ## Status
 
-Beam confirmed the complete product scope on 2026-10-13 and requested a dedicated project directory. The grilling interview is complete. This project currently contains design documentation only; no app implementation has been created. Technical validation and implementation choices remain separate from the accepted product behavior.
+Beam confirmed the complete product scope on 2026-10-13. Hana now has a native AppKit/SwiftUI app: mixed application/file Search, Note and Task capture, a durable SQLite Collection Store, and a main window showing live saved notes. Working-window organization and note editing are being delivered under #88; Inbox, Today, Completed and Archive currently have placeholders in the main window. Full collection export and manual validated snapshots exist at the recovery interface and fixture harness. Automatic backups and restore remain deferred, so Hana is not yet a safe sole home for important content. Accepted requirements, automated checks and interactive observations remain distinct; see the evidence records for verified scope.
 
 ## Confirmed decisions
 
@@ -83,14 +83,14 @@ These are requirements, not verified implementation results.
 
 ## Codebase
 
-The interview created no code. Subsequent work added an isolated native prototype; GitHub tracker setup on 2026-10-13 established the repository below. No production app scaffold exists.
+The repository contains the native Hana application under `Sources/Hana`, tests under `Tests/HanaTests`, build/run scripts, design documents and evidence records. The original native window-focus experiment remains on its isolated prototype branch.
 
 | Field | Value |
 | --- | --- |
 | Local path | `/Users/beamsereeyothin/Documents/Projects/hana` |
-| Working branch | `main` for project documentation and tracker setup; `prototype/window-focus` for the isolated experiment |
+| Working branch | `main` for the application and documentation; `prototype/window-focus` for the isolated experiment |
 | Remote | Private GitHub repository: [beamseree/hana](https://github.com/beamseree/hana) |
-| Stack | AppKit/SwiftUI and SQLite through GRDB selected in technical design; no implementation yet |
+| Stack | Swift 6, AppKit windows and text input, SwiftUI views, SQLite through pinned GRDB; Swift Package Manager builds an app bundle with `scripts/build` |
 
 ## Related
 

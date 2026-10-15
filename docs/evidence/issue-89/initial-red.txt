@@ -1,0 +1,218 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Write sources
+[2/8] Write swift-version--112E4EF74740DA65.txt
+[4/30] Compiling Hana ModeIcon.swift
+[5/30] Compiling Hana NoteScroller.swift
+[6/30] Compiling Hana SpotlightSource.swift
+[7/30] Compiling Hana HanaFont.swift
+[8/30] Compiling Hana HanaRadius.swift
+[9/30] Emitting module Hana
+[10/30] Compiling Hana HanaShadow.swift
+[11/30] Compiling Hana MacInteraction.swift
+[12/30] Compiling Hana CaptureSession.swift
+[13/30] Compiling Hana CollectionStore.swift
+[14/30] Compiling Hana SearchCorrectnessValidation.swift
+[15/30] Compiling Hana SearchName.swift
+[16/30] Compiling Hana PerformanceValidation.swift
+[17/30] Compiling Hana Search.swift
+[18/30] Compiling Hana HanaApp.swift
+[19/30] Compiling Hana HanaColor.swift
+[20/30] Compiling Hana SearchResultsView.swift
+[21/30] Compiling Hana SegmentedControl.swift
+[22/30] Compiling Hana Diagnostics.swift
+[23/30] Compiling Hana FocusedWindowGeometry.swift
+[24/30] Compiling Hana ApplicationCatalog.swift
+[25/30] Compiling Hana BarStyle.swift
+[26/42] Compiling Hana WorkingWindowController.swift
+[27/43] Compiling Hana CollectionSnapshots.swift
+[28/43] Compiling Hana CollectionExportFixture.swift
+[29/43] Compiling Hana GlobalShortcut.swift
+[30/43] Compiling Hana CoverageValidation.swift
+[31/43] Compiling Hana CollectionExport.swift
+[32/43] Compiling Hana ResultIcons.swift
+[33/43] Compiling Hana CollectionSnapshotFixture.swift
+[34/43] Compiling Hana CollectionSchema.swift
+[35/43] Compiling Hana CollectionLocation.swift
+[36/43] Compiling Hana DisplayPlacement.swift
+[37/43] Compiling Hana MixedSearchValidation.swift
+[38/43] Compiling Hana CollectionFixtureHarness.swift
+[38/43] Write Objects.LinkFileList
+[39/43] Linking Hana
+[40/43] Applying Hana
+[42/75] Compiling HanaTests ResultIconsTests.swift
+[43/75] Compiling HanaTests SearchExclusionTests.swift
+[44/75] Compiling HanaTests SearchRankingTests.swift
+[45/75] Compiling HanaTests SpotlightStageTests.swift
+[46/75] Compiling HanaTests SuggestionInteractionTests.swift
+[47/77] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[48/77] Compiling HanaTests CollectionSnapshotTests.swift
+[49/77] Compiling HanaTests CollectionStoreOpeningTests.swift
+[50/77] Emitting module HanaTests
+[51/77] Compiling HanaTests CollectionStoreTests.swift
+[52/77] Compiling HanaTests DisplayPlacementTests.swift
+[53/77] Compiling HanaTests IndependentExportDecoder.swift
+[54/77] Compiling HanaTests SearchResponsivenessTests.swift
+[55/77] Compiling HanaTests SearchTests.swift
+[56/77] Compiling HanaTests SearchTypingGapTests.swift
+[57/77] Compiling HanaTests NativeEditingTests.swift
+[58/77] Compiling HanaTests NativeWindowSlot.swift
+[59/77] Compiling HanaTests NoteModeTests.swift
+[60/77] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:24:44: error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+22 |         defer { NSApp.windows.first { $0.title == "Hana" }?.close() }
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+   |                                            `- error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+26 |         clock.advance(by: 1)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:24:77: error: cannot infer key path type from context; consider explicitly specifying a root type
+22 |         defer { NSApp.windows.first { $0.title == "Hana" }?.close() }
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+   |                                                                             `- error: cannot infer key path type from context; consider explicitly specifying a root type
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+26 |         clock.advance(by: 1)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:25:29: error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+   |                             `- error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:25:62: error: cannot infer key path type from context; consider explicitly specifying a root type
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+   |                                                              `- error: cannot infer key path type from context; consider explicitly specifying a root type
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:28:44: error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+28 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, new.id, recent.id] }
+   |                                            `- error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+29 |         await store.close()
+30 |     }
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:28:77: error: cannot infer key path type from context; consider explicitly specifying a root type
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+28 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, new.id, recent.id] }
+   |                                                                             `- error: cannot infer key path type from context; consider explicitly specifying a root type
+29 |         await store.close()
+30 |     }
+[61/77] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:24:44: error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+22 |         defer { NSApp.windows.first { $0.title == "Hana" }?.close() }
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+   |                                            `- error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+26 |         clock.advance(by: 1)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:24:77: error: cannot infer key path type from context; consider explicitly specifying a root type
+22 |         defer { NSApp.windows.first { $0.title == "Hana" }?.close() }
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+   |                                                                             `- error: cannot infer key path type from context; consider explicitly specifying a root type
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+26 |         clock.advance(by: 1)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:25:29: error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+   |                             `- error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:25:62: error: cannot infer key path type from context; consider explicitly specifying a root type
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+   |                                                              `- error: cannot infer key path type from context; consider explicitly specifying a root type
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:28:44: error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+28 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, new.id, recent.id] }
+   |                                            `- error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+29 |         await store.close()
+30 |     }
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:28:77: error: cannot infer key path type from context; consider explicitly specifying a root type
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+28 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, new.id, recent.id] }
+   |                                                                             `- error: cannot infer key path type from context; consider explicitly specifying a root type
+29 |         await store.close()
+30 |     }
+[62/77] Compiling HanaTests ModeIconTests.swift
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:24:44: error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+22 |         defer { NSApp.windows.first { $0.title == "Hana" }?.close() }
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+   |                                            `- error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+26 |         clock.advance(by: 1)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:24:77: error: cannot infer key path type from context; consider explicitly specifying a root type
+22 |         defer { NSApp.windows.first { $0.title == "Hana" }?.close() }
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+   |                                                                             `- error: cannot infer key path type from context; consider explicitly specifying a root type
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+26 |         clock.advance(by: 1)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:25:29: error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+   |                             `- error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:25:62: error: cannot infer key path type from context; consider explicitly specifying a root type
+23 |         #expect(interaction.open(.main))
+24 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, recent.id] }
+25 |         #expect(interaction.mainWindowPresentation?.rows.map(\.title) == ["Pinned", "Recent"])
+   |                                                              `- error: cannot infer key path type from context; consider explicitly specifying a root type
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:28:44: error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+28 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, new.id, recent.id] }
+   |                                            `- error: value of type 'MacInteraction' has no member 'mainWindowPresentation'
+29 |         await store.close()
+30 |     }
+
+/Users/beamsereeyothin/Documents/Projects/hana/Tests/HanaTests/MainWindowTests.swift:28:77: error: cannot infer key path type from context; consider explicitly specifying a root type
+26 |         clock.advance(by: 1)
+27 |         let new = try await store.perform(.createNote(operation: UUID(), body: "New"), in: g)
+28 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [pinned.id, new.id, recent.id] }
+   |                                                                             `- error: cannot infer key path type from context; consider explicitly specifying a root type
+29 |         await store.close()
+30 |     }
+[63/77] Compiling HanaTests TaskSaveTests.swift
+[64/77] Compiling HanaTests TestClock.swift
+[65/77] Compiling HanaTests CollectionExportHarnessTests.swift
+[66/77] Compiling HanaTests CollectionExportTests.swift
+[67/77] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[68/77] Compiling HanaTests NoteOrganizationTests.swift
+[69/77] Compiling HanaTests NoteSaveTests.swift
+[70/77] Compiling HanaTests OrganizedCollectionFixture.swift
+[71/77] Compiling HanaTests CaptureSafetyNativeTests.swift
+[72/77] Compiling HanaTests CaptureSafetyTests.swift
+[73/77] Compiling HanaTests CaptureSessionTests.swift
+[74/77] Compiling HanaTests TaskLifecycleTests.swift
+[75/77] Compiling HanaTests TaskOrderingTests.swift
+error: fatalError

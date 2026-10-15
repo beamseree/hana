@@ -1,0 +1,30 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Compiling HanaTests MainWindowTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.98s)
+Test Suite 'Selected tests' started at 2026-10-15 16:27:57.530.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 16:27:57.532.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 16:27:57.532.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 16:27:57.532.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite MainWindowTests started.
+􀟈  Test notesShowCommittedStoreOrderAndUpdateWhileOpen() started.
+􁁛  Test notesShowCommittedStoreOrderAndUpdateWhileOpen() passed after 0.404 seconds.
+􀟈  Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+􀟈  Test case passing 1 argument openingFails → false to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+􀟈  Test case passing 1 argument openingFails → true to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+􁁛  Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) with 2 test cases passed after 0.231 seconds.
+􀟈  Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() started.
+􁁛  Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() passed after 1.432 seconds.
+􀟈  Test menusOpenTheSameMainWindowWithoutMockDestinations() started.
+􁁛  Test menusOpenTheSameMainWindowWithoutMockDestinations() passed after 0.260 seconds.
+􁁛  Suite MainWindowTests passed after 2.329 seconds.
+􁁛  Test run with 4 tests in 1 suite passed after 2.329 seconds.
