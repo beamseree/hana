@@ -505,6 +505,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         editor.delegate = self
         editor.escape = { [weak self] in
             guard let self, let invocation = self.currentInvocation else { return }
+            self.updateAutomaticSwitchEligibility()
             let effects = self.automaticSwitch?.handle(.reversed(.escape)) ?? []
             if effects.contains(where: { if case .returnToSearch = $0 { true } else { false } }) {
                 self.performAutomaticSwitch(effects)

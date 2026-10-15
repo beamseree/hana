@@ -25,7 +25,7 @@ struct AutomaticSwitch {
         case record(AutomaticSwitchDiagnostics.Event)
     }
     private struct Request { let id: UUID; let started: Duration }
-    private struct Candidate { let verdict: ClassifierVerdict; let latency: Double }
+    private struct Candidate { let verdict: ClassifierVerdict; let latency: Double? }
     let options: AutomaticSwitchOptions
     private let now: () -> Duration
     private var active = false
@@ -36,6 +36,8 @@ struct AutomaticSwitch {
     private var mode = CaptureSession.Mode.search
     private var gate = StrongMatchGate.Evaluation(decision: .blocked(.collectionUnavailable), settled: false, allSourcesSettled: false)
     private var request: Request?
+    // A timeout already sampled latency; retain the later stale row without sampling it again.
+    private var timedOutRequests: Set<UUID> = []
     private var due: Duration?
     private var changedAt: Duration = .zero
     private var candidate: Candidate?
@@ -61,6 +63,7 @@ struct AutomaticSwitch {
             let effects = cancel()
             active = true; text = ""; composing = false; eligible = true; suspended = false
             mode = .search; candidate = nil; due = nil; agreements = 0; agreementLabel = nil
+            timedOutRequests = []
             switchedAt = nil; hadSwitch = false; actedOnText = nil; ended = false; lastVerdict = .none; lateKind = nil
             return effects
         case .dismissed(let end):
@@ -92,10 +95,7 @@ struct AutomaticSwitch {
                 var effects: [Effect] = [.record(.lateStrongMatch(kind: diagnosticKind(kind),
                     outcome: options.lateStrongMatch == .stay ? .stayed : .returnedToSearch))]
                 if options.lateStrongMatch == .returnToSearch, eligible, !composing {
-                    self.switchedAt = nil; mode = .search; candidate = nil; due = nil
-                    suspended = options.reversalSuspends
-                    effects += cancel(); effects.append(.returnToSearch)
-                    if !ended { effects.append(.record(.ended(.reversed))); ended = true }
+                    effects += returnToSearch()
                 }
                 return effects
             }
@@ -111,7 +111,7 @@ struct AutomaticSwitch {
             return []
         case .verdict(let id, let verdict, let latency):
             let value = Candidate(verdict: verdict, latency: latency)
-            guard request?.id == id else { return [diagnostic(value, .stale)] }
+            guard request?.id == id else { return [staleDiagnostic(id: id, value: value)] }
             if let timeout = timeoutIfDue() { return timeout }
             request = nil
             lastVerdict = diagnosticLabel(verdict.label)
@@ -119,7 +119,7 @@ struct AutomaticSwitch {
             return apply(value)
         case .failed(let id, let kind, let latency):
             guard request?.id == id else {
-                return [diagnostic(Candidate(verdict: .init(label: .unsure), latency: latency), .stale)]
+                return [staleDiagnostic(id: id, value: Candidate(verdict: .init(label: .unsure), latency: latency))]
             }
             if let timeout = timeoutIfDue() { return timeout }
             request = nil; candidate = nil; agreements = 0; agreementLabel = nil
@@ -133,15 +133,10 @@ struct AutomaticSwitch {
                   now() - switchedAt < .milliseconds(300) else { return [] }
             return [.swallowEnter]
         case .reversed(let method):
-            guard let switchedAt, mode != .search,
+            guard eligible, !composing, let switchedAt, mode != .search,
                   method == .backspace || options.escapeBehavior == .returnsToSearch else { return [] }
-            var effects = cancel()
-            effects += [.returnToSearch, .record(.reversed(method: method,
-                millisecondsSinceSwitch: milliseconds(now() - switchedAt)))]
-            if !ended { effects.append(.record(.ended(.reversed))); ended = true }
-            self.switchedAt = nil; mode = .search; candidate = nil; due = nil
-            suspended = options.reversalSuspends; agreements = 0; agreementLabel = nil
-            return effects
+            return returnToSearch(recording: .reversed(method: method,
+                millisecondsSinceSwitch: milliseconds(now() - switchedAt)))
         case .manualModeChanged(let mode):
             self.mode = mode; switchedAt = nil; candidate = nil; due = nil
             return cancel()
@@ -153,9 +148,21 @@ struct AutomaticSwitch {
         }
     }
 
+    /// Both reversal routes reset the same session state and end a switch once.
+    private mutating func returnToSearch(recording event: AutomaticSwitchDiagnostics.Event? = nil) -> [Effect] {
+        var effects = cancel()
+        switchedAt = nil; mode = .search; candidate = nil; due = nil
+        suspended = options.reversalSuspends; agreements = 0; agreementLabel = nil
+        effects.append(.returnToSearch)
+        if let event { effects.append(.record(event)) }
+        if !ended { effects.append(.record(.ended(.reversed))); ended = true }
+        return effects
+    }
+
     private mutating func timeoutIfDue() -> [Effect]? {
         guard let request, now() - request.started >= .milliseconds(1500) else { return nil }
         self.request = nil; candidate = nil
+        timedOutRequests.insert(request.id)
         return [.cancel(request.id), diagnostic(Candidate(verdict: .init(label: .unsure),
             latency: milliseconds(now() - request.started)), .timeout)]
     }
@@ -208,6 +215,11 @@ struct AutomaticSwitch {
         return [diagnostic(value, .switched), transition,
                 .record(.switched(mode: AutomaticSwitchDiagnostics.Mode(rawValue: target.rawValue)!))]
     }
+    private func staleDiagnostic(id: UUID, value: Candidate) -> Effect {
+        diagnostic(Candidate(verdict: value.verdict,
+            latency: timedOutRequests.contains(id) ? nil : value.latency), .stale)
+    }
+
     private func diagnostic(_ value: Candidate?, _ outcome: AutomaticSwitchDiagnostics.Outcome,
                             error: AutomaticSwitchDiagnostics.ErrorKind? = nil) -> Effect {
         var row = AutomaticSwitchDiagnostics.Verdict(classifier: options.classifier,

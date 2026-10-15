@@ -32,6 +32,18 @@ struct AutomaticSwitchTests {
         #expect(lateOutcomes(completed) == [.returnedToSearch])
     }
 
+    @Test(arguments: [AutomaticSwitchDiagnostics.ReversalMethod.escape, .backspace])
+    func ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method: AutomaticSwitchDiagnostics.ReversalMethod) throws {
+        var h = Harness()
+        let id = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        _ = h.policy.handle(.verdict(id: id, .init(label: .note), latencyMilliseconds: 12))
+        _ = h.policy.handle(.eligibilityChanged(false))
+        #expect(h.policy.handle(.reversed(method)).isEmpty)
+        #expect(h.policy.lastModeChangeWasAutomatic)
+        let finished = h.policy.handle(.dismissed(.saved))
+        #expect(finished.contains { if case .record(.ended(.saved)) = $0 { true } else { false } })
+    }
+
     @Test func responseAtTheTimeoutCannotSwitchBeforeTheNextTick() throws {
         var h = Harness()
         let id = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
@@ -242,6 +254,36 @@ struct AutomaticSwitchTests {
         let rows = try String(contentsOf: log.url, encoding: .utf8)
         #expect(!rows.contains(secret) && !rows.contains("private policy"))
         #expect(rows.contains("suspended") && rows.contains("blocked") && rows.contains("autoswitch.ended"))
+    }
+
+    @Test(arguments: [false, true])
+    func timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict: Bool) throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let log = AutomaticSwitchDiagnostics(file: directory.appendingPathComponent("automatic-switch.jsonl"))
+        var h = Harness()
+        func record(_ effects: [AutomaticSwitch.Effect]) {
+            for effect in effects { if case .record(let event) = effect { log.record(event, options: h.policy.options) } }
+        }
+        let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
+        h.clock.advance(by: .milliseconds(1500))
+        record(h.policy.handle(.tick))
+        let stale = h.policy.handle(lateVerdict
+            ? .verdict(id: first, .init(label: .task), latencyMilliseconds: 1700)
+            : .failed(id: first, .other, latencyMilliseconds: 1700))
+        #expect(outcomes(stale) == [.stale])
+        record(stale)
+        let second = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom tomorrow", composing: false))).first?.id)
+        record(h.policy.handle(.verdict(id: second, .init(label: .search), latencyMilliseconds: 100)))
+        let counts = AutomaticSwitchDiagnostics(file: log.url).counts()
+        #expect(counts.timeouts == 1 && counts.errors == 0)
+        // Exactly two observations: the 1500 ms abandonment and the 100 ms normal verdict.
+        #expect(counts.latencies[.foundationModels]?.medianMilliseconds == 800)
+        #expect(counts.latencies[.foundationModels]?.maximumMilliseconds == 1500)
+        let rows = try String(contentsOf: log.url, encoding: .utf8).split(separator: "\n")
+            .map { try #require(JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any]) }
+        #expect(rows.filter { $0["latencyMilliseconds"] != nil }.count == 2)
+        #expect(rows.filter { $0["outcome"] as? String == "stale" }.count == 1)
     }
 
     private func outcomes(_ effects: [AutomaticSwitch.Effect]) -> [AutomaticSwitchDiagnostics.Outcome] {
