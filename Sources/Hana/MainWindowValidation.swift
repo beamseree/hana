@@ -70,7 +70,7 @@ func validateMainWindow(register: (MacInteraction) -> Void) async {
         await openedStore.close()
         try FileManager.default.removeItem(at: root)
         diagnostics.record("main-window.validation-passed", state: [:])
-        NSApp.terminate(nil)
+        RunLoop.main.perform(inModes: [.common]) { MainActor.assumeIsolated { NSApp.terminate(nil) } }
     } catch {
         let step = (error as? MainWindowCheck)?.step ?? "fixture-storage"
         diagnostics.record("main-window.validation-failed", state: ["step": step])
