@@ -11,7 +11,11 @@ The compact entry point for finding notes and tasks, launching apps, and finding
 The search bar's transformation into the interface needed for the current activity; a core part of the intended experience.
 
 **Mode**:
-An explicitly selected activity in the search bar, such as searching, capturing a note, or capturing a task.
+An activity the search bar is in, such as searching, capturing a note, or capturing a task, entered explicitly or by automatic switch.
+
+**Automatic switch**:
+A mode change the search bar makes on its own from the text typed in Search, which the user can reverse.
+_Avoid_: Auto-mode, smart mode.
 
 **Note**:
 A separate saved piece of writing within the app's collection.
