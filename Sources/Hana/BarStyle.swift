@@ -31,6 +31,8 @@ enum BarStyle {
     static let editorTopInset: CGFloat = 10
     /// Note's writing surface grows to this text height, then scrolls.
     static let noteMaxTextHeight: CGFloat = 240
+    /// A capture's one-line explanation below the writing surface.
+    static let noticeHeight: CGFloat = 24
 
     static let font = NSFont.systemFont(ofSize: 26)
     static let textColor = NSColor(srgbRed: 0x17 / 255, green: 0x17 / 255, blue: 0x17 / 255, alpha: 1)

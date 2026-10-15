@@ -39,7 +39,7 @@ A separate working window for an existing note, where edits autosave.
 An open main, note, or Settings window, including one that is minimized. The search bar is not a working window.
 
 **Invocation origin**:
-The app and editing context from which the search bar was opened; the intended typing destination when the bar is dismissed with Escape.
+The app and editing context from which the search bar was opened; the intended typing destination when the bar is dismissed with Escape or closes after a successful save.
 
 **Mode prefix**:
 A leading typed symbol that selects a capture mode from Search: `-` for Note and `[` for Task. Pasted symbols do not select modes; a typed mode prefix is not part of the captured content.
