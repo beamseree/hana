@@ -1,0 +1,133 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests WorkingWindowsValidationTests.swift
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:17:40: error: cannot find 'WorkingWindowsFixture' in scope
+15 |         let root = FileManager.default.temporaryDirectory.appendingPathComponent("hana-working-fixture-\(UUID())")
+16 |         defer { try? FileManager.default.removeItem(at: root) }
+17 |         let (store, first) = try await WorkingWindowsFixture.open(root: root)
+   |                                        `- error: cannot find 'WorkingWindowsFixture' in scope
+18 |         let noteID = try #require(first.notes["quit"])
+19 |         let note = try #require(try await store.read(.note(noteID), in: store.generation))
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:19:55: error: cannot infer contextual base in reference to member 'note'
+17 |         let (store, first) = try await WorkingWindowsFixture.open(root: root)
+18 |         let noteID = try #require(first.notes["quit"])
+19 |         let note = try #require(try await store.read(.note(noteID), in: store.generation))
+   |                                                       `- error: cannot infer contextual base in reference to member 'note'
+20 |         _ = try await store.perform(.editNote(noteID, expectedRevision: note.revision, body: "Changed ไทย🌸"), in: store.generation)
+21 |         let records = try await store.read(.allRecords, in: store.generation)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:20:38: error: cannot infer contextual base in reference to member 'editNote'
+18 |         let noteID = try #require(first.notes["quit"])
+19 |         let note = try #require(try await store.read(.note(noteID), in: store.generation))
+20 |         _ = try await store.perform(.editNote(noteID, expectedRevision: note.revision, body: "Changed ไทย🌸"), in: store.generation)
+   |                                      `- error: cannot infer contextual base in reference to member 'editNote'
+21 |         let records = try await store.read(.allRecords, in: store.generation)
+22 |         #expect(records.notes.count == 6 && records.tasks.count == 10)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:21:45: error: cannot infer contextual base in reference to member 'allRecords'
+19 |         let note = try #require(try await store.read(.note(noteID), in: store.generation))
+20 |         _ = try await store.perform(.editNote(noteID, expectedRevision: note.revision, body: "Changed ไทย🌸"), in: store.generation)
+21 |         let records = try await store.read(.allRecords, in: store.generation)
+   |                                             `- error: cannot infer contextual base in reference to member 'allRecords'
+22 |         #expect(records.notes.count == 6 && records.tasks.count == 10)
+23 |         #expect(try await store.read(.inbox, in: store.generation).count == 3)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:23:39: error: cannot infer contextual base in reference to member 'inbox'
+21 |         let records = try await store.read(.allRecords, in: store.generation)
+22 |         #expect(records.notes.count == 6 && records.tasks.count == 10)
+23 |         #expect(try await store.read(.inbox, in: store.generation).count == 3)
+   |                                       `- error: cannot infer contextual base in reference to member 'inbox'
+24 |         #expect(try await store.read(.today, in: store.generation).count == 3)
+25 |         #expect(try await store.read(.completedTasks, in: store.generation).count == 2)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:24:39: error: cannot infer contextual base in reference to member 'today'
+22 |         #expect(records.notes.count == 6 && records.tasks.count == 10)
+23 |         #expect(try await store.read(.inbox, in: store.generation).count == 3)
+24 |         #expect(try await store.read(.today, in: store.generation).count == 3)
+   |                                       `- error: cannot infer contextual base in reference to member 'today'
+25 |         #expect(try await store.read(.completedTasks, in: store.generation).count == 2)
+26 |         #expect(try await store.read(.archivedTasks, in: store.generation).count == 2)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:25:39: error: cannot infer contextual base in reference to member 'completedTasks'
+23 |         #expect(try await store.read(.inbox, in: store.generation).count == 3)
+24 |         #expect(try await store.read(.today, in: store.generation).count == 3)
+25 |         #expect(try await store.read(.completedTasks, in: store.generation).count == 2)
+   |                                       `- error: cannot infer contextual base in reference to member 'completedTasks'
+26 |         #expect(try await store.read(.archivedTasks, in: store.generation).count == 2)
+27 |         await store.close()
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:26:39: error: cannot infer contextual base in reference to member 'archivedTasks'
+24 |         #expect(try await store.read(.today, in: store.generation).count == 3)
+25 |         #expect(try await store.read(.completedTasks, in: store.generation).count == 2)
+26 |         #expect(try await store.read(.archivedTasks, in: store.generation).count == 2)
+   |                                       `- error: cannot infer contextual base in reference to member 'archivedTasks'
+27 |         await store.close()
+28 |         let (reopened, second) = try await WorkingWindowsFixture.open(root: root)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:28:44: error: cannot find 'WorkingWindowsFixture' in scope
+26 |         #expect(try await store.read(.archivedTasks, in: store.generation).count == 2)
+27 |         await store.close()
+28 |         let (reopened, second) = try await WorkingWindowsFixture.open(root: root)
+   |                                            `- error: cannot find 'WorkingWindowsFixture' in scope
+29 |         #expect(first == second)
+30 |         #expect(try await reopened.read(.allRecords, in: reopened.generation) == records)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:30:42: error: cannot infer contextual base in reference to member 'allRecords'
+28 |         let (reopened, second) = try await WorkingWindowsFixture.open(root: root)
+29 |         #expect(first == second)
+30 |         #expect(try await reopened.read(.allRecords, in: reopened.generation) == records)
+   |                                          `- error: cannot infer contextual base in reference to member 'allRecords'
+31 |         #expect(try await reopened.read(.note(noteID), in: reopened.generation)?.body == "Changed ไทย🌸")
+32 |         await reopened.close()
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:31:42: error: cannot infer contextual base in reference to member 'note'
+29 |         #expect(first == second)
+30 |         #expect(try await reopened.read(.allRecords, in: reopened.generation) == records)
+31 |         #expect(try await reopened.read(.note(noteID), in: reopened.generation)?.body == "Changed ไทย🌸")
+   |                                          `- error: cannot infer contextual base in reference to member 'note'
+32 |         await reopened.close()
+33 |         try FileManager.default.removeItem(at: root.appendingPathComponent(WorkingWindowsFixture.sidecarName))
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:33:76: error: cannot find 'WorkingWindowsFixture' in scope
+31 |         #expect(try await reopened.read(.note(noteID), in: reopened.generation)?.body == "Changed ไทย🌸")
+32 |         await reopened.close()
+33 |         try FileManager.default.removeItem(at: root.appendingPathComponent(WorkingWindowsFixture.sidecarName))
+   |                                                                            `- error: cannot find 'WorkingWindowsFixture' in scope
+34 |         await #expect(throws: (any Error).self) { try await WorkingWindowsFixture.open(root: root) }
+35 |     }
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:34:61: error: cannot find 'WorkingWindowsFixture' in scope
+32 |         await reopened.close()
+33 |         try FileManager.default.removeItem(at: root.appendingPathComponent(WorkingWindowsFixture.sidecarName))
+34 |         await #expect(throws: (any Error).self) { try await WorkingWindowsFixture.open(root: root) }
+   |                                                             `- error: cannot find 'WorkingWindowsFixture' in scope
+35 |     }
+36 | }
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:18:22: warning: no calls to throwing functions occur within 'try' expression
+16 |         defer { try? FileManager.default.removeItem(at: root) }
+17 |         let (store, first) = try await WorkingWindowsFixture.open(root: root)
+18 |         let noteID = try #require(first.notes["quit"])
+   |                      `- warning: no calls to throwing functions occur within 'try' expression
+19 |         let note = try #require(try await store.read(.note(noteID), in: store.generation))
+20 |         _ = try await store.perform(.editNote(noteID, expectedRevision: note.revision, body: "Changed ไทย🌸"), in: store.generation)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:19:20: warning: no calls to throwing functions occur within 'try' expression
+17 |         let (store, first) = try await WorkingWindowsFixture.open(root: root)
+18 |         let noteID = try #require(first.notes["quit"])
+19 |         let note = try #require(try await store.read(.note(noteID), in: store.generation))
+   |                    `- warning: no calls to throwing functions occur within 'try' expression
+20 |         _ = try await store.perform(.editNote(noteID, expectedRevision: note.revision, body: "Changed ไทย🌸"), in: store.generation)
+21 |         let records = try await store.read(.allRecords, in: store.generation)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:34:9: warning: no 'async' operations occur within 'await' expression
+32 |         await reopened.close()
+33 |         try FileManager.default.removeItem(at: root.appendingPathComponent(WorkingWindowsFixture.sidecarName))
+34 |         await #expect(throws: (any Error).self) { try await WorkingWindowsFixture.open(root: root) }
+   |         `- warning: no 'async' operations occur within 'await' expression
+35 |     }
+36 | }
+error: fatalError

@@ -8,8 +8,18 @@ struct HanaApp {
             Task.detached { exit(await CollectionFixtureHarness.run(Array(CommandLine.arguments.dropFirst(2)))) }
             dispatchMain()
         }
+        let fixtureOptions: WorkingWindowsOptions?
+        do { fixtureOptions = try WorkingWindowsOptions.parse(Array(CommandLine.arguments.dropFirst())) }
+        catch {
+            fputs("Hana: invalid working-windows fixture arguments. Require one mode, absolute fixture root and report path.\n", stderr)
+            exit(2)
+        }
+        if Bundle.main.bundleIdentifier == "com.beamseree.hana.validation.issue99", fixtureOptions == nil {
+            fputs("Hana: isolated working-windows bundle requires explicit fixture arguments.\n", stderr)
+            exit(2)
+        }
         let app = NSApplication.shared
-        let delegate = AppDelegate()
+        let delegate = AppDelegate(workingWindows: fixtureOptions)
         app.delegate = delegate
         withExtendedLifetime(delegate) { app.run() }
     }
@@ -18,17 +28,30 @@ struct HanaApp {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var interaction: MacInteraction?
-    /// The live collection. Only normal launch opens it, and only through the
-    /// production location; validation runs and the fixture harness never do.
+    /// Normal launch uses the production location; the explicit working-window
+    /// fixture registers its marked Store here for the same orderly quit path.
     private var collection: Task<CollectionStore, any Error>?
     private var termination: Task<Void, Never>?
+    private let workingWindows: WorkingWindowsOptions?
+    private var fixtureDiagnostics: Diagnostics?
 
-    init(interaction: MacInteraction? = nil) {
+    init(interaction: MacInteraction? = nil, workingWindows: WorkingWindowsOptions? = nil) {
         self.interaction = interaction
+        self.workingWindows = workingWindows
         super.init()
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        if let workingWindows {
+            Task {
+                await validateWorkingWindows(workingWindows) { collection, interaction, diagnostics in
+                    self.collection = collection
+                    self.interaction = interaction
+                    self.fixtureDiagnostics = diagnostics
+                }
+            }
+            return
+        }
         if CommandLine.arguments.contains("--validate-open-note-capture") {
             Task { await validateOpenNoteCapture { self.interaction = $0 } }
             return
@@ -87,6 +110,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 if let collection, let store = try? await collection.value { await store.close() }
                 allowed = true
             }
+            fixtureDiagnostics?.record("working-windows.quit-prepared", state: ["allowed": allowed])
             termination = nil
             sender.reply(toApplicationShouldTerminate: allowed)
         }
@@ -94,7 +118,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
-    func applicationWillTerminate(_ notification: Notification) { interaction?.stop() }
+    func applicationWillTerminate(_ notification: Notification) {
+        fixtureDiagnostics?.record("working-windows.will-terminate", state: [:])
+        interaction?.stop()
+    }
 }
 
 /// `--typing-gap-ms N` overrides the typing gap for performance validation.

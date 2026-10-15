@@ -1,0 +1,2 @@
+Normal quit/relaunch write phase exited successfully.
+Normal quit/relaunch verify phase exited successfully.

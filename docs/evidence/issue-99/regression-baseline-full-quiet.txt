@@ -1,0 +1,1103 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Write sources
+[2/8] Write swift-version--1AB21518FC5DEDBE.txt
+[4/42] Compiling Hana MixedSearchValidation.swift
+[5/42] Compiling Hana ModeIcon.swift
+[6/42] Compiling Hana NoteScroller.swift
+[7/45] Compiling Hana CoverageValidation.swift
+[8/45] Compiling Hana Diagnostics.swift
+[9/45] Compiling Hana DisplayPlacement.swift
+[10/45] Compiling Hana FocusedWindowGeometry.swift
+[11/45] Compiling Hana GlobalShortcut.swift
+[12/45] Compiling Hana HanaApp.swift
+[13/45] Compiling Hana HanaColor.swift
+[14/45] Compiling Hana HanaFont.swift
+[15/45] Compiling Hana ApplicationCatalog.swift
+[16/45] Compiling Hana BarStyle.swift
+[17/45] Compiling Hana CaptureSession.swift
+[18/45] Compiling Hana CollectionExport.swift
+[19/45] Compiling Hana SearchCorrectnessValidation.swift
+[20/45] Compiling Hana SearchName.swift
+[21/45] Compiling Hana SearchResultsView.swift
+[22/45] Compiling Hana SegmentedControl.swift
+[23/45] Compiling Hana SpotlightSource.swift
+[24/45] Compiling Hana WorkingWindowController.swift
+[25/45] Compiling Hana PerformanceValidation.swift
+[26/45] Compiling Hana ResultIcons.swift
+[27/45] Compiling Hana Search.swift
+[28/45] Compiling Hana CollectionSchema.swift
+[29/45] Compiling Hana CollectionSnapshotFixture.swift
+[30/45] Compiling Hana CollectionSnapshots.swift
+[31/45] Compiling Hana CollectionStore.swift
+[32/45] Compiling Hana CollectionExportFixture.swift
+[33/45] Compiling Hana CollectionFixtureHarness.swift
+[34/45] Compiling Hana CollectionLocation.swift
+[35/45] Compiling Hana CollectionRecovery.swift
+[36/45] Emitting module Hana
+[37/45] Compiling Hana HanaRadius.swift
+[38/45] Compiling Hana HanaShadow.swift
+[39/45] Compiling Hana MacInteraction.swift
+[40/45] Compiling Hana MainWindowValidation.swift
+[40/45] Write Objects.LinkFileList
+[41/45] Linking Hana
+[42/45] Applying Hana
+[44/76] Compiling HanaTests SearchResponsivenessTests.swift
+[45/76] Compiling HanaTests SearchTests.swift
+[46/76] Compiling HanaTests SearchTypingGapTests.swift
+[47/76] Compiling HanaTests SpotlightStageTests.swift
+[48/76] Compiling HanaTests SuggestionInteractionTests.swift
+[49/76] Compiling HanaTests TaskLifecycleTests.swift
+[50/79] Compiling HanaTests CollectionStoreOpeningTests.swift
+[51/79] Compiling HanaTests CollectionStoreTests.swift
+[52/79] Compiling HanaTests DisplayPlacementTests.swift
+[53/79] Compiling HanaTests IndependentExportDecoder.swift
+[54/79] Compiling HanaTests NativeEditingTests.swift
+[55/79] Compiling HanaTests NativeWindowSlot.swift
+[56/79] Compiling HanaTests NoteModeTests.swift
+[57/79] Compiling HanaTests ResultIconsTests.swift
+[58/79] Compiling HanaTests SearchExclusionTests.swift
+[59/79] Compiling HanaTests SearchRankingTests.swift
+[60/79] Compiling HanaTests NoteOrganizationTests.swift
+[61/79] Compiling HanaTests NoteSaveTests.swift
+[62/79] Compiling HanaTests OrganizedCollectionFixture.swift
+[63/79] Compiling HanaTests CollectionExportTests.swift
+[64/79] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[65/79] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[66/79] Compiling HanaTests CollectionSnapshotTests.swift
+[67/79] Emitting module HanaTests
+[68/79] Compiling HanaTests TaskOrderingTests.swift
+[69/79] Compiling HanaTests TaskSaveTests.swift
+[70/79] Compiling HanaTests TestClock.swift
+[71/79] Compiling HanaTests CaptureSafetyNativeTests.swift
+[72/79] Compiling HanaTests CaptureSafetyTests.swift
+[73/79] Compiling HanaTests CaptureSessionTests.swift
+[74/79] Compiling HanaTests CollectionExportHarnessTests.swift
+[75/79] Compiling HanaTests MacInteractionTests.swift
+<home>/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[76/79] Compiling HanaTests MainWindowTests.swift
+<home>/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[77/79] Compiling HanaTests ModeIconTests.swift
+<home>/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[77/79] Write Objects.LinkFileList
+[78/79] Linking HanaPackageTests
+Build complete! (9.13s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CaptureSafetyNativeTests started.
+◇ Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "-", outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "-", outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "-", outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "[", outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "[", outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+◇ Test case passing 2 arguments prefix → "[", outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+✔ Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) with 6 test cases passed after 1.528 seconds.
+◇ Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+✔ Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) with 2 test cases passed after 0.190 seconds.
+◇ Test anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+✔ Test anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) with 2 test cases passed after 0.709 seconds.
+✔ Suite CaptureSafetyNativeTests passed after 2.428 seconds.
+◇ Suite CaptureSafetyTests started.
+◇ Test dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) started.
+✔ Test dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) with 2 test cases passed after 0.001 seconds.
+◇ Test failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) started.
+✔ Test failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) with 2 test cases passed after 0.001 seconds.
+◇ Test editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test case passing 2 arguments prefix → "-", text → "edited" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test case passing 2 arguments prefix → "-", text → "Café" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test case passing 2 arguments prefix → "[", text → "edited" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test case passing 2 arguments prefix → "[", text → "Café" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+✔ Test editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) with 4 test cases passed after 0.001 seconds.
+◇ Test changingAFailedTasksDestinationStartsANewOperation() started.
+✔ Test changingAFailedTasksDestinationStartsANewOperation() passed after 0.001 seconds.
+◇ Test changingAFailedNotesModeStartsANewOperation() started.
+✔ Test changingAFailedNotesModeStartsANewOperation() passed after 0.001 seconds.
+◇ Test aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) started.
+✔ Test aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) with 2 test cases passed after 0.067 seconds.
+◇ Test aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) started.
+✔ Test aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) with 2 test cases passed after 0.065 seconds.
+◇ Test aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) started.
+✔ Test aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) with 2 test cases passed after 0.456 seconds.
+✔ Suite CaptureSafetyTests passed after 0.593 seconds.
+◇ Suite CaptureSessionTests started.
+◇ Test typedDashOnAnEmptyBufferEntersNoteWithoutBecomingText() started.
+✔ Test typedDashOnAnEmptyBufferEntersNoteWithoutBecomingText() passed after 0.001 seconds.
+◇ Test typedDashBeforeExistingSearchTextKeepsTheTextAndSelection() started.
+✔ Test typedDashBeforeExistingSearchTextKeepsTheTextAndSelection() passed after 0.001 seconds.
+◇ Test typedDashAfterTheStartIsLiteralText() started.
+✔ Test typedDashAfterTheStartIsLiteralText() passed after 0.001 seconds.
+◇ Test typedDashReplacingASelectionAtTheStartIsLiteralText() started.
+✔ Test typedDashReplacingASelectionAtTheStartIsLiteralText() passed after 0.001 seconds.
+◇ Test untypedDashAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .paste to untypedDashAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .drop to untypedDashAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .undo to untypedDashAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .redo to untypedDashAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .programmatic to untypedDashAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .composition to untypedDashAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .compositionCommit to untypedDashAtTheStartIsLiteralText(provenance:) started.
+✔ Test untypedDashAtTheStartIsLiteralText(provenance:) with 7 test cases passed after 0.001 seconds.
+◇ Test typedDashInNoteIsLiteralText() started.
+✔ Test typedDashInNoteIsLiteralText() passed after 0.001 seconds.
+◇ Test invocationAndDismissalDiscardTheCaptureAndArmPrefixes(event:) started.
+◇ Test case passing 1 argument event → .invoked to invocationAndDismissalDiscardTheCaptureAndArmPrefixes(event:) started.
+◇ Test case passing 1 argument event → .dismissed to invocationAndDismissalDiscardTheCaptureAndArmPrefixes(event:) started.
+✔ Test invocationAndDismissalDiscardTheCaptureAndArmPrefixes(event:) with 2 test cases passed after 0.001 seconds.
+✔ Suite CaptureSessionTests passed after 0.001 seconds.
+◇ Suite CaptureSessionReturnTests started.
+◇ Test backspaceAtTheStartOfNoteReturnsToSearchKeepingTheBufferAndSelection() started.
+✔ Test backspaceAtTheStartOfNoteReturnsToSearchKeepingTheBufferAndSelection() passed after 0.001 seconds.
+◇ Test backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) started.
+◇ Test case passing 1 argument selection → {3, 0} to backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) started.
+◇ Test case passing 1 argument selection → {0, 3} to backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) started.
+◇ Test case passing 1 argument selection → {1, 2} to backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) started.
+✔ Test backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) with 3 test cases passed after 0.001 seconds.
+◇ Test backspaceAtTheStartOfSearchDoesNotDisarmPrefixes() started.
+✔ Test backspaceAtTheStartOfSearchDoesNotDisarmPrefixes() passed after 0.001 seconds.
+◇ Test typedDashAfterReturningToSearchIsLiteralText() started.
+✔ Test typedDashAfterReturningToSearchIsLiteralText() passed after 0.001 seconds.
+◇ Test returningFromAnEmptyNoteArmsPrefixesSoATypedDashEntersNoteAgain() started.
+✔ Test returningFromAnEmptyNoteArmsPrefixesSoATypedDashEntersNoteAgain() passed after 0.001 seconds.
+◇ Test clearingTheKeptTextAfterReturningArmsPrefixesAgain() started.
+✔ Test clearingTheKeptTextAfterReturningArmsPrefixesAgain() passed after 0.001 seconds.
+◇ Test deletingTheKeptTextAfterReturningArmsPrefixesAgain() started.
+✔ Test deletingTheKeptTextAfterReturningArmsPrefixesAgain() passed after 0.001 seconds.
+◇ Test aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+◇ Test case passing 1 argument provenance → .paste to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+◇ Test case passing 1 argument provenance → .drop to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+◇ Test case passing 1 argument provenance → .undo to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+◇ Test case passing 1 argument provenance → .redo to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+◇ Test case passing 1 argument provenance → .programmatic to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+◇ Test case passing 1 argument provenance → .composition to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+◇ Test case passing 1 argument provenance → .compositionCommit to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+✔ Test aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) with 7 test cases passed after 0.001 seconds.
+◇ Test theNextInvocationArmsPrefixesAgain(event:) started.
+◇ Test case passing 1 argument event → .invoked to theNextInvocationArmsPrefixesAgain(event:) started.
+◇ Test case passing 1 argument event → .dismissed to theNextInvocationArmsPrefixesAgain(event:) started.
+✔ Test theNextInvocationArmsPrefixesAgain(event:) with 2 test cases passed after 0.001 seconds.
+◇ Test backspaceAtTheStartWhileSavingKeepsTheCaptureInNote() started.
+✔ Test backspaceAtTheStartWhileSavingKeepsTheCaptureInNote() passed after 0.001 seconds.
+◇ Test returningToSearchLeavesTheNoteNoticeBehind() started.
+✔ Test returningToSearchLeavesTheNoteNoticeBehind() passed after 0.001 seconds.
+✔ Suite CaptureSessionReturnTests passed after 0.001 seconds.
+◇ Suite CaptureSubmissionTests started.
+◇ Test submittingANoteSavesItsExactTextOnceUnderTheSessionOperation() started.
+✔ Test submittingANoteSavesItsExactTextOnceUnderTheSessionOperation() passed after 0.001 seconds.
+◇ Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+◇ Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+◇ Test case passing 1 argument text → " " to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+◇ Test case passing 1 argument text → "
+	  
+" to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+✔ Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) with 3 test cases passed after 0.001 seconds.
+◇ Test submittedTextIsFrozenWhileSaving() started.
+✔ Test submittedTextIsFrozenWhileSaving() passed after 0.001 seconds.
+◇ Test aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) started.
+◇ Test case passing 1 argument notice → .failed to aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) started.
+◇ Test case passing 1 argument notice → .collectionUnavailable to aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) started.
+✔ Test aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) with 2 test cases passed after 0.001 seconds.
+◇ Test outcomesOutsideASaveChangeNothing() started.
+✔ Test outcomesOutsideASaveChangeNothing() passed after 0.001 seconds.
+◇ Test searchEnterIsNotACapture() started.
+✔ Test searchEnterIsNotACapture() passed after 0.001 seconds.
+◇ Test eachInvocationHasANewOperation() started.
+✔ Test eachInvocationHasANewOperation() passed after 0.001 seconds.
+✔ Suite CaptureSubmissionTests passed after 0.001 seconds.
+◇ Suite CaptureTaskTests started.
+◇ Test typedBracketOnAnEmptyBufferEntersTaskWithoutBecomingText() started.
+✔ Test typedBracketOnAnEmptyBufferEntersTaskWithoutBecomingText() passed after 0.001 seconds.
+◇ Test typedBracketBeforeExistingSearchTextKeepsTheTextAndSelection() started.
+✔ Test typedBracketBeforeExistingSearchTextKeepsTheTextAndSelection() passed after 0.001 seconds.
+◇ Test typedBracketAfterTheStartIsLiteralText() started.
+✔ Test typedBracketAfterTheStartIsLiteralText() passed after 0.001 seconds.
+◇ Test typedBracketReplacingASelectionAtTheStartIsLiteralText() started.
+✔ Test typedBracketReplacingASelectionAtTheStartIsLiteralText() passed after 0.001 seconds.
+◇ Test untypedBracketAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .paste to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .drop to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .undo to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .redo to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .programmatic to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .composition to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+◇ Test case passing 1 argument provenance → .compositionCommit to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+✔ Test untypedBracketAtTheStartIsLiteralText(provenance:) with 7 test cases passed after 0.001 seconds.
+◇ Test typedPrefixesInTaskAreLiteralText(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to typedPrefixesInTaskAreLiteralText(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to typedPrefixesInTaskAreLiteralText(prefix:) started.
+✔ Test typedPrefixesInTaskAreLiteralText(prefix:) with 2 test cases passed after 0.001 seconds.
+◇ Test switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+◇ Test case passing 1 argument text → "one
+two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+◇ Test case passing 1 argument text → "one
+two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+◇ Test case passing 1 argument text → "one
+two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+◇ Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+◇ Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+◇ Test case passing 1 argument text → "trailing
+" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+✔ Test switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) with 6 test cases passed after 0.001 seconds.
+◇ Test aLongSingleLineThatSoftWrapsEntersTask() started.
+✔ Test aLongSingleLineThatSoftWrapsEntersTask() passed after 0.001 seconds.
+◇ Test aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .paste, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .paste, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .paste, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .paste, pasted → "
+" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .drop, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .drop, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .drop, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .drop, pasted → "
+" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .programmatic, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .programmatic, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .programmatic, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .programmatic, pasted → "
+" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .typed, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .typed, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .typed, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+◇ Test case passing 2 arguments provenance → .typed, pasted → "
+" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+✔ Test aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) with 24 test cases passed after 0.001 seconds.
+◇ Test aMultilineInsertionInNoteIsText() started.
+✔ Test aMultilineInsertionInNoteIsText() passed after 0.001 seconds.
+◇ Test theDestinationDefaultsToInboxAndTabTogglesItWithoutEnteringText() started.
+✔ Test theDestinationDefaultsToInboxAndTabTogglesItWithoutEnteringText() passed after 0.001 seconds.
+◇ Test choosingADestinationSelectsIt() started.
+✔ Test choosingADestinationSelectsIt() passed after 0.001 seconds.
+◇ Test tabOutsideTaskIsOrdinaryInputAndKeepsTheDestination() started.
+✔ Test tabOutsideTaskIsOrdinaryInputAndKeepsTheDestination() passed after 0.001 seconds.
+◇ Test aNewInvocationResetsTheDestinationToInbox(event:) started.
+◇ Test case passing 1 argument event → .invoked to aNewInvocationResetsTheDestinationToInbox(event:) started.
+◇ Test case passing 1 argument event → .dismissed to aNewInvocationResetsTheDestinationToInbox(event:) started.
+✔ Test aNewInvocationResetsTheDestinationToInbox(event:) with 2 test cases passed after 0.001 seconds.
+◇ Test theDestinationIsFrozenWhileSaving() started.
+✔ Test theDestinationIsFrozenWhileSaving() passed after 0.001 seconds.
+◇ Test shiftEnterInTaskDoesNothing() started.
+✔ Test shiftEnterInTaskDoesNothing() passed after 0.001 seconds.
+◇ Test shiftEnterInNoteIsAnOrdinaryLineBreak() started.
+✔ Test shiftEnterInNoteIsAnOrdinaryLineBreak() passed after 0.001 seconds.
+◇ Test submittingATaskSavesItsExactTitleToTheDestinationOnce(destination:) started.
+◇ Test case passing 1 argument destination → .inbox to submittingATaskSavesItsExactTitleToTheDestinationOnce(destination:) started.
+◇ Test case passing 1 argument destination → .today to submittingATaskSavesItsExactTitleToTheDestinationOnce(destination:) started.
+✔ Test submittingATaskSavesItsExactTitleToTheDestinationOnce(destination:) with 2 test cases passed after 0.001 seconds.
+◇ Test aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) started.
+◇ Test case passing 1 argument title → "" to aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) started.
+◇ Test case passing 1 argument title → " " to aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) started.
+◇ Test case passing 1 argument title → "	  " to aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) started.
+✔ Test aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) with 3 test cases passed after 0.001 seconds.
+◇ Test aTitleThatBecameMultilineOutsideAnInsertionIsRefusedBeforeAnySave() started.
+✔ Test aTitleThatBecameMultilineOutsideAnInsertionIsRefusedBeforeAnySave() passed after 0.001 seconds.
+◇ Test enteringNoteAfterARefusedSwitchLeavesTheTaskExplanationBehind() started.
+✔ Test enteringNoteAfterARefusedSwitchLeavesTheTaskExplanationBehind() passed after 0.001 seconds.
+◇ Test typedBracketAfterReturningAndClearingTheTextEntersTaskAgain() started.
+✔ Test typedBracketAfterReturningAndClearingTheTextEntersTaskAgain() passed after 0.001 seconds.
+◇ Test returningFromAnEmptyTaskArmsPrefixesSoATypedBracketEntersTaskAgain() started.
+✔ Test returningFromAnEmptyTaskArmsPrefixesSoATypedBracketEntersTaskAgain() passed after 0.001 seconds.
+◇ Test theNextInvocationArmsTheBracketAgain(event:) started.
+◇ Test case passing 1 argument event → .invoked to theNextInvocationArmsTheBracketAgain(event:) started.
+◇ Test case passing 1 argument event → .dismissed to theNextInvocationArmsTheBracketAgain(event:) started.
+✔ Test theNextInvocationArmsTheBracketAgain(event:) with 2 test cases passed after 0.001 seconds.
+◇ Test typedBracketAfterReturningToSearchIsLiteralText() started.
+✔ Test typedBracketAfterReturningToSearchIsLiteralText() passed after 0.001 seconds.
+✔ Suite CaptureTaskTests passed after 0.004 seconds.
+◇ Suite CaptureSuggestionTests started.
+◇ Test choosingASuggestionEntersItsModeKeepingTheExactTextAndSelectionWithoutSaving(suggestion:mode:) started.
+◇ Test case passing 2 arguments suggestion → .note, mode → .note to choosingASuggestionEntersItsModeKeepingTheExactTextAndSelectionWithoutSaving(suggestion:mode:) started.
+◇ Test case passing 2 arguments suggestion → .task, mode → .task to choosingASuggestionEntersItsModeKeepingTheExactTextAndSelectionWithoutSaving(suggestion:mode:) started.
+✔ Test choosingASuggestionEntersItsModeKeepingTheExactTextAndSelectionWithoutSaving(suggestion:mode:) with 2 test cases passed after 0.001 seconds.
+◇ Test choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+◇ Test case passing 1 argument text → "one
+two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+◇ Test case passing 1 argument text → "one
+two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+◇ Test case passing 1 argument text → "one two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+◇ Test case passing 1 argument text → "trailing
+" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+✔ Test choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) with 4 test cases passed after 0.001 seconds.
+◇ Test choosingASuggestionLeavesPrefixArmingAsItWas(armed:) started.
+◇ Test case passing 1 argument armed → true to choosingASuggestionLeavesPrefixArmingAsItWas(armed:) started.
+◇ Test case passing 1 argument armed → false to choosingASuggestionLeavesPrefixArmingAsItWas(armed:) started.
+✔ Test choosingASuggestionLeavesPrefixArmingAsItWas(armed:) with 2 test cases passed after 0.001 seconds.
+◇ Test aSuggestionOutsideSearchChangesNothing() started.
+✔ Test aSuggestionOutsideSearchChangesNothing() passed after 0.001 seconds.
+✔ Suite CaptureSuggestionTests passed after 0.001 seconds.
+◇ Suite CollectionExportHarnessTests started.
+◇ Test organizedCollectionSurvivesFreshProcessExportAndIndependentReconstruction() started.
+✔ Test organizedCollectionSurvivesFreshProcessExportAndIndependentReconstruction() passed after 1.232 seconds.
+✔ Suite CollectionExportHarnessTests passed after 1.232 seconds.
+◇ Suite CollectionExportTests started.
+◇ Test emptyCollectionPublishesACompleteVersionedPackage() started.
+✔ Test emptyCollectionPublishesACompleteVersionedPackage() passed after 0.034 seconds.
+◇ Test independentReconstructionPreservesExactBytesAndEveryOrganizedView() started.
+✔ Test independentReconstructionPreservesExactBytesAndEveryOrganizedView() passed after 0.073 seconds.
+◇ Test validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "valid" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "missing-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "changed-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "invalid-utf8" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "missing-tasks" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "changed-tasks" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "future-manifest" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "future-tasks" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "count" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "hash" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "path" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "id" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "duplicate-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "duplicate-task" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "revision" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "placement" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "completed-placement" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "blank-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "title" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "multiline-task" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "identity" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "extra-file" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "symlink-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "symlink-package" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+◇ Test case passing 1 argument change → "unpublished-stage" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+✔ Test validatesTheCompletePackageAndRejectsCorruption(_:) with 25 test cases passed after 0.815 seconds.
+◇ Test failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+◇ Test case passing 1 argument failure → "write" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+◇ Test case passing 1 argument failure → "readonly" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+◇ Test case passing 1 argument failure → "space" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+◇ Test case passing 1 argument failure → "publication" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+◇ Test case passing 1 argument failure → "invalid-stage" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+✔ Test failedAttemptsPreserveTheSourceAndEarlierExports(_:) with 5 test cases passed after 0.190 seconds.
+◇ Test refusesSourceStorageAliasesAndRealUnwritableDestinations() started.
+✔ Test refusesSourceStorageAliasesAndRealUnwritableDestinations() passed after 0.031 seconds.
+◇ Test editsStatusAndOrderContinueWhileAnEarlierCaptureIsBeingWritten() started.
+✔ Test editsStatusAndOrderContinueWhileAnEarlierCaptureIsBeingWritten() passed after 0.073 seconds.
+◇ Test racingExportsMatchOneOfTheActualCommittedStates() started.
+✔ Test racingExportsMatchOneOfTheActualCommittedStates() passed after 0.089 seconds.
+✔ Suite CollectionExportTests passed after 1.309 seconds.
+◇ Suite CollectionFixtureHarnessTests started.
+◇ Test createReadObserveAndRetryAcrossFreshProcesses() started.
+✔ Test createReadObserveAndRetryAcrossFreshProcesses() passed after 0.564 seconds.
+◇ Test harnessRefusesTheLiveRootWithoutCreatingIt() started.
+✔ Test harnessRefusesTheLiveRootWithoutCreatingIt() passed after 0.855 seconds.
+◇ Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+◇ Test case passing 1 argument point → "before-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+◇ Test case passing 1 argument point → "after-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+✔ Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) with 2 test cases passed after 0.964 seconds.
+◇ Test processDeathReleasesOwnership() started.
+✔ Test processDeathReleasesOwnership() passed after 0.490 seconds.
+◇ Test unsavedSentinelNeverReachesStorageOrDiagnostics() started.
+✔ Test unsavedSentinelNeverReachesStorageOrDiagnostics() passed after 0.407 seconds.
+◇ Test editPinArchiveAndRestorePersistAcrossFreshProcesses() started.
+✔ Test editPinArchiveAndRestorePersistAcrossFreshProcesses() passed after 1.223 seconds.
+◇ Test aFailedEditLeavesNoTraceInStorageOrOutput() started.
+✔ Test aFailedEditLeavesNoTraceInStorageOrOutput() passed after 0.398 seconds.
+◇ Test killedNoteChangeIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "edit-note", point → "before-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "edit-note", point → "after-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "pin-note", point → "before-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "pin-note", point → "after-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "archive-note", point → "before-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "archive-note", point → "after-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+✔ Test killedNoteChangeIsAllOrNone(_:_:) with 6 test cases passed after 2.319 seconds.
+◇ Test taskLifecyclePersistsAcrossFreshProcessesAndTimeZones() started.
+✔ Test taskLifecyclePersistsAcrossFreshProcessesAndTimeZones() passed after 2.040 seconds.
+◇ Test creationRetriesReturnTheItemEvenAfterItLeftItsView() started.
+✔ Test creationRetriesReturnTheItemEvenAfterItLeftItsView() passed after 0.658 seconds.
+◇ Test failedTaskSavesLeaveNoTraceInStorageOrOutput() started.
+✔ Test failedTaskSavesLeaveNoTraceInStorageOrOutput() passed after 0.644 seconds.
+◇ Test killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "create-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "create-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "edit-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "edit-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "move-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "move-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "complete-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "complete-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "reopen-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "reopen-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "archive-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "archive-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "restore-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+◇ Test case passing 2 arguments action → "restore-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+✔ Test killedTaskCommandIsAllOrNone(_:_:) with 14 test cases passed after 6.090 seconds.
+◇ Test manualOrderPersistsAcrossFreshProcessesAndAStaleViewIsRefused() started.
+✔ Test manualOrderPersistsAcrossFreshProcessesAndAStaleViewIsRefused() passed after 1.566 seconds.
+◇ Test killedReorderIsAllOrNoneEvenWhenItRenumbers(_:) started.
+◇ Test case passing 1 argument point → "before-commit" to killedReorderIsAllOrNoneEvenWhenItRenumbers(_:) started.
+◇ Test case passing 1 argument point → "after-commit" to killedReorderIsAllOrNoneEvenWhenItRenumbers(_:) started.
+✔ Test killedReorderIsAllOrNoneEvenWhenItRenumbers(_:) with 2 test cases passed after 1.713 seconds.
+✔ Suite CollectionFixtureHarnessTests passed after 19.939 seconds.
+◇ Suite CollectionSnapshotHarnessTests started.
+◇ Test createListInspectAndDisposableReopenAcrossFreshProcesses() started.
+✔ Test createListInspectAndDisposableReopenAcrossFreshProcesses() passed after 1.051 seconds.
+◇ Test snapshotHarnessRefusesLivePathsAliasesAndOverwritingADisposableStore() started.
+✔ Test snapshotHarnessRefusesLivePathsAliasesAndOverwritingADisposableStore() passed after 1.000 seconds.
+✔ Suite CollectionSnapshotHarnessTests passed after 2.052 seconds.
+◇ Suite CollectionSnapshotTests started.
+◇ Test snapshotReopensEveryOrganizedFactWithoutSourceWALOrUnsavedCapture() started.
+✔ Test snapshotReopensEveryOrganizedFactWithoutSourceWALOrUnsavedCapture() passed after 0.105 seconds.
+◇ Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "valid" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "truncated" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "future-schema" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "future-manifest" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "bad-count" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "bad-hash" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "bad-identity" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "bad-time" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "bad-name" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "missing-manifest" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "incomplete" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "blank-note" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "multiline-task" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "bad-utf8" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "foreign-key" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "invalid-placement" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "symlink" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "missing-table" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "lowercase-note-id" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+◇ Test case passing 1 argument damage → "lowercase-task-id" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+✔ Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) with 20 test cases passed after 0.753 seconds.
+◇ Test reopenedCanonicalIdentifiersSupportReadsAndMutations() started.
+✔ Test reopenedCanonicalIdentifiersSupportReadsAndMutations() passed after 0.052 seconds.
+◇ Test captureBarrierIncludesCommittedWALAndExcludesAConcurrentLaterCommand() started.
+✔ Test captureBarrierIncludesCommittedWALAndExcludesAConcurrentLaterCommand() passed after 0.051 seconds.
+◇ Test failedAttemptPreservesSourceAndGoodSnapshotAndRetryIsExplicit(_:) started.
+◇ Test case passing 1 argument point → "staging" to failedAttemptPreservesSourceAndGoodSnapshotAndRetryIsExplicit(_:) started.
+◇ Test case passing 1 argument point → "capturing" to failedAttemptPreservesSourceAndGoodSnapshotAndRetryIsExplicit(_:) started.
+◇ Test case passing 1 argument point → "closing" to failedAttemptPreservesSourceAndGoodSnapshotAndRetryIsExplicit(_:) started.
+◇ Test case passing 1 argument point → "validating" to failedAttemptPreservesSourceAndGoodSnapshotAndRetryIsExplicit(_:) started.
+◇ Test case passing 1 argument point → "writingManifest" to failedAttemptPreservesSourceAndGoodSnapshotAndRetryIsExplicit(_:) started.
+◇ Test case passing 1 argument point → "publishing" to failedAttemptPreservesSourceAndGoodSnapshotAndRetryIsExplicit(_:) started.
+✔ Test failedAttemptPreservesSourceAndGoodSnapshotAndRetryIsExplicit(_:) with 6 test cases passed after 0.272 seconds.
+◇ Test readOnlyDestinationAndPublicationCollisionPreserveAllEarlierArtifacts() started.
+✔ Test readOnlyDestinationAndPublicationCollisionPreserveAllEarlierArtifacts() passed after 0.056 seconds.
+✔ Suite CollectionSnapshotTests passed after 1.292 seconds.
+◇ Suite CollectionStoreOpeningTests started.
+◇ Test refusedExistingStoresArePreservedByteForByte(_:) started.
+◇ Test case passing 1 argument tampering → .missingDatabase to refusedExistingStoresArePreservedByteForByte(_:) started.
+◇ Test case passing 1 argument tampering → .emptyCollectionDirectory to refusedExistingStoresArePreservedByteForByte(_:) started.
+◇ Test case passing 1 argument tampering → .missingCollectionDirectory to refusedExistingStoresArePreservedByteForByte(_:) started.
+◇ Test case passing 1 argument tampering → .notADatabase to refusedExistingStoresArePreservedByteForByte(_:) started.
+◇ Test case passing 1 argument tampering → .truncated to refusedExistingStoresArePreservedByteForByte(_:) started.
+◇ Test case passing 1 argument tampering → .newerSchema to refusedExistingStoresArePreservedByteForByte(_:) started.
+◇ Test case passing 1 argument tampering → .olderSchema to refusedExistingStoresArePreservedByteForByte(_:) started.
+◇ Test case passing 1 argument tampering → .foreignDatabase to refusedExistingStoresArePreservedByteForByte(_:) started.
+✔ Test refusedExistingStoresArePreservedByteForByte(_:) with 8 test cases passed after 0.209 seconds.
+◇ Test aSecondOwnerIsRefusedUntilTheFirstCloses() started.
+✔ Test aSecondOwnerIsRefusedUntilTheFirstCloses() passed after 0.133 seconds.
+◇ Test ownershipIsRetakenAtOnceWhileOtherCodeSpawnsProcesses() started.
+✔ Test ownershipIsRetakenAtOnceWhileOtherCodeSpawnsProcesses() passed after 0.530 seconds.
+◇ Test storageIsOwnerOnlyWhileLiveAndRefusedWhenWidened() started.
+✔ Test storageIsOwnerOnlyWhileLiveAndRefusedWhenWidened() passed after 0.029 seconds.
+◇ Test aReadOnlyDatabaseFailsWritesWithoutLosingCommittedNotes() started.
+✔ Test aReadOnlyDatabaseFailsWritesWithoutLosingCommittedNotes() passed after 0.027 seconds.
+◇ Test fixtureRootsMustBeNewMarkedAndOutsideTheLiveRoot() started.
+✔ Test fixtureRootsMustBeNewMarkedAndOutsideTheLiveRoot() passed after 0.001 seconds.
+◇ Test linkedRuntimeUsesDurableSettingsAndOnlyTheWriterCanWriteOrCheckpoint() started.
+✔ Test linkedRuntimeUsesDurableSettingsAndOnlyTheWriterCanWriteOrCheckpoint() passed after 0.025 seconds.
+✔ Suite CollectionStoreOpeningTests passed after 0.958 seconds.
+◇ Suite CollectionStoreTests started.
+◇ Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() started.
+✔ Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() passed after 0.026 seconds.
+◇ Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() started.
+✔ Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() passed after 0.028 seconds.
+◇ Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() started.
+✔ Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() passed after 0.028 seconds.
+◇ Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() started.
+✔ Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() passed after 0.030 seconds.
+◇ Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() started.
+✔ Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() passed after 0.032 seconds.
+◇ Test workQueuedBeforeCloseIsRejectedWhenItExecutes() started.
+✔ Test workQueuedBeforeCloseIsRejectedWhenItExecutes() passed after 0.244 seconds.
+✔ Suite CollectionStoreTests passed after 0.392 seconds.
+◇ Suite DisplayPlacementTests started.
+◇ Test ownedFocusedWindowWinsOverPointerOnAnotherDisplay() started.
+✔ Test ownedFocusedWindowWinsOverPointerOnAnotherDisplay() passed after 0.001 seconds.
+◇ Test accessibilityCoordinatesMapAboveThePrimaryDisplay() started.
+✔ Test accessibilityCoordinatesMapAboveThePrimaryDisplay() passed after 0.001 seconds.
+◇ Test invalidFocusedGeometryFallsBackToCapturedPointer() started.
+✔ Test invalidFocusedGeometryFallsBackToCapturedPointer() passed after 0.001 seconds.
+◇ Test expansionAndContractionKeepInputTopUnlessVisibleBoundsRequireMovement() started.
+✔ Test expansionAndContractionKeepInputTopUnlessVisibleBoundsRequireMovement() passed after 0.001 seconds.
+◇ Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() started.
+✔ Test failedOrUnresponsiveAccessibilityUsesCapturedPointer() passed after 0.013 seconds.
+✔ Suite DisplayPlacementTests passed after 0.014 seconds.
+◇ Suite MacInteractionTests started.
+◇ Test emptySourceUpdateDoesNotReplaceRowsWithOnlyRecheckedMatches() started.
+✔ Test emptySourceUpdateDoesNotReplaceRowsWithOnlyRecheckedMatches() passed after 0.107 seconds.
+◇ Test sourceFailureOnlyClaimsResultsForTheDisplayedRequest(fileSourceFails:) started.
+◇ Test case passing 1 argument fileSourceFails → true to sourceFailureOnlyClaimsResultsForTheDisplayedRequest(fileSourceFails:) started.
+◇ Test case passing 1 argument fileSourceFails → false to sourceFailureOnlyClaimsResultsForTheDisplayedRequest(fileSourceFails:) started.
+✔ Test sourceFailureOnlyClaimsResultsForTheDisplayedRequest(fileSourceFails:) with 2 test cases passed after 0.156 seconds.
+◇ Test enterOnAnOutdatedRowWaitsAndOpensTheFreshMatch() started.
+✔ Test enterOnAnOutdatedRowWaitsAndOpensTheFreshMatch() passed after 0.049 seconds.
+◇ Test enterOnARetainedRowThatStillMatchesOpensImmediately() started.
+✔ Test enterOnARetainedRowThatStillMatchesOpensImmediately() passed after 0.046 seconds.
+◇ Test enterAgainAfterNavigatingToAMatchingRowOpensItAtOnce() started.
+✔ Test enterAgainAfterNavigatingToAMatchingRowOpensItAtOnce() passed after 0.067 seconds.
+◇ Test anEditCancelsAHeldEnter() started.
+✔ Test anEditCancelsAHeldEnter() passed after 0.126 seconds.
+◇ Test dismissalCancelsAHeldEnter(reason:) started.
+◇ Test case passing 1 argument reason → .escape to dismissalCancelsAHeldEnter(reason:) started.
+◇ Test case passing 1 argument reason → .outsideClick to dismissalCancelsAHeldEnter(reason:) started.
+✔ Test dismissalCancelsAHeldEnter(reason:) with 2 test cases passed after 0.150 seconds.
+◇ Test aHeldEnterEndsWithNoMatchesWhenBothSourcesFinishEmpty() started.
+✔ Test aHeldEnterEndsWithNoMatchesWhenBothSourcesFinishEmpty() passed after 0.067 seconds.
+◇ Test editsKeepPreviousRowsUntilFreshMatchesArrive() started.
+✔ Test editsKeepPreviousRowsUntilFreshMatchesArrive() passed after 0.364 seconds.
+◇ Test editingDuringAFinishedShrinkHoldsTheCurrentHeightWhileLoading() started.
+✔ Test editingDuringAFinishedShrinkHoldsTheCurrentHeightWhileLoading() passed after 0.401 seconds.
+◇ Test selectionFollowsBetterMatchesAndEveryEditResetsNavigationAndScroll() started.
+✔ Test selectionFollowsBetterMatchesAndEveryEditResetsNavigationAndScroll() passed after 0.120 seconds.
+◇ Test loadingUsesNoStatusRowAndNoResultsWaitsForBothSources() started.
+✔ Test loadingUsesNoStatusRowAndNoResultsWaitsForBothSources() passed after 0.227 seconds.
+◇ Test typingKeepsHeightUntilBothSourcesFinishAndClearingCollapses(finishedStatus:) started.
+◇ Test case passing 1 argument finishedStatus → .ready to typingKeepsHeightUntilBothSourcesFinishAndClearingCollapses(finishedStatus:) started.
+◇ Test case passing 1 argument finishedStatus → .partial to typingKeepsHeightUntilBothSourcesFinishAndClearingCollapses(finishedStatus:) started.
+◇ Test case passing 1 argument finishedStatus → .failed to typingKeepsHeightUntilBothSourcesFinishAndClearingCollapses(finishedStatus:) started.
+✔ Test typingKeepsHeightUntilBothSourcesFinishAndClearingCollapses(finishedStatus:) with 3 test cases passed after 4.828 seconds.
+◇ Test reinvocationKeepsTheCurrentSession() started.
+✔ Test reinvocationKeepsTheCurrentSession() passed after 0.037 seconds.
+◇ Test oldDismissalCannotCloseAReopenedBar() started.
+✔ Test oldDismissalCannotCloseAReopenedBar() passed after 0.032 seconds.
+◇ Test oldDestinationCannotCloseAReopenedBar() started.
+✔ Test oldDestinationCannotCloseAReopenedBar() passed after 0.020 seconds.
+✔ Suite MacInteractionTests passed after 6.806 seconds.
+◇ Suite DestinationInteractionTests started.
+◇ Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() started.
+✔ Test newQueryCanOpenWhileAnObsoleteOpenIsStillPending() passed after 0.066 seconds.
+◇ Test onlyAcknowledgedOpeningImprovesSessionUsage() started.
+✔ Test onlyAcknowledgedOpeningImprovesSessionUsage() passed after 0.048 seconds.
+◇ Test usageIsRecordedOnlyForTheResultMatchingTheOpenedRequest() started.
+✔ Test usageIsRecordedOnlyForTheResultMatchingTheOpenedRequest() passed after 0.041 seconds.
+◇ Test navigatedFileSurvivesNewExactBatchAndRemovalReturnsToFirstRow() started.
+✔ Test navigatedFileSurvivesNewExactBatchAndRemovalReturnsToFirstRow() passed after 0.123 seconds.
+◇ Test rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() started.
+✔ Test rapidReopeningRejectsPendingBatchesAndFailedOpenCallbacks() passed after 0.152 seconds.
+◇ Test delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() started.
+✔ Test delayedFileAcknowledgmentNeverActivatesOrDismissesANewerInvocation() passed after 0.085 seconds.
+◇ Test deletedFileFailsNativeRevalidationWithoutLosingQuery() started.
+✔ Test deletedFileFailsNativeRevalidationWithoutLosingQuery() passed after 0.047 seconds.
+◇ Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() started.
+✔ Test selectedFileSurvivesLateAppBatchAndFailedOpenRetainsContext() passed after 0.040 seconds.
+◇ Test failedFilesStillAllowAvailableApplicationOpening() started.
+✔ Test failedFilesStillAllowAvailableApplicationOpening() passed after 0.045 seconds.
+◇ Test missingFileExplainsUnavailableLocationAndRetainsSelection() started.
+✔ Test missingFileExplainsUnavailableLocationAndRetainsSelection() passed after 0.300 seconds.
+◇ Test changedQueryNeverActivatesAnOldAcknowledgment() started.
+✔ Test changedQueryNeverActivatesAnOldAcknowledgment() passed after 0.072 seconds.
+◇ Test unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() started.
+✔ Test unavailableInstallationFailsThroughTheNativeAdapterWithoutLosingContext() passed after 0.042 seconds.
+◇ Test enterCapturesTheVisibleDestinationBeforeAsynchronousWork() started.
+✔ Test enterCapturesTheVisibleDestinationBeforeAsynchronousWork() passed after 0.052 seconds.
+◇ Test barClosesBeforeASlowNativeOpenAcknowledges() started.
+✔ Test barClosesBeforeASlowNativeOpenAcknowledges() passed after 0.050 seconds.
+◇ Test aNewerBarBlocksALateNativeOpenActivation() started.
+✔ Test aNewerBarBlocksALateNativeOpenActivation() passed after 0.077 seconds.
+◇ Test aFailedNativeOpenNeverReachesANewerBar() started.
+✔ Test aFailedNativeOpenNeverReachesANewerBar() passed after 0.081 seconds.
+◇ Test failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() started.
+✔ Test failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() passed after 0.083 seconds.
+◇ Test obsoleteBatchesAndClearingCannotReplaceCurrentResults() started.
+✔ Test obsoleteBatchesAndClearingCannotReplaceCurrentResults() passed after 0.348 seconds.
+◇ Test selectionTracksIdentityAndVanishingReturnsToFollowingTheTop() started.
+✔ Test selectionTracksIdentityAndVanishingReturnsToFollowingTheTop() passed after 0.102 seconds.
+✔ Suite DestinationInteractionTests passed after 1.866 seconds.
+◇ Suite ResultIconInteractionTests started.
+◇ Test neverCompletingIconsHoldBackNoBatchSelectionOrOpening() started.
+✔ Test neverCompletingIconsHoldBackNoBatchSelectionOrOpening() passed after 0.037 seconds.
+◇ Test lateIconsNeverChangeResultsOrSelectionAndObsoleteOnesAreNotShown() started.
+✔ Test lateIconsNeverChangeResultsOrSelectionAndObsoleteOnesAreNotShown() passed after 0.063 seconds.
+✔ Suite ResultIconInteractionTests passed after 0.102 seconds.
+◇ Suite MainWindowTests started.
+◇ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() started.
+✔ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() passed after 0.191 seconds.
+◇ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → false to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → true to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+✔ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) with 2 test cases passed after 0.191 seconds.
+◇ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() started.
+✔ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() passed after 1.375 seconds.
+◇ Test menusOpenTheSameMainWindowWithoutMockDestinations() started.
+✔ Test menusOpenTheSameMainWindowWithoutMockDestinations() passed after 0.198 seconds.
+✔ Suite MainWindowTests passed after 1.956 seconds.
+◇ Suite SearchIconMorphTests started.
+◇ Test restingShapeIsTheLogo() started.
+✔ Test restingShapeIsTheLogo() passed after 0.001 seconds.
+◇ Test settledShapeIsTheMagnifier() started.
+✔ Test settledShapeIsTheMagnifier() passed after 0.001 seconds.
+◇ Test magnifierStaysInsideTheIconGutter() started.
+✔ Test magnifierStaysInsideTheIconGutter() passed after 0.001 seconds.
+◇ Test springStartsWhereItIsAndSettlesOnTarget() started.
+✔ Test springStartsWhereItIsAndSettlesOnTarget() passed after 0.001 seconds.
+◇ Test reportedVelocityMatchesMotion() started.
+✔ Test reportedVelocityMatchesMotion() passed after 0.001 seconds.
+✔ Suite SearchIconMorphTests passed after 0.001 seconds.
+◇ Suite NoteIconMorphTests started.
+◇ Test restingShapeIsTheLogo() started.
+✔ Test restingShapeIsTheLogo() passed after 0.001 seconds.
+◇ Test settledShapeIsTheFigmaNoteIcon() started.
+✔ Test settledShapeIsTheFigmaNoteIcon() passed after 0.001 seconds.
+◇ Test outlineFollowsItsOwnProgress() started.
+✔ Test outlineFollowsItsOwnProgress() passed after 0.001 seconds.
+◇ Test everyFrameKeepsThePathStructure() started.
+✔ Test everyFrameKeepsThePathStructure() passed after 0.001 seconds.
+◇ Test outlineBouncesLessThanTheLines() started.
+✔ Test outlineBouncesLessThanTheLines() passed after 0.001 seconds.
+✔ Suite NoteIconMorphTests passed after 0.001 seconds.
+◇ Suite TaskIconMorphTests started.
+◇ Test restingShapeIsTheLogo() started.
+✔ Test restingShapeIsTheLogo() passed after 0.001 seconds.
+◇ Test settledShapeIsACircleWithACheckmark() started.
+✔ Test settledShapeIsACircleWithACheckmark() passed after 0.001 seconds.
+◇ Test topSpokesSlideWithoutTurning() started.
+✔ Test topSpokesSlideWithoutTurning() passed after 0.001 seconds.
+◇ Test outlineFollowsItsOwnProgress() started.
+✔ Test outlineFollowsItsOwnProgress() passed after 0.001 seconds.
+◇ Test everyFrameKeepsThePathStructure() started.
+✔ Test everyFrameKeepsThePathStructure() passed after 0.001 seconds.
+◇ Test outlineBouncesMoreThanTheCheck() started.
+✔ Test outlineBouncesMoreThanTheCheck() passed after 0.001 seconds.
+✔ Suite TaskIconMorphTests passed after 0.003 seconds.
+◇ Suite ModeIconViewTests started.
+◇ Test noteMorphsFromAndBackToTheLogoAndCrossfadesWithTheMagnifier() started.
+✔ Test noteMorphsFromAndBackToTheLogoAndCrossfadesWithTheMagnifier() passed after 0.005 seconds.
+◇ Test taskMorphsFromAndBackToTheLogoAndCrossfadesWithTheOtherGlyphs() started.
+✔ Test taskMorphsFromAndBackToTheLogoAndCrossfadesWithTheOtherGlyphs() passed after 0.009 seconds.
+✔ Suite ModeIconViewTests passed after 0.015 seconds.
+◇ Suite ModeIconInteractionTests started.
+◇ Test queryTextShowsTheMagnifierAndClearingRestoresTheLogo() started.
+✔ Test queryTextShowsTheMagnifierAndClearingRestoresTheLogo() passed after 0.033 seconds.
+✔ Suite ModeIconInteractionTests passed after 0.034 seconds.
+◇ Suite NativeEditingTests started.
+◇ Test lateResultsPreserveEditorSelectionUndoAndInputPosition() started.
+✔ Test lateResultsPreserveEditorSelectionUndoAndInputPosition() passed after 0.099 seconds.
+◇ Test theBarsEditorUsesTextKit2() started.
+✔ Test theBarsEditorUsesTextKit2() passed after 0.018 seconds.
+◇ Test placeholderShowsOnlyInEmptySearchAndHidesWhileComposing() started.
+✔ Test placeholderShowsOnlyInEmptySearchAndHidesWhileComposing() passed after 0.039 seconds.
+◇ Test typedDashAtTheStartSwitchesToNoteAndKeepsTheText() started.
+✔ Test typedDashAtTheStartSwitchesToNoteAndKeepsTheText() passed after 0.026 seconds.
+◇ Test pastedDashStaysLiteralInSearch() started.
+✔ Test pastedDashStaysLiteralInSearch() passed after 0.019 seconds.
+◇ Test undoAndRedoAfterAConsumedPrefixChangeOnlyTheText() started.
+✔ Test undoAndRedoAfterAConsumedPrefixChangeOnlyTheText() passed after 0.018 seconds.
+◇ Test compositionContainingADashNeverSwitchesModes(composed:) started.
+◇ Test case passing 1 argument composed → "-" to compositionContainingADashNeverSwitchesModes(composed:) started.
+◇ Test case passing 1 argument composed → "a-" to compositionContainingADashNeverSwitchesModes(composed:) started.
+◇ Test case passing 1 argument composed → "-a" to compositionContainingADashNeverSwitchesModes(composed:) started.
+✔ Test compositionContainingADashNeverSwitchesModes(composed:) with 3 test cases passed after 0.323 seconds.
+◇ Test thaiTextSurvivesTheSwitchToNote() started.
+✔ Test thaiTextSurvivesTheSwitchToNote() passed after 0.035 seconds.
+◇ Test shiftEnterWritesANewLineInNoteAndEnterWithoutACollectionKeepsIt() started.
+✔ Test shiftEnterWritesANewLineInNoteAndEnterWithoutACollectionKeepsIt() passed after 0.033 seconds.
+◇ Test noteKeepsMarkdownPunctuationAsTyped() started.
+✔ Test noteKeepsMarkdownPunctuationAsTyped() passed after 0.030 seconds.
+◇ Test backspaceAtTheStartOfNoteReturnsToSearchAndATypedDashStaysLiteral() started.
+✔ Test backspaceAtTheStartOfNoteReturnsToSearchAndATypedDashStaysLiteral() passed after 0.020 seconds.
+◇ Test dashBackspaceDashEntersNoteAgainWithAnEmptyBuffer() started.
+✔ Test dashBackspaceDashEntersNoteAgainWithAnEmptyBuffer() passed after 0.023 seconds.
+◇ Test backspaceAfterTheStartOfNoteDeletesNormally() started.
+✔ Test backspaceAfterTheStartOfNoteDeletesNormally() passed after 0.029 seconds.
+◇ Test undoAfterReturningToSearchChangesOnlyTheText() started.
+✔ Test undoAfterReturningToSearchChangesOnlyTheText() passed after 0.020 seconds.
+◇ Test undoThatEmptiesReturnedTextLetsATypedDashEnterNote() started.
+✔ Test undoThatEmptiesReturnedTextLetsATypedDashEnterNote() passed after 0.026 seconds.
+◇ Test typedBracketAtTheStartSwitchesToTaskAndKeepsThaiText() started.
+✔ Test typedBracketAtTheStartSwitchesToTaskAndKeepsThaiText() passed after 0.019 seconds.
+◇ Test aRealCRLFPasteInTaskIsRefusedWithTheBufferUnchanged() started.
+✔ Test aRealCRLFPasteInTaskIsRefusedWithTheBufferUnchanged() passed after 0.031 seconds.
+◇ Test aRefusedSwitchToTaskKeepsTheTextSelectionAndUndoHistory() started.
+✔ Test aRefusedSwitchToTaskKeepsTheTextSelectionAndUndoHistory() passed after 0.027 seconds.
+◇ Test aTypedTabInTaskTogglesTheDestinationAndInSearchIsText() started.
+✔ Test aTypedTabInTaskTogglesTheDestinationAndInSearchIsText() passed after 0.036 seconds.
+✔ Suite NativeEditingTests passed after 0.883 seconds.
+◇ Suite NoteModeTests started.
+◇ Test typedPrefixShowsTheNoteLabelAndIconAndHidesSearchResults() started.
+✔ Test typedPrefixShowsTheNoteLabelAndIconAndHidesSearchResults() passed after 0.112 seconds.
+◇ Test noteGrowsDownwardToAMaximumHeightAndThenScrolls() started.
+✔ Test noteGrowsDownwardToAMaximumHeightAndThenScrolls() passed after 0.174 seconds.
+◇ Test dismissingNoteDiscardsItAndTheNextInvocationOpensAnEmptySearch(reason:) started.
+◇ Test case passing 1 argument reason → .escape to dismissingNoteDiscardsItAndTheNextInvocationOpensAnEmptySearch(reason:) started.
+◇ Test case passing 1 argument reason → .outsideClick to dismissingNoteDiscardsItAndTheNextInvocationOpensAnEmptySearch(reason:) started.
+✔ Test dismissingNoteDiscardsItAndTheNextInvocationOpensAnEmptySearch(reason:) with 2 test cases passed after 0.093 seconds.
+◇ Test returningFromAMultilineNoteKeepsTheTextAndSearchesItsNormalisedQuery() started.
+✔ Test returningFromAMultilineNoteKeepsTheTextAndSearchesItsNormalisedQuery() passed after 0.070 seconds.
+✔ Suite NoteModeTests passed after 0.452 seconds.
+◇ Suite NoteOrganizationTests started.
+◇ Test contentEditReplacesTheExactBodyAndAdvancesContentEditedTimeAndRevision() started.
+✔ Test contentEditReplacesTheExactBodyAndAdvancesContentEditedTimeAndRevision() passed after 0.040 seconds.
+◇ Test pinsComeFirstThenMostRecentlyContentEditedThenStableIDAndPinningKeepsContentEditedTime() started.
+✔ Test pinsComeFirstThenMostRecentlyContentEditedThenStableIDAndPinningKeepsContentEditedTime() passed after 0.036 seconds.
+◇ Test pinnedNotesAndArchiveEachOrderByTheirTimeThenStableID() started.
+✔ Test pinnedNotesAndArchiveEachOrderByTheirTimeThenStableID() passed after 0.036 seconds.
+◇ Test archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndContentEditedTimeIntact() started.
+✔ Test archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndContentEditedTimeIntact() passed after 0.038 seconds.
+◇ Test alreadySatisfiedCommandsAreNoOpsButStaleOrInvalidOnesFailWithoutChange() started.
+✔ Test alreadySatisfiedCommandsAreNoOpsButStaleOrInvalidOnesFailWithoutChange() passed after 0.031 seconds.
+◇ Test competingCommandsOnOneRevisionLetExactlyOneWinAndNeverOverwriteIt() started.
+✔ Test competingCommandsOnOneRevisionLetExactlyOneWinAndNeverOverwriteIt() passed after 0.029 seconds.
+◇ Test failedTransitionsRollBackAndOldGenerationsCannotChangeNotes() started.
+✔ Test failedTransitionsRollBackAndOldGenerationsCannotChangeNotes() passed after 0.036 seconds.
+◇ Test allRecordsAndTheSearchProjectionCoverArchivedNotesOnlyWhenEligible() started.
+✔ Test allRecordsAndTheSearchProjectionCoverArchivedNotesOnlyWhenEligible() passed after 0.062 seconds.
+◇ Test observationsFollowCommittedTransitionsAndNeverShowRolledBackOnes() started.
+✔ Test observationsFollowCommittedTransitionsAndNeverShowRolledBackOnes() passed after 0.036 seconds.
+✔ Suite NoteOrganizationTests passed after 0.349 seconds.
+◇ Suite NoteSaveTests started.
+◇ Test enterCommitsExactlyOneNoteAndClosesAfterTheConfirmation() started.
+✔ Test enterCommitsExactlyOneNoteAndClosesAfterTheConfirmation() passed after 0.380 seconds.
+◇ Test repeatedEnterWhileTheSaveIsPausedCommitsExactlyOneNote() started.
+✔ Test repeatedEnterWhileTheSaveIsPausedCommitsExactlyOneNote() passed after 0.075 seconds.
+◇ Test enterDuringCompositionCommitsItWithoutSaving() started.
+✔ Test enterDuringCompositionCommitsItWithoutSaving() passed after 0.100 seconds.
+◇ Test aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
+◇ Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
+◇ Test case passing 1 argument text → "  
+	  " to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
+✔ Test aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) with 2 test cases passed after 0.227 seconds.
+◇ Test dismissingBeforeASaveWritesNothing(reason:) started.
+◇ Test case passing 1 argument reason → .escape to dismissingBeforeASaveWritesNothing(reason:) started.
+◇ Test case passing 1 argument reason → .outsideClick to dismissingBeforeASaveWritesNothing(reason:) started.
+✔ Test dismissingBeforeASaveWritesNothing(reason:) with 2 test cases passed after 0.249 seconds.
+◇ Test aFailureBeforeCommitKeepsTheTextAndModeWithAnExplanation() started.
+✔ Test aFailureBeforeCommitKeepsTheTextAndModeWithAnExplanation() passed after 0.067 seconds.
+◇ Test whenTheStoreCannotOpenSearchStillWorksAndCaptureExplainsAndKeepsTheText() started.
+✔ Test whenTheStoreCannotOpenSearchStillWorksAndCaptureExplainsAndKeepsTheText() passed after 0.448 seconds.
+◇ Test withoutACollectionCaptureExplainsAndKeepsTheText() started.
+✔ Test withoutACollectionCaptureExplainsAndKeepsTheText() passed after 0.071 seconds.
+◇ Test returningToSearchLeavesTheNoteNoticeBehind() started.
+✔ Test returningToSearchLeavesTheNoteNoticeBehind() passed after 0.048 seconds.
+◇ Test diagnosticsNeverRecordCapturedText() started.
+✔ Test diagnosticsNeverRecordCapturedText() passed after 0.072 seconds.
+◇ Test anOwnedOriginWindowGetsItsKeyStatusAndResponderBack(reason:) started.
+◇ Test case passing 1 argument reason → .saved to anOwnedOriginWindowGetsItsKeyStatusAndResponderBack(reason:) started.
+◇ Test case passing 1 argument reason → .escape to anOwnedOriginWindowGetsItsKeyStatusAndResponderBack(reason:) started.
+✔ Test anOwnedOriginWindowGetsItsKeyStatusAndResponderBack(reason:) with 2 test cases passed after 0.176 seconds.
+✔ Suite NoteSaveTests passed after 1.918 seconds.
+◇ Suite OrganizedCollectionFixtureTests started.
+◇ Test theFixtureCoversEveryOrganizationFactAndSurvivesRestart() started.
+✔ Test theFixtureCoversEveryOrganizationFactAndSurvivesRestart() passed after 0.071 seconds.
+✔ Suite OrganizedCollectionFixtureTests passed after 0.071 seconds.
+◇ Suite ResultIconsTests started.
+◇ Test customIconDiffersFromTheGenericApplicationIconAtTheRequestedPixelSize() started.
+✔ Test customIconDiffersFromTheGenericApplicationIconAtTheRequestedPixelSize() passed after 0.056 seconds.
+◇ Test installationsSharingABundleIdentifierKeepTheirOwnIcons() started.
+✔ Test installationsSharingABundleIdentifierKeepTheirOwnIcons() passed after 0.049 seconds.
+◇ Test missingDeletedOrUnreadableBundlesProduceNoIcon() started.
+✔ Test missingDeletedOrUnreadableBundlesProduceNoIcon() passed after 0.022 seconds.
+◇ Test anUpdatedBundleProducesItsNewIconWhileAnUnchangedOneIsServedFromCache() started.
+✔ Test anUpdatedBundleProducesItsNewIconWhileAnUnchangedOneIsServedFromCache() passed after 0.035 seconds.
+◇ Test theCacheStaysWithinItsCapAcrossManyDistinctInstallations() started.
+✔ Test theCacheStaysWithinItsCapAcrossManyDistinctInstallations() passed after 0.224 seconds.
+✔ Suite ResultIconsTests passed after 0.388 seconds.
+◇ Suite SearchExclusionTests started.
+◇ Test dependencyAndBuildFoldersAreExcludedAtAnyDepthByWholeName() started.
+✔ Test dependencyAndBuildFoldersAreExcludedAtAnyDepthByWholeName() passed after 0.004 seconds.
+◇ Test systemAndLibraryLocationsAreExcludedExceptICloudDriveAndCloudStorage() started.
+✔ Test systemAndLibraryLocationsAreExcludedExceptICloudDriveAndCloudStorage() passed after 0.002 seconds.
+◇ Test applicationsInConventionalRootsStillAppearFromTheCatalogAndTheIndex() started.
+✔ Test applicationsInConventionalRootsStillAppearFromTheCatalogAndTheIndex() passed after 0.001 seconds.
+◇ Test finderRemainsSearchableAlthoughOutsideTheCatalogRoots() started.
+✔ Test finderRemainsSearchableAlthoughOutsideTheCatalogRoots() passed after 0.001 seconds.
+◇ Test excludedCandidatesDoNotTakeShortlistPlaces() started.
+✔ Test excludedCandidatesDoNotTakeShortlistPlaces() passed after 0.054 seconds.
+➜ Test liveIndexedTeQueryOmitsDependencySystemAndApplicationSupportClutter() skipped.
+➜ Test liveIndexedFinderQueryReturnsFinder() skipped.
+✔ Suite SearchExclusionTests passed after 0.062 seconds.
+◇ Suite SearchRankingTests started.
+◇ Test wordStartsBeatShorterMidwordMatches() started.
+✔ Test wordStartsBeatShorterMidwordMatches() passed after 0.001 seconds.
+◇ Test extensionsAreFallbackMatchesAndKindsBreakEqualTiers() started.
+✔ Test extensionsAreFallbackMatchesAndKindsBreakEqualTiers() passed after 0.002 seconds.
+◇ Test applicationsMatchingByNameOrWordStartPrecedeExactFiles() started.
+✔ Test applicationsMatchingByNameOrWordStartPrecedeExactFiles() passed after 0.001 seconds.
+◇ Test promotedApplicationsKeepTheirOwnOrderAboveFoldersThenFiles() started.
+✔ Test promotedApplicationsKeepTheirOwnOrderAboveFoldersThenFiles() passed after 0.001 seconds.
+◇ Test substringApplicationsAndUnmatchedApplicationsAreNotPromoted() started.
+✔ Test substringApplicationsAndUnmatchedApplicationsAreNotPromoted() passed after 0.001 seconds.
+◇ Test adapterShortlistKeepsPromotedApplicationsAheadOfExactCandidatesUnderItsLimit() started.
+✔ Test adapterShortlistKeepsPromotedApplicationsAheadOfExactCandidatesUnderItsLimit() passed after 0.005 seconds.
+◇ Test wordOrderWinsBeforeUsageAndPathOnlyAfterCloseness() started.
+✔ Test wordOrderWinsBeforeUsageAndPathOnlyAfterCloseness() passed after 0.001 seconds.
+◇ Test languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+◇ Test case passing 3 arguments query → "studio code", first → "Visual Studio Code", second → "xstudio xcode" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+◇ Test case passing 3 arguments query → "code studio", first → "Visual Studio Code", second → "xcode xstudio" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+◇ Test case passing 3 arguments query → "point", first → "PowerPoint", second → "Checkpoint" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+◇ Test case passing 3 arguments query → "time", first → "FaceTime", second → "Overtime" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+◇ Test case passing 3 arguments query → "udio", first → "Another udio tool", second → "Visual Studio Code" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+◇ Test case passing 3 arguments query → "ภาษา", first → "บันทึกภาษาไทย", second → "เอกสารยาวมาก ภาษา" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+◇ Test case passing 3 arguments query → "ทึก", first → "เอกสาร ทึก สรุป", second → "บันทึก" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+◇ Test case passing 3 arguments query → "ไทย", first → "เอกสาร ไทย มากมาย", second → "ภาษาไทย" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+◇ Test case passing 3 arguments query → "studio", first → "Android Studio", second → "Visual Studio Code" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+✔ Test languageAwareWordStartsAndSubstringFallback(query:first:second:) with 9 test cases passed after 0.005 seconds.
+◇ Test fullFilenamesAndUnrecognizedDottedSuffixesRemainLiteral() started.
+✔ Test fullFilenamesAndUnrecognizedDottedSuffixesRemainLiteral() passed after 0.001 seconds.
+◇ Test fileClosenessIgnoresDeclaredExtensionAndFilesShareFolderRank() started.
+✔ Test fileClosenessIgnoresDeclaredExtensionAndFilesShareFolderRank() passed after 0.001 seconds.
+◇ Test usageCannotCrossTierKindClosenessOrWordOrderAndTiesAreStable() started.
+✔ Test usageCannotCrossTierKindClosenessOrWordOrderAndTiesAreStable() passed after 0.001 seconds.
+◇ Test catalogMatchesDisplayBundleAndInstallationNames() started.
+✔ Test catalogMatchesDisplayBundleAndInstallationNames() passed after 0.009 seconds.
+◇ Test adapterShortlistKeepsLateStrongMatchesAheadOfWeakCandidates() started.
+✔ Test adapterShortlistKeepsLateStrongMatchesAheadOfWeakCandidates() passed after 0.139 seconds.
+➜ Test indexedShortlistKeepsWordStartsAheadOfMidwordAndExtensionOnlyMatches() skipped.
+✔ Suite SearchRankingTests passed after 0.171 seconds.
+◇ Suite SearchResponsivenessTests started.
+➜ Test liveIndexedSearchKeepsInputQueueResponsive() skipped.
+✔ Suite SearchResponsivenessTests passed after 0.001 seconds.
+◇ Suite SearchTests started.
+◇ Test loadingReplacementsNeverResurrectPreviouslyInvisibleCandidates() started.
+✔ Test loadingReplacementsNeverResurrectPreviouslyInvisibleCandidates() passed after 0.002 seconds.
+◇ Test retainedAliasesKeepTheirSourceOwnershipWhenThatSourceFinishes() started.
+✔ Test retainedAliasesKeepTheirSourceOwnershipWhenThatSourceFinishes() passed after 0.006 seconds.
+◇ Test retainedMatchesSurviveLoadingSnapshotsUntilTheirSourceFinishes() started.
+✔ Test retainedMatchesSurviveLoadingSnapshotsUntilTheirSourceFinishes() passed after 0.006 seconds.
+◇ Test editsFirstYieldRecheckedRerankedResultsBeforeSourcesRespond() started.
+✔ Test editsFirstYieldRecheckedRerankedResultsBeforeSourcesRespond() passed after 0.001 seconds.
+◇ Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() started.
+✔ Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() passed after 0.001 seconds.
+◇ Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() started.
+✔ Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() passed after 0.001 seconds.
+◇ Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() started.
+✔ Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() passed after 0.001 seconds.
+◇ Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() started.
+✔ Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() passed after 0.351 seconds.
+➜ Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() skipped.
+➜ Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() skipped.
+➜ Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() skipped.
+◇ Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() started.
+✔ Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() passed after 0.001 seconds.
+◇ Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() started.
+✔ Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() passed after 0.001 seconds.
+◇ Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() started.
+✔ Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() passed after 0.001 seconds.
+◇ Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() started.
+✔ Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() passed after 0.001 seconds.
+➜ Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() skipped.
+◇ Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() started.
+✔ Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() passed after 0.006 seconds.
+◇ Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() started.
+✔ Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() passed after 0.003 seconds.
+◇ Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() started.
+✔ Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() passed after 0.001 seconds.
+◇ Test failedSourceStatusStillDeliversAvailableMatches() started.
+✔ Test failedSourceStatusStillDeliversAvailableMatches() passed after 0.001 seconds.
+◇ Test installationFilenameRemainsSearchableWhenBundleNameDiffers() started.
+✔ Test installationFilenameRemainsSearchableWhenBundleNameDiffers() passed after 0.008 seconds.
+◇ Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() started.
+✔ Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() passed after 0.006 seconds.
+◇ Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() started.
+✔ Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() passed after 2.101 seconds.
+◇ Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() started.
+✔ Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() passed after 0.021 seconds.
+◇ Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() started.
+✔ Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() passed after 0.024 seconds.
+◇ Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() started.
+✔ Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() passed after 0.001 seconds.
+◇ Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() started.
+✔ Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() passed after 0.001 seconds.
+◇ Test exactPrefixAndSubstringHaveDeterministicOrder() started.
+✔ Test exactPrefixAndSubstringHaveDeterministicOrder() passed after 0.001 seconds.
+✔ Suite SearchTests passed after 2.550 seconds.
+◇ Suite SearchTypingGapTests started.
+◇ Test aKeystrokeAfterAnIdleGapStartsTheFileQueryImmediately() started.
+✔ Test aKeystrokeAfterAnIdleGapStartsTheFileQueryImmediately() passed after 0.012 seconds.
+◇ Test keystrokesWithinTheGapStartOneFileQueryWithTheLatestTextOnceTypingPauses() started.
+✔ Test keystrokesWithinTheGapStartOneFileQueryWithTheLatestTextOnceTypingPauses() passed after 0.125 seconds.
+◇ Test applicationsAndRetainedResultsArriveWhileTheFileQueryWaitsForAPause() started.
+✔ Test applicationsAndRetainedResultsArriveWhileTheFileQueryWaitsForAPause() passed after 0.003 seconds.
+✔ Suite SearchTypingGapTests passed after 0.141 seconds.
+◇ Suite SpotlightStageTests started.
+➜ Test allThreeStagesStartBeforeAnyFinishesGathering() skipped.
+➜ Test aNameMatchSurvivesThousandsOfExtensionOnlyMatchesInTheShortlist() skipped.
+➜ Test indexedHiddenDestinationsAreExcludedAfterShortlisting() skipped.
+◇ Test destinationsInsidePackagesOrHiddenFoldersAreNotVisible() started.
+✔ Test destinationsInsidePackagesOrHiddenFoldersAreNotVisible() passed after 0.004 seconds.
+✔ Suite SpotlightStageTests passed after 0.004 seconds.
+◇ Suite SuggestionInteractionTests started.
+◇ Test suggestionsFollowEveryMatchIncludingLateFileBatchesAndAreAbsentForEmptyText() started.
+✔ Test suggestionsFollowEveryMatchIncludingLateFileBatchesAndAreAbsentForEmptyText() passed after 0.061 seconds.
+◇ Test withNoMatchesTheFirstSuggestionIsSelected() started.
+✔ Test withNoMatchesTheFirstSuggestionIsSelected() passed after 0.044 seconds.
+◇ Test enterOnASuggestionSwitchesModeWithTheExactTextAndSelectionAndSavesOnlyOnTheNextEnter(suggestion:) started.
+◇ Test case passing 1 argument suggestion → .note to enterOnASuggestionSwitchesModeWithTheExactTextAndSelectionAndSavesOnlyOnTheNextEnter(suggestion:) started.
+◇ Test case passing 1 argument suggestion → .task to enterOnASuggestionSwitchesModeWithTheExactTextAndSelectionAndSavesOnlyOnTheNextEnter(suggestion:) started.
+✔ Test enterOnASuggestionSwitchesModeWithTheExactTextAndSelectionAndSavesOnlyOnTheNextEnter(suggestion:) with 2 test cases passed after 0.282 seconds.
+◇ Test anUnnavigatedEnterOnASuggestionWhileLoadingWaitsSoALateMatchIsNotSkipped(lateMatch:) started.
+◇ Test case passing 1 argument lateMatch → true to anUnnavigatedEnterOnASuggestionWhileLoadingWaitsSoALateMatchIsNotSkipped(lateMatch:) started.
+◇ Test case passing 1 argument lateMatch → false to anUnnavigatedEnterOnASuggestionWhileLoadingWaitsSoALateMatchIsNotSkipped(lateMatch:) started.
+✔ Test anUnnavigatedEnterOnASuggestionWhileLoadingWaitsSoALateMatchIsNotSkipped(lateMatch:) with 2 test cases passed after 0.106 seconds.
+◇ Test enterOnANavigatedSuggestionChoosesItAtOnceWhileLoading() started.
+✔ Test enterOnANavigatedSuggestionChoosesItAtOnceWhileLoading() passed after 0.072 seconds.
+◇ Test newTaskWithMultilineTextExplainsTheRuleAndKeepsSearchAndTheText() started.
+✔ Test newTaskWithMultilineTextExplainsTheRuleAndKeepsSearchAndTheText() passed after 0.039 seconds.
+✔ Suite SuggestionInteractionTests passed after 0.607 seconds.
+◇ Suite TaskLifecycleTests started.
+◇ Test newTasksGoToTheTopOfInboxByDefaultAndSurviveReopen() started.
+✔ Test newTasksGoToTheTopOfInboxByDefaultAndSurviveReopen() passed after 0.034 seconds.
+◇ Test titlesMustBeNonblankSingleLinesAndAreRejectedWholeRatherThanFlattened() started.
+✔ Test titlesMustBeNonblankSingleLinesAndAreRejectedWholeRatherThanFlattened() passed after 0.027 seconds.
+◇ Test explicitTodayCreationAndIdenticalRetriesReturnOneTask() started.
+✔ Test explicitTodayCreationAndIdenticalRetriesReturnOneTask() passed after 0.033 seconds.
+◇ Test everyCommandFromEveryCompletionAndArchiveStateFollowsTheOperationTable() started.
+✔ Test everyCommandFromEveryCompletionAndArchiveStateFollowsTheOperationTable() passed after 0.134 seconds.
+◇ Test staleOrMissingReferencesFailWithoutChangeEvenWhenTheResultAlreadyHolds() started.
+✔ Test staleOrMissingReferencesFailWithoutChangeEvenWhenTheResultAlreadyHolds() passed after 0.030 seconds.
+◇ Test competingTitleEditsAndArchiveOnOneRevisionLetExactlyOneWin() started.
+✔ Test competingTitleEditsAndArchiveOnOneRevisionLetExactlyOneWin() passed after 0.029 seconds.
+◇ Test topInsertionAtTheEndOfTheKeySpaceRenumbersAtomicallyAndKeepsOrderAndTies() started.
+✔ Test topInsertionAtTheEndOfTheKeySpaceRenumbersAtomicallyAndKeepsOrderAndTies() passed after 0.037 seconds.
+◇ Test completedAndArchiveSortByTheirTimesThenIDAndSearchEligibilityIsExplicit() started.
+✔ Test completedAndArchiveSortByTheirTimesThenIDAndSearchEligibilityIsExplicit() passed after 0.046 seconds.
+◇ Test failedTaskCommandsPublishNothingAndOldGenerationsCannotChangeTasks() started.
+✔ Test failedTaskCommandsPublishNothingAndOldGenerationsCannotChangeTasks() passed after 0.042 seconds.
+◇ Test theSchemaItselfRefusesTasksThatBreakPlacementOrTitleRules() started.
+✔ Test theSchemaItselfRefusesTasksThatBreakPlacementOrTitleRules() passed after 0.029 seconds.
+◇ Test todayMembershipIgnoresMidnightAndDaylightSavingChanges() started.
+✔ Test todayMembershipIgnoresMidnightAndDaylightSavingChanges() passed after 0.056 seconds.
+◇ Test observationsFollowCommittedTaskTransitionsAndNeverShowRolledBackOnes() started.
+✔ Test observationsFollowCommittedTaskTransitionsAndNeverShowRolledBackOnes() passed after 0.044 seconds.
+✔ Suite TaskLifecycleTests passed after 0.548 seconds.
+◇ Suite TaskOrderingTests started.
+◇ Test reorderMovesOneTaskWithinItsListAndSurvivesReopen() started.
+✔ Test reorderMovesOneTaskWithinItsListAndSurvivesReopen() passed after 0.039 seconds.
+◇ Test aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .createAtTop to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .moveIn to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .moveOut to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .complete to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .archive to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .reopen to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .restore to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .reorder to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+✔ Test aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) with 8 test cases passed after 0.310 seconds.
+◇ Test reorderChecksTheTaskThenTheRequestThenTheListAndAlreadyHeldPositionsAreNoOps() started.
+✔ Test reorderChecksTheTaskThenTheRequestThenTheListAndAlreadyHeldPositionsAreNoOps() passed after 0.036 seconds.
+◇ Test reorderUsesAFreeKeyWhenOneFitsAndOtherwiseRenumbersAtomicallyWithoutLosingAnyTask() started.
+✔ Test reorderUsesAFreeKeyWhenOneFitsAndOtherwiseRenumbersAtomicallyWithoutLosingAnyTask() passed after 0.062 seconds.
+◇ Test concurrentReordersInsertsAndMovesFromOneViewLoseNothingAndAtMostOneReorderWins() started.
+✔ Test concurrentReordersInsertsAndMovesFromOneViewLoseNothingAndAtMostOneReorderWins() passed after 0.085 seconds.
+◇ Test insertionMoveReopenAndRestoreGoAboveTheManualOrderWhichSurvivesRestart() started.
+✔ Test insertionMoveReopenAndRestoreGoAboveTheManualOrderWhichSurvivesRestart() passed after 0.044 seconds.
+◇ Test completedAndArchiveKeepTheirTimeOrderWhateverTheManualOrderWas() started.
+✔ Test completedAndArchiveKeepTheirTimeOrderWhateverTheManualOrderWas() passed after 0.037 seconds.
+◇ Test observersSeeOnlyCommittedOrdersAndOldGenerationsCannotReorder() started.
+✔ Test observersSeeOnlyCommittedOrdersAndOldGenerationsCannotReorder() passed after 0.040 seconds.
+✔ Suite TaskOrderingTests passed after 0.656 seconds.
+◇ Suite TaskSaveTests started.
+◇ Test enterCommitsExactlyOneTaskAtTheTopOfTheChosenList(destination:) started.
+◇ Test case passing 1 argument destination → .inbox to enterCommitsExactlyOneTaskAtTheTopOfTheChosenList(destination:) started.
+◇ Test case passing 1 argument destination → .today to enterCommitsExactlyOneTaskAtTheTopOfTheChosenList(destination:) started.
+✔ Test enterCommitsExactlyOneTaskAtTheTopOfTheChosenList(destination:) with 2 test cases passed after 0.729 seconds.
+◇ Test repeatedEnterWhileTheSaveIsPausedCommitsExactlyOneTask() started.
+✔ Test repeatedEnterWhileTheSaveIsPausedCommitsExactlyOneTask() passed after 0.088 seconds.
+◇ Test dismissingBeforeASaveWritesNothingAndTheNextInvocationStartsInInbox(reason:) started.
+◇ Test case passing 1 argument reason → .escape to dismissingBeforeASaveWritesNothingAndTheNextInvocationStartsInInbox(reason:) started.
+◇ Test case passing 1 argument reason → .outsideClick to dismissingBeforeASaveWritesNothingAndTheNextInvocationStartsInInbox(reason:) started.
+✔ Test dismissingBeforeASaveWritesNothingAndTheNextInvocationStartsInInbox(reason:) with 2 test cases passed after 0.241 seconds.
+◇ Test aWhitespaceOnlyTitleIsRefusedWithoutReachingTheStore(title:) started.
+◇ Test case passing 1 argument title → "" to aWhitespaceOnlyTitleIsRefusedWithoutReachingTheStore(title:) started.
+◇ Test case passing 1 argument title → " 	 " to aWhitespaceOnlyTitleIsRefusedWithoutReachingTheStore(title:) started.
+✔ Test aWhitespaceOnlyTitleIsRefusedWithoutReachingTheStore(title:) with 2 test cases passed after 0.534 seconds.
+◇ Test shiftEnterInTaskDoesNothing() started.
+✔ Test shiftEnterInTaskDoesNothing() passed after 0.019 seconds.
+◇ Test clickingTheSelectorChoosesTheDestinationAndKeepsTypingFocus() started.
+✔ Test clickingTheSelectorChoosesTheDestinationAndKeepsTypingFocus() passed after 0.066 seconds.
+◇ Test switchingToTaskWithMultilineSearchTextIsRefusedWithAnExplanation() started.
+✔ Test switchingToTaskWithMultilineSearchTextIsRefusedWithAnExplanation() passed after 0.016 seconds.
+◇ Test anOpenInProgressOutranksTheRefusedSwitchExplanation() started.
+✔ Test anOpenInProgressOutranksTheRefusedSwitchExplanation() passed after 0.051 seconds.
+◇ Test aFailureKeepsTheTitleModeAndDestinationWithAnExplanation() started.
+✔ Test aFailureKeepsTheTitleModeAndDestinationWithAnExplanation() passed after 0.063 seconds.
+✔ Suite TaskSaveTests passed after 1.813 seconds.
+✔ Test run with 314 tests in 40 suites passed after 51.634 seconds.
