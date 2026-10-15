@@ -1,0 +1,32 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.25s)
+Test Suite 'Selected tests' started at 2026-10-15 10:45:58.196.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 10:45:58.197.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 10:45:58.197.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 10:45:58.197.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CaptureSafetyNativeTests started.
+􀟈  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "-", outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "-", outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "-", outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "[", outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "[", outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "[", outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􁁛  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) with 6 test cases passed after 2.229 seconds.
+􀟈  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "-" to editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "[" to editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+􁁛  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) with 2 test cases passed after 0.303 seconds.
+􀟈  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "-" to anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "[" to anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+􁁛  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) with 2 test cases passed after 0.724 seconds.
+􁁛  Suite CaptureSafetyNativeTests passed after 3.258 seconds.
+􁁛  Test run with 3 tests in 1 suite passed after 3.258 seconds.

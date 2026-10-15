@@ -1,0 +1,79 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests NativeEditingTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (3.03s)
+Test Suite 'Selected tests' started at 2026-10-15 10:47:15.718.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 10:47:15.719.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 10:47:15.719.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 10:47:15.719.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CaptureSafetyNativeTests started.
+􀟈  Suite NativeEditingTests started.
+􀟈  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "-", outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "-", outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "-", outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "[", outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "[", outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􀟈  Test case passing 2 arguments prefix → "[", outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) started.
+􁁛  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix:outcome:) with 6 test cases passed after 2.357 seconds.
+􀟈  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "-" to editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "[" to editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) started.
+􁁛  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix:) with 2 test cases passed after 0.350 seconds.
+􀟈  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "-" to anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "[" to anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) started.
+􁁛  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix:) with 2 test cases passed after 0.734 seconds.
+􁁛  Suite CaptureSafetyNativeTests passed after 3.442 seconds.
+􀟈  Test lateResultsPreserveEditorSelectionUndoAndInputPosition() started.
+􁁛  Test lateResultsPreserveEditorSelectionUndoAndInputPosition() passed after 0.610 seconds.
+􀟈  Test theBarsEditorUsesTextKit2() started.
+􁁛  Test theBarsEditorUsesTextKit2() passed after 0.047 seconds.
+􀟈  Test placeholderShowsOnlyInEmptySearchAndHidesWhileComposing() started.
+􁁛  Test placeholderShowsOnlyInEmptySearchAndHidesWhileComposing() passed after 0.053 seconds.
+􀟈  Test typedDashAtTheStartSwitchesToNoteAndKeepsTheText() started.
+􁁛  Test typedDashAtTheStartSwitchesToNoteAndKeepsTheText() passed after 0.033 seconds.
+􀟈  Test pastedDashStaysLiteralInSearch() started.
+􁁛  Test pastedDashStaysLiteralInSearch() passed after 0.071 seconds.
+􀟈  Test undoAndRedoAfterAConsumedPrefixChangeOnlyTheText() started.
+􁁛  Test undoAndRedoAfterAConsumedPrefixChangeOnlyTheText() passed after 0.053 seconds.
+􀟈  Test compositionContainingADashNeverSwitchesModes(composed:) started.
+􀟈  Test case passing 1 argument composed → "-" to compositionContainingADashNeverSwitchesModes(composed:) started.
+􀟈  Test case passing 1 argument composed → "a-" to compositionContainingADashNeverSwitchesModes(composed:) started.
+􀟈  Test case passing 1 argument composed → "-a" to compositionContainingADashNeverSwitchesModes(composed:) started.
+􁁛  Test compositionContainingADashNeverSwitchesModes(composed:) with 3 test cases passed after 0.178 seconds.
+􀟈  Test thaiTextSurvivesTheSwitchToNote() started.
+􁁛  Test thaiTextSurvivesTheSwitchToNote() passed after 0.071 seconds.
+􀟈  Test shiftEnterWritesANewLineInNoteAndEnterWithoutACollectionKeepsIt() started.
+􁁛  Test shiftEnterWritesANewLineInNoteAndEnterWithoutACollectionKeepsIt() passed after 0.080 seconds.
+􀟈  Test noteKeepsMarkdownPunctuationAsTyped() started.
+􁁛  Test noteKeepsMarkdownPunctuationAsTyped() passed after 0.115 seconds.
+􀟈  Test backspaceAtTheStartOfNoteReturnsToSearchAndATypedDashStaysLiteral() started.
+􁁛  Test backspaceAtTheStartOfNoteReturnsToSearchAndATypedDashStaysLiteral() passed after 0.110 seconds.
+􀟈  Test dashBackspaceDashEntersNoteAgainWithAnEmptyBuffer() started.
+􁁛  Test dashBackspaceDashEntersNoteAgainWithAnEmptyBuffer() passed after 0.084 seconds.
+􀟈  Test backspaceAfterTheStartOfNoteDeletesNormally() started.
+􁁛  Test backspaceAfterTheStartOfNoteDeletesNormally() passed after 0.066 seconds.
+􀟈  Test undoAfterReturningToSearchChangesOnlyTheText() started.
+􁁛  Test undoAfterReturningToSearchChangesOnlyTheText() passed after 0.074 seconds.
+􀟈  Test undoThatEmptiesReturnedTextLetsATypedDashEnterNote() started.
+􁁛  Test undoThatEmptiesReturnedTextLetsATypedDashEnterNote() passed after 0.050 seconds.
+􀟈  Test typedBracketAtTheStartSwitchesToTaskAndKeepsThaiText() started.
+􁁛  Test typedBracketAtTheStartSwitchesToTaskAndKeepsThaiText() passed after 0.049 seconds.
+􀟈  Test aRealCRLFPasteInTaskIsRefusedWithTheBufferUnchanged() started.
+􁁛  Test aRealCRLFPasteInTaskIsRefusedWithTheBufferUnchanged() passed after 0.054 seconds.
+􀟈  Test aRefusedSwitchToTaskKeepsTheTextSelectionAndUndoHistory() started.
+􁁛  Test aRefusedSwitchToTaskKeepsTheTextSelectionAndUndoHistory() passed after 0.066 seconds.
+􀟈  Test aTypedTabInTaskTogglesTheDestinationAndInSearchIsText() started.
+􁁛  Test aTypedTabInTaskTogglesTheDestinationAndInSearchIsText() passed after 0.070 seconds.
+􁁛  Suite NativeEditingTests passed after 5.387 seconds.
+􁁛  Test run with 22 tests in 2 suites passed after 5.388 seconds.

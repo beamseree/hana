@@ -193,6 +193,13 @@ Reject whitespace-only new captures; preserve intentional content and Markdown w
 
 A save is explicit commitment intent. Before submission Escape/outside click discards; after submission starts, serialize dismissal with the save result instead of pretending that an already committed write was cancelled. Briefly defer hiding during the write, preserve text on failure, and do not steal focus back if the user clicked elsewhere. If the write stalls, display its state and offer retry only after determining its outcome using the operation ID. This race policy is a proposed implementation detail requiring validation. A failed capture is not silently persisted as a draft.
 
+Issue #67 implements this policy for Note and Task with a “Saving…” label,
+deferred dismissal, and operation IDs reused only for unchanged retries. The
+Capture Session, real temporary Store fault tests, and automated AppKit
+key-window/responder checks pass; physical foreign-app typing and Space
+validation remain pending. See the
+[implementation and evidence status](evidence/issue-67/validation.md).
+
 ### Working-note editor and autosave
 
 Use plain-text `NSTextView` with Markdown syntax always present. Preserve native undo/redo, selection, spelling, and composition. Disable substitutions that unexpectedly change Markdown punctuation. Source text is authoritative; highlighting and preview never rewrite it. Start with TextKit 2 and avoid accidentally invoking TextKit 1 compatibility paths; validate long documents before adding elaborate syntax decoration. Apple documents the text-system fallback behavior. [NSTextView](https://developer.apple.com/documentation/appkit/nstextview).

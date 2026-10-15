@@ -43,7 +43,7 @@ struct CaptureSession {
         case chooseSuggestion(Suggestion)
         /// A click on Task's destination selector.
         case chooseDestination(TaskPlacement)
-        /// A new invocation, or a dismissal discarding any unsaved capture.
+        /// A new invocation, or a dismissal. An in-flight save defers discard.
         case invoked, dismissed
         /// Enter outside composition.
         case submit
@@ -62,6 +62,8 @@ struct CaptureSession {
         case saveTask(operation: UUID, title: String, placement: TaskPlacement)
         /// Show the confirmation, then close and return focus.
         case confirmSaved
+        /// A dismissal requested during the write: close without restoring focus.
+        case closeSaved
     }
 
     /// Editing accepts changes; once submitted, the text is frozen until the
@@ -90,15 +92,24 @@ struct CaptureSession {
         var destination = TaskPlacement.inbox
         var phase = Phase.editing
         var notice: Notice?
+        var dismissalRequested = false
     }
 
     /// The typed prefixes that select a capture mode from Search.
     private static let prefixes: [String: Mode] = ["-": .note, "[": .task]
 
     private(set) var state = State()
-    /// Identifies this invocation's capture to the Store, so every save of it
-    /// creates at most one note or task. Each invocation gets a new one.
+    /// Identifies one submitted payload to the Store. Unchanged retries keep
+    /// it; editing after a failed attempt starts a new operation.
     private(set) var operation = UUID()
+    private var submitted = false
+
+    private mutating func payloadChanged() {
+        state.notice = nil
+        guard submitted else { return }
+        operation = UUID()
+        submitted = false
+    }
 
     /// The query Search receives for the buffer: whitespace runs, line breaks
     /// included, become single spaces. The buffer itself is never changed.
@@ -122,7 +133,9 @@ struct CaptureSession {
                 state.notice = .multilineTask
                 return [.consumeInsertion]
             }
-            state.text = (state.text as NSString).replacingCharacters(in: range, with: text)
+            let changed = (state.text as NSString).replacingCharacters(in: range, with: text)
+            if !changed.utf8.elementsEqual(state.text.utf8) { payloadChanged() }
+            state.text = changed
             if !text.isEmpty || range.length > 0 { state.notice = nil }
             state.selection = NSRange(location: range.location + (text as NSString).length, length: 0)
             return []
@@ -133,6 +146,7 @@ struct CaptureSession {
             // Once submitted, the capture stays put until the save settles.
             guard state.mode != .search, state.phase == .editing,
                   state.selection == NSRange(location: 0, length: 0) else { return [] }
+            payloadChanged()
             state.mode = .search
             state.prefixesArmed = state.text.isEmpty
             state.notice = nil
@@ -143,24 +157,37 @@ struct CaptureSession {
         case .tab:
             // A typed Tab never enters a title: it toggles the destination.
             guard state.mode == .task else { return [] }
-            if state.phase == .editing { state.destination = state.destination == .inbox ? .today : .inbox }
+            if state.phase == .editing {
+                payloadChanged()
+                state.destination = state.destination == .inbox ? .today : .inbox
+            }
             return [.consumeInsertion]
         case .newline:
             // Task titles are one line; Note writes the line break.
             return state.mode == .task ? [.consumeInsertion] : []
         case .chooseDestination(let destination):
             guard state.mode == .task, state.phase == .editing else { return [] }
+            if destination != state.destination { payloadChanged() }
             state.destination = destination
             return []
         case .edited(let text, let selection):
             guard state.phase == .editing else { return [] }
-            if text != state.text { state.notice = nil }
+            if !text.utf8.elementsEqual(state.text.utf8) {
+                payloadChanged()
+                state.notice = nil
+            }
             state.text = text
             state.selection = selection
+            return []
+        case .dismissed where state.phase == .saving:
+            // The outcome is still unknown. Keep the submitted payload and
+            // receipt identity until the write settles; this is not cancellation.
+            state.dismissalRequested = true
             return []
         case .invoked, .dismissed:
             state = State()
             operation = UUID()
+            submitted = false
             return []
         case .submit:
             guard state.mode != .search, state.phase == .editing else { return [] }
@@ -175,6 +202,7 @@ struct CaptureSession {
                 return []
             }
             state.phase = .saving
+            submitted = true
             state.notice = nil
             return state.mode == .task
                 ? [.saveTask(operation: operation, title: state.text, placement: state.destination)]
@@ -182,7 +210,7 @@ struct CaptureSession {
         case .saved:
             guard state.phase == .saving else { return [] }
             state.phase = .saved
-            return [.confirmSaved]
+            return state.dismissalRequested ? [.closeSaved] : [.confirmSaved]
         case .saveFailed(let notice):
             guard state.phase == .saving else { return [] }
             // The same operation stays: Enter again can never duplicate a save that committed.
@@ -200,6 +228,7 @@ struct CaptureSession {
             state.notice = .multilineTask
             return []
         }
+        payloadChanged()
         state.mode = mode
         state.notice = nil
         return [.enterMode(mode)]

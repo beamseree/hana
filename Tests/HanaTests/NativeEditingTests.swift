@@ -158,6 +158,10 @@ struct NativeEditingTests {
         #expect(interaction.mode == .note)
         #expect(editor.string == "one\ntwo")
         #expect(interaction.currentInvocation == invocation)
+        // Submission is asynchronous even without a collection. Let its
+        // failure settle before cleanup: dismissal while saving now defers.
+        try await eventually { interaction.captureMessage != nil }
+        #expect(editor.isEditable)
     }
 
     @Test func noteKeepsMarkdownPunctuationAsTyped() async throws {

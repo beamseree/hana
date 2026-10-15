@@ -197,7 +197,7 @@ struct TaskSaveTests {
         editor.keyDown(with: try tabKey())
         editor.keyDown(with: try returnKey())
         try await eventually { interaction.captureMessage != nil }
-        #expect(interaction.captureMessage == "This task couldn’t be saved. Your text is kept.")
+        #expect(interaction.captureMessage == "Save not confirmed. Your text is kept. Press Enter to retry.")
         #expect(interaction.mode == .task && interaction.modeLabelText == "Task" && interaction.taskDestination == .today)
         #expect(editor.string == "keep me" && interaction.currentInvocation == invocation)
         #expect(try await store.read(.allRecords, in: store.generation).tasks.isEmpty)

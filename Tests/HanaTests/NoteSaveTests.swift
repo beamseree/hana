@@ -149,7 +149,7 @@ struct NoteSaveTests {
         editor.insertText("keep\nme", replacementRange: none)
         editor.keyDown(with: try returnKey())
         try await eventually { interaction.captureMessage != nil }
-        #expect(interaction.captureMessage == "This note couldn’t be saved. Your text is kept.")
+        #expect(interaction.captureMessage == "Save not confirmed. Your text is kept. Press Enter to retry.")
         #expect(interaction.mode == .note && interaction.modeLabelText == "Note")
         #expect(editor.string == "keep\nme" && interaction.currentInvocation == invocation)
         #expect(editor.window?.firstResponder === editor)

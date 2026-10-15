@@ -1,0 +1,116 @@
+{
+  "base_revision": "86b674dfcc758e533589e0d1697245019bd40e10",
+  "evidence_type": "automated desktop input; not human physical observation",
+  "passed_scenarios": 18,
+  "remaining": "Full-screen outside-click scenarios inconclusive; further deep testing stopped at maintainer request.",
+  "scenarios": [
+    {
+      "scenario": "ordinary-note-escape-success",
+      "mode": "note",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-note-escape-rollback",
+      "mode": "note",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-note-escape-ack",
+      "mode": "note",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-task-escape-success",
+      "mode": "task",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-task-escape-rollback",
+      "mode": "task",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-task-escape-ack",
+      "mode": "task",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-fullscreen-note-escape-success",
+      "mode": "note",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-fullscreen-note-escape-rollback",
+      "mode": "note",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-fullscreen-note-escape-ack",
+      "mode": "note",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-fullscreen-task-escape-success",
+      "mode": "task",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-fullscreen-task-escape-rollback",
+      "mode": "task",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-fullscreen-task-escape-ack",
+      "mode": "task",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-pointer-note-outside-success",
+      "mode": "note",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-pointer-note-outside-rollback",
+      "mode": "note",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-pointer-note-outside-ack",
+      "mode": "note",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-pointer-task-outside-success",
+      "mode": "task",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-pointer-task-outside-rollback",
+      "mode": "task",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    },
+    {
+      "scenario": "UI67-ordinary-pointer-task-outside-ack",
+      "mode": "task",
+      "saved_items": 1,
+      "typed_text_received_before_and_after_result": true
+    }
+  ]
+}
