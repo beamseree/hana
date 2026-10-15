@@ -1,0 +1,37 @@
+Hana tricky-input check
+Classifier: Jev (jev-1.13.0)
+Wording: automatic-switch-v1
+Jev threshold: 0.7
+Foundation Models unsure: true
+Fixed fixture collection; no live content. Requests ignore the gate; a timeout stops remaining requests.
+Input	Gate	Label	Probability/unsure	Latency ms
+term	blocked:one-word	unsure	unsure	274.2
+remind m	allowed	task	0.540	261.9
+remind 	allowed	task	0.580	1302.2
+Visual S	blocked:strong-match:application	unsure	unsure	243.7
+call mom	allowed	task	0.990	288.4
+call mom tomorrow	allowed	task	1.000	254.2
+buy milk	allowed	task	1.000	267.7
+I noticed the light on the river. It changes every evening.	allowed	note	0.980	255.2
+https://example.com	blocked:one-word	unsure	unsure	269.3
+pasted paragraph\nSecond line	allowed	unsure	unsure	265.6
+Weekend ideas	blocked:strong-match:note	note	0.850	260.1
+Weekend i	blocked:strong-match:note	unsure	unsure	255.3
+Book dentist	blocked:strong-match:task	task	0.980	269.1
+Send invoice	allowed	task	1.000	263.3
+Old travel notes	allowed	note	0.560	261.7
+open budget.xlsx	allowed	task	0.640	268.3
+budget.xlsx 	blocked:strong-match:file	search	0.530	492.5
+Visual Studio Code	blocked:strong-match:application	unsure	unsure	286.5
+find my notes	allowed	search	1.000	259.2
+remember this idea	allowed	note	0.940	264.3
+the meeting went well	allowed	note	0.830	261.0
+schedule a call	allowed	task	0.990	263.4
+write a thank you	allowed	task	0.640	281.5
+milk	blocked:one-word	unsure	unsure	255.2
+do	blocked:one-word	unsure	unsure	247.1
+a new thought	allowed	note	0.990	264.8
+pick up parcel tomorrow	allowed	task	1.000	265.0
+What if we try a different route?	allowed	unsure	unsure	258.4
+finish the report	allowed	task	0.970	236.9
+Read the design proposal	allowed	unsure	unsure	289.4

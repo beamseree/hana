@@ -4,6 +4,8 @@ Date: 2026-10-15. Parent: #110. Target: `feature/automatic-switch`, never `main`
 
 ## Status and evidence boundary
 
+**Follow-up, 2026-10-15:** the candidate was subsequently installed with Beam's authorization, and both real-provider checks completed. See [installed-candidate reports and settings/provenance](interactive/README.md). PR #119 remains draft; normal-use human acceptance remains pending. The rest of this document records the earlier automated verification phase and its then-current installation hold.
+
 The code and automated adapter, Keychain, submenu, and fixture-report checks are implemented. **Interactive acceptance remains pending.** No real Jev API request or Foundation Models inference, installed trial build, or deliberate tricky-input provider run occurred in this work. The user authorized native automated tests only and held installation/trial launch. This record does not satisfy the criterion requiring a report from each available classifier on Beam's Mac; #114 must remain open/draft until that evidence exists.
 
 ## Implementation
@@ -32,7 +34,7 @@ Environment: macOS 26.4.1 (25E253), arm64; Xcode 26.6 selected at `/Applications
 | Warmed-session ownership; typed Foundation errors | `foundationConsumesWarmedSessionThenUsesFreshSessions`, `foundationRunnerFailuresStayTyped`. SDK enum/macro/error matching also compiles against the installed framework; fake failures do not constitute an actual model refusal/guardrail observation. |
 | Fake report structure, fixture gates and bounded timeout | `TrickyInputCheckTests` checks 30 rows, escaped multiline input, gate/label/score/latency fields, and an uncooperative fake whose timeout prevents any subsequent inference and marks latency unmeasured. |
 | Menu key enablement, radio persistence, no working-window/policy change | `ClassifierMenuTests`; existing options-submenu regression test now supplies a unique saved test key. The secure alert itself has source/compiler evidence only; it was not interactively opened. |
-| Real-provider interactive checks with reports | **Pending**, intentionally not run. |
+| Real-provider interactive checks with reports | Subsequently completed via the installed candidate; see [raw reports and limitations](interactive/README.md). |
 
 TDD logs retain missing-adapter/report red states and focused green checks. The first full suite ran 370 tests and found two assertions in one existing options-submenu test: that test assumed Jev was selectable without a key. Its fixture now saves an isolated test key while still leaving the classifier factory nil. This was a requirement-driven test-fixture correction, not a relaxation of disabled-item behavior. The final serial suite passed **370 tests in 49 suites** in 61.599 seconds with exit status 0; `full-tests.log` records the normalized output. Native testing slot released immediately after completion.
 
