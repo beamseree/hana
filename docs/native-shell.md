@@ -37,6 +37,20 @@ security find-identity -v -p codesigning
 
 The build product is `build/Hana.app`; the repeatable installed location is `~/Applications/Hana.app`. `scripts/run` refuses replacement while Hana is running. Normal `open` uses the existing process; do not use `open -n` to start competing instances. The executable is `Hana`, with stable bundle identifier **com.beamseree.hana** and `LSUIElement=true`. The app is accessory with zero working windows and regular while any working window remains open, including minimized windows. Dock reopening explicitly opens or raises the main window.
 
+On the Command Line Tools selected for #88 (Swift 6.3.3), Swift Testing needs explicit framework and interop search paths. If the plain test command cannot import `Testing`, use:
+
+```sh
+hana_developer="$(xcode-select -p)"
+hana_frameworks="$hana_developer/Library/Developer/Frameworks"
+xcrun swift test --no-parallel \
+  -Xswiftc -F -Xswiftc "$hana_frameworks" \
+  -Xlinker -F -Xlinker "$hana_frameworks" \
+  -Xlinker -rpath -Xlinker "$hana_frameworks" \
+  -Xlinker -rpath -Xlinker "$hana_developer/Library/Developer/usr/lib"
+```
+
+Coordinate native test processes with the shared `/tmp/hana-spec-88-native-lock` directory; acquire it atomically with `mkdir` and release only your own lock after the process exits. Leave keyboard/mouse idle during focus tests. Require the final Swift Testing test/suite summary as well as exit status: this CLT runner can exit early when an asynchronous native window close escapes a test's lifetime. The fixture app-loop harnesses cover native close/minimize behavior separately.
+
 No valid certificate identity was available on the tested Mac. The scripts explicitly use **ad-hoc signing**, no TeamIdentifier, no entitlements, no App Sandbox and no Hardened Runtime. Strict local signature validation is not notarization or public distribution readiness. The designated requirement for this ad-hoc build is a code hash; keeping the bundle identifier and installed path stable does **not** promise TCC permission continuity after a rebuild. No paid account is required for these local checks. No privacy grants or global shortcut/Spaces changes are performed.
 
 ## Native behavior and boundary
