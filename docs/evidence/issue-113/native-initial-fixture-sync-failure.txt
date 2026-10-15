@@ -1,0 +1,83 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write sources
+[2/7] Write swift-version--112E4EF74740DA65.txt
+[4/10] Emitting module Hana
+[5/10] Compiling Hana AutomaticSwitch.swift
+[6/10] Compiling Hana MacInteraction.swift
+[7/16] Compiling Hana PerformanceValidation.swift
+[8/16] Compiling Hana MainWindowValidation.swift
+[9/16] Compiling Hana MixedSearchValidation.swift
+[10/16] Compiling Hana HanaApp.swift
+[11/16] Compiling Hana SearchCorrectnessValidation.swift
+[12/16] Compiling Hana CoverageValidation.swift
+[12/17] Write Objects.LinkFileList
+[13/17] Linking Hana
+[14/17] Applying Hana
+[16/30] Compiling HanaTests ModeIconTests.swift
+[17/30] Compiling HanaTests NoteSaveTests.swift
+[18/30] Compiling HanaTests SuggestionInteractionTests.swift
+[19/31] Compiling HanaTests ScriptedClassifier.swift
+[20/31] Compiling HanaTests MainWindowTests.swift
+[21/31] Compiling HanaTests NoteModeTests.swift
+[22/31] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[23/31] Compiling HanaTests AutomaticSwitchTests.swift
+[24/31] Compiling HanaTests TaskSaveTests.swift
+[25/31] Compiling HanaTests NativeEditingTests.swift
+[26/31] Compiling HanaTests DisplayPlacementTests.swift
+[27/31] Compiling HanaTests CaptureSafetyNativeTests.swift
+[28/31] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[29/31] Emitting module HanaTests
+[29/31] Write Objects.LinkFileList
+[30/31] Linking HanaPackageTests
+Build complete! (8.13s)
+Test Suite 'Selected tests' started at 2026-10-15 18:02:16.224.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 18:02:16.226.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 18:02:16.226.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 18:02:16.226.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchInteractionTests started.
+􀟈  Test submenuPersistsToggleAndResetsCountsWithoutOpeningWorkingWindowsOrChangingPolicy() started.
+􁁛  Test submenuPersistsToggleAndResetsCountsWithoutOpeningWorkingWindowsOrChangingPolicy() passed after 0.124 seconds.
+􀟈  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀟈  Test case passing 2 arguments enabled → true, suggestion → .note to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀟈  Test case passing 2 arguments enabled → true, suggestion → .task to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀟈  Test case passing 2 arguments enabled → false, suggestion → .note to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀟈  Test case passing 2 arguments enabled → false, suggestion → .task to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􁁛  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) with 4 test cases passed after 0.700 seconds.
+􀟈  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:) started.
+􀟈  Test case passing 1 argument label → .note to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:) started.
+􀟈  Test case passing 1 argument label → .task to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:) started.
+􁁛  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:) with 2 test cases passed after 1.035 seconds.
+􀟈  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) started.
+􀟈  Test case passing 1 argument method → .escape to automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) started.
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) recorded an issue with 1 argument method → .escape at MacInteractionTests.swift:946:5: Expectation failed: condition()
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) recorded an issue with 1 argument method → .escape at AutomaticSwitchInteractionTests.swift:137:9: Expectation failed: (interaction.mode == .note → false) && (fixture.log.counts().missed == 1 → <not evaluated>)
+􀟈  Test case passing 1 argument method → .backspace to automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) started.
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) recorded an issue with 1 argument method → .backspace at MacInteractionTests.swift:946:5: Expectation failed: condition()
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) recorded an issue with 1 argument method → .backspace at AutomaticSwitchInteractionTests.swift:137:9: Expectation failed: (interaction.mode == .note → false) && (fixture.log.counts().missed == 1 → <not evaluated>)
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) with 2 test cases failed after 6.485 seconds with 4 issues.
+􀢄  Suite AutomaticSwitchInteractionTests failed after 8.346 seconds with 4 issues.
+􀢄  Test run with 4 tests in 1 suite failed after 8.346 seconds with 4 issues.

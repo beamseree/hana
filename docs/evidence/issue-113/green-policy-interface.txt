@@ -1,0 +1,130 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write sources
+[2/8] Write swift-version--112E4EF74740DA65.txt
+[4/12] Compiling Hana Classifier.swift
+[5/20] Compiling Hana MixedSearchValidation.swift
+[6/20] Compiling Hana PerformanceValidation.swift
+[7/20] Compiling Hana SearchCorrectnessValidation.swift
+[8/20] Compiling Hana MainWindowValidation.swift
+[9/20] Compiling Hana AutomaticSwitchOptions.swift
+[10/20] Compiling Hana AutomaticSwitchDiagnostics.swift
+[11/20] Emitting module Hana
+[12/20] Compiling Hana AutomaticSwitch.swift
+[13/20] Compiling Hana HanaApp.swift
+[14/20] Compiling Hana CoverageValidation.swift
+[15/20] Compiling Hana MacInteraction.swift
+[15/20] Write Objects.LinkFileList
+[16/20] Linking Hana
+[17/20] Applying Hana
+[19/55] Emitting module HanaTests
+[20/55] Compiling HanaTests CollectionTitleSourceTests.swift
+[21/55] Compiling HanaTests DisplayPlacementTests.swift
+[22/55] Compiling HanaTests IndependentExportDecoder.swift
+[23/58] Compiling HanaTests NoteSaveTests.swift
+[24/58] Compiling HanaTests OrganizedCollectionFixture.swift
+[25/58] Compiling HanaTests ResultIconsTests.swift
+[26/58] Compiling HanaTests StrongMatchGateTests.swift
+[27/58] Compiling HanaTests SuggestionInteractionTests.swift
+[28/58] Compiling HanaTests TaskLifecycleTests.swift
+[29/58] Compiling HanaTests SearchTests.swift
+[30/58] Compiling HanaTests SearchTypingGapTests.swift
+[31/58] Compiling HanaTests SpotlightStageTests.swift
+[32/58] Compiling HanaTests CollectionExportTests.swift
+[33/58] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[34/58] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[35/58] Compiling HanaTests NativeEditingTests.swift
+[36/58] Compiling HanaTests NoteModeTests.swift
+[37/58] Compiling HanaTests NoteOrganizationTests.swift
+[38/58] Compiling HanaTests TaskOrderingTests.swift
+[39/58] Compiling HanaTests TaskSaveTests.swift
+[40/58] Compiling HanaTests TestClock.swift
+[41/58] Compiling HanaTests CaptureSafetyTests.swift
+[42/58] Compiling HanaTests CaptureSessionTests.swift
+[43/58] Compiling HanaTests CollectionExportHarnessTests.swift
+[44/58] Compiling HanaTests SearchExclusionTests.swift
+[45/58] Compiling HanaTests SearchRankingTests.swift
+[46/58] Compiling HanaTests SearchResponsivenessTests.swift
+[47/58] Compiling HanaTests CollectionSnapshotTests.swift
+[48/58] Compiling HanaTests CollectionStoreOpeningTests.swift
+[49/58] Compiling HanaTests CollectionStoreTests.swift
+[50/58] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+[51/58] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[52/58] Compiling HanaTests AutomaticSwitchTests.swift
+[53/58] Compiling HanaTests CaptureSafetyNativeTests.swift
+[54/58] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[55/58] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[56/58] Compiling HanaTests ModeIconTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[57/60] Compiling HanaPackageTests runner.swift
+[58/60] Emitting module HanaPackageTests
+[58/60] Write Objects.LinkFileList
+[59/60] Linking HanaPackageTests
+Build complete! (11.40s)
+Test Suite 'Selected tests' started at 2026-10-15 17:55:37.895.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 17:55:37.897.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 17:55:37.897.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 17:55:37.897.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() started.
+􁁛  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchTests passed after 0.001 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 0.001 seconds.
