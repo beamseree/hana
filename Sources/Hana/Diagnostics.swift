@@ -8,12 +8,19 @@ final class Diagnostics {
 
     init(enabled: Bool = false) {
         guard enabled else { return }
+        open(FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Logs/Hana/native-shell.jsonl"))
+    }
+
+    /// Records to `url` instead of the user's log, for tests.
+    init(file url: URL) {
+        open(url)
+    }
+
+    private func open(_ url: URL) {
         do {
-            let directory = FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Logs/Hana", isDirectory: true)
-            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true,
+            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true,
                                                    attributes: [.posixPermissions: 0o700])
-            let url = directory.appendingPathComponent("native-shell.jsonl")
             if !FileManager.default.fileExists(atPath: url.path) {
                 FileManager.default.createFile(atPath: url.path, contents: nil, attributes: [.posixPermissions: 0o600])
             }

@@ -6,7 +6,7 @@ It is a sibling of the [logo → note prototype](../logo-note-morph/README.md), 
 
 ## The Task icon
 
-There is no Figma frame for it, and it does not use `App/Resources/TaskIcon.svg`. It is drawn in the same 28-point space as the logo and the Note icon:
+There is no Figma frame for it, and it does not use the bloom-outline `TaskIcon.svg` (since removed). It is drawn in the same 28-point space as the logo and the Note icon:
 
 | Part | Logo | Task |
 | --- | --- | --- |

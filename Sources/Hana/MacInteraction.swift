@@ -18,6 +18,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     enum DismissalReason: String {
         case escape, outsideClick, appSwitch, environmentChange, destination
+        /// A capture was saved and its confirmation ended.
+        case saved
     }
 
     private(set) var currentInvocation: Invocation?
@@ -33,6 +35,16 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private let modeIcon = ModeIconView(frame: BarStyle.modeIconFrame)
     /// Stands in for a consumed mode prefix; the prefix never becomes text.
     private let modeLabel = NSTextField(labelWithString: "Note")
+    /// Explains why a capture wasn't saved, below the writing surface.
+    private let captureNotice = NSTextField(wrappingLabelWithString: "")
+    /// The live collection, opened in the background at launch. Nil, or a
+    /// failed opening, leaves Search working and capture unavailable.
+    private let collection: Task<CollectionStore, any Error>?
+    private let confirmationDuration: Duration
+    /// The workspace's frontmost application; replaceable because a test
+    /// runner can't be activated.
+    private let frontmostApplication: @MainActor () -> NSRunningApplication?
+    private var confirmationTask: Task<Void, Never>?
     private let loadingIndicator = NSProgressIndicator()
     private let search: Search
     private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
@@ -70,6 +82,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     var mode: CaptureSession.Mode { capture.state.mode }
     var modeIconShowsNote: Bool { modeIcon.glyph == .note }
     var modeLabelText: String? { modeLabel.isHidden ? nil : modeLabel.stringValue }
+    var captureMessage: String? { captureNotice.isHidden ? nil : captureNotice.stringValue }
     var resultsVisible: Bool { resultSurface?.isHidden == false }
     var selectedResult: SearchResult? { results.first { $0.id == selectedID } }
     private let diagnostics: Diagnostics
@@ -90,9 +103,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
          launchApplication: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.launch,
          openFile: @escaping @MainActor (URL) async throws -> OpenedApplication = MacInteraction.openFileDestination,
-         loadIcon: (@MainActor (URL, CGFloat) async -> ResultIcon?)? = nil) {
+         loadIcon: (@MainActor (URL, CGFloat) async -> ResultIcon?)? = nil,
+         collection: Task<CollectionStore, any Error>? = nil, confirmationDuration: Duration = .milliseconds(500),
+         frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
         self.diagnostics = diagnostics
         self.search = search
+        self.collection = collection
+        self.confirmationDuration = confirmationDuration
+        self.frontmostApplication = frontmostApplication
         self.launchApplication = launchApplication
         self.openFile = openFile
         let icons = ResultIcons(pointSize: BarStyle.resultIconSize)
@@ -143,7 +161,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let existing = currentInvocation != nil
         let invocation = currentInvocation ?? Invocation()
         if !existing {
-            origin = NSWorkspace.shared.frontmostApplication
+            origin = frontmostApplication()
             originWindow = origin?.processIdentifier == ProcessInfo.processInfo.processIdentifier ? NSApp.keyWindow : nil
             originResponder = originWindow?.firstResponder
             currentInvocation = invocation
@@ -199,6 +217,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         placementTask = nil
         removeSessionObservers()
         panel.orderOut(nil)
+        // A save already issued still completes; its outcome can't reach a later invocation.
+        confirmationTask?.cancel()
+        confirmationTask = nil
         // Discards any unsaved capture: nothing about it outlives the invocation.
         _ = capture.handle(.dismissed)
         clearEditor()
@@ -207,9 +228,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // The foreign origin normally never lost activation. Ordering out the
         // nonactivating panel releases its key focus. Never activate an old app
         // over a subsequent user choice, even for Escape. Restoration is best effort.
-        if reason == .escape,
+        if reason == .escape || reason == .saved,
            origin?.processIdentifier == ProcessInfo.processInfo.processIdentifier,
-           NSWorkspace.shared.frontmostApplication?.processIdentifier == origin?.processIdentifier,
+           frontmostApplication()?.processIdentifier == origin?.processIdentifier,
            let originWindow, originWindow.isVisible, !originWindow.isMiniaturized {
             originWindow.makeKey()
             if let originResponder { originWindow.makeFirstResponder(originResponder) }
@@ -351,6 +372,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         modeLabel.isHidden = true
         card.addSubview(modeLabel)
 
+        captureNotice.font = BarStyle.modeLabelFont
+        captureNotice.textColor = BarStyle.secondaryColor
+        captureNotice.maximumNumberOfLines = 1
+        captureNotice.lineBreakMode = .byTruncatingTail
+        captureNotice.autoresizingMask = [.width, .minYMargin]
+        captureNotice.isHidden = true
+        card.addSubview(captureNotice)
+
         let scroll = editorScroll
         scroll.frame = NSRect(x: BarStyle.textInset, y: BarStyle.editorTopInset,
                               width: card.frame.width - BarStyle.textInset - 44, height: BarStyle.editorHeight)
@@ -405,6 +434,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     private func clearEditor() {
+        editor.isEditable = true
         editor.unmarkText()
         editor.string = ""
         editor.typingAttributes = BarStyle.textAttributes
@@ -428,6 +458,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.setAccessibilityLabel(note ? "Note" : "Search")
         editor.setAccessibilityPlaceholderValue(note ? nil : "Search")
         modeLabel.isHidden = !note
+        setModeLabel("Note")
         // Search's glyph follows its query; clearing the editor restores the logo.
         if note { modeIcon.setGlyph(.note, animated: animated) } else { updateModeIcon() }
         editorScroll.hasVerticalScroller = note
@@ -592,14 +623,83 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// the session consumed it, so it never becomes text or an undoable edit.
     private func shouldInsert(_ text: String, replacing range: NSRange, provenance: CaptureSession.Provenance) -> Bool {
         guard currentInvocation != nil else { return true }
-        let effects = capture.handle(.insert(text, replacing: range, provenance: provenance))
-        perform(effects)
-        return !effects.contains(.consumeInsertion)
+        var applies = true
+        for effect in capture.handle(.insert(text, replacing: range, provenance: provenance)) {
+            switch effect {
+            case .consumeInsertion: applies = false
+            default: perform(effect)
+            }
+        }
+        return applies
     }
 
-    /// Performs the session's window effects; callers decide what the editor applies.
-    private func perform(_ effects: [CaptureSession.Effect]) {
-        for case .enterMode(let mode) in effects { show(mode) }
+    /// Enter in Note. Repeated Enter while saving, and Enter during the
+    /// confirmation, do nothing: the session has already frozen the text.
+    private func submitCapture() {
+        let effects = capture.handle(.submit)
+        if effects.isEmpty, capture.state.notice == .blank { record("capture.refused-blank") }
+        effects.forEach(perform)
+        renderResults()
+    }
+
+    private func perform(_ effect: CaptureSession.Effect) {
+        guard let invocation = currentInvocation else { return }
+        switch effect {
+        case .enterMode(let mode): show(mode)
+        case .save(let operation, let body): save(body, operation: operation, from: invocation)
+        case .confirmSaved:
+            setModeLabel("Saved")
+            let duration = confirmationDuration
+            // Focus returns to the invocation origin when the confirmation ends.
+            confirmationTask = Task { [weak self] in
+                try? await Task.sleep(for: duration)
+                guard let self, !Task.isCancelled, self.currentInvocation == invocation else { return }
+                self.dismiss(invocation, reason: .saved)
+            }
+        // Only `shouldInsert` can drop an insertion.
+        case .consumeInsertion: break
+        }
+    }
+
+    /// Issues the session's one save. Its outcome reaches only the invocation
+    /// and operation that requested it.
+    private func save(_ body: String, operation: UUID, from invocation: Invocation) {
+        record("capture.save-request")
+        let collection = collection
+        Task { [weak self] in
+            let store: CollectionStore
+            do {
+                guard let collection else { throw CollectionStoreError.missingCollection }
+                store = try await collection.value
+            } catch {
+                self?.finishSave(.saveFailed(.collectionUnavailable), operation: operation, invocation: invocation, error: error)
+                return
+            }
+            do {
+                _ = try await store.perform(.createNote(operation: operation, body: body), in: store.generation)
+                self?.finishSave(.saved, operation: operation, invocation: invocation, error: nil)
+            } catch {
+                self?.finishSave(.saveFailed(.failed), operation: operation, invocation: invocation, error: error)
+            }
+        }
+    }
+
+    private func finishSave(_ outcome: CaptureSession.Event, operation: UUID, invocation: Invocation, error: (any Error)?) {
+        guard currentInvocation == invocation, capture.operation == operation else {
+            record("capture.stale-outcome")
+            return
+        }
+        if let error {
+            // Classification only: no text, paths or localized descriptions.
+            let classification = (error as? CollectionStoreError).map { String(describing: $0) }
+                ?? "\((error as NSError).domain):\((error as NSError).code)"
+            record(outcome == .saveFailed(.collectionUnavailable) ? "capture.collection-unavailable" : "capture.save-failed",
+                   extra: ["error": classification])
+        } else {
+            record("capture.saved")
+        }
+        capture.handle(outcome).forEach(perform)
+        renderResults()
     }
 
     func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
@@ -607,12 +707,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // Backspace at the start of a capture returns to Search instead of deleting.
         if commandSelector == #selector(NSResponder.deleteBackward(_:)) {
             let effects = capture.handle(.deleteBackward)
-            perform(effects)
+            effects.forEach(perform)
             return !effects.isEmpty
         }
         if mode == .note {
-            // Shift+Enter writes a new line. Plain Enter will save; until then it does nothing.
-            return commandSelector == #selector(NSResponder.insertNewline(_:)) && !editor.shiftHeld
+            // Shift+Enter writes a new line; plain Enter saves.
+            guard commandSelector == #selector(NSResponder.insertNewline(_:)), !editor.shiftHeld else { return false }
+            submitCapture()
+            return true
         }
         switch commandSelector {
         case #selector(NSResponder.moveDown(_:)): moveSelection(by: 1)
@@ -868,6 +970,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     private func renderResults() {
         guard mode == .search else { return layoutNote() }
+        // Capture notices belong to Note; returning to Search leaves them behind.
+        captureNotice.isHidden = true
         let hasQuery = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let loading = hasQuery && (sourceStatus == .loading || fileStatus == .loading)
         loadingIndicator.isHidden = !loading
@@ -929,10 +1033,21 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         loadingIndicator.stopAnimation(nil)
         resultSurface?.isHidden = true
         retainedContentHeight = 0
+        // Submitted text is frozen until a failure returns it for editing.
+        editor.isEditable = capture.state.phase == .editing
+        let notice = capture.state.notice.map(Self.noticeMessage)
+        captureNotice.stringValue = notice ?? ""
+        captureNotice.isHidden = notice == nil
+        let noticeHeight = notice == nil ? 0 : BarStyle.noticeHeight
         let height = editorHeight
-        let frame = currentPlacement?.frame(height: BarStyle.collapsedHeight + height - BarStyle.editorHeight) ?? panel.frame
+        let frame = currentPlacement?.frame(
+            height: BarStyle.collapsedHeight + height - BarStyle.editorHeight + noticeHeight) ?? panel.frame
         setPanelFrame(frame, animated: true)
         pinEditor(height: height)
+        guard let card = editorScroll.superview else { return }
+        captureNotice.frame = NSRect(x: BarStyle.textInset, y: editorScroll.frame.minY - noticeHeight,
+                                     width: card.bounds.width - BarStyle.textInset - BarStyle.cardPadding - BarStyle.resultIconInset,
+                                     height: noticeHeight)
     }
 
     /// The editor is as tall as its text, from one line up to Note's maximum,
@@ -947,6 +1062,26 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         guard let card = editorScroll.superview else { return }
         editorScroll.frame = NSRect(x: editorScroll.frame.minX, y: card.bounds.height - BarStyle.editorTopInset - height,
                                     width: editorScroll.frame.width, height: height)
+    }
+
+    private static func noticeMessage(_ notice: CaptureSession.Notice) -> String {
+        switch notice {
+        case .blank: "Write something to save this note."
+        case .collectionUnavailable: "The collection couldn’t be opened, so notes can’t be saved right now. Your text is kept."
+        case .failed: "This note couldn’t be saved. Your text is kept."
+        }
+    }
+
+    /// The label ends where the results' type labels end; Note's text stops short of it.
+    private func setModeLabel(_ text: String) {
+        guard let card = modeLabel.superview else { return }
+        modeLabel.stringValue = text
+        modeLabel.sizeToFit()
+        let labelTrailing = BarStyle.cardPadding + BarStyle.resultIconInset
+        modeLabel.frame.origin = NSPoint(x: card.bounds.width - labelTrailing - modeLabel.frame.width,
+                                         y: card.bounds.height - BarStyle.inputHeight + 30 - modeLabel.frame.height / 2)
+        guard mode == .note else { return }
+        editorScroll.frame.size.width = modeLabel.frame.minX - 8 - BarStyle.textInset
     }
 
     private var textHeight: CGFloat {

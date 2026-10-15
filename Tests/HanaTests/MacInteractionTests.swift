@@ -860,16 +860,6 @@ final class CatalogFeed {
     }
 }
 
-/// A Backspace key event for the key window, delivered through `keyDown`.
-@MainActor
-func backspaceKey() throws -> NSEvent {
-    try #require(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
-                                  timestamp: ProcessInfo.processInfo.systemUptime,
-                                  windowNumber: NSApp.keyWindow?.windowNumber ?? 0, context: nil,
-                                  characters: "\u{7f}", charactersIgnoringModifiers: "\u{7f}",
-                                  isARepeat: false, keyCode: 51))
-}
-
 @MainActor
 func eventually(_ condition: () -> Bool) async throws {
     let deadline = ContinuousClock.now + .seconds(3)
