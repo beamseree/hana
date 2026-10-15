@@ -70,7 +70,7 @@ func validateNoteWindow(register: (MacInteraction) -> Void) async {
         try FileManager.default.removeItem(at: root)
         diagnostics.record("note-window.validation-passed", state: [:])
         platform.stop()
-        NSApp.terminate(nil)
+        RunLoop.main.perform(inModes: [.common]) { MainActor.assumeIsolated { NSApp.terminate(nil) } }
     } catch {
         gate.signal()
         diagnostics.record("note-window.validation-failed", state: ["step": (error as? NoteWindowCheck)?.step ?? "storage"])

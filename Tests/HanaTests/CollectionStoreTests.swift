@@ -151,7 +151,7 @@ extension CollectionStoreTests {
 }
 
 extension CollectionStoreTests {
-    @Test func workQueuedBeforeCloseIsRejectedWhenItExecutes() async throws {
+    @Test func workInFlightOrQueuedBeforeCloseIsRejectedBeforeCommit() async throws {
         let fixture = try TemporaryFixture()
         let writerHeld = DispatchSemaphore(value: 0), release = DispatchSemaphore(value: 0)
         let holdOnce = FailOnce()
@@ -159,7 +159,8 @@ extension CollectionStoreTests {
             if holdOnce.take() { writerHeld.signal(); release.wait() }
         }))
         let generation = store.generation
-        let first = Task { try await store.perform(.createNote(operation: UUID(), body: "First"), in: generation) }
+        let firstOperation = UUID()
+        let first = Task { try await store.perform(.createNote(operation: firstOperation, body: "First"), in: generation) }
         await withCheckedContinuation { continuation in DispatchQueue.global().async { writerHeld.wait(); continuation.resume() } }
         // Accepted at submission, then queued behind the held writer.
         let queuedOperation = UUID()
@@ -168,16 +169,19 @@ extension CollectionStoreTests {
         let closing = Task { await store.close() }
         try await Task.sleep(for: .milliseconds(100))
         release.signal()
-        let committed = try await first.value
+        await #expect(throws: CollectionStoreError.closed) { try await first.value }
         await #expect(throws: CollectionStoreError.closed) { try await queued.value }
         await closing.value
 
         let reopened = try await CollectionStore.open(fixture.location)
-        #expect(try await reopened.read(.notes, in: reopened.generation) == [committed])
+        #expect(try await reopened.read(.notes, in: reopened.generation).isEmpty)
         // No receipt was committed for the rejected work, so it can still run once.
         let retried = try await reopened.perform(.createNote(operation: queuedOperation, body: "Queued"), in: reopened.generation)
-        #expect(try await reopened.read(.notes, in: reopened.generation).count == 2)
+        #expect(try await reopened.read(.notes, in: reopened.generation).count == 1)
         #expect(retried.body == "Queued")
+        let firstRetried = try await reopened.perform(.createNote(operation: firstOperation, body: "First"), in: reopened.generation)
+        #expect(firstRetried.body == "First")
+        #expect(try await reopened.read(.notes, in: reopened.generation).count == 2)
         await reopened.close()
     }
 }
