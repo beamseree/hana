@@ -32,6 +32,9 @@ struct AutomaticSwitch {
         let verdict: ClassifierVerdict
         let latency: Double?
         var prefix: String? = nil
+        var cached = false
+        /// Set once when a Word-paced answer is handled, even if Search's sources still need to settle.
+        var agreementCount: Int? = nil
     }
     private struct WordRequest {
         let started: Duration
@@ -42,6 +45,7 @@ struct AutomaticSwitch {
     }
     let options: AutomaticSwitchOptions
     private let memory: JevLaunchMemory
+    private let cacheIdentity: JevLaunchMemory.CacheIdentity
     private let now: () -> Duration
     private var active = false
     private var text = ""
@@ -104,8 +108,9 @@ struct AutomaticSwitch {
     }
 
     init(options: AutomaticSwitchOptions, memory: JevLaunchMemory = JevLaunchMemory(),
+         cacheIdentity: JevLaunchMemory.CacheIdentity = .current,
          now: @escaping () -> Duration) {
-        self.options = options; self.memory = memory; self.now = now
+        self.options = options; self.memory = memory; self.cacheIdentity = cacheIdentity; self.now = now
     }
 
     /// Word-paced request text: trimmed, whitespace runs collapsed to one space, Unicode NFC.
@@ -176,6 +181,7 @@ struct AutomaticSwitch {
                 return cancel()
             }
             if let candidate { return apply(candidate) + fireIfDue() }
+            if isWordPaced, wasBlocked, let cached = applyCachedAnswer(for: Self.normalized(text)) { return cached }
             if wasBlocked, gate.decision == .allowed, due == nil, request == nil,
                !text.isEmpty, !composing, canClassify {
                 due = max(now(), changedAt + firingDelay)
@@ -295,7 +301,8 @@ struct AutomaticSwitch {
         let id = UUID(); request = Request(id: id, started: now())
         return [.classify(id: id, text: text)]
     }
-    private mutating func apply(_ value: Candidate) -> [Effect] {
+    private mutating func apply(_ incoming: Candidate) -> [Effect] {
+        var value = incoming
         if let prefix = value.prefix, !Self.normalized(text).utf8.starts(with: prefix.utf8) {
             candidate = nil
             return [diagnostic(value, .stale)]
@@ -303,6 +310,17 @@ struct AutomaticSwitch {
         guard !suspended else { candidate = nil; return [diagnostic(value, .suspended)] }
         guard eligible, !composing, canClassify else { candidate = nil; return [diagnostic(value, .blocked)] }
         guard gate.decision == .allowed else { candidate = nil; agreements = 0; return [diagnostic(value, .blocked)] }
+        if isWordPaced, value.agreementCount == nil {
+            let accepts = value.verdict.label != .unsure
+                && (value.verdict.probability.map { $0.isFinite && $0 >= options.jevThreshold.rawValue } ?? false)
+                && !(value.verdict.label == .task && TaskItem.isMultiline(text))
+            if accepts {
+                if agreementLabel == value.verdict.label { agreements += 1 }
+                else { agreementLabel = value.verdict.label; agreements = 1 }
+            } else { agreements = 0; agreementLabel = nil }
+            value.agreementCount = agreements
+            candidate = value
+        }
         // All-source waiting has a hard cap measured from the current edit.
         if options.wait == .allSources, !gate.allSourcesSettled, now() - changedAt < .seconds(1) { return [] }
         if options.wait == .appsAndCollection, !gate.settled { return [] }
@@ -317,9 +335,13 @@ struct AutomaticSwitch {
         }
         if target == .task, TaskItem.isMultiline(text) { agreements = 0; return [diagnostic(value, .multiline)] }
         guard target != mode else { agreements = 0; return [diagnostic(value, .blocked)] }
-        if agreementLabel == value.verdict.label { agreements += 1 }
-        else { agreementLabel = value.verdict.label; agreements = 1 }
-        if agreements < options.agreeingVerdicts.rawValue {
+        if !isWordPaced {
+            if agreementLabel == value.verdict.label { agreements += 1 }
+            else { agreementLabel = value.verdict.label; agreements = 1 }
+        }
+        let requiredAgreements = isWordPaced && (value.verdict.probability ?? 0) < 0.90
+            ? max(2, options.agreeingVerdicts.rawValue) : options.agreeingVerdicts.rawValue
+        if (value.agreementCount ?? agreements) < requiredAgreements {
             // Word-paced never resends the same text for a second opinion; the next answer may agree.
             if !isWordPaced { due = now() + max(firingDelay, .milliseconds(150)) }
             return [diagnostic(value, .awaitingAgreement)]
@@ -339,6 +361,7 @@ struct AutomaticSwitch {
     private mutating func wordPacedBufferChanged(text newText: String, composing newComposing: Bool,
                                                  gate newGate: StrongMatchGate.Evaluation?) -> [Effect] {
         guard !text.utf8.elementsEqual(newText.utf8) || composing != newComposing else { return [] }
+        let previousNormalized = Self.normalized(text)
         let appending = !composing && !newComposing && newText.utf8.count > text.utf8.count
             && newText.utf8.starts(with: text.utf8)
         let time = now()
@@ -372,6 +395,10 @@ struct AutomaticSwitch {
         }
         if suspended, !composing { return effects + [diagnostic(nil, .suspended)] }
         guard !composing, canClassify else { return effects }
+        let normalized = Self.normalized(text)
+        if !normalized.utf8.elementsEqual(previousNormalized.utf8), let cached = applyCachedAnswer(for: normalized) {
+            return effects + cached
+        }
         if completesWord { return effects + sendWordPaced() }
         due = time + memory.pauseThreshold
         return effects
@@ -388,6 +415,7 @@ struct AutomaticSwitch {
         guard gate.decision == .allowed else { return [diagnostic(nil, .blocked)] }
         guard !(answeredText?.utf8.elementsEqual(value.utf8) ?? false),
               !wordRequests.values.contains(where: { $0.valid && $0.text.utf8.elementsEqual(value.utf8) }) else { return [] }
+        if let cached = applyCachedAnswer(for: value) { return cached }
         guard memory.hasCapacity else { waitingText = value; return [] }
         waitingText = nil
         sequence += 1; requestsSent += 1
@@ -404,6 +432,18 @@ struct AutomaticSwitch {
         return sendWordPaced(waiting)
     }
 
+    private mutating func applyCachedAnswer(for text: String) -> [Effect]? {
+        guard !composing, canClassify, gate.decision == .allowed,
+              text.split(separator: " ").count >= 2,
+              let verdict = memory.cachedVerdict(for: text, identity: cacheIdentity) else { return nil }
+        due = nil; waitingText = nil; answeredText = text
+        sequence += 1; newestHandledSequence = sequence
+        lastVerdict = diagnosticLabel(verdict.label)
+        let value = Candidate(verdict: verdict, latency: nil, prefix: text, cached: true)
+        candidate = value
+        return apply(value)
+    }
+
     private mutating func cancelWordRequests(where removed: (WordRequest) -> Bool) -> [Effect] {
         let ids = wordRequests.filter { $0.value.valid && removed($0.value) }
             .sorted { $0.value.sequence < $1.value.sequence }.map(\.key)
@@ -416,14 +456,18 @@ struct AutomaticSwitch {
         memory.requestFinished(id)
         let value = Candidate(verdict: verdict, latency: latency)
         guard let request = wordRequests.removeValue(forKey: id) else { return sendWaiting() }
-        guard request.valid, request.sequence > newestHandledSequence,
-              Self.normalized(text).utf8.starts(with: request.text.utf8) else {
+        guard request.valid else {
             return [staleDiagnostic(id: id, value: value)] + sendWaiting()
         }
         if now() - request.started >= requestDeadline {
             unsampledRequests.insert(id)
             return [diagnostic(Candidate(verdict: .init(label: .unsure),
                 latency: milliseconds(now() - request.started)), .timeout)] + sendWaiting()
+        }
+        if error == nil { memory.remember(verdict, for: request.text, identity: cacheIdentity) }
+        guard request.sequence > newestHandledSequence,
+              Self.normalized(text).utf8.starts(with: request.text.utf8) else {
+            return [staleDiagnostic(id: id, value: value)] + sendWaiting()
         }
         newestHandledSequence = request.sequence
         if let error {
@@ -453,7 +497,10 @@ struct AutomaticSwitch {
             label: value.map { diagnosticLabel($0.verdict.label) } ?? .none,
             latencyMilliseconds: value?.latency, outcome: outcome, errorKind: error,
             wordCount: text.split(whereSeparator: \.isWhitespace).count)
-        if let value { row.wordingVersion = value.verdict.wordingVersion; row.probability = value.verdict.probability; row.unsure = value.verdict.label == .unsure }
+        if let value {
+            row.wordingVersion = value.verdict.wordingVersion; row.probability = value.verdict.probability
+            row.unsure = value.verdict.label == .unsure; row.cached = value.cached
+        }
         if case .blocked(let reason) = gate.decision {
             switch reason {
             case .oneWord: row.gateReason = .oneWord
