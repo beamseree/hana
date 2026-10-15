@@ -1,0 +1,470 @@
+Fetching https://github.com/groue/GRDB.swift from cache
+Fetched https://github.com/groue/GRDB.swift from cache (0.02s)
+Creating working copy for https://github.com/groue/GRDB.swift
+Working copy of https://github.com/groue/GRDB.swift resolved at 7.11.1
+Building for debugging...
+[0/14] /Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/.build/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[1/14] Write sources
+[2/14] Write Hana-entitlement.plist
+[4/14] Write sources
+[5/14] Copying PrivacyInfo.xcprivacy
+[6/14] Copying Info.plist
+[7/14] Write sources
+[8/14] Write swift-version--112E4EF74740DA65.txt
+[10/169] Emitting module GRDB
+[11/183] Compiling GRDB NSData.swift
+[12/183] Compiling GRDB NSNull.swift
+[13/183] Compiling GRDB NSNumber.swift
+[14/183] Compiling GRDB NSString.swift
+[15/183] Compiling GRDB SQLiteDateParser.swift
+[16/183] Compiling GRDB URL.swift
+[17/183] Compiling GRDB UUID.swift
+[18/183] Compiling GRDB DatabaseValueConvertible+Decodable.swift
+[19/183] Compiling GRDB DatabaseValueConvertible+Encodable.swift
+[20/183] Compiling GRDB DatabaseValueConvertible+RawRepresentable.swift
+[21/183] Compiling GRDB JSONRequiredEncoder.swift
+[22/183] Compiling GRDB Optional.swift
+[23/183] Compiling GRDB StandardLibrary.swift
+[24/183] Compiling GRDB TransactionClock.swift
+[25/183] Compiling GRDB SQLIndexGenerator.swift
+[26/183] Compiling GRDB SQLQueryGenerator.swift
+[27/183] Compiling GRDB SQLTableAlterationGenerator.swift
+[28/183] Compiling GRDB SQLTableGenerator.swift
+[29/183] Compiling GRDB TableAlias.swift
+[30/183] Compiling GRDB SQLInterpolation+QueryInterface.swift
+[31/183] Compiling GRDB ColumnDefinition.swift
+[32/183] Compiling GRDB Database+SchemaDefinition.swift
+[33/183] Compiling GRDB ForeignKeyDefinition.swift
+[34/183] Compiling GRDB IndexDefinition.swift
+[35/183] Compiling GRDB TableAlteration.swift
+[36/183] Compiling GRDB TableDefinition.swift
+[37/183] Compiling GRDB VirtualTableModule.swift
+[38/183] Compiling GRDB TableRecord+Association.swift
+[39/183] Compiling GRDB SQL.swift
+[40/183] Compiling GRDB SQLInterpolation.swift
+[41/183] Compiling GRDB SQLRequest.swift
+[42/183] Compiling GRDB SchedulingWatchdog.swift
+[43/183] Compiling GRDB SerializedDatabase.swift
+[44/183] Compiling GRDB Statement.swift
+[45/183] Compiling GRDB StatementAuthorizer.swift
+[46/183] Compiling GRDB StatementColumnConvertible.swift
+[47/183] Compiling GRDB CGFloat.swift
+[48/183] Compiling GRDB Data.swift
+[49/183] Compiling GRDB DatabaseDateComponents.swift
+[50/183] Compiling GRDB DatabaseValueConvertible+ReferenceConvertible.swift
+[51/183] Compiling GRDB Date.swift
+[52/183] Compiling GRDB Decimal.swift
+[53/183] Compiling GRDB Refinable.swift
+[54/183] Compiling GRDB Utils.swift
+[55/183] Compiling GRDB DatabaseCancellable.swift
+[56/183] Compiling GRDB ValueConcurrentObserver.swift
+[57/183] Compiling GRDB ValueWriteOnlyObserver.swift
+[58/183] Compiling GRDB Fetch.swift
+[59/183] Compiling GRDB Map.swift
+[60/183] Compiling GRDB RemoveDuplicates.swift
+[61/183] Compiling GRDB Trace.swift
+[62/183] Compiling GRDB ValueReducer.swift
+[63/183] Compiling GRDB SharedValueObservation.swift
+[64/183] Compiling GRDB ValueObservation.swift
+[65/183] Compiling GRDB ValueObservationScheduler.swift
+[66/183] Compiling GRDB resource_bundle_accessor.swift
+[67/183] Compiling GRDB PersistableRecord+Save.swift
+[68/183] Compiling GRDB PersistableRecord+Upsert.swift
+[69/183] Compiling GRDB PersistableRecord.swift
+[70/183] Compiling GRDB Record.swift
+[71/183] Compiling GRDB TableRecord.swift
+[72/183] Compiling GRDB CaseInsensitiveIdentifier.swift
+[73/183] Compiling GRDB Inflections+English.swift
+[74/183] Compiling GRDB Inflections.swift
+[75/183] Compiling GRDB Mutex.swift
+[76/183] Compiling GRDB OnDemandFuture.swift
+[77/183] Compiling GRDB OrderedDictionary.swift
+[78/183] Compiling GRDB Pool.swift
+[79/183] Compiling GRDB ReadWriteLock.swift
+[80/183] Compiling GRDB ReceiveValuesOn.swift
+[81/183] Compiling GRDB TableRecord+QueryInterfaceRequest.swift
+[82/183] Compiling GRDB EncodableRecord+Encodable.swift
+[83/183] Compiling GRDB EncodableRecord.swift
+[84/183] Compiling GRDB FetchableRecord+Decodable.swift
+[85/183] Compiling GRDB FetchableRecord+TableRecord.swift
+[86/183] Compiling GRDB FetchableRecord.swift
+[87/183] Compiling GRDB MutablePersistableRecord+DAO.swift
+[88/183] Compiling GRDB MutablePersistableRecord+Delete.swift
+[89/183] Compiling GRDB MutablePersistableRecord+Insert.swift
+[90/183] Compiling GRDB MutablePersistableRecord+Save.swift
+[91/183] Compiling GRDB MutablePersistableRecord+Update.swift
+[92/183] Compiling GRDB MutablePersistableRecord+Upsert.swift
+[93/183] Compiling GRDB MutablePersistableRecord.swift
+[94/183] Compiling GRDB PersistableRecord+Insert.swift
+[95/183] Compiling GRDB DatabaseRegion.swift
+[96/183] Compiling GRDB DatabaseRegionObservation.swift
+[97/183] Compiling GRDB DatabaseSchemaCache.swift
+[98/183] Compiling GRDB DatabaseSchemaSource.swift
+[99/183] Compiling GRDB DatabaseSnapshot.swift
+[100/183] Compiling GRDB DatabaseSnapshotPool.swift
+[101/183] Compiling GRDB DatabaseValue.swift
+[102/183] Compiling GRDB DatabaseValueConvertible.swift
+[103/183] Compiling GRDB DatabaseWriter.swift
+[104/183] Compiling GRDB DispatchQueueActor.swift
+[105/183] Compiling GRDB FetchRequest.swift
+[106/183] Compiling GRDB Row.swift
+[107/183] Compiling GRDB RowAdapter.swift
+[108/183] Compiling GRDB RowDecodingError.swift
+[109/183] Compiling GRDB TransactionObserver.swift
+[110/183] Compiling GRDB WALSnapshot.swift
+[111/183] Compiling GRDB WALSnapshotTransaction.swift
+[112/183] Compiling GRDB Database+Dump.swift
+[113/183] Compiling GRDB DatabaseReader+dump.swift
+[114/183] Compiling GRDB DumpFormat.swift
+[115/183] Compiling GRDB DebugDumpFormat.swift
+[116/183] Compiling GRDB JSONDumpFormat.swift
+[117/183] Compiling GRDB LineDumpFormat.swift
+[118/183] Compiling GRDB ListDumpFormat.swift
+[119/183] Compiling GRDB QuoteDumpFormat.swift
+[120/183] Compiling GRDB FTS3.swift
+[121/183] Compiling GRDB FTS3Pattern.swift
+[122/183] Compiling GRDB FTS3TokenizerDescriptor.swift
+[123/183] Compiling GRDB FTS4.swift
+[124/183] Compiling GRDB FTS5.swift
+[125/183] Compiling GRDB FTS5CustomTokenizer.swift
+[126/183] Compiling GRDB FTS5Pattern.swift
+[127/183] Compiling GRDB FTS5Tokenizer.swift
+[128/183] Compiling GRDB FTS5TokenizerDescriptor.swift
+[129/183] Compiling GRDB FTS5WrapperTokenizer.swift
+[130/183] Compiling GRDB Fixits.swift
+[131/183] Compiling GRDB JSONColumn.swift
+[132/183] Compiling GRDB SQLJSONExpressible.swift
+[133/183] Compiling GRDB SQLJSONFunctions.swift
+[134/183] Compiling GRDB DatabaseMigrator.swift
+[135/183] Compiling GRDB Migration.swift
+[136/183] Compiling GRDB FTS3+QueryInterface.swift
+[137/183] Compiling GRDB Configuration.swift
+[138/183] Compiling GRDB Cursor.swift
+[139/183] Compiling GRDB Database+SQLCipher.swift
+[140/183] Compiling GRDB Database+Schema.swift
+[141/183] Compiling GRDB Database+Statements.swift
+[142/183] Compiling GRDB Database.swift
+[143/183] Compiling GRDB DatabaseBackupProgress.swift
+[144/183] Compiling GRDB DatabaseCollation.swift
+[145/183] Compiling GRDB DatabaseError.swift
+[146/183] Compiling GRDB DatabaseFunction.swift
+[147/183] Compiling GRDB DatabasePool.swift
+[148/183] Compiling GRDB DatabasePublishers.swift
+[149/183] Compiling GRDB DatabaseQueue.swift
+[150/183] Compiling GRDB DatabaseReader.swift
+[151/183] Compiling GRDB DatabasePromise.swift
+[152/183] Compiling GRDB SQLAssociation.swift
+[153/183] Compiling GRDB SQLCollection.swift
+[154/183] Compiling GRDB SQLExpression.swift
+[155/183] Compiling GRDB SQLForeignKeyRequest.swift
+[156/183] Compiling GRDB SQLFunctions.swift
+[157/183] Compiling GRDB SQLOperators.swift
+[158/183] Compiling GRDB SQLOrdering.swift
+[159/183] Compiling GRDB SQLRelation.swift
+[160/183] Compiling GRDB SQLSelection.swift
+[161/183] Compiling GRDB SQLSubquery.swift
+[162/183] Compiling GRDB Table.swift
+[163/183] Compiling GRDB SQLColumnGenerator.swift
+[164/183] Compiling GRDB SQLGenerationContext.swift
+[165/183] Compiling GRDB FTS5+QueryInterface.swift
+[166/183] Compiling GRDB ForeignKey.swift
+[167/183] Compiling GRDB Association.swift
+[168/183] Compiling GRDB AssociationAggregate.swift
+[169/183] Compiling GRDB BelongsToAssociation.swift
+[170/183] Compiling GRDB HasManyAssociation.swift
+[171/183] Compiling GRDB HasManyThroughAssociation.swift
+[172/183] Compiling GRDB HasOneAssociation.swift
+[173/183] Compiling GRDB HasOneThroughAssociation.swift
+[174/183] Compiling GRDB JoinAssociation.swift
+[175/183] Compiling GRDB CommonTableExpression.swift
+[176/183] Compiling GRDB QueryInterfaceRequest.swift
+[177/183] Compiling GRDB RequestProtocols.swift
+[178/183] Compiling GRDB Column.swift
+[179/232] Emitting module Hana
+[180/232] Compiling Hana CollectionExportFixture.swift
+[181/232] Compiling Hana CollectionFixtureHarness.swift
+[182/232] Compiling Hana CollectionLocation.swift
+[183/232] Compiling Hana CollectionRecovery.swift
+[184/232] Compiling Hana CollectionSchema.swift
+[185/236] Compiling Hana HanaRadius.swift
+[186/236] Compiling Hana HanaShadow.swift
+[187/236] Compiling Hana JevClassifier.swift
+[188/236] Compiling Hana JevHTTPSession.swift
+[189/236] Compiling Hana GlobalShortcut.swift
+[190/236] Compiling Hana HanaApp.swift
+[191/236] Compiling Hana HanaColor.swift
+[192/236] Compiling Hana HanaFont.swift
+[193/236] Compiling Hana MainWindowValidation.swift
+[194/236] Compiling Hana MixedSearchValidation.swift
+[195/236] Compiling Hana ModeIcon.swift
+[196/236] Compiling Hana NoteScroller.swift
+[197/236] Compiling Hana SearchName.swift
+[198/236] Compiling Hana SearchResultsView.swift
+[199/236] Compiling Hana SegmentedControl.swift
+[200/236] Compiling Hana SpotlightSource.swift
+[201/236] Compiling Hana ApplicationCatalog.swift
+[202/236] Compiling Hana AutomaticSwitch.swift
+[203/236] Compiling Hana AutomaticSwitchDiagnostics.swift
+[204/236] Compiling Hana AutomaticSwitchOptions.swift
+[205/236] Compiling Hana BarStyle.swift
+[206/236] Compiling Hana CaptureSession.swift
+[207/236] Compiling Hana Classifier.swift
+[208/236] Compiling Hana ClassifierServices.swift
+[209/236] Compiling Hana ClassifierWording.swift
+[210/236] Compiling Hana CollectionExport.swift
+[211/236] Compiling Hana PerformanceValidation.swift
+[212/236] Compiling Hana ResultIcons.swift
+[213/236] Compiling Hana Search.swift
+[214/236] Compiling Hana SearchCorrectnessValidation.swift
+[215/236] Compiling Hana Diagnostics.swift
+[216/236] Compiling Hana DisplayPlacement.swift
+[217/236] Compiling Hana FocusedWindowGeometry.swift
+[218/236] Compiling Hana FoundationModelsClassifier.swift
+[219/236] Compiling Hana CollectionSnapshotFixture.swift
+[220/236] Compiling Hana CollectionSnapshots.swift
+[221/236] Compiling Hana CollectionStore.swift
+[222/236] Compiling Hana CollectionTitleSource.swift
+[223/236] Compiling Hana CoverageValidation.swift
+[224/236] Compiling Hana StrongMatchGate.swift
+[225/236] Compiling Hana TrickyInputCheck.swift
+[226/236] Compiling Hana TrickyInputRequest.swift
+[227/236] Compiling Hana WorkingWindowController.swift
+[228/236] Compiling Hana JevKeychainStore.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[229/236] Compiling Hana JevLaunchMemory.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[230/236] Compiling Hana JevSharedTransport.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[231/236] Compiling Hana MacInteraction.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[231/236] Write Objects.LinkFileList
+[232/236] Linking Hana
+[233/236] Applying Hana
+[235/288] Compiling HanaTests OrganizedCollectionFixture.swift
+[236/288] Compiling HanaTests ResultIconsTests.swift
+[237/288] Compiling HanaTests ScriptedClassifier.swift
+[238/288] Compiling HanaTests SearchExclusionTests.swift
+[239/292] Compiling HanaTests JevHTTPSessionTests.swift
+[240/292] Compiling HanaTests JevKeychainTests.swift
+[241/292] Compiling HanaTests JevRejectionMenuTests.swift
+[242/292] Compiling HanaTests JevSharedTransportTests.swift
+[243/292] Compiling HanaTests JevWordPacedDeletionNativeTests.swift
+[244/292] Compiling HanaTests AutomaticSwitchWakeUpInteractionTests.swift
+[245/292] Compiling HanaTests AutomaticSwitchWakeUpTests.swift
+[246/292] Compiling HanaTests AutomaticSwitchWordCacheTests.swift
+[247/292] Compiling HanaTests AutomaticSwitchWordPacedTests.swift
+[248/292] Compiling HanaTests CaptureSafetyNativeTests.swift
+[249/292] Compiling HanaTests CollectionStoreTests.swift
+[250/292] Compiling HanaTests CollectionTitleSourceTests.swift
+[251/292] Compiling HanaTests DisplayPlacementTests.swift
+[252/292] Compiling HanaTests IndependentExportDecoder.swift
+[253/292] Compiling HanaTests JevBackoffTests.swift
+[254/292] Compiling HanaTests SpotlightStageTests.swift
+[255/292] Compiling HanaTests StrongMatchGateTests.swift
+[256/292] Compiling HanaTests SuggestionInteractionTests.swift
+[257/292] Compiling HanaTests TaskLifecycleTests.swift
+[258/292] Compiling HanaTests NativeWindowSlot.swift
+[259/292] Compiling HanaTests NoteModeTests.swift
+[260/292] Compiling HanaTests NoteOrganizationTests.swift
+[261/292] Compiling HanaTests NoteSaveTests.swift
+[262/292] Compiling HanaTests SearchRankingTests.swift
+[263/292] Compiling HanaTests SearchResponsivenessTests.swift
+[264/292] Compiling HanaTests SearchTests.swift
+[265/292] Compiling HanaTests SearchTypingGapTests.swift
+[266/292] Compiling HanaTests CollectionExportTests.swift
+[267/292] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[268/292] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[269/292] Compiling HanaTests CollectionSnapshotTests.swift
+[270/292] Compiling HanaTests CollectionStoreOpeningTests.swift
+[271/292] Compiling HanaTests TaskOrderingTests.swift
+[272/292] Compiling HanaTests TaskSaveTests.swift
+[273/292] Compiling HanaTests TestClock.swift
+[274/292] Compiling HanaTests TrickyInputCheckTests.swift
+[275/292] Compiling HanaTests CaptureSafetyTests.swift
+[276/292] Compiling HanaTests CaptureSessionTests.swift
+[277/292] Compiling HanaTests ClassifierAdapterTests.swift
+[278/292] Compiling HanaTests ClassifierMenuTests.swift
+[279/292] Compiling HanaTests CollectionExportHarnessTests.swift
+[280/292] Emitting module HanaTests
+[281/292] Compiling HanaTests AutomaticSwitchDeletionTests.swift
+[282/292] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+[283/292] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[284/292] Compiling HanaTests AutomaticSwitchSessionCountTests.swift
+[285/292] Compiling HanaTests AutomaticSwitchTests.swift
+[286/292] Compiling HanaTests JevWordPacedNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[287/292] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[288/292] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[289/292] Compiling HanaTests ModeIconTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[290/292] Compiling HanaTests NativeEditingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[291/294] Compiling HanaPackageTests runner.swift
+[292/294] Emitting module HanaPackageTests
+[292/294] Write Objects.LinkFileList
+[293/294] Linking HanaPackageTests
+Build complete! (35.04s)
+Test Suite 'Selected tests' started at 2026-10-15 22:40:00.103.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:40:00.104.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:40:00.104.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:40:00.104.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchSessionCountTests started.
+􀟈  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, classifier → .foundationModels to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .everyKeystroke, classifier → .foundationModels at AutomaticSwitchSessionCountTests.swift:33:9: Expectation failed: (sessionCounts(dismissed) → [0]) == [2]
+􀅺  inserted [0], removed [2]
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .everyKeystroke, classifier → .foundationModels at AutomaticSwitchSessionCountTests.swift:41:9: Expectation failed: (sessionCounts(policy.handle(.dismissed(.dismissed))) → [0]) == [1]
+􀅺  inserted [0], removed [1]
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, classifier → .jev to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .everyKeystroke, classifier → .jev at AutomaticSwitchSessionCountTests.swift:33:9: Expectation failed: (sessionCounts(dismissed) → [0]) == [2]
+􀅺  inserted [0], removed [2]
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .everyKeystroke, classifier → .jev at AutomaticSwitchSessionCountTests.swift:41:9: Expectation failed: (sessionCounts(policy.handle(.dismissed(.dismissed))) → [0]) == [1]
+􀅺  inserted [0], removed [1]
+􀟈  Test case passing 2 arguments firing → .debounced, classifier → .foundationModels to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .debounced, classifier → .foundationModels at AutomaticSwitchSessionCountTests.swift:33:9: Expectation failed: (sessionCounts(dismissed) → [0]) == [2]
+􀅺  inserted [0], removed [2]
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .debounced, classifier → .foundationModels at AutomaticSwitchSessionCountTests.swift:41:9: Expectation failed: (sessionCounts(policy.handle(.dismissed(.dismissed))) → [0]) == [1]
+􀅺  inserted [0], removed [1]
+􀟈  Test case passing 2 arguments firing → .debounced, classifier → .jev to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .debounced, classifier → .jev at AutomaticSwitchSessionCountTests.swift:33:9: Expectation failed: (sessionCounts(dismissed) → [0]) == [2]
+􀅺  inserted [0], removed [2]
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .debounced, classifier → .jev at AutomaticSwitchSessionCountTests.swift:41:9: Expectation failed: (sessionCounts(policy.handle(.dismissed(.dismissed))) → [0]) == [1]
+􀅺  inserted [0], removed [1]
+􀟈  Test case passing 2 arguments firing → .onPause, classifier → .foundationModels to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .onPause, classifier → .foundationModels at AutomaticSwitchSessionCountTests.swift:33:9: Expectation failed: (sessionCounts(dismissed) → [0]) == [2]
+􀅺  inserted [0], removed [2]
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .onPause, classifier → .foundationModels at AutomaticSwitchSessionCountTests.swift:41:9: Expectation failed: (sessionCounts(policy.handle(.dismissed(.dismissed))) → [0]) == [1]
+􀅺  inserted [0], removed [1]
+􀟈  Test case passing 2 arguments firing → .onPause, classifier → .jev to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .onPause, classifier → .jev at AutomaticSwitchSessionCountTests.swift:33:9: Expectation failed: (sessionCounts(dismissed) → [0]) == [2]
+􀅺  inserted [0], removed [2]
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) recorded an issue with 2 arguments firing → .onPause, classifier → .jev at AutomaticSwitchSessionCountTests.swift:41:9: Expectation failed: (sessionCounts(policy.handle(.dismissed(.dismissed))) → [0]) == [1]
+􀅺  inserted [0], removed [1]
+􀢄  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) with 6 test cases failed after 0.002 seconds with 12 issues.
+􀢄  Suite AutomaticSwitchSessionCountTests failed after 0.002 seconds with 12 issues.
+􀄵  /// Session diagnostics through policy effects, without windows or a live classifier.
+􀢄  Test run with 1 test in 1 suite failed after 0.002 seconds with 12 issues.
