@@ -24,6 +24,11 @@ xcrun swift test --no-parallel --filter 'AutomaticSwitch(Deletion|WordPaced|Wake
 Result: **70 tests in 5 suites passed**. Native tests were compiled by this
 command but were excluded from execution.
 
+After merging integration `cd5546d` with #123, the same filter plus
+`WordCache` passed **86 tests in 6 suites** (`cache-merge-green.txt`). The merge
+keeps edit-time cache lookup outside the deletion burst and preserves each
+held answer's one-time confidence count.
+
 | Acceptance | Test in `AutomaticSwitchDeletionTests` |
 | --- | --- |
 | Holding Backspace sends nothing | `holdingBackspaceSendsNothingUntilThePause` |
