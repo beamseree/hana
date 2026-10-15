@@ -386,7 +386,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let tint = NSView(frame: bezel.bounds)
         tint.autoresizingMask = [.width, .height]
         tint.wantsLayer = true
-        tint.layer?.backgroundColor = NSColor.white.withAlphaComponent(0.35).cgColor
+        tint.layer?.backgroundColor = HanaColor.Bezel.tint.cgColor
         tint.layer?.cornerRadius = BarStyle.bezelRadius
         bezel.addSubview(tint)
 
@@ -412,7 +412,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         card.addSubview(loadingIndicator)
 
         modeLabel.font = BarStyle.modeLabelFont
-        modeLabel.textColor = BarStyle.secondaryColor
+        modeLabel.textColor = HanaColor.Text.secondary
         modeLabel.sizeToFit()
         modeLabel.frame.origin = NSPoint(x: card.frame.width - labelTrailing - modeLabel.frame.width,
                                          y: 30 - modeLabel.frame.height / 2)
@@ -433,7 +433,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         card.addSubview(destinationSelector)
 
         captureNotice.font = BarStyle.modeLabelFont
-        captureNotice.textColor = BarStyle.secondaryColor
+        captureNotice.textColor = HanaColor.Text.secondary
         captureNotice.maximumNumberOfLines = 1
         captureNotice.lineBreakMode = .byTruncatingTail
         captureNotice.autoresizingMask = [.width, .minYMargin]
@@ -457,9 +457,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.textContainer?.lineFragmentPadding = 0
         editor.textContainerInset = NSSize(width: 0, height: 4)
         editor.font = BarStyle.font
-        editor.textColor = BarStyle.textColor
+        editor.textColor = HanaColor.Text.primary
         editor.typingAttributes = BarStyle.textAttributes
-        editor.insertionPointColor = BarStyle.textColor
+        editor.insertionPointColor = HanaColor.Text.primary
         editor.backgroundColor = .white
         editor.isRichText = false
         editor.importsGraphics = false

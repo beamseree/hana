@@ -363,7 +363,7 @@ final class ModeIconView: NSView {
         layer?.addSublayer(canvas)
         for part in parts {
             part.fillColor = nil
-            part.strokeColor = BarStyle.modeIconColor.cgColor
+            part.strokeColor = HanaColor.Icon.primary.cgColor
             part.lineWidth = SearchIconMorph.stroke
             part.lineCap = .round
             part.lineJoin = .round

@@ -34,22 +34,18 @@ enum BarStyle {
     /// A capture's one-line explanation below the writing surface.
     static let noticeHeight: CGFloat = 24
 
+    /// Colors are `HanaColor` roles; see docs/design-system.md.
     static let font = NSFont.systemFont(ofSize: 26)
-    static let textColor = NSColor(srgbRed: 0x17 / 255, green: 0x17 / 255, blue: 0x17 / 255, alpha: 1)
-    static let secondaryColor = NSColor(srgbRed: 0x66 / 255, green: 0x66 / 255, blue: 0x66 / 255, alpha: 1)
-    static let iconColor = NSColor(srgbRed: 0x77 / 255, green: 0x77 / 255, blue: 0x77 / 255, alpha: 1)
-    /// The bar's logo and magnifier match the query text.
-    static let modeIconColor = textColor
-    static let textAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: textColor, .kern: -0.26]
+    static let textAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: HanaColor.Text.primary, .kern: -0.26]
     static let modeLabelFont = NSFont.systemFont(ofSize: 13, weight: .medium)
-    static let placeholderAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: secondaryColor, .kern: -0.26]
+    static let placeholderAttributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: HanaColor.Text.placeholder, .kern: -0.26]
 }
 
 extension NSView {
     static func card(frame: NSRect) -> NSView {
         let card = NSView(frame: frame)
         card.wantsLayer = true
-        card.layer?.backgroundColor = NSColor.white.cgColor
+        card.layer?.backgroundColor = HanaColor.Surface.card.cgColor
         card.layer?.cornerRadius = BarStyle.cardRadius
         card.layer?.masksToBounds = true
         return card

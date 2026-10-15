@@ -80,14 +80,14 @@ struct SearchResultsView: View {
                 .id(scrollResetID)
             }
             if let status {
-                Text(status).font(.system(size: 12)).foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
+                Text(status).font(.system(size: 12)).foregroundStyle(Color(nsColor: HanaColor.Text.secondary))
                     .lineLimit(2)
                     .padding(.horizontal, 8).frame(maxWidth: .infinity, minHeight: Self.statusHeight, alignment: .leading)
                     .padding(.trailing, BarStyle.cardPadding)
             }
         }
         .frame(maxHeight: .infinity, alignment: .top)
-        .foregroundStyle(Color(nsColor: BarStyle.textColor))
+        .foregroundStyle(Color(nsColor: HanaColor.Text.primary))
         .environment(\.colorScheme, .light)
     }
 
@@ -100,7 +100,7 @@ struct SearchResultsView: View {
             let height = max(Self.thumbMinHeight, track * scroll.visible / scroll.content)
             let progress = min(max(scroll.offset / (scroll.content - scroll.visible), 0), 1)
             Capsule()
-                .fill(Color.black.opacity(0.16))
+                .fill(Color(nsColor: HanaColor.Scroll.thumb))
                 .frame(width: Self.thumbWidth, height: height)
                 .offset(y: progress * (track - height))
                 .padding(.trailing, Self.thumbTrailing)
@@ -136,7 +136,7 @@ struct SearchResultsView: View {
             self.row(id: row.id, name: suggestion.title, subtitle: query, typeLabel: nil) {
                 Image(systemName: suggestion.symbolName)
                     .font(.system(size: 18))
-                    .foregroundStyle(Color(nsColor: BarStyle.iconColor))
+                    .foregroundStyle(Color(nsColor: HanaColor.Icon.secondary))
             }
         }
     }
@@ -151,17 +151,17 @@ struct SearchResultsView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(name).font(.system(size: 16)).tracking(-0.16).lineLimit(1)
                 Text(subtitle).font(.system(size: 12))
-                    .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
+                    .foregroundStyle(Color(nsColor: HanaColor.Text.secondary))
                     .lineLimit(1).truncationMode(.middle)
             }
             Spacer(minLength: 8)
             if let typeLabel {
                 Text(typeLabel).font(.system(size: 12))
-                    .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
+                    .foregroundStyle(Color(nsColor: HanaColor.Text.tertiary))
             }
         }
         .padding(.horizontal, Self.rowInset).frame(height: Self.rowHeight)
-        .background(selectedID == id ? Color.black.opacity(0.06) : Color.clear)
+        .background(selectedID == id ? Color(nsColor: HanaColor.Row.selected) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: BarStyle.cardRadius - BarStyle.cardPadding))
         .contentShape(Rectangle())
     }
@@ -174,7 +174,7 @@ struct SearchResultsView: View {
         } else {
             Image(systemName: result.symbolName)
                 .font(.system(size: 18))
-                .foregroundStyle(Color(nsColor: BarStyle.iconColor))
+                .foregroundStyle(Color(nsColor: HanaColor.Icon.secondary))
         }
     }
 }
