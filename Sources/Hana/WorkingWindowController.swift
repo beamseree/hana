@@ -105,12 +105,17 @@ final class WorkingWindowController: NSWindowController {
     let presentation = MainWindowPresentation()
     var openNote: ((UUID) -> Void)?
     let taskWorkspace: TaskWorkspacePresentation
+    let archiveWorkspace: ArchiveWorkspacePresentation
     private var observation: Task<Void, Never>?
+    private var sectionSelection: Task<Void, Never>?
+    private var closePreparation: Task<Void, Never>?
+    var closeIsHeld: Bool { closePreparation != nil }
     private let organizeAction: @MainActor (MainWindowPresentation.Row, MainNoteAction) async throws -> Void
 
     init(collection: Task<CollectionStore, any Error>?,
          organizeNote: @escaping @MainActor (MainWindowPresentation.Row, MainNoteAction) async throws -> Void) {
         taskWorkspace = TaskWorkspacePresentation(collection: collection)
+        archiveWorkspace = ArchiveWorkspacePresentation(collection: collection, organizeNote: organizeNote)
         organizeAction = organizeNote
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 820, height: 560),
@@ -127,6 +132,8 @@ final class WorkingWindowController: NSWindowController {
             presentation: presentation,
             openNote: { [weak self] id in self?.openNote?(id) },
             tasks: taskWorkspace,
+            archive: archiveWorkspace,
+            selectSection: { [weak self] section in self?.selectSection(section) },
             organizeNote: { [weak self] row, action in await self?.organizeNote(row, action: action) }
         ))
         window.center()
@@ -154,8 +161,33 @@ final class WorkingWindowController: NSWindowController {
         }
     }
 
+    func selectSection(_ section: MainSection) {
+        sectionSelection?.cancel()
+        guard section != presentation.selectedSection else { return }
+        guard taskWorkspace.editing != nil else { presentation.select(section); return }
+        sectionSelection = Task { [weak self] in
+            guard let self, await taskWorkspace.commitRename(), !Task.isCancelled else { return }
+            presentation.select(section)
+        }
+    }
+
+    func shouldClose() -> Bool {
+        guard taskWorkspace.editing != nil else { return true }
+        guard closePreparation == nil else { return false }
+        closePreparation = Task { [weak self] in
+            guard let self else { return }
+            defer { closePreparation = nil }
+            guard await taskWorkspace.commitRename(), !Task.isCancelled else { return }
+            window?.close()
+        }
+        return false
+    }
+
     func stopObserving() {
+        closePreparation?.cancel()
+        sectionSelection?.cancel()
         taskWorkspace.stopObserving()
+        archiveWorkspace.stopObserving()
         observation?.cancel()
         observation = nil
     }
@@ -184,13 +216,15 @@ private struct MainWindowView: View {
     let presentation: MainWindowPresentation
     let openNote: (UUID) -> Void
     let tasks: TaskWorkspacePresentation
+    let archive: ArchiveWorkspacePresentation
+    let selectSection: (MainSection) -> Void
     let organizeNote: @MainActor (MainWindowPresentation.Row, MainNoteAction) async -> Void
 
     var body: some View {
         NavigationSplitView {
             List(selection: Binding<MainSection?>(
                 get: { presentation.selectedSection },
-                set: { if let section = $0 { presentation.select(section) } }
+                set: { if let section = $0 { selectSection(section) } }
             )) {
                 ForEach(MainSection.allCases) { section in
                     Label(section.rawValue, systemImage: section.symbol).tag(section)
@@ -226,10 +260,10 @@ private struct MainWindowView: View {
         case .unavailable(let reason):
             message("Collection unavailable", detail: reason.message)
         case .available:
-            if presentation.selectedSection == .inbox || presentation.selectedSection == .today {
+            if presentation.selectedSection == .inbox || presentation.selectedSection == .today || presentation.selectedSection == .completed {
                 TaskWorkspaceView(tasks: tasks, section: presentation.selectedSection)
-            } else if presentation.selectedSection != .notes {
-                message(presentation.selectedSection.rawValue, detail: "This section is coming soon.")
+            } else if presentation.selectedSection == .archive {
+                ArchiveWorkspaceView(archive: archive, openNote: openNote)
             } else if presentation.rows.isEmpty {
                 message("No notes yet", detail: "Capture a note from the search bar to see it here.")
             } else {

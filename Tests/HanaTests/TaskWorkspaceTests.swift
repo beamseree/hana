@@ -183,9 +183,9 @@ struct TaskWorkspaceTests {
         try await eventually { interaction.taskWorkspacePresentation?.inbox.count == 1 }
         interaction.selectTask(task.id)
         let menu = try #require(NSApp.mainMenu?.item(withTitle: "Tasks")?.submenu)
-        #expect(menu.items.map(\.title) == ["Complete Task", "Move to Today", "Move to Inbox", "Rename Task", "Archive Task", "Move Up", "Move Down"])
+        #expect(menu.items.map(\.title) == ["Complete Task", "Reopen Task", "Move to Today", "Move to Inbox", "Rename Task", "Archive Task", "Move Up", "Move Down"])
         #expect(menu.items.allSatisfy { !$0.keyEquivalent.isEmpty })
-        #expect(Set(menu.items.map { $0.keyEquivalent }).count == 7)
+        #expect(Set(menu.items.map { $0.keyEquivalent }).count == 8)
         menu.performActionForItem(at: menu.indexOfItem(withTitle: "Rename Task"))
         try await eventually { interaction.taskWorkspacePresentation?.editing != nil }
         #expect(interaction.canPerformTaskAction(.complete) == false)

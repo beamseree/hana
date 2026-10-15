@@ -1,0 +1,480 @@
+issue-96-completed-native-red.txt
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Compiling HanaTests CompletedArchiveTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.14s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CompletedArchiveTests started.
+◇ Test completedNativeRenameAndArchiveKeepCompletion() started.
+✘ Test completedNativeRenameAndArchiveKeepCompletion() recorded an issue at CompletedArchiveTests.swift:58:9: Expectation failed: (reopen.keyEquivalent == "o" → false) && (reopen.keyEquivalentModifierMask == [.command, .shift] → <not evaluated>)
+✘ Test completedNativeRenameAndArchiveKeepCompletion() recorded an issue at CompletedArchiveTests.swift:59:9: Expectation failed: (Set(menu.items.map(\.keyEquivalent)).count → 7) == (menu.items.count → 8)
+✘ Test completedNativeRenameAndArchiveKeepCompletion() failed after 0.511 seconds with 2 issues.
+✘ Suite CompletedArchiveTests failed after 0.511 seconds with 2 issues.
+✘ Test run with 1 test in 1 suite failed after 0.511 seconds with 2 issues.
+
+
+issue-96-navigation-red.txt
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Compiling HanaTests CompletedArchiveTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.24s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CompletedArchiveTests started.
+◇ Test invalidRenameKeepsItsVisibleSectionUntilFixedOrCanceled() started.
+✘ Test invalidRenameKeepsItsVisibleSectionUntilFixedOrCanceled() recorded an issue at CompletedArchiveTests.swift:160:9: Expectation failed: (interaction.mainWindowPresentation?.selectedSection → .completed) == .inbox
+✘ Test invalidRenameKeepsItsVisibleSectionUntilFixedOrCanceled() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test invalidRenameKeepsItsVisibleSectionUntilFixedOrCanceled() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test invalidRenameKeepsItsVisibleSectionUntilFixedOrCanceled() recorded an issue at CompletedArchiveTests.swift:167:9: Expectation failed: try await store.read(.task(task.id), in: store.generation)?.title == "Fixed title"
+✘ Test invalidRenameKeepsItsVisibleSectionUntilFixedOrCanceled() failed after 6.325 seconds with 4 issues.
+✘ Suite CompletedArchiveTests failed after 6.326 seconds with 4 issues.
+✘ Test run with 1 test in 1 suite failed after 6.326 seconds with 4 issues.
+
+
+issue-96-navigation-race-red.txt
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Compiling HanaTests CompletedArchiveTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.25s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CompletedArchiveTests started.
+◇ Test navigationWaitsForAPausedRenameAndUsesTheLatestRequestedSection() started.
+✘ Test navigationWaitsForAPausedRenameAndUsesTheLatestRequestedSection() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test navigationWaitsForAPausedRenameAndUsesTheLatestRequestedSection() failed after 3.358 seconds with 1 issue.
+✘ Suite CompletedArchiveTests failed after 3.358 seconds with 1 issue.
+✘ Test run with 1 test in 1 suite failed after 3.359 seconds with 1 issue.
+
+
+issue-96-navigation-cancel-red.txt
+[0/1] Planning build
+Building for debugging...
+[0/7] Write sources
+[2/7] Write swift-version--1AB21518FC5DEDBE.txt
+[4/224] Compiling GRDB SQLQueryGenerator.swift
+[5/224] Compiling GRDB SQLTableAlterationGenerator.swift
+[6/224] Compiling GRDB SQLTableGenerator.swift
+[7/224] Compiling GRDB TableAlias.swift
+[8/224] Compiling GRDB SQLInterpolation+QueryInterface.swift
+[9/224] Compiling GRDB ColumnDefinition.swift
+[10/224] Compiling GRDB StatementAuthorizer.swift
+[11/231] Compiling GRDB SQLRelation.swift
+[12/231] Compiling GRDB SQLSelection.swift
+[13/231] Compiling GRDB SQLSubquery.swift
+[14/231] Compiling GRDB Table.swift
+[15/231] Compiling GRDB SQLColumnGenerator.swift
+[16/231] Compiling GRDB SQLGenerationContext.swift
+[17/231] Compiling GRDB SQLIndexGenerator.swift
+[18/231] Emitting module Markdown
+[19/231] Compiling GRDB NSData.swift
+[20/231] Compiling GRDB NSNull.swift
+[21/231] Compiling GRDB NSNumber.swift
+[22/231] Compiling GRDB NSString.swift
+[23/231] Compiling GRDB SQLiteDateParser.swift
+[24/231] Compiling GRDB URL.swift
+[25/231] Compiling GRDB UUID.swift
+[26/231] Compiling GRDB HasOneThroughAssociation.swift
+[27/231] Compiling GRDB JoinAssociation.swift
+[28/231] Compiling GRDB CommonTableExpression.swift
+[29/231] Compiling GRDB QueryInterfaceRequest.swift
+[30/231] Compiling GRDB RequestProtocols.swift
+[31/231] Compiling GRDB Column.swift
+[32/231] Compiling GRDB DatabasePromise.swift
+[33/231] Compiling GRDB DatabaseValueConvertible+Decodable.swift
+[34/231] Compiling GRDB DatabaseValueConvertible+Encodable.swift
+[35/231] Compiling GRDB DatabaseSchemaSource.swift
+[36/231] Compiling GRDB DatabaseSnapshot.swift
+[37/231] Compiling GRDB DatabaseSnapshotPool.swift
+[38/231] Compiling GRDB DatabaseValue.swift
+[39/231] Compiling GRDB DatabaseValueConvertible.swift
+[40/231] Compiling GRDB SQLAssociation.swift
+[41/231] Compiling GRDB SQLCollection.swift
+[42/231] Compiling GRDB SQLExpression.swift
+[43/231] Compiling GRDB SQLForeignKeyRequest.swift
+[44/231] Compiling GRDB SQLFunctions.swift
+[45/231] Compiling GRDB SQLOperators.swift
+[46/231] Compiling GRDB SQLOrdering.swift
+[47/231] Compiling GRDB ForeignKey.swift
+[48/231] Compiling GRDB Association.swift
+[49/231] Compiling GRDB AssociationAggregate.swift
+[50/231] Compiling GRDB BelongsToAssociation.swift
+[51/231] Compiling GRDB HasManyAssociation.swift
+[52/231] Compiling GRDB HasManyThroughAssociation.swift
+[53/231] Compiling GRDB HasOneAssociation.swift
+[54/231] Compiling GRDB StatementColumnConvertible.swift
+[55/231] Compiling GRDB CGFloat.swift
+[56/231] Compiling GRDB Data.swift
+[57/231] Compiling GRDB DatabaseDateComponents.swift
+[58/231] Compiling GRDB DatabaseValueConvertible+ReferenceConvertible.swift
+[59/231] Compiling GRDB Date.swift
+[60/231] Compiling GRDB Decimal.swift
+[61/231] Compiling Markdown CollectionExtensions.swift
+[62/231] Compiling Markdown StringExtensions.swift
+[63/231] Compiling Markdown MarkupVisitor.swift
+[64/231] Compiling Markdown MarkupWalker.swift
+[65/231] Compiling Markdown HTMLFormatter.swift
+[66/231] Compiling Markdown MarkupFormatter.swift
+[67/231] Compiling Markdown MarkupTreeDumper.swift
+[68/231] Compiling GRDB DatabaseWriter.swift
+[69/231] Compiling GRDB DispatchQueueActor.swift
+[70/231] Compiling GRDB FetchRequest.swift
+[71/231] Compiling GRDB Row.swift
+[72/231] Compiling GRDB RowAdapter.swift
+[73/231] Compiling GRDB RowDecodingError.swift
+[74/231] Compiling GRDB SQL.swift
+[75/231] Compiling GRDB FTS3Pattern.swift
+[76/231] Compiling GRDB FTS3TokenizerDescriptor.swift
+[77/231] Compiling GRDB FTS4.swift
+[78/231] Compiling GRDB FTS5.swift
+[79/231] Compiling GRDB FTS5CustomTokenizer.swift
+[80/231] Compiling GRDB FTS5Pattern.swift
+[81/231] Compiling GRDB FTS5Tokenizer.swift
+[82/231] Compiling GRDB FTS5TokenizerDescriptor.swift
+[83/231] Compiling GRDB FTS5WrapperTokenizer.swift
+[84/231] Compiling GRDB Fixits.swift
+[85/231] Compiling GRDB JSONColumn.swift
+[86/231] Compiling GRDB SQLJSONExpressible.swift
+[87/231] Compiling GRDB SQLJSONFunctions.swift
+[88/231] Compiling GRDB DatabaseMigrator.swift
+[89/231] Compiling GRDB Migration.swift
+[90/231] Compiling GRDB FTS3+QueryInterface.swift
+[91/231] Compiling GRDB FTS5+QueryInterface.swift
+[111/247] Compiling GRDB IndexDefinition.swift
+[112/247] Compiling GRDB TableAlteration.swift
+[113/247] Compiling GRDB TableDefinition.swift
+[114/247] Compiling GRDB VirtualTableModule.swift
+[115/247] Compiling GRDB TableRecord+Association.swift
+[116/247] Compiling GRDB TableRecord+QueryInterfaceRequest.swift
+[117/247] Compiling GRDB EncodableRecord+Encodable.swift
+[118/247] Compiling GRDB EncodableRecord.swift
+[119/247] Compiling GRDB FetchableRecord+Decodable.swift
+[120/247] Compiling GRDB FetchableRecord+TableRecord.swift
+[121/247] Compiling GRDB FetchableRecord.swift
+[122/247] Compiling GRDB MutablePersistableRecord+DAO.swift
+[123/247] Compiling GRDB MutablePersistableRecord+Delete.swift
+[124/247] Compiling GRDB MutablePersistableRecord+Insert.swift
+[125/247] Compiling GRDB MutablePersistableRecord+Save.swift
+[126/247] Compiling GRDB ReadWriteLock.swift
+[127/247] Compiling GRDB ReceiveValuesOn.swift
+[128/247] Compiling GRDB Refinable.swift
+[129/247] Compiling GRDB Utils.swift
+[130/247] Compiling GRDB DatabaseCancellable.swift
+[131/247] Compiling GRDB ValueConcurrentObserver.swift
+[132/247] Compiling GRDB ValueWriteOnlyObserver.swift
+[133/247] Compiling GRDB Fetch.swift
+[134/247] Compiling GRDB Map.swift
+[135/247] Compiling GRDB RemoveDuplicates.swift
+[136/247] Compiling GRDB Trace.swift
+[137/247] Compiling GRDB ValueReducer.swift
+[138/247] Compiling GRDB SharedValueObservation.swift
+[139/247] Compiling GRDB ValueObservation.swift
+[140/247] Compiling GRDB ValueObservationScheduler.swift
+[141/247] Compiling GRDB resource_bundle_accessor.swift
+[193/247] Emitting module GRDB
+[194/247] Compiling GRDB DatabaseValueConvertible+RawRepresentable.swift
+[195/247] Compiling GRDB JSONRequiredEncoder.swift
+[196/247] Compiling GRDB Optional.swift
+[197/247] Compiling GRDB StandardLibrary.swift
+[198/247] Compiling GRDB TransactionClock.swift
+[199/247] Compiling GRDB TransactionObserver.swift
+[200/247] Compiling GRDB WALSnapshot.swift
+[201/247] Compiling GRDB WALSnapshotTransaction.swift
+[202/247] Compiling GRDB Database+Dump.swift
+[203/247] Compiling GRDB DatabaseReader+dump.swift
+[204/247] Compiling GRDB DumpFormat.swift
+[205/247] Compiling GRDB DebugDumpFormat.swift
+[206/247] Compiling GRDB JSONDumpFormat.swift
+[207/247] Compiling GRDB LineDumpFormat.swift
+[208/247] Compiling GRDB ListDumpFormat.swift
+[209/247] Compiling GRDB QuoteDumpFormat.swift
+[210/247] Compiling GRDB FTS3.swift
+[211/247] Compiling GRDB MutablePersistableRecord+Update.swift
+[212/247] Compiling GRDB MutablePersistableRecord+Upsert.swift
+[213/247] Compiling GRDB MutablePersistableRecord.swift
+[214/247] Compiling GRDB PersistableRecord+Insert.swift
+[215/247] Compiling GRDB PersistableRecord+Save.swift
+[216/247] Compiling GRDB PersistableRecord+Upsert.swift
+[217/247] Compiling GRDB PersistableRecord.swift
+[218/247] Compiling GRDB Record.swift
+[219/247] Compiling GRDB TableRecord.swift
+[220/247] Compiling GRDB CaseInsensitiveIdentifier.swift
+[221/247] Compiling GRDB Inflections+English.swift
+[222/247] Compiling GRDB Inflections.swift
+[223/247] Compiling GRDB Mutex.swift
+[224/247] Compiling GRDB OnDemandFuture.swift
+[225/247] Compiling GRDB OrderedDictionary.swift
+[226/247] Compiling GRDB Pool.swift
+[227/247] Compiling GRDB Configuration.swift
+[228/247] Compiling GRDB Cursor.swift
+[229/247] Compiling GRDB Database+SQLCipher.swift
+[230/247] Compiling GRDB Database+Schema.swift
+[231/247] Compiling GRDB Database+Statements.swift
+[232/247] Compiling GRDB Database.swift
+[233/247] Compiling GRDB DatabaseBackupProgress.swift
+[234/247] Compiling GRDB DatabaseCollation.swift
+[235/247] Compiling GRDB DatabaseError.swift
+[236/247] Compiling GRDB DatabaseFunction.swift
+[237/247] Compiling GRDB DatabasePool.swift
+[238/247] Compiling GRDB DatabasePublishers.swift
+[239/247] Compiling GRDB DatabaseQueue.swift
+[240/247] Compiling GRDB DatabaseReader.swift
+[241/247] Compiling GRDB DatabaseRegion.swift
+[242/247] Compiling GRDB DatabaseRegionObservation.swift
+[243/247] Compiling GRDB DatabaseSchemaCache.swift
+[244/289] Compiling Hana CollectionExportFixture.swift
+[245/289] Compiling Hana CollectionFixtureHarness.swift
+[246/289] Compiling Hana CollectionLocation.swift
+[247/289] Compiling Hana CollectionRecovery.swift
+[248/289] Compiling Hana CollectionSchema.swift
+[249/293] Compiling Hana DisplayPlacement.swift
+[250/293] Compiling Hana FocusedWindowGeometry.swift
+[251/293] Compiling Hana GlobalShortcut.swift
+[252/293] Compiling Hana HanaApp.swift
+[253/293] Compiling Hana HanaColor.swift
+[254/293] Compiling Hana NoteWindowValidation.swift
+[255/293] Compiling Hana OpenNoteCaptureValidation.swift
+[256/293] Compiling Hana PerformanceValidation.swift
+[257/293] Compiling Hana ResultIcons.swift
+[258/293] Compiling Hana NotePreview.swift
+[259/293] Compiling Hana NotePreviewSession.swift
+[260/293] Compiling Hana NoteScroller.swift
+[261/293] Compiling Hana NoteWindowController.swift
+[262/293] Compiling Hana MarkdownPreviewRenderer.swift
+[263/293] Compiling Hana MixedSearchValidation.swift
+[264/293] Compiling Hana ModeIcon.swift
+[265/293] Compiling Hana NoteEditing.swift
+[266/293] Compiling Hana Search.swift
+[267/293] Compiling Hana SearchCorrectnessValidation.swift
+[268/293] Compiling Hana SearchName.swift
+[269/293] Compiling Hana SearchResultsView.swift
+[270/293] Emitting module Hana
+[271/293] Compiling Hana CollectionSnapshotFixture.swift
+[272/293] Compiling Hana CollectionSnapshots.swift
+[273/293] Compiling Hana CollectionStore.swift
+[274/293] Compiling Hana CoverageValidation.swift
+[275/293] Compiling Hana Diagnostics.swift
+[276/293] Compiling Hana SegmentedControl.swift
+[277/293] Compiling Hana SpotlightSource.swift
+[278/293] Compiling Hana TaskWorkspace.swift
+[279/293] Compiling Hana WorkingWindowController.swift
+[280/293] Compiling Hana ApplicationCatalog.swift
+[281/293] Compiling Hana ArchiveWorkspace.swift
+[282/293] Compiling Hana BarStyle.swift
+[283/293] Compiling Hana CaptureSession.swift
+[284/293] Compiling Hana CollectionExport.swift
+[285/293] Compiling Hana HanaFont.swift
+[286/293] Compiling Hana HanaRadius.swift
+[287/293] Compiling Hana HanaShadow.swift
+[288/293] Compiling Hana MacInteraction.swift
+[289/293] Compiling Hana MainWindowValidation.swift
+[289/294] Write Objects.LinkFileList
+[290/294] Linking Hana
+[291/294] Applying Hana
+[293/335] Compiling HanaTests OpenNoteOrganizationTests.swift
+[294/335] Compiling HanaTests OrganizedCollectionFixture.swift
+[295/335] Compiling HanaTests ResultIconsTests.swift
+[296/335] Compiling HanaTests SearchExclusionTests.swift
+[297/339] Compiling HanaTests TaskSaveTests.swift
+[298/339] Compiling HanaTests TaskWorkspaceOrderTests.swift
+[299/339] Compiling HanaTests TaskWorkspaceTests.swift
+[300/339] Compiling HanaTests TestClock.swift
+[301/339] Compiling HanaTests CaptureSafetyNativeTests.swift
+[302/339] Compiling HanaTests CaptureSafetyTests.swift
+[303/339] Compiling HanaTests CaptureSessionTests.swift
+[304/339] Compiling HanaTests CollectionExportHarnessTests.swift
+[305/339] Compiling HanaTests CollectionExportTests.swift
+[306/339] Compiling HanaTests SearchRankingTests.swift
+[307/339] Compiling HanaTests SearchResponsivenessTests.swift
+[308/339] Compiling HanaTests SearchTests.swift
+[309/339] Compiling HanaTests SearchTypingGapTests.swift
+[310/339] Compiling HanaTests SpotlightStageTests.swift
+[311/339] Compiling HanaTests SuggestionInteractionTests.swift
+[312/339] Compiling HanaTests TaskLifecycleTests.swift
+[313/339] Compiling HanaTests TaskOrderingTests.swift
+[314/339] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[315/339] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[316/339] Compiling HanaTests CollectionSnapshotTests.swift
+[317/339] Compiling HanaTests CollectionStoreOpeningTests.swift
+[318/339] Compiling HanaTests CollectionStoreTests.swift
+[319/339] Compiling HanaTests NoteModeTests.swift
+[320/339] Compiling HanaTests NoteOrganizationTests.swift
+[321/339] Compiling HanaTests NotePreviewTests.swift
+[322/339] Compiling HanaTests NoteSaveSafetyNativeTests.swift
+[323/339] Compiling HanaTests NoteSaveSafetyTests.swift
+[324/339] Compiling HanaTests NoteSaveTests.swift
+[325/339] Compiling HanaTests NoteWindowTests.swift
+[326/339] Compiling HanaTests OpenNoteCaptureTests.swift
+[327/339] Emitting module HanaTests
+[328/339] Compiling HanaTests CompletedArchiveTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[329/339] Compiling HanaTests DisplayPlacementTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[330/339] Compiling HanaTests IndependentExportDecoder.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[331/339] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[332/339] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[333/339] Compiling HanaTests MainWindowTests.swift
+[334/339] Compiling HanaTests MarkdownPreviewTests.swift
+[335/339] Compiling HanaTests ModeIconTests.swift
+[336/339] Compiling HanaTests NativeEditingTests.swift
+[337/339] Compiling HanaTests NoteEditingTests.swift
+[337/339] Write Objects.LinkFileList
+[338/339] Linking HanaPackageTests
+Build complete! (13.98s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CompletedArchiveTests started.
+◇ Test navigationWaitsForAPausedRenameAndUsesTheLatestRequestedSection(returnToCurrent:) started.
+◇ Test case passing 1 argument returnToCurrent → false to navigationWaitsForAPausedRenameAndUsesTheLatestRequestedSection(returnToCurrent:) started.
+◇ Test case passing 1 argument returnToCurrent → true to navigationWaitsForAPausedRenameAndUsesTheLatestRequestedSection(returnToCurrent:) started.
+✘ Test navigationWaitsForAPausedRenameAndUsesTheLatestRequestedSection(returnToCurrent:) recorded an issue with 1 argument returnToCurrent → true at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test navigationWaitsForAPausedRenameAndUsesTheLatestRequestedSection(returnToCurrent:) recorded an issue with 1 argument returnToCurrent → true at CompletedArchiveTests.swift:200:9: Expectation failed: (interaction.mainWindowPresentation?.selectedSection → .completed) == ((returnToCurrent ? .inbox : .archive) → .inbox)
+✘ Test navigationWaitsForAPausedRenameAndUsesTheLatestRequestedSection(returnToCurrent:) with 2 test cases failed after 3.523 seconds with 2 issues.
+✘ Suite CompletedArchiveTests failed after 3.524 seconds with 2 issues.
+✘ Test run with 1 test in 1 suite failed after 3.524 seconds with 2 issues.
+
+
+issue-96-main-close-red.txt
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Compiling HanaTests CompletedArchiveTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.23s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CompletedArchiveTests started.
+◇ Test closingTheMainWindowDoesNotHideAnInvalidRename() started.
+✘ Test closingTheMainWindowDoesNotHideAnInvalidRename() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test closingTheMainWindowDoesNotHideAnInvalidRename() recorded an issue at CompletedArchiveTests.swift:219:9: Expectation failed: (interaction.window(for: .main) === window → false) && (window.isVisible → <not evaluated>)
+✘ Test closingTheMainWindowDoesNotHideAnInvalidRename() recorded an issue at CompletedArchiveTests.swift:220:9: Expectation failed: (interaction.taskWorkspacePresentation?.editing?.text → nil) == "  "
+✘ Test closingTheMainWindowDoesNotHideAnInvalidRename() failed after 3.303 seconds with 3 issues.
+✘ Suite CompletedArchiveTests failed after 3.303 seconds with 3 issues.
+✘ Test run with 1 test in 1 suite failed after 3.303 seconds with 3 issues.
+
+
+issue-96-archive-menu-red.txt
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Compiling HanaTests CompletedArchiveTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.36s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CompletedArchiveTests started.
+◇ Test tiedArchiveKindsAreStableAndAnUnfinishedTodayTaskRestoresToInbox() started.
+✘ Test tiedArchiveKindsAreStableAndAnUnfinishedTodayTaskRestoresToInbox() recorded an issue at CompletedArchiveTests.swift:292:9: Expectation failed: (restore.keyEquivalent → "") == "r"
+✘ Test tiedArchiveKindsAreStableAndAnUnfinishedTodayTaskRestoresToInbox() failed after 0.281 seconds with 1 issue.
+✘ Suite CompletedArchiveTests failed after 0.281 seconds with 1 issue.
+✘ Test run with 1 test in 1 suite failed after 0.281 seconds with 1 issue.

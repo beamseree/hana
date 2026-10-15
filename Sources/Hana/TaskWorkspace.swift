@@ -4,11 +4,12 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 enum TaskWorkspaceAction: Int, CaseIterable {
-    case complete, moveToToday, moveToInbox, rename, archive, moveUp, moveDown
+    case complete, reopen, moveToToday, moveToInbox, rename, archive, moveUp, moveDown
 
     var title: String {
         switch self {
         case .complete: "Complete Task"
+        case .reopen: "Reopen Task"
         case .moveToToday: "Move to Today"
         case .moveToInbox: "Move to Inbox"
         case .rename: "Rename Task"
@@ -50,6 +51,7 @@ final class TaskWorkspacePresentation {
     enum Availability: Equatable { case loading, available, unavailable }
     private(set) var inbox: [TaskItem] = []
     private(set) var today: [TaskItem] = []
+    private(set) var completed: [TaskItem] = []
     private(set) var availability: Availability = .loading
     struct Editing: Equatable {
         let id: UUID
@@ -62,6 +64,7 @@ final class TaskWorkspacePresentation {
     private(set) var isPerforming = false
     private let collection: Task<CollectionStore, any Error>?
     private var observations: [Task<Void, Never>] = []
+    private var renameSave: Task<Bool, Never>?
 
     init(collection: Task<CollectionStore, any Error>?) {
         self.collection = collection
@@ -83,22 +86,38 @@ final class TaskWorkspacePresentation {
                 }
             })
         }
+        observations.append(Task { [weak self] in
+            do {
+                let store = try await collection.value
+                for try await rows in store.observe(.completedTasks, in: store.generation) {
+                    guard !Task.isCancelled else { return }
+                    self?.completed = rows
+                    self?.availability = .available
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+                self?.completed = []
+                self?.availability = .unavailable
+            }
+        })
     }
 
     func select(_ id: UUID?) { selectedID = id }
 
     func rows(in section: MainSection) -> [TaskItem] {
-        switch section { case .inbox: inbox; case .today: today; default: [] }
+        switch section { case .inbox: inbox; case .today: today; case .completed: completed; default: [] }
     }
 
     func canPerform(_ action: TaskWorkspaceAction, in section: MainSection, taskID: UUID? = nil) -> Bool {
         guard availability == .available, !isPerforming, editing == nil,
               let row = rows(in: section).first(where: { $0.id == (taskID ?? selectedID) }) else { return false }
         switch action {
-        case .moveToToday: return row.placement == .inbox
-        case .moveToInbox: return row.placement == .today
-        case .moveUp: return rows(in: section).first?.id != row.id
-        case .moveDown: return rows(in: section).last?.id != row.id
+        case .complete: return section != .completed
+        case .reopen: return section == .completed
+        case .moveToToday: return section == .inbox
+        case .moveToInbox: return section == .today
+        case .moveUp: return section.taskPlacement != nil && rows(in: section).first?.id != row.id
+        case .moveDown: return section.taskPlacement != nil && rows(in: section).last?.id != row.id
         default: return true
         }
     }
@@ -123,6 +142,7 @@ final class TaskWorkspacePresentation {
             let store = try await collection.value
             let command: CollectionCommand<TaskItem> = switch action {
             case .complete: .completeTask(row.id, expectedRevision: row.revision)
+            case .reopen: .reopenTask(row.id, expectedRevision: row.revision)
             case .moveToToday: .moveTask(row.id, to: .today, expectedRevision: row.revision)
             case .moveToInbox: .moveTask(row.id, to: .inbox, expectedRevision: row.revision)
             case .archive: .archiveTask(row.id, expectedRevision: row.revision)
@@ -217,6 +237,7 @@ final class TaskWorkspacePresentation {
 
     @discardableResult
     func commitRename() async -> Bool {
+        if let renameSave { return await renameSave.value }
         guard let draft = editing, !isPerforming, let collection else { return false }
         do { try TaskItem.validate(title: draft.text) }
         catch {
@@ -226,7 +247,15 @@ final class TaskWorkspacePresentation {
             return false
         }
         isPerforming = true
-        defer { isPerforming = false }
+        let saving = Task { @MainActor in
+            defer { self.isPerforming = false; self.renameSave = nil }
+            return await self.saveRename(draft, in: collection)
+        }
+        renameSave = saving
+        return await saving.value
+    }
+
+    private func saveRename(_ draft: Editing, in collection: Task<CollectionStore, any Error>) async -> Bool {
         do {
             let store = try await collection.value
             _ = try await store.perform(.editTaskTitle(draft.id, expectedRevision: draft.expectedRevision, title: draft.text), in: store.generation)
@@ -241,6 +270,7 @@ final class TaskWorkspacePresentation {
                 // explicitly retries or cancels. Never overwrite automatically.
                 if let index = inbox.firstIndex(where: { $0.id == committed.id }) { inbox[index] = committed }
                 if let index = today.firstIndex(where: { $0.id == committed.id }) { today[index] = committed }
+                if let index = completed.firstIndex(where: { $0.id == committed.id }) { completed[index] = committed }
                 editing?.expectedRevision = committed.revision
                 notice = "This task changed elsewhere. The saved title is \(committed.title). Your draft is kept; Return retries, Escape cancels."
             } else {
@@ -276,7 +306,7 @@ struct TaskWorkspaceView: View {
                     .foregroundStyle(Color(nsColor: HanaColor.Text.secondary))
             case .available:
                 if tasks.rows(in: section).isEmpty {
-                    Text(section == .today ? "No tasks in Today. Move a task here or capture one from the search bar." : "No tasks in Inbox. Capture a task from the search bar to see it here.")
+                    Text(section == .completed ? "No completed tasks yet." : section == .today ? "No tasks in Today. Move a task here or capture one from the search bar." : "No tasks in Inbox. Capture a task from the search bar to see it here.")
                         .foregroundStyle(Color(nsColor: HanaColor.Text.secondary))
                 } else {
                     List(selection: Binding(get: { tasks.selectedID }, set: { tasks.select($0) })) {
@@ -284,13 +314,13 @@ struct TaskWorkspaceView: View {
                             HStack(spacing: 10) {
                                 Button {
                                     tasks.select(row.id)
-                                    Task { await tasks.perform(.complete, in: section) }
+                                    Task { await tasks.perform(section == .completed ? .reopen : .complete, in: section) }
                                 } label: {
-                                    Image(systemName: "circle")
+                                    Image(systemName: section == .completed ? "checkmark.circle.fill" : "circle")
                                         .foregroundStyle(Color(nsColor: HanaColor.Text.faint))
                                 }
                                 .buttonStyle(.plain)
-                                .accessibilityLabel("Complete \(row.title)")
+                                .accessibilityLabel("\(section == .completed ? "Reopen" : "Complete") \(row.title)")
                                 .disabled(tasks.editing != nil || tasks.isPerforming)
                                 if tasks.editing?.id == row.id {
                                     TaskTitleEditor(tasks: tasks, taskID: row.id).frame(height: 26)
@@ -309,7 +339,7 @@ struct TaskWorkspaceView: View {
                             .tag(row.id)
                             .listRowBackground(Color(nsColor: HanaColor.Surface.group))
                             .contextMenu {
-                                ForEach(TaskWorkspaceAction.allCases, id: \.rawValue) { action in
+                                ForEach(section == .completed ? [.reopen, .rename, .archive] : TaskWorkspaceAction.allCases.filter { $0 != .reopen }, id: \.rawValue) { action in
                                     Button(action.title) {
                                         tasks.select(row.id)
                                         if let request = tasks.requestReorder(action, in: section) {
@@ -322,10 +352,12 @@ struct TaskWorkspaceView: View {
                                 }
                             }
                         }
-                        Color.clear.frame(height: 12)
-                            .contentShape(Rectangle())
-                            .modifier(TaskOrderDropModifier(tasks: tasks, section: section, before: nil))
-                            .accessibilityLabel("Move task to end")
+                        if section.taskPlacement != nil {
+                            Color.clear.frame(height: 12)
+                                .contentShape(Rectangle())
+                                .modifier(TaskOrderDropModifier(tasks: tasks, section: section, before: nil))
+                                .accessibilityLabel("Move task to end")
+                        }
                     }
                     .scrollContentBackground(.hidden)
                     .accessibilityLabel(section.rawValue)
@@ -337,7 +369,6 @@ struct TaskWorkspaceView: View {
                 }
             }
         }
-        .onChange(of: section) { _, _ in Task { await tasks.commitRename() } }
     }
 }
 
@@ -454,6 +485,7 @@ final class TaskWorkspaceMenuTarget: NSObject, NSMenuItemValidation {
         for action in TaskWorkspaceAction.allCases {
             let key = switch action {
             case .complete: "k"
+            case .reopen: "o"
             case .moveToToday: "t"
             case .moveToInbox: "i"
             case .rename: "r"
