@@ -4,7 +4,7 @@ Hana looks clean, minimal and Mac-native: near-monochrome grays, one near-black 
 
 Each section defines named **roles**, and views use only roles: never a raw color, a Geist step or a font size. To change how something looks, change or add a role.
 
-Elevation, motion and iconography are not written yet; until they are, [`BarStyle`](../Sources/Hana/BarStyle.swift) remains the source for the Search bar's motion. Spacing is deliberately not a section: each layout keeps its own numbers, as `BarStyle` does for the Search bar.
+Motion and iconography are not written yet; until they are, [`BarStyle`](../Sources/Hana/BarStyle.swift) remains the source for the Search bar's motion. Spacing is deliberately not a section: each layout keeps its own numbers, as `BarStyle` does for the Search bar.
 
 ## Color
 
@@ -151,4 +151,28 @@ A rounded shape inside another takes the outer radius minus the gap between them
 ### Windows
 
 Main window and Note window corners belong to macOS. Hana uses the system window shape and never sets a window's radius.
+
+## Elevation
+
+Code: [`HanaShadow.swift`](../Sources/Hana/HanaShadow.swift). The role `shadow.raised` is `HanaShadow.raised`, applied in SwiftUI with `.elevation(_:cornerRadius:)`.
+
+### Levels
+
+| Level | Layers | Use |
+| --- | --- | --- |
+| Flat | None | The default: windows, groups, rows, controls |
+| `shadow.raised` | 1-point outline at 6% black; 0 1 2 −1 at 6%; 0 2 4 0 at 4% | Small white pieces on gray: the selected segment, key hints, a white card on the window |
+| `shadow.popover` | 1-point outline at 6% black; 0 4 8 −2 at 6%; 0 12 24 −4 at 8% | Floating panels Hana draws itself |
+| System | Native window shadow | Main window, Note windows, the Search bar, native menus and popovers |
+
+Drop layers read as x offset, y offset, blur and spread in points, as in CSS. The outline is a ring just outside the shape. Both levels come from [Anish's lab](https://lab.anishfn.ink/), where they are `shadow-surface` and `shadow-popover`.
+
+### Rules
+
+- **Flat first.** Separate things with fill (`surface.group` on `surface.window`) before reaching for a shadow.
+- **Shadows go on opaque `surface.card` shapes.** The implementation casts each layer from a shape behind the view, so the view must cover it.
+- **The shadow follows the shape's corners.** Pass the shape's radius, base or nested, to `.elevation`.
+- **Native things keep native shadows.** Windows, the Search bar panel, menus and system popovers are never given a painted shadow; the [technical design](technical-design.md) explains why the bar's shadow must stay native.
+- **No lift on hover.** Hover changes fill (`row.hover`, `surface.groupHover`), never elevation.
+- **Light only.** The values are tuned for light surfaces; dark mode would need its own.
 
