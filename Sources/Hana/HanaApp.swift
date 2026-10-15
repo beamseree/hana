@@ -18,6 +18,9 @@ struct HanaApp {
 @MainActor
 private final class AppDelegate: NSObject, NSApplicationDelegate {
     private var interaction: MacInteraction?
+    /// The live collection. Only normal launch opens it, and only through the
+    /// production location; validation runs and the fixture harness never do.
+    private var collection: Task<CollectionStore, any Error>?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let diagnostics = Diagnostics(enabled: CommandLine.arguments.contains("--diagnostics"))
@@ -25,7 +28,14 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
         let search = validation?.makeSearch() ?? Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true,
                             fileDelay: CommandLine.arguments.contains("--validation-file-delay") ? .seconds(5) : .zero,
                             typingGap: validationTypingGap ?? Search.defaultTypingGap)
-        let interaction = MacInteraction(diagnostics: diagnostics, search: search)
+        let validating = CommandLine.arguments.contains { $0.hasPrefix("--validate-") }
+        // Opened off the main actor so the bar never waits for it. A failure
+        // leaves Search working; capture explains it and keeps the text.
+        let collection = validating ? nil : Task.detached(priority: .userInitiated) {
+            try await CollectionStore.open(.live())
+        }
+        self.collection = collection
+        let interaction = MacInteraction(diagnostics: diagnostics, search: search, collection: collection)
         self.interaction = interaction
         interaction.start()
         if CommandLine.arguments.contains("--validate-performance") {
@@ -44,6 +54,16 @@ private final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         interaction?.open(.main)
         return false
+    }
+
+    /// Orderly quit closes the Store: checkpointed and its owner lock released.
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard let collection else { return .terminateNow }
+        Task {
+            if let store = try? await collection.value { await store.close() }
+            sender.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }

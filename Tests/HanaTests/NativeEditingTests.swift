@@ -111,7 +111,7 @@ struct NativeEditingTests {
         #expect(editor.string == "บันทึกไทย")
     }
 
-    @Test func shiftEnterWritesANewLineInNoteAndEnterDoesNothingYet() async throws {
+    @Test func shiftEnterWritesANewLineInNoteAndEnterWithoutACollectionKeepsIt() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let none = NSRange(location: NSNotFound, length: 0)
@@ -134,14 +134,6 @@ struct NativeEditingTests {
             editor.insertText(String(character), replacementRange: NSRange(location: NSNotFound, length: 0))
         }
         #expect(editor.string == markdown)
-    }
-
-    private func returnKey(shift: Bool) throws -> NSEvent {
-        try #require(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: shift ? .shift : [],
-                                      timestamp: ProcessInfo.processInfo.systemUptime,
-                                      windowNumber: NSApp.keyWindow?.windowNumber ?? 0, context: nil,
-                                      characters: "\r", charactersIgnoringModifiers: "\r",
-                                      isARepeat: false, keyCode: 36))
     }
 
     /// A real paste reads the general pasteboard; put back what was there.
