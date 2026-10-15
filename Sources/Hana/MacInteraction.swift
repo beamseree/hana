@@ -126,8 +126,28 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private weak var originWindow: NSWindow?
     private weak var originResponder: NSResponder?
     // Membership ends on close, never on minimize or temporary invisibility.
+    private let taskMenuTarget = TaskWorkspaceMenuTarget()
     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
+    var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
+    func canPerformTaskAction(_ action: TaskWorkspaceAction) -> Bool {
+        guard currentInvocation == nil, let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
+        return tasks.canPerform(action, in: presentation.selectedSection)
+    }
+
+    func selectTask(_ id: UUID?) { taskWorkspacePresentation?.select(id) }
+
+    @discardableResult
+    func performTaskAction(_ action: TaskWorkspaceAction) async -> Bool {
+        guard let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
+        return await tasks.perform(action, in: presentation.selectedSection)
+    }
+
+    func editTaskTitle(_ text: String) { taskWorkspacePresentation?.editTitle(text) }
+    func cancelTaskRename() { taskWorkspacePresentation?.cancelRename() }
+    @discardableResult
+    func commitTaskRename() async -> Bool { await taskWorkspacePresentation?.commitRename() ?? false }
+
     func organizeNote(_ row: MainWindowPresentation.Row, action: MainNoteAction) async {
         await workingWindows[.main]?.organizeNote(row, action: action)
     }
@@ -641,6 +661,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             edit.submenu?.addItem(NSMenuItem(title: title, action: Selector(action), keyEquivalent: key))
         }
         main.addItem(edit)
+        taskMenuTarget.interaction = self
+        let tasks = NSMenuItem(title: "Tasks", action: nil, keyEquivalent: "")
+        tasks.submenu = taskMenuTarget.makeMenu()
+        main.addItem(tasks)
         let noteMenu = NSMenu(title: "Note")
         for (title, action, key) in [
             ("Pin Note", #selector(toggleSelectedNotePin), "p"),

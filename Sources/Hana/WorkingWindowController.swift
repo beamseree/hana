@@ -103,10 +103,12 @@ final class MainWindowPresentation {
 @MainActor
 final class WorkingWindowController: NSWindowController {
     let presentation = MainWindowPresentation()
+    let taskWorkspace: TaskWorkspacePresentation
     private var observation: Task<Void, Never>?
     private let collection: Task<CollectionStore, any Error>?
 
     init(collection: Task<CollectionStore, any Error>?) {
+        taskWorkspace = TaskWorkspacePresentation(collection: collection)
         self.collection = collection
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 820, height: 560),
@@ -120,7 +122,7 @@ final class WorkingWindowController: NSWindowController {
         window.appearance = NSAppearance(named: .aqua)
         window.backgroundColor = HanaColor.Surface.window
         window.contentView = NSHostingView(rootView: MainWindowView(
-            presentation: presentation,
+            presentation: presentation, tasks: taskWorkspace,
             organizeNote: { [weak self] row, action in await self?.organizeNote(row, action: action) }
         ))
         window.center()
@@ -149,6 +151,7 @@ final class WorkingWindowController: NSWindowController {
     }
 
     func stopObserving() {
+        taskWorkspace.stopObserving()
         observation?.cancel()
         observation = nil
     }
@@ -182,6 +185,7 @@ final class WorkingWindowController: NSWindowController {
 
 private struct MainWindowView: View {
     let presentation: MainWindowPresentation
+    let tasks: TaskWorkspacePresentation
     let organizeNote: @MainActor (MainWindowPresentation.Row, MainNoteAction) async -> Void
 
     var body: some View {
@@ -224,7 +228,9 @@ private struct MainWindowView: View {
         case .unavailable(let reason):
             message("Collection unavailable", detail: reason.message)
         case .available:
-            if presentation.selectedSection != .notes {
+            if presentation.selectedSection == .inbox || presentation.selectedSection == .today {
+                TaskWorkspaceView(tasks: tasks, section: presentation.selectedSection)
+            } else if presentation.selectedSection != .notes {
                 message(presentation.selectedSection.rawValue, detail: "This section is coming soon.")
             } else if presentation.rows.isEmpty {
                 message("No notes yet", detail: "Capture a note from the search bar to see it here.")
