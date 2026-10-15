@@ -34,6 +34,7 @@ final class AutomaticSwitchDiagnostics {
         var matchedKind: MatchedKind? = nil
         var wordCount: Int? = nil
         var backoffReason: BackoffReason? = nil
+        var cached = false
     }
     enum Event: Sendable {
         case verdict(Verdict)
@@ -146,6 +147,7 @@ final class AutomaticSwitchDiagnostics {
         var matchedKind: MatchedKind?
         var wordCount: Int?
         var backoffReason: BackoffReason?
+        var cached: Bool?
         var mode: Mode?
         var reversalMethod: ReversalMethod?
         var millisecondsSinceSwitch: Double?
@@ -169,6 +171,7 @@ final class AutomaticSwitchDiagnostics {
                 errorKind = verdict.errorKind; gateReason = verdict.gateReason
                 matchedKind = verdict.matchedKind; wordCount = verdict.wordCount
                 backoffReason = verdict.backoffReason
+                cached = verdict.cached
             case .switched(let mode): self.event = "autoswitch.switched"; self.mode = mode
             case .reversed(let method, let milliseconds):
                 self.event = "autoswitch.reversed"; reversalMethod = method; millisecondsSinceSwitch = milliseconds
