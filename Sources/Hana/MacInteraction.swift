@@ -26,8 +26,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false
     )
     private let editor = SearchEditor(frame: .zero)
+    private let editorScroll = NSScrollView()
+    /// Capture rules live in the session; this class only performs its effects.
+    private var capture = CaptureSession()
     /// Shows the current mode: the Hana logo for empty Search, a magnifying glass once it has a query.
     private let modeIcon = ModeIconView(frame: BarStyle.modeIconFrame)
+    /// Stands in for a consumed mode prefix; the prefix never becomes text.
+    private let modeLabel = NSTextField(labelWithString: "Note")
     private let loadingIndicator = NSProgressIndicator()
     private let search: Search
     private let launchApplication: @MainActor (URL) async throws -> OpenedApplication
@@ -62,6 +67,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     var statusMessage: String? { resultSurface?.rootView.status }
     var isLoading: Bool { !loadingIndicator.isHidden }
     var modeIconShowsQuery: Bool { modeIcon.showsQuery }
+    var mode: CaptureSession.Mode { capture.state.mode }
+    var modeIconShowsNote: Bool { modeIcon.glyph == .note }
+    var modeLabelText: String? { modeLabel.isHidden ? nil : modeLabel.stringValue }
+    var resultsVisible: Bool { resultSurface?.isHidden == false }
     var selectedResult: SearchResult? { results.first { $0.id == selectedID } }
     private let diagnostics: Diagnostics
     private var origin: NSRunningApplication?
@@ -138,6 +147,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             originWindow = origin?.processIdentifier == ProcessInfo.processInfo.processIdentifier ? NSApp.keyWindow : nil
             originResponder = originWindow?.firstResponder
             currentInvocation = invocation
+            _ = capture.handle(.invoked)
             clearEditor()
             observeSession(invocation)
             let pointer = NSEvent.mouseLocation
@@ -189,6 +199,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         placementTask = nil
         removeSessionObservers()
         panel.orderOut(nil)
+        // Discards any unsaved capture: nothing about it outlives the invocation.
+        _ = capture.handle(.dismissed)
         clearEditor()
         resetSearch()
         currentPlacement = nil
@@ -330,13 +342,24 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         loadingIndicator.setAccessibilityLabel("Searching")
         card.addSubview(loadingIndicator)
 
-        let scroll = NSScrollView(frame: NSRect(x: BarStyle.textInset, y: 10, width: card.frame.width - BarStyle.textInset - 44, height: 40))
+        modeLabel.font = BarStyle.modeLabelFont
+        modeLabel.textColor = BarStyle.secondaryColor
+        modeLabel.sizeToFit()
+        modeLabel.frame.origin = NSPoint(x: card.frame.width - labelTrailing - modeLabel.frame.width,
+                                         y: 30 - modeLabel.frame.height / 2)
+        modeLabel.autoresizingMask = [.minXMargin, .minYMargin]
+        modeLabel.isHidden = true
+        card.addSubview(modeLabel)
+
+        let scroll = editorScroll
+        scroll.frame = NSRect(x: BarStyle.textInset, y: BarStyle.editorTopInset,
+                              width: card.frame.width - BarStyle.textInset - 44, height: BarStyle.editorHeight)
         scroll.autoresizingMask = [.width, .minYMargin]
         scroll.drawsBackground = false
         scroll.hasHorizontalScroller = false
         scroll.hasVerticalScroller = false
         editor.frame = scroll.bounds
-        editor.minSize = NSSize(width: 0, height: 40)
+        editor.minSize = NSSize(width: 0, height: BarStyle.editorHeight)
         editor.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         editor.isVerticallyResizable = true
         editor.isHorizontallyResizable = false
@@ -356,6 +379,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.isAutomaticDashSubstitutionEnabled = false
         editor.isAutomaticTextReplacementEnabled = false
         editor.isAutomaticSpellingCorrectionEnabled = false
+        // Captures are Markdown: nothing may rewrite its punctuation or spacing.
+        editor.smartInsertDeleteEnabled = false
+        editor.isAutomaticTextCompletionEnabled = false
         editor.setAccessibilityLabel("Search")
         editor.setAccessibilityPlaceholderValue("Search")
         editor.delegate = self
@@ -364,6 +390,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             self.dismiss(invocation, reason: .escape)
         }
         editor.compositionChanged = { [weak self] in self?.updateModeIcon() }
+        editor.shouldInsert = { [weak self] text, range, provenance in
+            self?.shouldInsert(text, replacing: range, provenance: provenance) ?? true
+        }
         scroll.documentView = editor
         card.addSubview(scroll)
 
@@ -382,6 +411,30 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.setSelectedRange(NSRange(location: 0, length: 0))
         editor.undoManager?.removeAllActions()
         modeIcon.setShowsQuery(false, animated: false)
+        applyModePresentation(animated: false)
+    }
+
+    private func show(_ mode: CaptureSession.Mode) {
+        record("capture.mode", extra: ["mode": mode.rawValue])
+        resetSearch()
+        applyModePresentation(animated: panel.isVisible)
+        renderResults()
+    }
+
+    private func applyModePresentation(animated: Bool) {
+        let note = mode == .note
+        editor.placeholder = note ? nil : "Search"
+        editor.setAccessibilityLabel(note ? "Note" : "Search")
+        editor.setAccessibilityPlaceholderValue(note ? nil : "Search")
+        modeLabel.isHidden = !note
+        // Search's glyph follows its query; clearing the editor restores the logo.
+        if note { modeIcon.setGlyph(.note, animated: animated) }
+        editorScroll.hasVerticalScroller = note
+        guard let card = editorScroll.superview else { return }
+        // Note leaves room for its label; Search's single line stays pinned to the top.
+        let trailing = note ? card.bounds.width - modeLabel.frame.minX + 8 : 44
+        editorScroll.frame = NSRect(x: BarStyle.textInset, y: card.bounds.height - BarStyle.editorTopInset - BarStyle.editorHeight,
+                                    width: card.bounds.width - BarStyle.textInset - trailing, height: BarStyle.editorHeight)
     }
 
     private func applyPlacement(displays: [Display], pointer: CGPoint, focus: WindowFocus) {
@@ -526,11 +579,34 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     func textDidChange(_ notification: Notification) {
         record("editor.changed")
-        updateQuery(editor.string)
+        _ = capture.handle(.edited(text: editor.string, selection: editor.selectedRange()))
+        if mode == .search { updateQuery(editor.string) } else { renderResults() }
+    }
+
+    func textViewDidChangeSelection(_ notification: Notification) {
+        _ = capture.handle(.edited(text: editor.string, selection: editor.selectedRange()))
+    }
+
+    /// The editor asks before applying each native insertion. Returns false when
+    /// the session consumed it, so it never becomes text or an undoable edit.
+    private func shouldInsert(_ text: String, replacing range: NSRange, provenance: CaptureSession.Provenance) -> Bool {
+        guard currentInvocation != nil else { return true }
+        var applies = true
+        for effect in capture.handle(.insert(text, replacing: range, provenance: provenance)) {
+            switch effect {
+            case .consumeInsertion: applies = false
+            case .enterMode(let mode): show(mode)
+            }
+        }
+        return applies
     }
 
     func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         guard !textView.hasMarkedText() else { return false }
+        if mode == .note {
+            // Shift+Enter writes a new line. Plain Enter will save; until then it does nothing.
+            return commandSelector == #selector(NSResponder.insertNewline(_:)) && !editor.shiftHeld
+        }
         switch commandSelector {
         case #selector(NSResponder.moveDown(_:)): moveSelection(by: 1)
         case #selector(NSResponder.moveUp(_:)): moveSelection(by: -1)
@@ -544,7 +620,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// Native editor changes and callers use the same query-to-batches path.
     func updateQuery(_ text: String) {
         guard currentInvocation != nil else { return }
-        if editor.string != text { editor.string = text }
+        if editor.string != text {
+            editor.string = text
+            _ = capture.handle(.edited(text: text, selection: editor.selectedRange()))
+        }
+        // Note's text is not a query.
+        guard mode == .search else { return renderResults() }
         updateModeIcon()
         searchTask?.cancel()
         // A new query owns a new open intent; an old acknowledgment cannot
@@ -731,6 +812,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     /// Composition counts as a query: the placeholder is already hidden.
     private func updateModeIcon() {
+        guard mode == .search else { return }
         modeIcon.setShowsQuery(!editor.string.isEmpty || editor.hasMarkedText(), animated: panel.isVisible)
     }
 
@@ -777,6 +859,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     private func renderResults() {
+        guard mode == .search else { return layoutNote() }
         let hasQuery = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let loading = hasQuery && (sourceStatus == .loading || fileStatus == .loading)
         loadingIndicator.isHidden = !loading
@@ -824,6 +907,30 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 self.renderResults()
                 self.panel.makeFirstResponder(self.editor)
             }, rowAppeared: { [weak self] id in self?.requestIcon(id) })
+    }
+
+    /// Note grows with its text to a maximum height and then scrolls. Like the
+    /// results, it extends the card downward so the input never moves; placement
+    /// shifts the bar only to keep it on screen.
+    private func layoutNote() {
+        loadingIndicator.isHidden = true
+        loadingIndicator.stopAnimation(nil)
+        resultSurface?.isHidden = true
+        retainedContentHeight = 0
+        let height = min(BarStyle.noteMaxTextHeight, max(BarStyle.editorHeight, noteTextHeight))
+        let frame = currentPlacement?.frame(height: BarStyle.collapsedHeight + height - BarStyle.editorHeight) ?? panel.frame
+        setPanelFrame(frame, animated: true)
+        // Laid out at the final height, pinned under the card's top, so the card
+        // reveals it as it grows.
+        guard let card = editorScroll.superview else { return }
+        editorScroll.frame = NSRect(x: editorScroll.frame.minX, y: card.bounds.height - BarStyle.editorTopInset - height,
+                                    width: editorScroll.frame.width, height: height)
+    }
+
+    private var noteTextHeight: CGFloat {
+        guard let layout = editor.textLayoutManager else { return editor.frame.height }
+        layout.ensureLayout(for: layout.documentRange)
+        return layout.usageBoundsForTextContainer.height + 2 * editor.textContainerInset.height
     }
 
     /// Called as a row is about to appear. A late icon only fills the cache:
@@ -890,6 +997,15 @@ private final class SearchPanel: NSPanel {
 private final class SearchEditor: NSTextView {
     var escape: (() -> Void)?
     var compositionChanged: (() -> Void)?
+    /// Asked before each native insertion is applied, with where it came from.
+    /// False drops it: no text change and no undo entry.
+    var shouldInsert: ((String, NSRange, CaptureSession.Provenance) -> Bool)?
+    var placeholder: String? = "Search" {
+        didSet { needsDisplay = true }
+    }
+    /// Whether the key event being handled has Shift down.
+    private(set) var shiftHeld = false
+    private var provenance: CaptureSession.Provenance?
     override var needsPanelToBecomeKey: Bool { true }
 
     override func keyDown(with event: NSEvent) {
@@ -897,15 +1013,55 @@ private final class SearchEditor: NSTextView {
             escape?()
             return
         }
+        shiftHeld = event.modifierFlags.contains(.shift)
+        defer { shiftHeld = false }
         super.keyDown(with: event)
+    }
+
+    /// Provenance comes from the native operation performing the edit, never
+    /// from key codes. The outermost operation names it: AppKit may insert a
+    /// paste or drop through the same paths typing uses.
+    private func performing<T>(_ provenance: CaptureSession.Provenance, _ edit: () -> T) -> T {
+        let outer = self.provenance
+        if outer == nil { self.provenance = provenance }
+        defer { self.provenance = outer }
+        return edit()
+    }
+
+    /// The text-input insertion path. Committing marked text is not typing. Key
+    /// input replaces the selection without naming a range; an explicit range
+    /// (accent menu, Emoji & Symbols, dictation) is uncertain, so literal.
+    override func insertText(_ string: Any, replacementRange: NSRange) {
+        let provenance: CaptureSession.Provenance = hasMarkedText() ? .compositionCommit
+            : replacementRange.location == NSNotFound ? .typed : .programmatic
+        performing(provenance) { super.insertText(string, replacementRange: replacementRange) }
+    }
+
+    override func paste(_ sender: Any?) { performing(.paste) { super.paste(sender) } }
+    override func pasteAsPlainText(_ sender: Any?) { performing(.paste) { super.pasteAsPlainText(sender) } }
+    override func pasteAsRichText(_ sender: Any?) { performing(.paste) { super.pasteAsRichText(sender) } }
+
+    override func performDragOperation(_ sender: any NSDraggingInfo) -> Bool {
+        performing(.drop) { super.performDragOperation(sender) }
+    }
+
+    /// Insertions pass here before super registers them for undo. Undo and redo
+    /// replay theirs without asking; if they ever ask, they stay literal.
+    override func shouldChangeText(in range: NSRange, replacementString: String?) -> Bool {
+        if let replacementString {
+            let provenance: CaptureSession.Provenance = undoManager?.isUndoing == true ? .undo
+                : undoManager?.isRedoing == true ? .redo : self.provenance ?? .programmatic
+            guard shouldInsert?(replacementString, range, provenance) ?? true else { return false }
+        }
+        return super.shouldChangeText(in: range, replacementString: replacementString)
     }
 
     // NSTextView has no public placeholder. Hide it during composition too,
     // because marked text is not yet part of `string`.
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
-        guard string.isEmpty, !hasMarkedText() else { return }
-        NSAttributedString(string: "Search", attributes: BarStyle.placeholderAttributes)
+        guard let placeholder, string.isEmpty, !hasMarkedText() else { return }
+        NSAttributedString(string: placeholder, attributes: BarStyle.placeholderAttributes)
             .draw(at: textContainerOrigin)
     }
 
@@ -919,7 +1075,9 @@ private final class SearchEditor: NSTextView {
     }
 
     override func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
-        super.setMarkedText(string, selectedRange: selectedRange, replacementRange: replacementRange)
+        performing(.composition) {
+            super.setMarkedText(string, selectedRange: selectedRange, replacementRange: replacementRange)
+        }
         needsDisplay = true
         compositionChanged?()
     }
