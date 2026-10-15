@@ -70,3 +70,7 @@ The results below supersede the initial unrun status above.
 - `origin/main` (`ced5e5f`) is already an ancestor of this source; the prototype remains on the automatic-switch feature line.
 
 These results establish scripted behavior and AppKit integration. Physical focus, perceived latency and classifier quality remain human trial evidence under #128/#115. No trial completion is claimed.
+
+## Final integration validation — 2026-10-15
+
+At `b31ae3260922790218cbbf7f38b51a62c7573311`, `xcrun swift test --no-parallel` passed with **491 tests in 66 suites** (74.511 s), including all native Word-paced tests. Eleven unrelated environment-gated live-index checks remain skipped. This supersedes earlier native-unrun status in this ticket’s initial implementation phase. [Combined record and logs](../issue-120/validation.md). Physical focus, perceived/live latency and normal-use quality remain #128/#115 human evidence.

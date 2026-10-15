@@ -52,3 +52,7 @@ The broad run initially caught one new test constructing a replacement edit afte
 ## Limits
 
 These are fake-clock policy and temporary diagnostic-file checks. No live Jev request, app install, window interaction, perceived-latency claim or classifier-quality claim is part of this evidence. Deletion bursts and failure backoff integrate under #124 and #126 and require an integrated rerun. Beam's physical trial remains separate under #115/#128.
+
+## Final integration validation — 2026-10-15
+
+At `b31ae3260922790218cbbf7f38b51a62c7573311`, `xcrun swift test --no-parallel` passed with **491 tests in 66 suites** (74.511 s), including all native Word-paced tests. Eleven unrelated environment-gated live-index checks remain skipped. This supersedes earlier native-unrun status in this ticket’s initial implementation phase. [Combined record and logs](../issue-120/validation.md). Physical focus, perceived/live latency and normal-use quality remain #128/#115 human evidence.

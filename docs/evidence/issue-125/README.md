@@ -84,3 +84,7 @@ These cases were **compiled, not run by this implementer**. The integration
 agent owns Beam's testing slot and will add native results. No app was
 installed. Automated evidence does not establish physical focus, real Jev
 latency or classifier quality; Beam's trial remains separate.
+
+## Final integration validation — 2026-10-15
+
+At `b31ae3260922790218cbbf7f38b51a62c7573311`, `xcrun swift test --no-parallel` passed with **491 tests in 66 suites** (74.511 s), including all native Word-paced tests. Eleven unrelated environment-gated live-index checks remain skipped. This supersedes earlier native-unrun status in this ticket’s initial implementation phase. [Combined record and logs](../issue-120/validation.md). Physical focus, perceived/live latency and normal-use quality remain #128/#115 human evidence.

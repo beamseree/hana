@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-10-15T22:06:17.502993+07:00",
+  "capturedAt": "2026-10-15T23:05:53.283135+07:00",
   "installedExecutableSHA256": "eddc754a8e33ddcb097d65667e22005cf8e37152028f74cc3956d8deba4593c6",
   "resetFound": false,
   "limitations": [
@@ -37,11 +37,11 @@
         "switched": 2,
         "suspended": 29
       },
+      "wrongSwitches": 1,
       "latencySamples": 9,
       "latencyMedianMilliseconds": 205.172584,
       "latencyMaximumMilliseconds": 392.731584,
-      "requestsPerSession": null,
-      "wrongSwitches": 1
+      "requestsPerSession": null
     },
     {
       "options": {
@@ -69,11 +69,11 @@
         "stale": 15,
         "switched": 1
       },
+      "wrongSwitches": 0,
       "latencySamples": 16,
       "latencyMedianMilliseconds": 109.2184165,
       "latencyMaximumMilliseconds": 306.764542,
-      "requestsPerSession": null,
-      "wrongSwitches": 0
+      "requestsPerSession": null
     },
     {
       "options": {
@@ -104,11 +104,11 @@
         "switched": 2,
         "error": 1
       },
+      "wrongSwitches": 1,
       "latencySamples": 10,
       "latencyMedianMilliseconds": 136.9343125,
       "latencyMaximumMilliseconds": 293.603375,
-      "requestsPerSession": null,
-      "wrongSwitches": 1
+      "requestsPerSession": null
     },
     {
       "options": {
@@ -141,11 +141,11 @@
         "suspended": 20,
         "unsure": 2
       },
+      "wrongSwitches": 5,
       "latencySamples": 127,
       "latencyMedianMilliseconds": 122.8555,
       "latencyMaximumMilliseconds": 342.683833,
-      "requestsPerSession": null,
-      "wrongSwitches": 5
+      "requestsPerSession": null
     },
     {
       "options": {
@@ -164,26 +164,27 @@
         "wait": "none"
       },
       "events": {
-        "autoswitch.verdict": 378,
-        "autoswitch.switched": 8,
-        "autoswitch.ended": 8,
+        "autoswitch.verdict": 561,
+        "autoswitch.switched": 14,
+        "autoswitch.ended": 14,
         "autoswitch.late-strong-match": 1,
-        "autoswitch.reversed": 1
+        "autoswitch.reversed": 2
       },
       "verdictOutcomes": {
-        "blocked": 169,
-        "below-threshold": 45,
-        "switched": 8,
-        "stale": 31,
-        "unsure": 120,
+        "blocked": 275,
+        "below-threshold": 54,
+        "switched": 14,
+        "stale": 42,
+        "unsure": 171,
         "error": 2,
         "timeout": 3
       },
-      "latencySamples": 208,
-      "latencyMedianMilliseconds": 263.675271,
+      "wrongSwitches": 2,
+      "latencySamples": 285,
+      "latencyMedianMilliseconds": 262.600333,
       "latencyMaximumMilliseconds": 1517.3544160000001,
-      "requestsPerSession": null,
-      "wrongSwitches": 1
+      "requestsPerSession": null
     }
-  ]
+  ],
+  "recordedSourceForMatchingExecutable": "de98347dcf9e7fd270598bc54f0f56bd47684dbe"
 }

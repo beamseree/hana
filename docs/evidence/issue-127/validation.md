@@ -35,3 +35,7 @@ git diff --check
 The new test was first red because the dedicated HTTP owner did not exist, then green after it was introduced and wired into `JevClassifier.liveTransport`. Tests use an injected URLSession whose URLProtocol intercepts every request; there are no automated calls to TypeSafe or another external host. These checks prove response plumbing and shared ownership, not real TCP/TLS reuse or physical switch timing.
 
 No AppKit window tests, install, or launch occurred in this worktree.
+
+## Final integration validation — 2026-10-15
+
+At `b31ae3260922790218cbbf7f38b51a62c7573311`, `xcrun swift test --no-parallel` passed with **491 tests in 66 suites** (74.511 s), including all native Word-paced tests. Eleven unrelated environment-gated live-index checks remain skipped. This supersedes earlier native-unrun status in this ticket’s initial implementation phase. [Combined record and logs](../issue-120/validation.md). Physical focus, perceived/live latency and normal-use quality remain #128/#115 human evidence.
