@@ -31,15 +31,22 @@ Every tick-dependent path is covered by a reported time: timeouts, pending-candi
 | Same moments as the 25 ms ticks | `wakingOnlyAtReportedTimesMatchesTheEarlier25MillisecondTicks` drives one script both ways. Debounce, two-verdict agreement and the switch give identical effects at identical times, with exactly three wake-ups. |
 | No fixed 25 ms loop; sleep until the reported time, replace it, cancel on dismiss | Source: `automaticSwitchTicker` removed; `scheduleAutomaticSwitchWake()`. Native `newerWakeUpTimeReplacesThePendingSleep`, `dismissCancelsThePendingWakeUp` |
 | Native fake-classifier test: debounced request fires without periodic ticks; no wake-up while nothing is pending | Native `debouncedRequestFiresAtItsReportedTimeAndNothingWakesWhileNothingIsPending`. Over 200 ms the empty bar has no scheduled wake and none is delivered. Typing schedules one at the 150 ms debounce, and exactly one wake-up starts the request. After the verdict nothing is scheduled, and no wake-up happens over a further 200 ms. |
-| Existing policy, interaction and diagnostics tests pass unchanged | No existing test file was modified. **Not yet run; see below.** |
+| Existing policy, interaction and diagnostics tests pass unchanged | No existing test file was modified. `AutomaticSwitchTests`, `AutomaticSwitchInteractionTests` and `AutomaticSwitchDiagnosticsTests` all passed in the full serial run recorded below. |
 
 ## Verification status and limitations
 
-**Nothing in this record has been compiled or executed yet.** The work was done in a Linux cloud container. It has no Swift toolchain, `download.swift.org` is blocked by its network policy, and the package targets macOS 26 with AppKit, so neither `xcrun swift build` nor `xcrun swift test` could run. The source was checked by reading and tracing, including each fake-clock expectation above against the policy's state transitions. That is not test evidence.
+The initial implementation was written and traced in a Linux cloud container without a Swift toolchain. The macOS validation below supersedes its earlier unrun status.
 
-Remaining before #121 can close:
+### macOS validation — 2026-10-15 (Asia/Bangkok)
 
-1. `xcrun swift build` and `xcrun swift test --no-parallel` on a Mac. Record the source revision, toolchain, pass counts and logs in this directory, as for #113 and #114.
-2. Confirm that the new native suite runs under `.nativeWindowSlot` alongside the existing native suites.
+- Tested source: `2042478c6c96a22f09911416fea3474d22f56671`, after `git pull origin feature/automatic-switch` fast-forwarded the clean worktree to the requested head.
+- Host: macOS 26.4.1 (25E253), Apple silicon; target `arm64-apple-macosx26.0`.
+- Toolchain: Apple Swift 6.3.3 (`swiftlang-6.3.3.1.3 clang-2100.1.1.101`), swift-driver 1.148.6.
+- `xcrun swift build`: **passed**, exit 0; build completed in 25.05 s. Full output: [build.log](build.log).
+- `xcrun swift test --no-parallel`: **passed**, exit 0. Swift Testing reports **403 tests in 53 suites**, with **11 environment-gated live-index tests skipped**, in 74.459 s. Full compilation and test output: [tests.log](tests.log). The separate XCTest discovery summary of zero tests is not the Swift Testing result.
+- New fake-clock suite `AutomaticSwitchWakeUpTests`: all nine test functions passed (the firing-deadline test covers three firing strategies).
+- New native suite `AutomaticSwitchWakeUpInteractionTests`: all three tests passed in 1.423 s: idle/debounced wake-up, replacement of a pending sleep, and cancellation on dismiss. The suite is declared `@Suite(.serialized, .nativeWindowSlot)` and ran alongside the existing native suites in the same serial invocation.
+- Existing automatic-switch policy, interaction and diagnostics suites all passed.
+- Test compilation emitted a warning at `Tests/HanaTests/MacInteractionTests.swift:423`: `'shouldFail' mutated after capture by sendable closure`. It did not fail compilation or tests; the complete diagnostic is retained in `tests.log`.
 
-No real classifier was called, and no app was installed or launched. The native tests use `ScriptedClassifier` and a temporary Store. They establish automated AppKit timing only, not perceived latency.
+No real classifier was called for the issue-specific wake-up tests, and no installed app was replaced or launched for manual validation. The native tests use `ScriptedClassifier` and a temporary Store and present AppKit windows through the test process. They establish automated AppKit timing only, not perceived latency. The skipped live-index checks are not claimed as verified.
