@@ -47,6 +47,8 @@ struct CaptureSession {
         case invoked, dismissed
         /// Enter outside composition.
         case submit
+        /// Save a Note capture and continue it in its working window.
+        case openInWindow
         /// The outcome of the save the session requested.
         case saved, saveFailed(Notice)
     }
@@ -58,6 +60,7 @@ struct CaptureSession {
         case enterMode(Mode)
         /// Create the note once, idempotently under `operation`.
         case saveNote(operation: UUID, body: String)
+        case saveNoteInWindow(operation: UUID, body: String)
         /// Create the task once at the top of `placement`, idempotently under `operation`.
         case saveTask(operation: UUID, title: String, placement: TaskPlacement)
         /// Show the confirmation, then close and return focus.
@@ -189,8 +192,9 @@ struct CaptureSession {
             operation = UUID()
             submitted = false
             return []
-        case .submit:
+        case .submit, .openInWindow:
             guard state.mode != .search, state.phase == .editing else { return [] }
+            guard event != .openInWindow || state.mode == .note else { return [] }
             // Refused before any save; other content is saved byte for byte.
             // Undo can bring back multiline text without an insertion, so check again.
             if state.mode == .task, TaskItem.isMultiline(state.text) {
@@ -204,6 +208,12 @@ struct CaptureSession {
             state.phase = .saving
             submitted = true
             state.notice = nil
+            if event == .openInWindow {
+                // A new explicit retry owns this attempt, independently of a
+                // dismissal during an earlier failed write. The receipt stays.
+                state.dismissalRequested = false
+                return [.saveNoteInWindow(operation: operation, body: state.text)]
+            }
             return state.mode == .task
                 ? [.saveTask(operation: operation, title: state.text, placement: state.destination)]
                 : [.saveNote(operation: operation, body: state.text)]
