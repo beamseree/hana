@@ -10,6 +10,10 @@ The current preferences were Jev, pipeline firing, threshold 0.70, Stay, one agr
 
 The earlier candidate did not record requests per session. Its latency can include cancelled/stale requests, which Word-paced excludes. The baseline spans several option combinations and is not a controlled same-input experiment. These limitations prevent inferring request savings or perceived latency from these aggregates.
 
+## Beam's pipeline observation
+
+Beam reported in this chat on 2026-10-15: “its not bad, but i think this new version will be better”. This is an overall assessment of the pipeline and an expectation about Word-paced. No separate timing, last-word-delay or Backspace observation was supplied, and it does not evaluate the new candidate.
+
 ## Trial handoff
 
 The candidate source, signature, executable hash, settings and start boundary will be recorded after integrated verification and installation. A reset marker preserves earlier history in the content-free log.
