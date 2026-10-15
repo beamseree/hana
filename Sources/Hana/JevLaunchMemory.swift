@@ -1,8 +1,9 @@
 import Foundation
+import CryptoKit
 
 /// Launch-wide Word-paced Jev state, injected into each bar session's policy.
 /// It is never persisted. Only the answer cache retains text; other state is
-/// recent typing gaps and the IDs of requests still in flight, including those
+/// recent typing gaps and the IDs and content fingerprints of requests still in flight, including those
 /// left running by a closed bar. A request's slot lasts until its work actually ends.
 final class JevLaunchMemory {
     struct CacheIdentity: Hashable {
@@ -15,7 +16,7 @@ final class JevLaunchMemory {
     private static let gapLimit = 20
     private static let answerLimit = 64
     private var gaps: [Duration] = []
-    private var inFlight: Set<UUID> = []
+    private var inFlight: [UUID: SHA256.Digest] = [:]
     private(set) var keyRejected = false
     private(set) var keyRevision: UInt64 = 0
     private var pausedUntil: Duration?
@@ -81,7 +82,11 @@ final class JevLaunchMemory {
         gaps.append(gap)
         if gaps.count > Self.gapLimit { gaps.removeFirst(gaps.count - Self.gapLimit) }
     }
-    func requestStarted(_ id: UUID) { inFlight.insert(id) }
+    /// Normalized text is hashed transiently; only the fingerprint survives until completion.
+    func requestStarted(_ id: UUID, text: String) { inFlight[id] = SHA256.hash(data: Data(text.utf8)) }
+    func hasRequest(for text: String) -> Bool {
+        inFlight.values.contains(SHA256.hash(data: Data(text.utf8)))
+    }
     /// Idempotent: the policy and Mac Interaction may both report the same end.
-    func requestFinished(_ id: UUID) { inFlight.remove(id) }
+    func requestFinished(_ id: UUID) { inFlight.removeValue(forKey: id) }
 }
