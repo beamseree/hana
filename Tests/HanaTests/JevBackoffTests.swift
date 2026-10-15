@@ -4,6 +4,25 @@ import Testing
 
 /// Fake-clock requests and diagnostic effects only; no adapter or live Jev.
 struct JevBackoffTests {
+    @Test func failureDuringDeletionReturnsToSearchOnlyAfterThePause() throws {
+        let clock = TestClock()
+        var options = AutomaticSwitchOptions()
+        options.isEnabled = true; options.classifier = .jev; options.firing = .wordPaced; options.afterSwitch = .keepClassifying
+        var session = AutomaticSwitch(options: options, memory: JevLaunchMemory(), now: { clock.now.offset })
+        _ = session.handle(.invoked)
+        _ = session.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+        let first = try #require(requests(session.handle(.bufferChanged(text: "call mom ", composing: false))).first)
+        _ = session.handle(.verdict(id: first, .init(label: .task, probabilities: [.task: 0.95]), latencyMilliseconds: 10))
+        let next = try #require(requests(session.handle(.bufferChanged(text: "call mom tomorrow ", composing: false))).first)
+        _ = session.handle(.bufferChanged(text: "call mom tomorrow morning", composing: false))
+        _ = session.handle(.bufferChanged(text: "call mom tomorrow mornin", composing: false))
+        let failed = session.handle(.failed(id: next, .network, latencyMilliseconds: 10))
+        #expect(!failed.contains { if case .returnToSearch = $0 { true } else { false } })
+        clock.advance(by: .milliseconds(179))
+        #expect(!session.handle(.tick).contains { if case .returnToSearch = $0 { true } else { false } })
+        clock.advance(by: .milliseconds(1))
+        #expect(session.handle(.tick).contains { if case .returnToSearch = $0 { true } else { false } })
+    }
     @Test func aReplyForTheOldKeyCannotRejectANewlySavedKey() throws {
         let clock = TestClock(), memory = JevLaunchMemory()
         var session = policy(memory: memory, clock: clock)

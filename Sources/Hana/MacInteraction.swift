@@ -900,7 +900,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         guard currentInvocation != nil else { return }
         updateAutomaticSwitchEligibility()
         performAutomaticSwitch(automaticSwitch?.handle(.bufferChanged(text: editor.string,
-            composing: editor.hasMarkedText(), gate: automaticSwitchGate())) ?? [])
+            composing: editor.hasMarkedText(), gate: automaticSwitchGate(), edit: editor.automaticSwitchEdit)) ?? [])
     }
 
     private func refreshAutomaticSwitchGate() {
@@ -1692,6 +1692,9 @@ private final class SearchEditor: NSTextView {
     /// Whether the key event being handled has Shift down.
     private(set) var shiftHeld = false
     private var provenance: CaptureSession.Provenance?
+    /// The actual changed range, carried through the synchronous change
+    /// notification. This distinguishes replacements from look-alike appends.
+    private(set) var automaticSwitchEdit: AutomaticSwitch.Edit?
     override var needsPanelToBecomeKey: Bool { true }
 
     override func keyDown(with event: NSEvent) {
@@ -1739,7 +1742,15 @@ private final class SearchEditor: NSTextView {
                 : undoManager?.isRedoing == true ? .redo : self.provenance ?? .programmatic
             guard shouldInsert?(replacementString, range, provenance) ?? true else { return false }
         }
-        return super.shouldChangeText(in: range, replacementString: replacementString)
+        guard super.shouldChangeText(in: range, replacementString: replacementString) else { return false }
+        if let replacementString {
+            let end = (string as NSString).length
+            let edit: AutomaticSwitch.Edit = range.location == end && range.length == 0 && !replacementString.isEmpty
+                ? .append : .replacement(caretAtEnd: NSMaxRange(range) == end)
+            // A multi-part operation is an append only when every part is.
+            if case .replacement = automaticSwitchEdit {} else { automaticSwitchEdit = edit }
+        }
+        return true
     }
 
     // NSTextView has no public placeholder, and overriding `draw(_:)` to paint
@@ -1761,6 +1772,7 @@ private final class SearchEditor: NSTextView {
     }
 
     override func didChangeText() {
+        defer { automaticSwitchEdit = nil }
         super.didChangeText()
         updatePlaceholder()
     }

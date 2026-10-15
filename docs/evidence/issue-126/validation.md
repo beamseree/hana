@@ -39,3 +39,16 @@ Mac Interaction now keeps one launch epoch across bar invocations, passes parsed
 ## Remaining integration evidence
 
 The integration owner must run the native regression suites after merging the other #120 slices. Beam's trial remains the source of observed switch feel, request counts in live use, physical latency, and wrong/missed switch quality. Dedicated-session connection reuse/preconnect belongs to #127.
+
+## Integration with #123 and #124
+
+Merged integration tip `11565cf`, preserving the launch answer cache, cached diagnostics, and deletion handling. Cache retry tests first lift key rejection and advance past backoff, so they continue to isolate whether a failure was cached.
+
+The completion merge also exposed a cross-slice requirement: returning to plain Search after a failure must wait while a deletion burst is active. `JevBackoffTests.failureDuringDeletionReturnsToSearchOnlyAfterThePause` first failed because it returned during deletion, then passed after the failure return was deferred until the same adaptive pause. HTTP failures still update launch backoff immediately.
+
+```sh
+xcrun swift test --no-parallel --filter 'JevBackoffTests|ClassifierAdapterTests|JevKeychainTests|JevRejectionMenuTests|JevSharedTransportTests|AutomaticSwitchWordCacheTests|AutomaticSwitchDeletionTests|AutomaticSwitchWordPacedTests|AutomaticSwitchDiagnosticsTests|AutomaticSwitchWakeUpTests|AutomaticSwitchTests'
+git diff --check
+```
+
+118 tests in eleven suites passed after integration. Native window suites remain reserved for the integration owner.

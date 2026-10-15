@@ -1,0 +1,20 @@
+Test Suite 'Selected tests' started at 2026-10-15 22:04:35.573.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:04:35.576.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:04:35.576.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:04:35.576.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchDeletionTests started.
+􀟈  Test aQualifyingAnswerWaitsUntilTheDeletionPause() started.
+􀢄  Test aQualifyingAnswerWaitsUntilTheDeletionPause() recorded an issue at AutomaticSwitchDeletionTests.swift:14:9: Expectation failed: (modes(h.policy.handle(.verdict(id: id, task, latencyMilliseconds: 40))) → [Hana.CaptureSession.Mode.task]).isEmpty → false
+􀢄  Test aQualifyingAnswerWaitsUntilTheDeletionPause() recorded an issue at AutomaticSwitchDeletionTests.swift:15:9: Expectation failed: (h.policy.nextWakeUp → 0.3 seconds) == (.milliseconds(180) → 0.18 seconds)
+􀢄  Test aQualifyingAnswerWaitsUntilTheDeletionPause() recorded an issue at AutomaticSwitchDeletionTests.swift:19:9: Expectation failed: (modes(h.policy.handle(.tick)) → []) == ([.task] → [Hana.CaptureSession.Mode.task])
+􀅺  removed [Hana.CaptureSession.Mode.task]
+􀢄  Test aQualifyingAnswerWaitsUntilTheDeletionPause() failed after 0.002 seconds with 3 issues.
+􀢄  Suite AutomaticSwitchDeletionTests failed after 0.002 seconds with 3 issues.
+􀄵  /// Deletion behavior through the agreed policy seam. The clock and answers
+􀄵  /// are controlled; no AppKit window or real classifier is used.
+􀢄  Test run with 1 test in 1 suite failed after 0.002 seconds with 3 issues.
