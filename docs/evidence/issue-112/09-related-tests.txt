@@ -170,7 +170,7 @@ Test Suite 'Selected tests' passed at 2026-10-15 17:46:08.504.
 􀟈  Test case passing 2 arguments buffer → "  remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􀟈  Test case passing 2 arguments buffer → "	 remind	", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􀟈  Test case passing 2 arguments buffer → "call mom", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
-􀟈  Test case passing 2 arguments buffer → " 
+􀟈  Test case passing 2 arguments buffer → "
 ", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􁁛  Test rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) with 6 test cases passed after 0.001 seconds.
 􀟈  Test unavailableCollectionAlwaysBlocks(_:) started.

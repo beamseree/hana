@@ -24,6 +24,8 @@ The testing seams are the gate and committed Store behavior approved in #110 Tes
 
 `committedTitlesBlockAndCompletedOrArchivedItemsStopBlocking` creates a real disposable SQLite Store, waits for the first snapshot, saves and archives a note, saves and completes a task, saves and archives another task, and closes the Store. It checks the gate's public decision after each committed transition. The source starts loading, publishes prepared active titles, and becomes unavailable after close. The other source test verifies an absent Store immediately blocks.
 
+Evidence text files have trailing whitespace normalized for repository diff hygiene; test outcomes and the raw-buffer test inputs in source are unchanged.
+
 Final related check:
 
 ```sh

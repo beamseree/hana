@@ -6,14 +6,14 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 [3/6] Emitting module HanaTests
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:45:53: error: cannot find type 'CollectionTitleSource' in scope
 43 |     }
-44 | 
+44 |
 45 |     private func decision(_ text: String, _ titles: CollectionTitleSource.Snapshot) -> StrongMatchGate.Decision {
    |                                                     `- error: cannot find type 'CollectionTitleSource' in scope
 46 |         StrongMatchGate.evaluate(rawBuffer: text, results: [], appStatus: .ready,
 47 |                                  fileStatus: .ready, titles: titles).decision
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:51:106: error: cannot find type 'CollectionTitleSource' in scope
-49 | 
+49 |
 50 |     private func nextSnapshot(_ updates: inout AsyncStream<CollectionTitleSource.Snapshot>.Iterator,
 51 |                               where predicate: (CollectionTitleSource.Snapshot) -> Bool) async throws -> CollectionTitleSource.Snapshot {
    |                                                                                                          `- error: cannot find type 'CollectionTitleSource' in scope
@@ -22,14 +22,14 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:50:60: error: cannot find type 'CollectionTitleSource' in scope
 48 |     }
-49 | 
+49 |
 50 |     private func nextSnapshot(_ updates: inout AsyncStream<CollectionTitleSource.Snapshot>.Iterator,
    |                                                            `- error: cannot find type 'CollectionTitleSource' in scope
 51 |                               where predicate: (CollectionTitleSource.Snapshot) -> Bool) async throws -> CollectionTitleSource.Snapshot {
 52 |         while let value = await updates.next() {
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:51:49: error: cannot find type 'CollectionTitleSource' in scope
-49 | 
+49 |
 50 |     private func nextSnapshot(_ updates: inout AsyncStream<CollectionTitleSource.Snapshot>.Iterator,
 51 |                               where predicate: (CollectionTitleSource.Snapshot) -> Bool) async throws -> CollectionTitleSource.Snapshot {
    |                                                 `- error: cannot find type 'CollectionTitleSource' in scope
@@ -38,14 +38,14 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 [4/6] Compiling HanaTests CollectionTitleSourceTests.swift
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:45:53: error: cannot find type 'CollectionTitleSource' in scope
 43 |     }
-44 | 
+44 |
 45 |     private func decision(_ text: String, _ titles: CollectionTitleSource.Snapshot) -> StrongMatchGate.Decision {
    |                                                     `- error: cannot find type 'CollectionTitleSource' in scope
 46 |         StrongMatchGate.evaluate(rawBuffer: text, results: [], appStatus: .ready,
 47 |                                  fileStatus: .ready, titles: titles).decision
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:51:106: error: cannot find type 'CollectionTitleSource' in scope
-49 | 
+49 |
 50 |     private func nextSnapshot(_ updates: inout AsyncStream<CollectionTitleSource.Snapshot>.Iterator,
 51 |                               where predicate: (CollectionTitleSource.Snapshot) -> Bool) async throws -> CollectionTitleSource.Snapshot {
    |                                                                                                          `- error: cannot find type 'CollectionTitleSource' in scope
@@ -54,14 +54,14 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:50:60: error: cannot find type 'CollectionTitleSource' in scope
 48 |     }
-49 | 
+49 |
 50 |     private func nextSnapshot(_ updates: inout AsyncStream<CollectionTitleSource.Snapshot>.Iterator,
    |                                                            `- error: cannot find type 'CollectionTitleSource' in scope
 51 |                               where predicate: (CollectionTitleSource.Snapshot) -> Bool) async throws -> CollectionTitleSource.Snapshot {
 52 |         while let value = await updates.next() {
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:51:49: error: cannot find type 'CollectionTitleSource' in scope
-49 | 
+49 |
 50 |     private func nextSnapshot(_ updates: inout AsyncStream<CollectionTitleSource.Snapshot>.Iterator,
 51 |                               where predicate: (CollectionTitleSource.Snapshot) -> Bool) async throws -> CollectionTitleSource.Snapshot {
    |                                                 `- error: cannot find type 'CollectionTitleSource' in scope
@@ -89,11 +89,11 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 14 |         var updates = source.snapshots().makeAsyncIterator()
 15 |         _ = try await nextSnapshot(&updates) { $0.status == .ready }
    |                                                              `- error: cannot infer contextual base in reference to member 'ready'
-16 | 
+16 |
 17 |         let note = try await store.perform(.createNote(operation: UUID(), body: "Budget plan"), in: store.generation)
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:18:97: error: cannot infer contextual base in reference to member 'strongMatch'
-16 | 
+16 |
 17 |         let note = try await store.perform(.createNote(operation: UUID(), body: "Budget plan"), in: store.generation)
 18 |         let withNote = try await nextSnapshot(&updates) { decision("Budget p", $0) == .blocked(.strongMatch(.note)) }
    |                                                                                                 `- error: cannot infer contextual base in reference to member 'strongMatch'
@@ -101,7 +101,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 20 |         _ = try await store.perform(.archiveNote(note.id, expectedRevision: note.revision), in: store.generation)
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:18:110: error: cannot infer contextual base in reference to member 'note'
-16 | 
+16 |
 17 |         let note = try await store.perform(.createNote(operation: UUID(), body: "Budget plan"), in: store.generation)
 18 |         let withNote = try await nextSnapshot(&updates) { decision("Budget p", $0) == .blocked(.strongMatch(.note)) }
    |                                                                                                              `- error: cannot infer contextual base in reference to member 'note'
@@ -117,7 +117,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 21 |         _ = try await nextSnapshot(&updates) { decision("Budget p", $0) == .allowed }
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:24:84: error: cannot infer contextual base in reference to member 'strongMatch'
-22 | 
+22 |
 23 |         let task = try await store.perform(.createTask(operation: UUID(), title: "Call mom"), in: store.generation)
 24 |         _ = try await nextSnapshot(&updates) { decision("Call m", $0) == .blocked(.strongMatch(.task)) }
    |                                                                                    `- error: cannot infer contextual base in reference to member 'strongMatch'
@@ -125,7 +125,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 26 |         _ = try await nextSnapshot(&updates) { decision("Call m", $0) == .allowed }
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:24:97: error: cannot infer contextual base in reference to member 'task'
-22 | 
+22 |
 23 |         let task = try await store.perform(.createTask(operation: UUID(), title: "Call mom"), in: store.generation)
 24 |         _ = try await nextSnapshot(&updates) { decision("Call m", $0) == .blocked(.strongMatch(.task)) }
    |                                                                                                 `- error: cannot infer contextual base in reference to member 'task'
@@ -133,7 +133,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 26 |         _ = try await nextSnapshot(&updates) { decision("Call m", $0) == .allowed }
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:29:84: error: cannot infer contextual base in reference to member 'strongMatch'
-27 | 
+27 |
 28 |         let archived = try await store.perform(.createTask(operation: UUID(), title: "Book flight"), in: store.generation)
 29 |         _ = try await nextSnapshot(&updates) { decision("Book f", $0) == .blocked(.strongMatch(.task)) }
    |                                                                                    `- error: cannot infer contextual base in reference to member 'strongMatch'
@@ -141,7 +141,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 31 |         _ = try await nextSnapshot(&updates) { decision("Book f", $0) == .allowed }
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:29:97: error: cannot infer contextual base in reference to member 'task'
-27 | 
+27 |
 28 |         let archived = try await store.perform(.createTask(operation: UUID(), title: "Book flight"), in: store.generation)
 29 |         _ = try await nextSnapshot(&updates) { decision("Book f", $0) == .blocked(.strongMatch(.task)) }
    |                                                                                                 `- error: cannot infer contextual base in reference to member 'task'
@@ -154,10 +154,10 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 36 |         #expect(decision("call mom", source.snapshot) == .blocked(.collectionUnavailable))
    |                                                                    `- error: cannot infer contextual base in reference to member 'collectionUnavailable'
 37 |     }
-38 | 
+38 |
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:40:22: error: cannot find 'CollectionTitleSource' in scope
-38 | 
+38 |
 39 |     @Test func missingStoreIsUnavailableImmediately() {
 40 |         let source = CollectionTitleSource(store: nil)
    |                      `- error: cannot find 'CollectionTitleSource' in scope
@@ -165,7 +165,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 42 |         #expect(decision("call mom", source.snapshot) == .blocked(.collectionUnavailable))
 
 /Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/Tests/HanaTests/CollectionTitleSourceTests.swift:40:51: error: 'nil' requires a contextual type
-38 | 
+38 |
 39 |     @Test func missingStoreIsUnavailableImmediately() {
 40 |         let source = CollectionTitleSource(store: nil)
    |                                                   `- error: 'nil' requires a contextual type
@@ -178,5 +178,5 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
 42 |         #expect(decision("call mom", source.snapshot) == .blocked(.collectionUnavailable))
    |                                                                    `- error: cannot infer contextual base in reference to member 'collectionUnavailable'
 43 |     }
-44 | 
+44 |
 error: fatalError

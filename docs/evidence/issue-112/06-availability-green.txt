@@ -34,7 +34,7 @@ Test Suite 'Selected tests' passed at 2026-10-15 17:44:08.182.
 􀟈  Test case passing 1 argument buffer → "remind" to unavailableCollectionAlwaysBlocks(_:) started.
 􀟈  Test case passing 2 arguments buffer → "call mom", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􀟈  Test case passing 1 argument buffer → "remind " to unavailableCollectionAlwaysBlocks(_:) started.
-􀟈  Test case passing 2 arguments buffer → " 
+􀟈  Test case passing 2 arguments buffer → "
 ", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􀟈  Test case passing 1 argument item → MatchCase(buffer: "Studio ", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
 􀟈  Test case passing 1 argument buffer → "Visual Studio" to unavailableCollectionAlwaysBlocks(_:) started.

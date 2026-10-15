@@ -36,7 +36,7 @@ Test Suite 'Selected tests' passed at 2026-10-15 17:43:46.592.
 􀟈  Test case passing 1 argument buffer → "Visual Studio" to unavailableCollectionAlwaysBlocks(_:) started.
 􀟈  Test case passing 1 argument item → MatchCase(buffer: "isual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
 􀢄  Test unavailableCollectionAlwaysBlocks(_:) recorded an issue with 1 argument buffer → "remind" at StrongMatchGateTests.swift:62:9: Expectation failed: (evaluation.decision → .blocked(Hana.StrongMatchGate.Reason.oneWord)) == (.blocked(.collectionUnavailable) → .blocked(Hana.StrongMatchGate.Reason.collectionUnavailable))
-􀟈  Test case passing 2 arguments buffer → " 
+􀟈  Test case passing 2 arguments buffer → "
 ", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􀟈  Test case passing 5 arguments app → .ready, titles → .loading, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
 􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget plan", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.

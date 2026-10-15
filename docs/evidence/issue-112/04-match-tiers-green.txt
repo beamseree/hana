@@ -30,7 +30,7 @@ Test Suite 'Selected tests' passed at 2026-10-15 17:43:20.049.
 􀟈  Test case passing 2 arguments buffer → "  remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􀟈  Test case passing 1 argument item → MatchCase(buffer: "isual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
 􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
-􀟈  Test case passing 2 arguments buffer → " 
+􀟈  Test case passing 2 arguments buffer → "
 ", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget plan", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
 􀟈  Test case passing 2 arguments buffer → "	 remind	", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
