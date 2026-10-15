@@ -1,0 +1,120 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--112E4EF74740DA65.txt
+[3/6] Emitting module HanaTests
+[4/6] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:12:41: error: extra arguments at positions #1, #2 in call
+10 |         let fixture = try Fixture()
+11 |         defer { fixture.remove() }
+12 |         let interaction = MacInteraction(automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log)
+   |                                         `- error: extra arguments at positions #1, #2 in call
+13 |         let previousMenu = NSApp.mainMenu, previousWindowsMenu = NSApp.windowsMenu
+14 |         interaction.start()
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Sources/Hana/MacInteraction.swift:142:5: note: 'init(diagnostics:search:launchApplication:openFile:loadIcon:collection:confirmationDuration:frontmostApplication:)' declared here
+ 140 |     private var currentPlacement: Placement?
+ 141 | 
+ 142 |     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
+     |     `- note: 'init(diagnostics:search:launchApplication:openFile:loadIcon:collection:confirmationDuration:frontmostApplication:)' declared here
+ 143 |          launchApplication: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.launch,
+ 144 |          openFile: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.openFileDestination,
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:28:34: error: cannot infer contextual base in reference to member 'off'
+26 |         submenu.delegate?.menuWillOpen?(submenu)
+27 |         let toggle = try #require(submenu.item(withTitle: "On"))
+28 |         #expect(toggle.state == .off)
+   |                                  `- error: cannot infer contextual base in reference to member 'off'
+29 |         #expect(submenu.item(withTitle: "Switches 0 · Wrong 0 · Ambiguous 0")?.isEnabled == false)
+30 |         submenu.performActionForItem(at: submenu.indexOfItem(withTitle: "On"))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:31:70: error: cannot infer contextual base in reference to member 'on'
+29 |         #expect(submenu.item(withTitle: "Switches 0 · Wrong 0 · Ambiguous 0")?.isEnabled == false)
+30 |         submenu.performActionForItem(at: submenu.indexOfItem(withTitle: "On"))
+31 |         #expect(fixture.options.read().isEnabled && toggle.state == .on)
+   |                                                                      `- error: cannot infer contextual base in reference to member 'on'
+32 |         fixture.log.record(.switched(mode: .note), options: fixture.options.read())
+33 |         submenu.delegate?.menuWillOpen?(submenu)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:39:42: error: cannot infer contextual base in reference to member 'main'
+37 |         #expect(NSApp.activationPolicy() == policy)
+38 |         #expect(NSApp.windows.filter { $0.isVisible } == windows)
+39 |         #expect(interaction.window(for: .main) == nil && interaction.currentInvocation == nil)
+   |                                          `- error: cannot infer contextual base in reference to member 'main'
+40 |     }
+41 | 
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:21:20: warning: no calls to throwing functions occur within 'try' expression
+19 |         let policy = NSApp.activationPolicy()
+20 |         let windows = NSApp.windows.filter { $0.isVisible }
+21 |         let menu = try #require(interaction.menuBarMenu)
+   |                    `- warning: no calls to throwing functions occur within 'try' expression
+22 |         let submenuIndex = menu.indexOfItem(withTitle: "Automatic switch (prototype)")
+23 |         #expect(submenuIndex > menu.indexOfItem(withTitle: "Open Hana"))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:25:23: warning: no calls to throwing functions occur within 'try' expression
+23 |         #expect(submenuIndex > menu.indexOfItem(withTitle: "Open Hana"))
+24 |         #expect(submenuIndex < menu.indexOfItem(withTitle: "Quit Hana"))
+25 |         let submenu = try #require(menu.items[submenuIndex].submenu)
+   |                       `- warning: no calls to throwing functions occur within 'try' expression
+26 |         submenu.delegate?.menuWillOpen?(submenu)
+27 |         let toggle = try #require(submenu.item(withTitle: "On"))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:27:22: warning: no calls to throwing functions occur within 'try' expression
+25 |         let submenu = try #require(menu.items[submenuIndex].submenu)
+26 |         submenu.delegate?.menuWillOpen?(submenu)
+27 |         let toggle = try #require(submenu.item(withTitle: "On"))
+   |                      `- warning: no calls to throwing functions occur within 'try' expression
+28 |         #expect(toggle.state == .off)
+29 |         #expect(submenu.item(withTitle: "Switches 0 · Wrong 0 · Ambiguous 0")?.isEnabled == false)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:49:41: error: extra arguments at positions #2, #3 in call
+47 |         var options = fixture.options.read(); options.isEnabled = enabled; fixture.options.write(options)
+48 |         let apps = CatalogFeed()
+49 |         let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+   |                                         `- error: extra arguments at positions #2, #3 in call
+50 |             automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log)
+51 |         var invocation = interaction.presentBar()
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Sources/Hana/MacInteraction.swift:142:5: note: 'init(diagnostics:search:launchApplication:openFile:loadIcon:collection:confirmationDuration:frontmostApplication:)' declared here
+ 140 |     private var currentPlacement: Placement?
+ 141 | 
+ 142 |     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
+     |     `- note: 'init(diagnostics:search:launchApplication:openFile:loadIcon:collection:confirmationDuration:frontmostApplication:)' declared here
+ 143 |          launchApplication: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.launch,
+ 144 |          openFile: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.openFileDestination,
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:52:104: error: cannot infer contextual base in reference to member 'outsideClick'
+50 |             automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log)
+51 |         var invocation = interaction.presentBar()
+52 |         defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+   |                                                                                                        `- error: cannot infer contextual base in reference to member 'outsideClick'
+53 |         let editor = try await editor()
+54 |         editor.insertText("private search บ้าน", replacementRange: NSRange(location: NSNotFound, length: 0))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:59:50: error: cannot infer contextual base in reference to member 'outsideClick'
+57 |         #expect(interaction.mode == suggestion.mode && editor.string == "private search บ้าน")
+58 |         #expect(fixture.log.counts().missed == (enabled ? 1 : 0))
+59 |         interaction.dismiss(invocation, reason: .outsideClick)
+   |                                                  `- error: cannot infer contextual base in reference to member 'outsideClick'
+60 |         invocation = interaction.presentBar()
+61 |         editor.insertText("another private search", replacementRange: NSRange(location: NSNotFound, length: 0))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchInteractionTests.swift:88:19: error: call to main actor-isolated initializer 'init(file:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+86 |             defaults = try #require(UserDefaults(suiteName: name))
+87 |             options = AutomaticSwitchOptionsStore(defaults: defaults)
+88 |             log = AutomaticSwitchDiagnostics(file: directory.appendingPathComponent("automatic-switch.jsonl"))
+   |                   `- error: call to main actor-isolated initializer 'init(file:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+89 |         }
+90 |         func remove() {
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Sources/Hana/AutomaticSwitchDiagnostics.swift:46:5: note: calls to initializer 'init(file:)' from outside of its actor context are implicitly asynchronous
+ 44 | 
+ 45 |     let url: URL
+ 46 |     init(file: URL = FileManager.default.homeDirectoryForCurrentUser
+    |     `- note: calls to initializer 'init(file:)' from outside of its actor context are implicitly asynchronous
+ 47 |         .appendingPathComponent("Library/Logs/Hana/automatic-switch.jsonl")) { url = file }
+ 48 | 
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+error: fatalError

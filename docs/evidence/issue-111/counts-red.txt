@@ -1,0 +1,77 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:51:21: error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+49 |         let log = AutomaticSwitchDiagnostics(file: url)
+50 |         var options = AutomaticSwitchOptions(); options.isEnabled = true
+51 |         #expect(log.counts().switches == 0)
+   |                     `- error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+52 |         log.record(.switched(mode: .note), options: options)
+53 |         log.record(.ended(.saved), options: options)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:71:60: error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+69 |         log.record(.verdict(.init(classifier: .jev, label: .none,
+70 |             latencyMilliseconds: 1500, outcome: .timeout)), options: options)
+71 |         let counts = AutomaticSwitchDiagnostics(file: url).counts()
+   |                                                            `- error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+72 |         #expect(counts.switches == 4 && counts.wrongSwitches == 2 && counts.reversals == 1)
+73 |         #expect(counts.ambiguous == 1 && counts.missed == 1 && counts.errors == 1 && counts.timeouts == 1)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:74:35: error: cannot infer contextual base in reference to member 'foundationModels'
+72 |         #expect(counts.switches == 4 && counts.wrongSwitches == 2 && counts.reversals == 1)
+73 |         #expect(counts.ambiguous == 1 && counts.missed == 1 && counts.errors == 1 && counts.timeouts == 1)
+74 |         #expect(counts.latencies[.foundationModels]?.medianMilliseconds == 250)
+   |                                   `- error: cannot infer contextual base in reference to member 'foundationModels'
+75 |         #expect(counts.latencies[.foundationModels]?.maximumMilliseconds == 400)
+76 |         #expect(counts.latencies[.jev]?.medianMilliseconds == 775)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:75:35: error: cannot infer contextual base in reference to member 'foundationModels'
+73 |         #expect(counts.ambiguous == 1 && counts.missed == 1 && counts.errors == 1 && counts.timeouts == 1)
+74 |         #expect(counts.latencies[.foundationModels]?.medianMilliseconds == 250)
+75 |         #expect(counts.latencies[.foundationModels]?.maximumMilliseconds == 400)
+   |                                   `- error: cannot infer contextual base in reference to member 'foundationModels'
+76 |         #expect(counts.latencies[.jev]?.medianMilliseconds == 775)
+77 |         let before = try Data(contentsOf: url)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:76:35: error: cannot infer contextual base in reference to member 'jev'
+74 |         #expect(counts.latencies[.foundationModels]?.medianMilliseconds == 250)
+75 |         #expect(counts.latencies[.foundationModels]?.maximumMilliseconds == 400)
+76 |         #expect(counts.latencies[.jev]?.medianMilliseconds == 775)
+   |                                   `- error: cannot infer contextual base in reference to member 'jev'
+77 |         let before = try Data(contentsOf: url)
+78 |         log.resetCounts(options: options)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:78:13: error: value of type 'AutomaticSwitchDiagnostics' has no member 'resetCounts'
+76 |         #expect(counts.latencies[.jev]?.medianMilliseconds == 775)
+77 |         let before = try Data(contentsOf: url)
+78 |         log.resetCounts(options: options)
+   |             `- error: value of type 'AutomaticSwitchDiagnostics' has no member 'resetCounts'
+79 |         #expect(log.counts().switches == 0 && log.counts().latencies.isEmpty)
+80 |         #expect(try Data(contentsOf: url).starts(with: before))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:79:21: error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+77 |         let before = try Data(contentsOf: url)
+78 |         log.resetCounts(options: options)
+79 |         #expect(log.counts().switches == 0 && log.counts().latencies.isEmpty)
+   |                     `- error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+80 |         #expect(try Data(contentsOf: url).starts(with: before))
+81 |         log.record(.missed(mode: .note, lastVerdict: .unsure), options: options)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:79:51: error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+77 |         let before = try Data(contentsOf: url)
+78 |         log.resetCounts(options: options)
+79 |         #expect(log.counts().switches == 0 && log.counts().latencies.isEmpty)
+   |                                                   `- error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+80 |         #expect(try Data(contentsOf: url).starts(with: before))
+81 |         log.record(.missed(mode: .note, lastVerdict: .unsure), options: options)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:82:55: error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+80 |         #expect(try Data(contentsOf: url).starts(with: before))
+81 |         log.record(.missed(mode: .note, lastVerdict: .unsure), options: options)
+82 |         #expect(AutomaticSwitchDiagnostics(file: url).counts().missed == 1)
+   |                                                       `- error: value of type 'AutomaticSwitchDiagnostics' has no member 'counts'
+83 |     }
+84 | }
+error: fatalError
