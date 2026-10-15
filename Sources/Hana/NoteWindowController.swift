@@ -6,11 +6,15 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
     let session: NoteEditingSession
     let preview: NotePreviewSession
     let previewToggle = NSButton(checkboxWithTitle: "Preview", target: nil, action: nil)
+    private let restoreButton = NSButton(title: "Restore", target: nil, action: nil)
     private let previewSurface: MarkdownPreviewSurface
     private let editorScroll = NSScrollView()
     let editor = NoteEditor(frame: .zero)
     private let message = NSTextField(wrappingLabelWithString: "")
     var onTitleChange: (() -> Void)?
+    var onOrganization: (@MainActor (NoteOrganizationAction) async throws -> Void)?
+    private var organizationNotice: String?
+    var canRestore: Bool { session.committed.archivedAt != nil && session.canOrganize }
     var allowsClose = false
     private var renderedTextRevision: UInt64 = 0
     private var renderedPreviewVisible = false
@@ -63,7 +67,14 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
         previewToggle.action = #selector(togglePreview)
         previewToggle.font = HanaFont.label.nsFont
         previewToggle.setAccessibilityLabel("Show Markdown preview")
-        let stack = NSStackView(views: [previewToggle, scroll, previewSurface.scroll, message])
+        restoreButton.target = self
+        restoreButton.action = #selector(restoreArchivedNote)
+        restoreButton.keyEquivalent = "r"
+        restoreButton.keyEquivalentModifierMask = [.command, .control]
+        restoreButton.setAccessibilityLabel("Restore note")
+        let toolbar = NSStackView(views: [previewToggle, restoreButton])
+        toolbar.edgeInsets = NSEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
+        let stack = NSStackView(views: [toolbar, scroll, previewSurface.scroll, message])
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.spacing = 8
@@ -77,7 +88,6 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
             stack.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -12),
             scroll.widthAnchor.constraint(equalTo: stack.widthAnchor),
             previewSurface.scroll.widthAnchor.constraint(equalTo: stack.widthAnchor),
-            previewToggle.leadingAnchor.constraint(equalTo: stack.leadingAnchor, constant: 20),
             message.leadingAnchor.constraint(equalTo: stack.leadingAnchor, constant: 20),
             message.trailingAnchor.constraint(lessThanOrEqualTo: stack.trailingAnchor, constant: -20)
         ])
@@ -96,10 +106,30 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
         preview.setVisible(!preview.isVisible)
     }
 
+    @objc private func restoreArchivedNote() { Task { await performOrganization(.restore) } }
+
+    @discardableResult
+    func performOrganization(_ action: NoteOrganizationAction) async -> Bool {
+        guard session.canOrganize, let onOrganization else { return false }
+        organizationNotice = nil
+        do { try await onOrganization(action); refresh(); return true }
+        catch {
+            organizationNotice = error as? NoteOrganizationError == .compositionActive
+                ? "Finish composing text before organizing this note."
+                : "The note couldn’t be organized. Your text is still here; try again."
+            refresh()
+            return false
+        }
+    }
+
     func textDidChange(_ notification: Notification) { changed() }
     private func changed() {
         session.edit(editor.string, isComposing: editor.hasMarkedText())
         renderedTextRevision = session.textRevision
+    }
+
+    func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
+        session.isEditable
     }
 
     func shouldClose() -> Bool {
@@ -131,11 +161,13 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
             }
             previewSurface.show(preview.document, isParsing: preview.isParsing)
             editor.isEditable = session.isEditable
+            restoreButton.isHidden = session.committed.archivedAt == nil
+            restoreButton.isEnabled = canRestore
             if renderedTextRevision != session.textRevision, !editor.hasMarkedText() {
                 editor.string = session.text
                 renderedTextRevision = session.textRevision
             }
-            message.stringValue = session.explanation ?? (session.state == .saving ? "Saving…" : "")
+            message.stringValue = organizationNotice ?? session.explanation ?? (session.state == .saving ? "Saving…" : "")
             message.isHidden = message.stringValue.isEmpty
         } onChange: { [weak self] in
             Task { @MainActor [weak self] in

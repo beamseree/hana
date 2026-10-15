@@ -23,10 +23,7 @@ enum MainSection: String, CaseIterable, Identifiable {
     }
 }
 
-enum MainNoteAction: Sendable {
-    case setPinned(Bool)
-    case archive
-}
+typealias MainNoteAction = NoteOrganizationAction
 
 /// Values shared by the native window, SwiftUI and Mac Interaction's callers.
 /// No editor or database handle is exposed by the presentation.
@@ -67,6 +64,7 @@ final class MainWindowPresentation {
     enum NoteNotice: Equatable {
         case refused(CollectionStoreError)
         case unavailable
+        case compositionActive
 
         var message: String {
             switch self {
@@ -75,6 +73,7 @@ final class MainWindowPresentation {
             case .refused(.noteNotFound): "This note is no longer available."
             case .refused: "The note couldn’t be changed. Try again."
             case .unavailable: "The collection is unavailable. The note wasn’t changed."
+            case .compositionActive: "Finish composing text before organizing this note."
             }
         }
     }
@@ -107,11 +106,12 @@ final class WorkingWindowController: NSWindowController {
     var openNote: ((UUID) -> Void)?
     let taskWorkspace: TaskWorkspacePresentation
     private var observation: Task<Void, Never>?
-    private let collection: Task<CollectionStore, any Error>?
+    private let organizeAction: @MainActor (MainWindowPresentation.Row, MainNoteAction) async throws -> Void
 
-    init(collection: Task<CollectionStore, any Error>?) {
+    init(collection: Task<CollectionStore, any Error>?,
+         organizeNote: @escaping @MainActor (MainWindowPresentation.Row, MainNoteAction) async throws -> Void) {
         taskWorkspace = TaskWorkspacePresentation(collection: collection)
-        self.collection = collection
+        organizeAction = organizeNote
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 820, height: 560),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
@@ -165,21 +165,14 @@ final class WorkingWindowController: NSWindowController {
         presentation.isOrganizingNote = true
         defer { presentation.isOrganizingNote = false }
         presentation.noteNotice = nil
-        guard let collection, let store = try? await collection.value else {
-            presentation.noteNotice = .unavailable
-            return
-        }
         do {
-            switch action {
-            case .setPinned(let pinned):
-                _ = try await store.perform(.setNotePinned(row.id, pinned, expectedRevision: row.revision),
-                                            in: store.generation)
-            case .archive:
-                _ = try await store.perform(.archiveNote(row.id, expectedRevision: row.revision), in: store.generation)
-            }
+            try await organizeAction(row, action)
         } catch {
-            presentation.noteNotice = (error as? CollectionStoreError).map(MainWindowPresentation.NoteNotice.refused)
-                ?? .unavailable
+            if error as? NoteOrganizationError == .compositionActive { presentation.noteNotice = .compositionActive }
+            else {
+                presentation.noteNotice = (error as? CollectionStoreError).map(MainWindowPresentation.NoteNotice.refused)
+                    ?? .unavailable
+            }
         }
     }
 

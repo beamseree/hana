@@ -147,6 +147,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         button.sendAction(action, to: button.target)
     }
     func noteSession(_ id: UUID) -> NoteEditingSession? { noteWindows[id]?.session }
+    func canRestoreNote(_ id: UUID) -> Bool { noteWindows[id]?.canRestore ?? false }
+    @discardableResult
+    func restoreNote(_ id: UUID) async -> Bool { await noteWindows[id]?.performOrganization(.restore) ?? false }
     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
     func window(for destination: WorkingWindow) -> NSWindow? {
         switch destination {
@@ -197,6 +200,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
 
     func organizeNote(_ row: MainWindowPresentation.Row, action: MainNoteAction) async {
         await workingWindows[.main]?.organizeNote(row, action: action)
+    }
+    private func changeNote(_ row: MainWindowPresentation.Row, action: MainNoteAction) async throws {
+        if let session = noteEditing?.existingSession(row.id) {
+            try await session.organize(action)
+        } else {
+            guard let collection else { throw CollectionStoreError.missingCollection }
+            let store = try await collection.value
+            _ = try await store.perform(action.command(row.id, revision: row.revision), in: store.generation)
+        }
     }
     func selectMainNote(_ id: UUID?) { mainWindowPresentation?.selectedNoteID = id }
     private var localMouse: Any?
@@ -386,7 +398,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         if let currentInvocation { dismiss(currentInvocation, reason: .destination) }
         if case .note(let id) = destination { return openNote(id, focus: focus) }
         if workingWindows[destination] == nil {
-            let controller = WorkingWindowController(collection: collection)
+            let controller = WorkingWindowController(collection: collection, organizeNote: { [weak self] row, action in
+                guard let self else { throw CollectionStoreError.closed }
+                try await self.changeNote(row, action: action)
+            })
             controller.window?.delegate = self
             controller.openNote = { [weak self] id in self?.open(.note(id)) }
             workingWindows[destination] = controller
@@ -441,6 +456,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                     return
                 }
                 let controller = NoteWindowController(session: session, previewParser: previewParser, openPreviewLink: openPreviewLink)
+                controller.onOrganization = { [weak self] action in
+                    guard let self else { throw CollectionStoreError.closed }
+                    try await self.changeNote(MainWindowPresentation.Row(session.committed), action: action)
+                }
                 controller.window?.delegate = self
                 controller.onTitleChange = { [weak self] in self?.refreshNoteMenu() }
                 noteWindows[id] = controller
@@ -831,7 +850,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let noteMenu = NSMenu(title: "Note")
         for (title, action, key) in [
             ("Pin Note", #selector(toggleSelectedNotePin), "p"),
-            ("Archive Note", #selector(archiveSelectedNote), "a")
+            ("Archive Note", #selector(archiveSelectedNote), "a"),
+            ("Restore Note", #selector(restoreSelectedNote), "r")
         ] {
             let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
             item.keyEquivalentModifierMask = [.command, .control]
@@ -873,6 +893,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             return selectedOrganizerNote != nil
         }
         if menuItem.action == #selector(archiveSelectedNote) { return selectedOrganizerNote != nil }
+        if menuItem.action == #selector(restoreSelectedNote) { return selectedArchivedNote != nil }
         return true
     }
 
@@ -884,6 +905,16 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     @objc private func archiveSelectedNote() {
         guard let row = selectedOrganizerNote else { return }
         Task { await organizeNote(row, action: .archive) }
+    }
+
+    private var selectedArchivedNote: UUID? {
+        guard currentInvocation == nil else { return nil }
+        return noteWindows.first { $0.value.window === NSApp.keyWindow && $0.value.canRestore }?.key
+    }
+
+    @objc private func restoreSelectedNote() {
+        guard let id = selectedArchivedNote else { return }
+        Task { await restoreNote(id) }
     }
 
     /// A click on Task's selector. The session decides; the selector then shows its choice.

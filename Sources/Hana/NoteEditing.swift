@@ -1,6 +1,20 @@
 import Foundation
 import Observation
 
+enum NoteOrganizationAction: Sendable {
+    case setPinned(Bool), archive, restore
+
+    func command(_ id: UUID, revision: Int64) -> CollectionCommand<Note> {
+        switch self {
+        case .setPinned(let pinned): .setNotePinned(id, pinned, expectedRevision: revision)
+        case .archive: .archiveNote(id, expectedRevision: revision)
+        case .restore: .restoreNote(id, expectedRevision: revision)
+        }
+    }
+}
+
+enum NoteOrganizationError: Error, Equatable { case unavailable, compositionActive }
+
 /// The collection's public editing boundary: one revision-owning session per note.
 @MainActor
 final class NoteEditing {
@@ -38,6 +52,11 @@ final class NoteEditing {
     func flush() async throws {
         for session in sessions.values where !session.isClosed { try await session.flush() }
     }
+
+    func existingSession(_ id: UUID) -> NoteEditingSession? {
+        guard let session = sessions[id], !session.isClosed else { return nil }
+        return session
+    }
 }
 
 @MainActor @Observable
@@ -54,7 +73,9 @@ final class NoteEditingSession {
     private(set) var state: SaveState
     private(set) var isComposing = false
     private(set) var isClosed = false
-    var isEditable: Bool { !isClosed && state != .invalidated && committed.archivedAt == nil }
+    private(set) var isOrganizing = false
+    var canOrganize: Bool { !isOrganizing && !isClosed && state != .invalidated }
+    var isEditable: Bool { !isOrganizing && !isClosed && state != .invalidated && committed.archivedAt == nil }
     var explanation: String? {
         switch state {
         case .blank: Self.blankExplanation
@@ -158,6 +179,26 @@ final class NoteEditingSession {
         isClosed = true
         timer?.cancel()
         observation?.cancel()
+    }
+
+    /// Freeze before flushing: no edit can arrive between the body commit and
+    /// the metadata command. Quit suspension is a separate editing reason.
+    func organize(_ action: NoteOrganizationAction) async throws {
+        guard canOrganize else { throw NoteOrganizationError.unavailable }
+        guard !isComposing else { throw NoteOrganizationError.compositionActive }
+        isOrganizing = true
+        defer { isOrganizing = false }
+        try await flush()
+        guard !isClosed, state != .invalidated else { throw CollectionStoreError.closed }
+        let note = try await store.perform(action.command(committed.id, revision: committed.revision), in: generation)
+        guard !isClosed, state != .invalidated else { throw CollectionStoreError.closed }
+        if note.revision >= committed.revision { committed = note }
+        if committed.archivedAt != nil {
+            if !sameBytes(text, committed.body) { text = committed.body; textRevision += 1 }
+            state = .readOnly
+        } else {
+            state = Note.isNonblank(text) ? .saved : .blank
+        }
     }
 
     private func receive(_ note: Note) {
