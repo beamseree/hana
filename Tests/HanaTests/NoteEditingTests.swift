@@ -75,22 +75,31 @@ struct NoteEditingTests {
     @Test func aPausedCommitDrainsNewerTextInOrderWithoutMarkingItSavedEarly() async throws {
         let fixture = try TemporaryFixture()
         defer { try? FileManager.default.removeItem(at: fixture.directory) }
-        let gate = CommitGate()
+        let gates = [CommitGate(), CommitGate()]
+        let index = Synchronization.Mutex(0)
         let enabled = Synchronization.Mutex(false)
         let store = try await CollectionStore.open(fixture.location, faults: .init(beforeCommit: { _ in
-            if enabled.withLock({ $0 }) { gate.pass() }
+            if enabled.withLock({ $0 }) {
+                let arrival = index.withLock { value in defer { value += 1 }; return value }
+                gates[arrival].pass()
+            }
         }))
         let note = try await store.perform(.createNote(operation: UUID(), body: "Original"), in: store.generation)
         enabled.withLock { $0 = true }
         let session = try await NoteEditing(store: store, clock: TestClock()).open(note.id)
         session.edit("First")
         let flush = Task { try await session.flush() }
-        defer { gate.open() }
-        try await eventually { gate.arrivals == 1 }
+        defer { for gate in gates { gate.open() } }
+        try await eventually { gates[0].arrivals == 1 }
         session.edit("Latest ไทย")
         #expect(session.state == .saving)
         #expect(session.committed.body == "Original")
-        gate.open()
+        gates[0].open()
+        try await eventually { gates[1].arrivals == 1 }
+        #expect(session.state == .saving)
+        #expect(session.committed.body == "First")
+        #expect(try await store.read(.note(note.id), in: store.generation)?.body == "First")
+        gates[1].open()
         try await flush.value
         #expect(session.state == .saved)
         #expect(session.committed.body == "Latest ไทย")

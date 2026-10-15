@@ -124,8 +124,9 @@ final class WorkingWindowController: NSWindowController {
         window.appearance = NSAppearance(named: .aqua)
         window.backgroundColor = HanaColor.Surface.window
         window.contentView = NSHostingView(rootView: MainWindowView(
-            presentation: presentation, tasks: taskWorkspace,
+            presentation: presentation,
             openNote: { [weak self] id in self?.openNote?(id) },
+            tasks: taskWorkspace,
             organizeNote: { [weak self] row, action in await self?.organizeNote(row, action: action) }
         ))
         window.center()

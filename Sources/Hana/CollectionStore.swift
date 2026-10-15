@@ -17,9 +17,15 @@ struct Note: Identifiable, Sendable {
 
     /// The first nonempty line, trimmed; nil when the body has no visible text.
     var title: String? {
-        body.split(whereSeparator: \.isNewline).lazy
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .first { !$0.isEmpty }
+        var start = body.startIndex
+        while start < body.endIndex {
+            let end = body[start...].firstIndex(where: \.isNewline) ?? body.endIndex
+            let line = body[start..<end].trimmingCharacters(in: .whitespaces)
+            if !line.isEmpty { return line }
+            guard end < body.endIndex else { return nil }
+            start = body.index(after: end)
+        }
+        return nil
     }
 
     static func isNonblank(_ body: String) -> Bool {

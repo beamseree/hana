@@ -24,5 +24,11 @@ Beam's physical Thai/IME typing, long-note typing/scrolling, Dock and Command-Ta
 ## Recorded results
 
 - `focused-tests.txt`: 6 tests in 2 suites passed in 1.798 seconds, including the 1.14 MB fixture.
-- `native-runtime.jsonl`: signed disposable debug app reached `note-window.validation-passed`. It recorded regular policy while minimized and while the last window's commit was paused, exact saved text and accessory policy after close, Escape responder restoration, and one native Window-menu entry after the committed title changed.
+- `native-runtime.jsonl`: signed disposable release app reached `note-window.validation-passed`. It recorded regular policy while minimized and while the last window's commit was paused, exact saved text and accessory policy after close, Escape responder restoration, and one native Window-menu entry after the committed title changed.
 - Debug fixture (1,140,000 UTF-8 bytes): open 267.643 ms, one insertion 317.437 ms, flush 639.191 ms. Debug iteration overhead is material; release measurements are recorded separately before drawing performance conclusions.
+
+- `release-profile-before.txt`: the pre-optimization release fixture passed, measuring open 236.479 ms, insertion 163.634 ms and flush 252.491 ms.
+- `release-tests.txt`: after bounded optimization, 19 tests in 4 suites passed in 1.794 seconds. The 1.14 MB fixture measured open 98.747 ms, insertion 70.416 ms and flush 106.902 ms. Title extraction now stops at the first nonempty line rather than splitting the full document; normal text insertions report one edit, and view updates use the local text revision instead of rescanning all bytes. No concurrency was introduced. A 70 ms synthetic insertion is still not a guarantee of smooth physical typing or scrolling, which remains a #99 observation.
+- The paused-writer test now holds both the first and second save transactions: after the older commit, the public session remains `saving` with the latest text, while the Store still contains the first body until the second gate is released.
+
+- `integration-tests.txt`: the post-merge release run passed 16 tests in 4 suites (Note Editing, native note editor/profile, Task Workspace and Main Window) in 4.029 seconds.

@@ -1,0 +1,81 @@
+Building for production...
+[0/5] Write sources
+[2/5] Write swift-version--1AB21518FC5DEDBE.txt
+[4/6] Compiling Hana ApplicationCatalog.swift
+[4/8] Write Objects.LinkFileList
+[5/8] Linking Hana
+[7/9] Compiling HanaTests CaptureSafetyNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-91-editor/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[7/9] Write Objects.LinkFileList
+[8/9] Linking HanaPackageTests
+Build complete! (45.91s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NoteEditingTests started.
+◇ Suite NoteWindowTests started.
+◇ Suite NoteOrganizationTests started.
+◇ Suite MainNoteOrganizationTests started.
+◇ Test idleSaveWaitsThreeHundredMillisecondsAndKeepsExactBytes() started.
+◇ Test aPausedCommitDrainsNewerTextInOrderWithoutMarkingItSavedEarly() started.
+◇ Test pinnedNotesAndArchiveEachOrderByTheirTimeThenStableID() started.
+◇ Test continuousTypingSavesByOneSecondAndCompositionDefersUntilCommitted() started.
+◇ Test alreadySatisfiedCommandsAreNoOpsButStaleOrInvalidOnesFailWithoutChange() started.
+◇ Test competingCommandsOnOneRevisionLetExactlyOneWinAndNeverOverwriteIt() started.
+◇ Test blankCloseKeepsLastCommittedBody() started.
+◇ Test allRecordsAndTheSearchProjectionCoverArchivedNotesOnlyWhenEligible() started.
+◇ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() started.
+◇ Test observationsFollowCommittedTransitionsAndNeverShowRolledBackOnes() started.
+◇ Test contentEditReplacesTheExactBodyAndAdvancesContentEditedTimeAndRevision() started.
+◇ Test failedTransitionsRollBackAndOldGenerationsCannotChangeNotes() started.
+◇ Test archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndContentEditedTimeIntact() started.
+◇ Test pinsComeFirstThenMostRecentlyContentEditedThenStableIDAndPinningKeepsContentEditedTime() started.
+✔ Test observationsFollowCommittedTransitionsAndNeverShowRolledBackOnes() passed after 0.273 seconds.
+✔ Test competingCommandsOnOneRevisionLetExactlyOneWinAndNeverOverwriteIt() passed after 0.288 seconds.
+✔ Test contentEditReplacesTheExactBodyAndAdvancesContentEditedTimeAndRevision() passed after 0.298 seconds.
+✔ Test pinnedNotesAndArchiveEachOrderByTheirTimeThenStableID() passed after 0.302 seconds.
+✔ Test archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndContentEditedTimeIntact() passed after 0.302 seconds.
+✔ Test alreadySatisfiedCommandsAreNoOpsButStaleOrInvalidOnesFailWithoutChange() passed after 0.303 seconds.
+✔ Test pinsComeFirstThenMostRecentlyContentEditedThenStableIDAndPinningKeepsContentEditedTime() passed after 0.306 seconds.
+✔ Test failedTransitionsRollBackAndOldGenerationsCannotChangeNotes() passed after 0.307 seconds.
+✔ Test idleSaveWaitsThreeHundredMillisecondsAndKeepsExactBytes() passed after 0.308 seconds.
+✔ Test allRecordsAndTheSearchProjectionCoverArchivedNotesOnlyWhenEligible() passed after 0.334 seconds.
+✔ Suite NoteOrganizationTests passed after 0.335 seconds.
+✔ Test blankCloseKeepsLastCommittedBody() passed after 0.500 seconds.
+✔ Test continuousTypingSavesByOneSecondAndCompositionDefersUntilCommitted() passed after 0.501 seconds.
+✔ Test aPausedCommitDrainsNewerTextInOrderWithoutMarkingItSavedEarly() passed after 0.561 seconds.
+✔ Suite NoteEditingTests passed after 0.561 seconds.
+✔ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() passed after 0.577 seconds.
+◇ Test aOneMegabyteFixtureCanOpenEditAndFlush() started.
+NOTE_PROFILE bytes=1140000 open=0.098747416 seconds insert=0.070415958 seconds flush=0.106902041 seconds
+✔ Test aOneMegabyteFixtureCanOpenEditAndFlush() passed after 0.355 seconds.
+✔ Suite NoteWindowTests passed after 0.933 seconds.
+◇ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() started.
+✔ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() passed after 0.142 seconds.
+◇ Test archiveRemovesTheRowAndPreservesWritingAndPin() started.
+✔ Test archiveRemovesTheRowAndPreservesWritingAndPin() passed after 0.169 seconds.
+◇ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .setPinned(true) to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .archive to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+✔ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) with 2 test cases passed after 0.285 seconds.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+✔ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 0.262 seconds.
+✔ Suite MainNoteOrganizationTests passed after 1.793 seconds.
+✔ Test run with 19 tests in 4 suites passed after 1.794 seconds.

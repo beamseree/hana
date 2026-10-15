@@ -8,6 +8,7 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
     private let message = NSTextField(wrappingLabelWithString: "")
     var onTitleChange: (() -> Void)?
     var allowsClose = false
+    private var renderedTextRevision: UInt64 = 0
     private var closeTask: Task<Void, Never>?
 
     init(session: NoteEditingSession) {
@@ -78,7 +79,10 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
     }
 
     func textDidChange(_ notification: Notification) { changed() }
-    private func changed() { session.edit(editor.string, isComposing: editor.hasMarkedText()) }
+    private func changed() {
+        session.edit(editor.string, isComposing: editor.hasMarkedText())
+        renderedTextRevision = session.textRevision
+    }
 
     func shouldClose() -> Bool {
         if allowsClose { return true }
@@ -101,8 +105,9 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
         withObservationTracking {
             window?.title = session.committed.title ?? "Untitled"
             editor.isEditable = session.isEditable
-            if editor.string.utf8.elementsEqual(session.text.utf8) == false, !editor.hasMarkedText() {
+            if renderedTextRevision != session.textRevision, !editor.hasMarkedText() {
                 editor.string = session.text
+                renderedTextRevision = session.textRevision
             }
             message.stringValue = session.explanation ?? (session.state == .saving ? "Saving…" : "")
             message.isHidden = message.stringValue.isEmpty
@@ -130,7 +135,8 @@ final class NoteEditor: NSTextView {
         onCompositionChange?()
     }
     override func insertText(_ string: Any, replacementRange: NSRange) {
+        let wasMarked = hasMarkedText()
         super.insertText(string, replacementRange: replacementRange)
-        onCompositionChange?()
+        if wasMarked { onCompositionChange?() }
     }
 }
