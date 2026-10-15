@@ -1,6 +1,6 @@
 # Native Hana — build and validation
 
-Hana finds cached applications and indexed filenames, captures notes and tasks to the local Collection Store, and shows live notes in its main window. Working-window organization and editing are being completed under [#88](https://github.com/beamseree/hana/issues/88). The bar retains its blurred bezel, opaque card and native shadow. Current accepted behavior lives in the [product specification](product-spec.md); earlier native-shell evidence remains under [issue #10](evidence/issue-10/validation.md).
+Hana finds cached applications and indexed filenames, captures notes and tasks to the local Collection Store, and organizes committed content in Notes, Inbox, Today, Completed and Archive. Native note windows autosave source text, retain failed saves and offer a read-only Markdown preview. [#88](https://github.com/beamseree/hana/issues/88) records this implementation; [#99](https://github.com/beamseree/hana/issues/99) separates automated/native results from pending physical acceptance. The bar retains its blurred bezel, opaque card and native shadow. Current accepted behavior lives in the [product specification](product-spec.md); earlier native-shell evidence remains under [issue #10](evidence/issue-10/validation.md).
 
 ## Build, test, install and run
 
@@ -106,11 +106,11 @@ Verify **Hana !**, the unavailable-shortcut menu message, and working **Search**
 
 ## Working windows
 
-The menu-bar menu offers Search, Open Hana, shortcut status and Quit. **Window → Open Hana** (Command+1) and Dock reopen reach the same main window. The native Window menu also exposes Minimize (Command+M) and Close (Command+W). The main sidebar selects Notes, Inbox, Today, Completed and Archive. Notes follows committed Collection Store observations; unavailable storage shows an explanation rather than an empty editable collection.
+The menu-bar menu offers Search, Open Hana, shortcut status and Quit. **Window → Open Hana** (Command+1) and Dock reopen reach the same main window. The native Window menu also exposes Minimize (Command+M) and Close (Command+W). The main sidebar selects Notes, Inbox, Today, Completed and Archive. All five sections follow committed Collection Store observations; unavailable storage shows an explanation rather than an empty editable collection. Notes can be pinned, archived and opened with double-click or Return. Inbox/Today offer complete, move, inline rename and drag or keyboard ordering; Completed offers reopen, rename and archive. Archive interleaves notes/tasks with kind and completion labels and restores them without deleting content. Archived note windows are read-only until Restore.
 
 Only closing removes a working window from the registry; minimizing does not. An invocation-bound destination ignores an obsolete bar session before changing windows or focus. Ordinary Option+Space invocation does not activate Hana or order unrelated working windows. The historical mock destinations and focus probes described in [issue #4 evidence](evidence/issue-4/validation.md) were removed by #89; that record is prior evidence, not current controls.
 
-`--validate-main-window --main-window-report PATH` runs the main-window app-loop harness with a disposable fixture Store. It never opens the live collection. Native state assertions and human-observed typing/focus remain separate; see [#89 evidence](evidence/issue-89/validation.md).
+`--validate-main-window --main-window-report PATH` runs the main-window app-loop harness with a disposable fixture Store. It never opens the live collection. Native state assertions and human-observed typing/focus remain separate; see [#89 evidence](evidence/issue-89/validation.md) and the extended [#96 checks](evidence/issue-96/validation.md). `--validate-note-window --note-window-report PATH` and `--validate-open-note-capture --open-note-capture-report PATH` exercise note lifecycle and capture opening with disposable fixtures. These flags do not open the live collection. The final persistent fixture and physical checklist belong to #99; do not use `scripts/run` to replace the installed app for those checks.
 
 ## Application Search — issue #5
 
