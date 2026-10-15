@@ -1,0 +1,341 @@
+Fetching https://github.com/groue/GRDB.swift from cache
+Fetched https://github.com/groue/GRDB.swift from cache (0.01s)
+Creating working copy for https://github.com/groue/GRDB.swift
+Working copy of https://github.com/groue/GRDB.swift resolved at 7.11.1
+Building for debugging...
+[0/14] /tmp/hana-spec-88-build-94/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[1/14] Write sources
+[1/14] Write Hana-entitlement.plist
+[3/14] Write sources
+[4/14] Copying Info.plist
+[4/14] Write sources
+[7/14] Copying PrivacyInfo.xcprivacy
+[8/14] Write swift-version--1AB21518FC5DEDBE.txt
+[10/167] Compiling GRDB MutablePersistableRecord+Update.swift
+[11/167] Compiling GRDB MutablePersistableRecord+Upsert.swift
+[12/167] Compiling GRDB MutablePersistableRecord.swift
+[13/167] Compiling GRDB PersistableRecord+Insert.swift
+[14/167] Compiling GRDB PersistableRecord+Save.swift
+[15/167] Compiling GRDB PersistableRecord+Upsert.swift
+[16/167] Compiling GRDB PersistableRecord.swift
+[17/167] Compiling GRDB Record.swift
+[18/167] Compiling GRDB TableRecord.swift
+[19/167] Compiling GRDB CaseInsensitiveIdentifier.swift
+[20/167] Compiling GRDB Inflections+English.swift
+[21/167] Compiling GRDB Inflections.swift
+[22/167] Compiling GRDB Mutex.swift
+[23/167] Compiling GRDB OnDemandFuture.swift
+[24/167] Compiling GRDB OrderedDictionary.swift
+[25/167] Compiling GRDB Pool.swift
+[26/183] Compiling GRDB FTS3Pattern.swift
+[27/183] Compiling GRDB FTS3TokenizerDescriptor.swift
+[28/183] Compiling GRDB FTS4.swift
+[29/183] Compiling GRDB FTS5.swift
+[30/183] Compiling GRDB FTS5CustomTokenizer.swift
+[31/183] Compiling GRDB FTS5Pattern.swift
+[32/183] Compiling GRDB FTS5Tokenizer.swift
+[33/183] Compiling GRDB FTS5TokenizerDescriptor.swift
+[34/183] Compiling GRDB FTS5WrapperTokenizer.swift
+[35/183] Compiling GRDB Fixits.swift
+[36/183] Compiling GRDB JSONColumn.swift
+[37/183] Compiling GRDB SQLJSONExpressible.swift
+[38/183] Compiling GRDB SQLJSONFunctions.swift
+[39/183] Compiling GRDB DatabaseMigrator.swift
+[40/183] Compiling GRDB Migration.swift
+[41/183] Compiling GRDB FTS3+QueryInterface.swift
+[42/183] Compiling GRDB FTS5+QueryInterface.swift
+[43/183] Emitting module GRDB
+[44/183] Compiling GRDB DatabaseValueConvertible+RawRepresentable.swift
+[45/183] Compiling GRDB JSONRequiredEncoder.swift
+[46/183] Compiling GRDB Optional.swift
+[47/183] Compiling GRDB StandardLibrary.swift
+[48/183] Compiling GRDB TransactionClock.swift
+[49/183] Compiling GRDB TransactionObserver.swift
+[50/183] Compiling GRDB WALSnapshot.swift
+[51/183] Compiling GRDB WALSnapshotTransaction.swift
+[52/183] Compiling GRDB Database+Dump.swift
+[53/183] Compiling GRDB DatabaseReader+dump.swift
+[54/183] Compiling GRDB DumpFormat.swift
+[55/183] Compiling GRDB DebugDumpFormat.swift
+[56/183] Compiling GRDB JSONDumpFormat.swift
+[57/183] Compiling GRDB LineDumpFormat.swift
+[58/183] Compiling GRDB ListDumpFormat.swift
+[59/183] Compiling GRDB QuoteDumpFormat.swift
+[60/183] Compiling GRDB FTS3.swift
+[61/183] Compiling GRDB Database+SchemaDefinition.swift
+[62/183] Compiling GRDB ForeignKeyDefinition.swift
+[63/183] Compiling GRDB IndexDefinition.swift
+[64/183] Compiling GRDB TableAlteration.swift
+[65/183] Compiling GRDB TableDefinition.swift
+[66/183] Compiling GRDB VirtualTableModule.swift
+[67/183] Compiling GRDB TableRecord+Association.swift
+[68/183] Compiling GRDB TableRecord+QueryInterfaceRequest.swift
+[69/183] Compiling GRDB EncodableRecord+Encodable.swift
+[70/183] Compiling GRDB EncodableRecord.swift
+[71/183] Compiling GRDB FetchableRecord+Decodable.swift
+[72/183] Compiling GRDB FetchableRecord+TableRecord.swift
+[73/183] Compiling GRDB FetchableRecord.swift
+[74/183] Compiling GRDB MutablePersistableRecord+DAO.swift
+[75/183] Compiling GRDB MutablePersistableRecord+Delete.swift
+[76/183] Compiling GRDB MutablePersistableRecord+Insert.swift
+[77/183] Compiling GRDB MutablePersistableRecord+Save.swift
+[78/183] Compiling GRDB SQLForeignKeyRequest.swift
+[79/183] Compiling GRDB SQLFunctions.swift
+[80/183] Compiling GRDB SQLOperators.swift
+[81/183] Compiling GRDB SQLOrdering.swift
+[82/183] Compiling GRDB SQLRelation.swift
+[83/183] Compiling GRDB SQLSelection.swift
+[84/183] Compiling GRDB SQLSubquery.swift
+[85/183] Compiling GRDB Table.swift
+[86/183] Compiling GRDB SQLColumnGenerator.swift
+[87/183] Compiling GRDB SQLGenerationContext.swift
+[88/183] Compiling GRDB SQLIndexGenerator.swift
+[89/183] Compiling GRDB SQLQueryGenerator.swift
+[90/183] Compiling GRDB SQLTableAlterationGenerator.swift
+[91/183] Compiling GRDB SQLTableGenerator.swift
+[92/183] Compiling GRDB TableAlias.swift
+[93/183] Compiling GRDB SQLInterpolation+QueryInterface.swift
+[94/183] Compiling GRDB ColumnDefinition.swift
+[95/183] Compiling GRDB ForeignKey.swift
+[96/183] Compiling GRDB Association.swift
+[97/183] Compiling GRDB AssociationAggregate.swift
+[98/183] Compiling GRDB BelongsToAssociation.swift
+[99/183] Compiling GRDB HasManyAssociation.swift
+[100/183] Compiling GRDB HasManyThroughAssociation.swift
+[101/183] Compiling GRDB HasOneAssociation.swift
+[102/183] Compiling GRDB HasOneThroughAssociation.swift
+[103/183] Compiling GRDB JoinAssociation.swift
+[104/183] Compiling GRDB CommonTableExpression.swift
+[105/183] Compiling GRDB QueryInterfaceRequest.swift
+[106/183] Compiling GRDB RequestProtocols.swift
+[107/183] Compiling GRDB Column.swift
+[108/183] Compiling GRDB DatabasePromise.swift
+[109/183] Compiling GRDB SQLAssociation.swift
+[110/183] Compiling GRDB SQLCollection.swift
+[111/183] Compiling GRDB SQLExpression.swift
+[112/183] Compiling GRDB StatementAuthorizer.swift
+[113/183] Compiling GRDB StatementColumnConvertible.swift
+[114/183] Compiling GRDB CGFloat.swift
+[115/183] Compiling GRDB Data.swift
+[116/183] Compiling GRDB DatabaseDateComponents.swift
+[117/183] Compiling GRDB DatabaseValueConvertible+ReferenceConvertible.swift
+[118/183] Compiling GRDB Date.swift
+[119/183] Compiling GRDB Decimal.swift
+[120/183] Compiling GRDB NSData.swift
+[121/183] Compiling GRDB NSNull.swift
+[122/183] Compiling GRDB NSNumber.swift
+[123/183] Compiling GRDB NSString.swift
+[124/183] Compiling GRDB SQLiteDateParser.swift
+[125/183] Compiling GRDB URL.swift
+[126/183] Compiling GRDB UUID.swift
+[127/183] Compiling GRDB DatabaseValueConvertible+Decodable.swift
+[128/183] Compiling GRDB DatabaseValueConvertible+Encodable.swift
+[129/183] Compiling GRDB DatabaseSchemaSource.swift
+[130/183] Compiling GRDB DatabaseSnapshot.swift
+[131/183] Compiling GRDB DatabaseSnapshotPool.swift
+[132/183] Compiling GRDB DatabaseValue.swift
+[133/183] Compiling GRDB DatabaseValueConvertible.swift
+[134/183] Compiling GRDB DatabaseWriter.swift
+[135/183] Compiling GRDB DispatchQueueActor.swift
+[136/183] Compiling GRDB FetchRequest.swift
+[137/183] Compiling GRDB Row.swift
+[138/183] Compiling GRDB RowAdapter.swift
+[139/183] Compiling GRDB RowDecodingError.swift
+[140/183] Compiling GRDB SQL.swift
+[141/183] Compiling GRDB SQLInterpolation.swift
+[142/183] Compiling GRDB SQLRequest.swift
+[143/183] Compiling GRDB SchedulingWatchdog.swift
+[144/183] Compiling GRDB SerializedDatabase.swift
+[145/183] Compiling GRDB Statement.swift
+[146/183] Compiling GRDB ReadWriteLock.swift
+[147/183] Compiling GRDB ReceiveValuesOn.swift
+[148/183] Compiling GRDB Refinable.swift
+[149/183] Compiling GRDB Utils.swift
+[150/183] Compiling GRDB DatabaseCancellable.swift
+[151/183] Compiling GRDB ValueConcurrentObserver.swift
+[152/183] Compiling GRDB ValueWriteOnlyObserver.swift
+[153/183] Compiling GRDB Fetch.swift
+[154/183] Compiling GRDB Map.swift
+[155/183] Compiling GRDB RemoveDuplicates.swift
+[156/183] Compiling GRDB Trace.swift
+[157/183] Compiling GRDB ValueReducer.swift
+[158/183] Compiling GRDB SharedValueObservation.swift
+[159/183] Compiling GRDB ValueObservation.swift
+[160/183] Compiling GRDB ValueObservationScheduler.swift
+[161/183] Compiling GRDB resource_bundle_accessor.swift
+[162/183] Compiling GRDB Configuration.swift
+[163/183] Compiling GRDB Cursor.swift
+[164/183] Compiling GRDB Database+SQLCipher.swift
+[165/183] Compiling GRDB Database+Schema.swift
+[166/183] Compiling GRDB Database+Statements.swift
+[167/183] Compiling GRDB Database.swift
+[168/183] Compiling GRDB DatabaseBackupProgress.swift
+[169/183] Compiling GRDB DatabaseCollation.swift
+[170/183] Compiling GRDB DatabaseError.swift
+[171/183] Compiling GRDB DatabaseFunction.swift
+[172/183] Compiling GRDB DatabasePool.swift
+[173/183] Compiling GRDB DatabasePublishers.swift
+[174/183] Compiling GRDB DatabaseQueue.swift
+[175/183] Compiling GRDB DatabaseReader.swift
+[176/183] Compiling GRDB DatabaseRegion.swift
+[177/183] Compiling GRDB DatabaseRegionObservation.swift
+[178/183] Compiling GRDB DatabaseSchemaCache.swift
+error: emit-module command failed with exit code 1 (use -v to see invocation)
+[179/217] Emitting module Hana
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/MacInteraction.swift:130:36: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 128 |     // Membership ends on close, never on minimize or temporary invisibility.
+ 129 |     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
+ 130 |     var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
+     |                                    `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 131 |     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
+ 132 |     func window(for destination: WorkingWindow) -> NSWindow? { workingWindows[destination]?.window }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:79:24: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 77 | final class WorkingWindowController: NSWindowController {
+ 78 |     let presentation = MainWindowPresentation()
+ 79 |     let taskWorkspace: TaskWorkspacePresentation
+    |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 80 |     private var observation: Task<Void, Never>?
+ 81 | 
+[180/220] Compiling Hana MixedSearchValidation.swift
+[181/220] Compiling Hana ModeIcon.swift
+[182/220] Compiling Hana NoteScroller.swift
+[183/220] Compiling Hana PerformanceValidation.swift
+[184/220] Compiling Hana ResultIcons.swift
+[185/220] Compiling Hana Search.swift
+[186/220] Compiling Hana CoverageValidation.swift
+[187/220] Compiling Hana Diagnostics.swift
+[188/220] Compiling Hana DisplayPlacement.swift
+[189/220] Compiling Hana FocusedWindowGeometry.swift
+[190/220] Compiling Hana SegmentedControl.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:79:24: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 77 | final class WorkingWindowController: NSWindowController {
+ 78 |     let presentation = MainWindowPresentation()
+ 79 |     let taskWorkspace: TaskWorkspacePresentation
+    |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 80 |     private var observation: Task<Void, Never>?
+ 81 | 
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:83:25: error: cannot find 'TaskWorkspacePresentation' in scope
+ 81 | 
+ 82 |     init(collection: Task<CollectionStore, any Error>?) {
+ 83 |         taskWorkspace = TaskWorkspacePresentation(collection: collection)
+    |                         `- error: cannot find 'TaskWorkspacePresentation' in scope
+ 84 |         let window = NSWindow(
+ 85 |             contentRect: NSRect(x: 0, y: 0, width: 820, height: 560),
+[191/220] Compiling Hana SpotlightSource.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:79:24: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 77 | final class WorkingWindowController: NSWindowController {
+ 78 |     let presentation = MainWindowPresentation()
+ 79 |     let taskWorkspace: TaskWorkspacePresentation
+    |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 80 |     private var observation: Task<Void, Never>?
+ 81 | 
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:83:25: error: cannot find 'TaskWorkspacePresentation' in scope
+ 81 | 
+ 82 |     init(collection: Task<CollectionStore, any Error>?) {
+ 83 |         taskWorkspace = TaskWorkspacePresentation(collection: collection)
+    |                         `- error: cannot find 'TaskWorkspacePresentation' in scope
+ 84 |         let window = NSWindow(
+ 85 |             contentRect: NSRect(x: 0, y: 0, width: 820, height: 560),
+[192/220] Compiling Hana WorkingWindowController.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:79:24: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 77 | final class WorkingWindowController: NSWindowController {
+ 78 |     let presentation = MainWindowPresentation()
+ 79 |     let taskWorkspace: TaskWorkspacePresentation
+    |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 80 |     private var observation: Task<Void, Never>?
+ 81 | 
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:83:25: error: cannot find 'TaskWorkspacePresentation' in scope
+ 81 | 
+ 82 |     init(collection: Task<CollectionStore, any Error>?) {
+ 83 |         taskWorkspace = TaskWorkspacePresentation(collection: collection)
+    |                         `- error: cannot find 'TaskWorkspacePresentation' in scope
+ 84 |         let window = NSWindow(
+ 85 |             contentRect: NSRect(x: 0, y: 0, width: 820, height: 560),
+[193/220] Compiling Hana CollectionExportFixture.swift
+[194/220] Compiling Hana CollectionFixtureHarness.swift
+[195/220] Compiling Hana CollectionLocation.swift
+[196/220] Compiling Hana CollectionRecovery.swift
+[197/220] Compiling Hana ApplicationCatalog.swift
+[198/220] Compiling Hana BarStyle.swift
+[199/220] Compiling Hana CaptureSession.swift
+[200/220] Compiling Hana CollectionExport.swift
+[201/220] Compiling Hana HanaRadius.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/MacInteraction.swift:130:36: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 128 |     // Membership ends on close, never on minimize or temporary invisibility.
+ 129 |     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
+ 130 |     var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
+     |                                    `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 131 |     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
+ 132 |     func window(for destination: WorkingWindow) -> NSWindow? { workingWindows[destination]?.window }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:79:24: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 77 | final class WorkingWindowController: NSWindowController {
+ 78 |     let presentation = MainWindowPresentation()
+ 79 |     let taskWorkspace: TaskWorkspacePresentation
+    |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 80 |     private var observation: Task<Void, Never>?
+ 81 | 
+[202/220] Compiling Hana HanaShadow.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/MacInteraction.swift:130:36: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 128 |     // Membership ends on close, never on minimize or temporary invisibility.
+ 129 |     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
+ 130 |     var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
+     |                                    `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 131 |     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
+ 132 |     func window(for destination: WorkingWindow) -> NSWindow? { workingWindows[destination]?.window }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:79:24: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 77 | final class WorkingWindowController: NSWindowController {
+ 78 |     let presentation = MainWindowPresentation()
+ 79 |     let taskWorkspace: TaskWorkspacePresentation
+    |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 80 |     private var observation: Task<Void, Never>?
+ 81 | 
+[203/220] Compiling Hana MacInteraction.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/MacInteraction.swift:130:36: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 128 |     // Membership ends on close, never on minimize or temporary invisibility.
+ 129 |     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
+ 130 |     var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
+     |                                    `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 131 |     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
+ 132 |     func window(for destination: WorkingWindow) -> NSWindow? { workingWindows[destination]?.window }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:79:24: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 77 | final class WorkingWindowController: NSWindowController {
+ 78 |     let presentation = MainWindowPresentation()
+ 79 |     let taskWorkspace: TaskWorkspacePresentation
+    |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 80 |     private var observation: Task<Void, Never>?
+ 81 | 
+[204/220] Compiling Hana MainWindowValidation.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/MacInteraction.swift:130:36: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 128 |     // Membership ends on close, never on minimize or temporary invisibility.
+ 129 |     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
+ 130 |     var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
+     |                                    `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 131 |     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
+ 132 |     func window(for destination: WorkingWindow) -> NSWindow? { workingWindows[destination]?.window }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:79:24: error: cannot find type 'TaskWorkspacePresentation' in scope
+ 77 | final class WorkingWindowController: NSWindowController {
+ 78 |     let presentation = MainWindowPresentation()
+ 79 |     let taskWorkspace: TaskWorkspacePresentation
+    |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
+ 80 |     private var observation: Task<Void, Never>?
+ 81 | 
+[205/220] Compiling Hana CollectionSchema.swift
+[206/220] Compiling Hana CollectionSnapshotFixture.swift
+[207/220] Compiling Hana CollectionSnapshots.swift
+[208/220] Compiling Hana CollectionStore.swift
+[209/220] Compiling Hana GlobalShortcut.swift
+[210/220] Compiling Hana HanaApp.swift
+[211/220] Compiling Hana HanaColor.swift
+[212/220] Compiling Hana HanaFont.swift
+[213/220] Compiling Hana SearchCorrectnessValidation.swift
+[214/220] Compiling Hana SearchName.swift
+[215/220] Compiling Hana SearchResultsView.swift
+error: fatalError

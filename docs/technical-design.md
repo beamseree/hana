@@ -535,6 +535,21 @@ The controller hosts SwiftUI and owns a cancellable observation of the live Stor
 
 Working-window membership, including minimized windows, still governs regular/accessory policy. The bar remains a nonactivating panel; opening the workspace explicitly requests activation, and Escape/save restoration retains its invocation-bound responder rules. Working windows use the design system's light appearance, color and typography roles with native window chrome. See [issue #89 evidence](evidence/issue-89/validation.md); AppKit state assertions do not establish physical keyboard focus or full-screen routing. ADR 0005 remains proposed.
 
+## Inbox, Today and native task rename — issue #94
+
+`WorkingWindowController` owns a `TaskWorkspacePresentation` alongside the existing Notes presentation. It observes `.inbox` and `.today` independently, preserves committed Store order, and cancels both streams on close. Mac Interaction exposes selection, availability, task intents and the current rename draft for the agreed integration test seam. Complete, move and archive delegate to revision-checked Store commands; Today has no midnight calculation.
+
+The SwiftUI organizer supplies selectable rows and context menus; `TaskWorkspaceMenuTarget` supplies native menu commands, gated on the main key window and absence of inline editing. `TaskTitleEditor` hosts a retained native text view for selection, undo, paste and composition. Its native delegate handles Return/Escape, rejects multiline insertion before mutation, and commits on focus loss. Blank and multiline submissions retain the draft. A stale revision reloads committed title/revision and keeps the user's draft with an explicit retry notice. Only a later user submission can overwrite the new revision. No storage schema change is needed. See [#94 evidence](evidence/issue-94/validation.md) for automated coverage and native/physical limitations.
+## Notes organization from the main window — issue #90
+
+Notes rows now include the revision they observed. Mac Interaction exposes selection and `organizeNote(row, action:)`; the main controller submits `setNotePinned` or `archiveNote` with that revision and the Store's current generation. The list remains driven by `.notes` observation, with no optimistic reordering/removal. Pin metadata leaves content-edited time unchanged, so Unpin restores the edited-time position. A stale action leaves committed content alone; typed notices explain refusals while observation supplies the current row.
+
+SwiftUI row context menus and the native Note menu share these intents. Control+Command+P toggles Pin/Unpin, and Control+Command+A archives; selection/availability and an in-flight action gate menu validation. These key equivalents are engineering starting points. [Issue #90 evidence](evidence/issue-90/validation.md) records real fixture Store and native menu checks. Coordination with pending note-window edits and Archive restoration belongs to the following #88 slices.
+
+## Working-window appearance clarification — issue #88
+
+On 2026-10-15 Beam explicitly chose to keep the current light appearance for this milestone, resolving #88's light/dark-aware wording against the design system's light-only rule. Both main and note windows use the current roles with a light appearance. See the [decision record](evidence/issue-88/decisions.md). This changes the milestone's appearance requirement; it does not establish physical acceptance or settle future dark-mode design.
+
 
 ## Note Editing and working-note windows — issue #91
 

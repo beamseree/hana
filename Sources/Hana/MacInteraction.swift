@@ -5,7 +5,7 @@ import SwiftUI
 /// Owns the native Search lifetime. Callers carry Invocation into any delayed
 /// completion so an obsolete operation cannot dismiss a newer session.
 @MainActor
-final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
+final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMenuItemValidation {
     struct Invocation: Equatable {
         fileprivate let id = UUID()
     }
@@ -126,6 +126,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private weak var originWindow: NSWindow?
     private weak var originResponder: NSResponder?
     // Membership ends on close, never on minimize or temporary invisibility.
+    private let taskMenuTarget = TaskWorkspaceMenuTarget()
     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
     private var noteWindows: [UUID: NoteWindowController] = [:]
     private var noteOpenings: [UUID: Task<Void, Never>] = [:]
@@ -138,6 +139,29 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         case .note(let id): noteWindows[id]?.window
         }
     }
+    var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
+    func canPerformTaskAction(_ action: TaskWorkspaceAction) -> Bool {
+        guard currentInvocation == nil, let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
+        return tasks.canPerform(action, in: presentation.selectedSection)
+    }
+
+    func selectTask(_ id: UUID?) { taskWorkspacePresentation?.select(id) }
+
+    @discardableResult
+    func performTaskAction(_ action: TaskWorkspaceAction) async -> Bool {
+        guard let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
+        return await tasks.perform(action, in: presentation.selectedSection)
+    }
+
+    func editTaskTitle(_ text: String) { taskWorkspacePresentation?.editTitle(text) }
+    func cancelTaskRename() { taskWorkspacePresentation?.cancelRename() }
+    @discardableResult
+    func commitTaskRename() async -> Bool { await taskWorkspacePresentation?.commitRename() ?? false }
+
+    func organizeNote(_ row: MainWindowPresentation.Row, action: MainNoteAction) async {
+        await workingWindows[.main]?.organizeNote(row, action: action)
+    }
+    func selectMainNote(_ id: UUID?) { mainWindowPresentation?.selectedNoteID = id }
     private var localMouse: Any?
     private var globalMouse: Any?
     private var menuDepth = 0
@@ -720,6 +744,23 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             edit.submenu?.addItem(item)
         }
         main.addItem(edit)
+        taskMenuTarget.interaction = self
+        let tasks = NSMenuItem(title: "Tasks", action: nil, keyEquivalent: "")
+        tasks.submenu = taskMenuTarget.makeMenu()
+        main.addItem(tasks)
+        let noteMenu = NSMenu(title: "Note")
+        for (title, action, key) in [
+            ("Pin Note", #selector(toggleSelectedNotePin), "p"),
+            ("Archive Note", #selector(archiveSelectedNote), "a")
+        ] {
+            let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+            item.keyEquivalentModifierMask = [.command, .control]
+            item.target = self
+            noteMenu.addItem(item)
+        }
+        let noteItem = NSMenuItem(title: "Note", action: nil, keyEquivalent: "")
+        noteItem.submenu = noteMenu
+        main.addItem(noteItem)
         let windows = NSMenu(title: "Window")
         addOpenMainWindow(to: windows, shortcut: true)
         windows.addItem(.separator())
@@ -737,6 +778,32 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                               keyEquivalent: shortcut ? "1" : "")
         item.target = self
         menu.addItem(item)
+    }
+
+    private var selectedOrganizerNote: MainWindowPresentation.Row? {
+        guard currentInvocation == nil, let presentation = mainWindowPresentation,
+              presentation.selectedSection == .notes, presentation.availability == .available,
+              !presentation.isOrganizingNote else { return nil }
+        return presentation.rows.first { $0.id == presentation.selectedNoteID }
+    }
+
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(toggleSelectedNotePin) {
+            menuItem.title = selectedOrganizerNote?.isPinned == true ? "Unpin Note" : "Pin Note"
+            return selectedOrganizerNote != nil
+        }
+        if menuItem.action == #selector(archiveSelectedNote) { return selectedOrganizerNote != nil }
+        return true
+    }
+
+    @objc private func toggleSelectedNotePin() {
+        guard let row = selectedOrganizerNote else { return }
+        Task { await organizeNote(row, action: .setPinned(!row.isPinned)) }
+    }
+
+    @objc private func archiveSelectedNote() {
+        guard let row = selectedOrganizerNote else { return }
+        Task { await organizeNote(row, action: .archive) }
     }
 
     /// A click on Task's selector. The session decides; the selector then shows its choice.

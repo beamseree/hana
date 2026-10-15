@@ -1,0 +1,72 @@
+Building for debugging...
+[0/6] Write sources
+[2/6] Write swift-version--1AB21518FC5DEDBE.txt
+[4/8] Emitting module Hana
+[5/8] Compiling Hana TaskWorkspace.swift
+[5/10] Write Objects.LinkFileList
+[6/10] Linking Hana
+[7/10] Applying Hana
+[9/12] Compiling HanaTests TaskWorkspaceTests.swift
+[10/12] Emitting module HanaTests
+[10/12] Write Objects.LinkFileList
+[11/12] Linking HanaPackageTests
+Build complete! (3.33s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite TaskWorkspaceTests started.
+◇ Suite TaskLifecycleTests started.
+◇ Suite MainWindowTests started.
+◇ Test explicitTodayCreationAndIdenticalRetriesReturnOneTask() started.
+◇ Test todayMembershipIgnoresMidnightAndDaylightSavingChanges() started.
+◇ Test staleOrMissingReferencesFailWithoutChangeEvenWhenTheResultAlreadyHolds() started.
+◇ Test theSchemaItselfRefusesTasksThatBreakPlacementOrTitleRules() started.
+◇ Test observationsFollowCommittedTaskTransitionsAndNeverShowRolledBackOnes() started.
+◇ Test competingTitleEditsAndArchiveOnOneRevisionLetExactlyOneWin() started.
+◇ Test newTasksGoToTheTopOfInboxByDefaultAndSurviveReopen() started.
+◇ Test completedAndArchiveSortByTheirTimesThenIDAndSearchEligibilityIsExplicit() started.
+◇ Test everyCommandFromEveryCompletionAndArchiveStateFollowsTheOperationTable() started.
+◇ Test failedTaskCommandsPublishNothingAndOldGenerationsCannotChangeTasks() started.
+◇ Test titlesMustBeNonblankSingleLinesAndAreRejectedWholeRatherThanFlattened() started.
+◇ Test topInsertionAtTheEndOfTheKeySpaceRenumbersAtomicallyAndKeepsOrderAndTies() started.
+◇ Test activeListsObserveStoreOrderAndNewTasksAtTheTop() started.
+✔ Test competingTitleEditsAndArchiveOnOneRevisionLetExactlyOneWin() passed after 0.218 seconds.
+✔ Test theSchemaItselfRefusesTasksThatBreakPlacementOrTitleRules() passed after 0.219 seconds.
+✔ Test staleOrMissingReferencesFailWithoutChangeEvenWhenTheResultAlreadyHolds() passed after 0.249 seconds.
+✔ Test newTasksGoToTheTopOfInboxByDefaultAndSurviveReopen() passed after 0.276 seconds.
+✔ Test observationsFollowCommittedTaskTransitionsAndNeverShowRolledBackOnes() passed after 0.281 seconds.
+✔ Test explicitTodayCreationAndIdenticalRetriesReturnOneTask() passed after 0.284 seconds.
+✔ Test failedTaskCommandsPublishNothingAndOldGenerationsCannotChangeTasks() passed after 0.287 seconds.
+✔ Test titlesMustBeNonblankSingleLinesAndAreRejectedWholeRatherThanFlattened() passed after 0.293 seconds.
+✔ Test completedAndArchiveSortByTheirTimesThenIDAndSearchEligibilityIsExplicit() passed after 0.300 seconds.
+✔ Test topInsertionAtTheEndOfTheKeySpaceRenumbersAtomicallyAndKeepsOrderAndTies() passed after 0.312 seconds.
+✔ Test todayMembershipIgnoresMidnightAndDaylightSavingChanges() passed after 0.321 seconds.
+✔ Test everyCommandFromEveryCompletionAndArchiveStateFollowsTheOperationTable() passed after 0.390 seconds.
+✔ Suite TaskLifecycleTests passed after 0.390 seconds.
+✔ Test activeListsObserveStoreOrderAndNewTasksAtTheTop() passed after 0.496 seconds.
+◇ Test taskActionsCommitStoreTransitionsAndObserveBothLists() started.
+✔ Test taskActionsCommitStoreTransitionsAndObserveBothLists() passed after 0.174 seconds.
+◇ Test renameKeepsInvalidDraftAndReloadsStaleCommittedTitle() started.
+✔ Test renameKeepsInvalidDraftAndReloadsStaleCommittedTitle() passed after 0.171 seconds.
+◇ Test nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "return" to nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "focusLoss" to nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "escape" to nativeInlineEditorCommitsOrCancels(command:) started.
+✔ Test nativeInlineEditorCommitsOrCancels(command:) with 3 test cases passed after 0.407 seconds.
+◇ Test nativePasteIsRefusedWholeAndBlankReturnKeepsEditor() started.
+✔ Test nativePasteIsRefusedWholeAndBlankReturnKeepsEditor() passed after 0.145 seconds.
+◇ Test taskMenuCommandsHaveKeyEquivalentsAndRouteSelectedTask() started.
+✔ Test taskMenuCommandsHaveKeyEquivalentsAndRouteSelectedTask() passed after 0.220 seconds.
+✔ Suite TaskWorkspaceTests passed after 1.617 seconds.
+◇ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() started.
+✔ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() passed after 0.156 seconds.
+◇ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → false to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → true to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+✔ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) with 2 test cases passed after 0.172 seconds.
+◇ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() started.
+✔ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() passed after 1.369 seconds.
+◇ Test menusOpenTheSameMainWindowWithoutMockDestinations() started.
+✔ Test menusOpenTheSameMainWindowWithoutMockDestinations() passed after 0.215 seconds.
+✔ Suite MainWindowTests passed after 3.530 seconds.
+✔ Test run with 22 tests in 3 suites passed after 3.530 seconds.
