@@ -1,0 +1,219 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (1.11s)
+Test Suite 'Selected tests' started at 2026-10-15 17:46:08.503.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 17:46:08.504.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 17:46:08.504.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 17:46:08.504.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CollectionStoreTests started.
+􀟈  Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() started.
+􁁛  Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() passed after 0.039 seconds.
+􀟈  Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() started.
+􁁛  Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() passed after 0.034 seconds.
+􀟈  Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() started.
+􁁛  Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() passed after 0.034 seconds.
+􀟈  Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() started.
+􁁛  Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() passed after 0.041 seconds.
+􀟈  Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() started.
+􁁛  Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() passed after 0.038 seconds.
+􀟈  Test workQueuedBeforeCloseIsRejectedWhenItExecutes() started.
+􁁛  Test workQueuedBeforeCloseIsRejectedWhenItExecutes() passed after 0.253 seconds.
+􁁛  Suite CollectionStoreTests passed after 0.441 seconds.
+􀟈  Suite CollectionTitleSourceTests started.
+􀟈  Test committedTitlesBlockAndCompletedOrArchivedItemsStopBlocking() started.
+􁁛  Test committedTitlesBlockAndCompletedOrArchivedItemsStopBlocking() passed after 0.046 seconds.
+􀟈  Test missingStoreIsUnavailableImmediately() started.
+􁁛  Test missingStoreIsUnavailableImmediately() passed after 0.001 seconds.
+􁁛  Suite CollectionTitleSourceTests passed after 0.047 seconds.
+􀟈  Suite NoteOrganizationTests started.
+􀟈  Test contentEditReplacesTheExactBodyAndAdvancesContentEditedTimeAndRevision() started.
+􁁛  Test contentEditReplacesTheExactBodyAndAdvancesContentEditedTimeAndRevision() passed after 0.034 seconds.
+􀟈  Test pinsComeFirstThenMostRecentlyContentEditedThenStableIDAndPinningKeepsContentEditedTime() started.
+􁁛  Test pinsComeFirstThenMostRecentlyContentEditedThenStableIDAndPinningKeepsContentEditedTime() passed after 0.043 seconds.
+􀟈  Test pinnedNotesAndArchiveEachOrderByTheirTimeThenStableID() started.
+􁁛  Test pinnedNotesAndArchiveEachOrderByTheirTimeThenStableID() passed after 0.086 seconds.
+􀟈  Test archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndContentEditedTimeIntact() started.
+􁁛  Test archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndContentEditedTimeIntact() passed after 0.052 seconds.
+􀟈  Test alreadySatisfiedCommandsAreNoOpsButStaleOrInvalidOnesFailWithoutChange() started.
+􁁛  Test alreadySatisfiedCommandsAreNoOpsButStaleOrInvalidOnesFailWithoutChange() passed after 0.053 seconds.
+􀟈  Test competingCommandsOnOneRevisionLetExactlyOneWinAndNeverOverwriteIt() started.
+􁁛  Test competingCommandsOnOneRevisionLetExactlyOneWinAndNeverOverwriteIt() passed after 0.038 seconds.
+􀟈  Test failedTransitionsRollBackAndOldGenerationsCannotChangeNotes() started.
+􁁛  Test failedTransitionsRollBackAndOldGenerationsCannotChangeNotes() passed after 0.042 seconds.
+􀟈  Test allRecordsAndTheSearchProjectionCoverArchivedNotesOnlyWhenEligible() started.
+􁁛  Test allRecordsAndTheSearchProjectionCoverArchivedNotesOnlyWhenEligible() passed after 0.074 seconds.
+􀟈  Test observationsFollowCommittedTransitionsAndNeverShowRolledBackOnes() started.
+􁁛  Test observationsFollowCommittedTransitionsAndNeverShowRolledBackOnes() passed after 0.046 seconds.
+􁁛  Suite NoteOrganizationTests passed after 0.472 seconds.
+􀟈  Suite SearchRankingTests started.
+􀟈  Test wordStartsBeatShorterMidwordMatches() started.
+􁁛  Test wordStartsBeatShorterMidwordMatches() passed after 0.002 seconds.
+􀟈  Test extensionsAreFallbackMatchesAndKindsBreakEqualTiers() started.
+􁁛  Test extensionsAreFallbackMatchesAndKindsBreakEqualTiers() passed after 0.006 seconds.
+􀟈  Test applicationsMatchingByNameOrWordStartPrecedeExactFiles() started.
+􁁛  Test applicationsMatchingByNameOrWordStartPrecedeExactFiles() passed after 0.003 seconds.
+􀟈  Test promotedApplicationsKeepTheirOwnOrderAboveFoldersThenFiles() started.
+􁁛  Test promotedApplicationsKeepTheirOwnOrderAboveFoldersThenFiles() passed after 0.001 seconds.
+􀟈  Test substringApplicationsAndUnmatchedApplicationsAreNotPromoted() started.
+􁁛  Test substringApplicationsAndUnmatchedApplicationsAreNotPromoted() passed after 0.001 seconds.
+􀟈  Test adapterShortlistKeepsPromotedApplicationsAheadOfExactCandidatesUnderItsLimit() started.
+􁁛  Test adapterShortlistKeepsPromotedApplicationsAheadOfExactCandidatesUnderItsLimit() passed after 0.014 seconds.
+􀟈  Test wordOrderWinsBeforeUsageAndPathOnlyAfterCloseness() started.
+􁁛  Test wordOrderWinsBeforeUsageAndPathOnlyAfterCloseness() passed after 0.001 seconds.
+􀟈  Test languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "studio code", first → "Visual Studio Code", second → "xstudio xcode" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "code studio", first → "Visual Studio Code", second → "xcode xstudio" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "point", first → "PowerPoint", second → "Checkpoint" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "time", first → "FaceTime", second → "Overtime" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "udio", first → "Another udio tool", second → "Visual Studio Code" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "ภาษา", first → "บันทึกภาษาไทย", second → "เอกสารยาวมาก ภาษา" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "ทึก", first → "เอกสาร ทึก สรุป", second → "บันทึก" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "ไทย", first → "เอกสาร ไทย มากมาย", second → "ภาษาไทย" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􀟈  Test case passing 3 arguments query → "studio", first → "Android Studio", second → "Visual Studio Code" to languageAwareWordStartsAndSubstringFallback(query:first:second:) started.
+􁁛  Test languageAwareWordStartsAndSubstringFallback(query:first:second:) with 9 test cases passed after 0.009 seconds.
+􀟈  Test fullFilenamesAndUnrecognizedDottedSuffixesRemainLiteral() started.
+􁁛  Test fullFilenamesAndUnrecognizedDottedSuffixesRemainLiteral() passed after 0.002 seconds.
+􀟈  Test fileClosenessIgnoresDeclaredExtensionAndFilesShareFolderRank() started.
+􁁛  Test fileClosenessIgnoresDeclaredExtensionAndFilesShareFolderRank() passed after 0.002 seconds.
+􀟈  Test usageCannotCrossTierKindClosenessOrWordOrderAndTiesAreStable() started.
+􁁛  Test usageCannotCrossTierKindClosenessOrWordOrderAndTiesAreStable() passed after 0.002 seconds.
+􀟈  Test catalogMatchesDisplayBundleAndInstallationNames() started.
+􁁛  Test catalogMatchesDisplayBundleAndInstallationNames() passed after 0.048 seconds.
+􀟈  Test adapterShortlistKeepsLateStrongMatchesAheadOfWeakCandidates() started.
+􁁛  Test adapterShortlistKeepsLateStrongMatchesAheadOfWeakCandidates() passed after 0.208 seconds.
+􀙟  Test indexedShortlistKeepsWordStartsAheadOfMidwordAndExtensionOnlyMatches() skipped.
+􁁛  Suite SearchRankingTests passed after 0.306 seconds.
+􀟈  Suite SearchTests started.
+􀟈  Test loadingReplacementsNeverResurrectPreviouslyInvisibleCandidates() started.
+􁁛  Test loadingReplacementsNeverResurrectPreviouslyInvisibleCandidates() passed after 0.004 seconds.
+􀟈  Test retainedAliasesKeepTheirSourceOwnershipWhenThatSourceFinishes() started.
+􁁛  Test retainedAliasesKeepTheirSourceOwnershipWhenThatSourceFinishes() passed after 0.007 seconds.
+􀟈  Test retainedMatchesSurviveLoadingSnapshotsUntilTheirSourceFinishes() started.
+􁁛  Test retainedMatchesSurviveLoadingSnapshotsUntilTheirSourceFinishes() passed after 0.006 seconds.
+􀟈  Test editsFirstYieldRecheckedRerankedResultsBeforeSourcesRespond() started.
+􁁛  Test editsFirstYieldRecheckedRerankedResultsBeforeSourcesRespond() passed after 0.001 seconds.
+􀟈  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() started.
+􁁛  Test closenessThenRecentSuccessfulUsePrecedeFrequencyWithinATier() passed after 0.001 seconds.
+􀟈  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() started.
+􁁛  Test comparisonNormalizesWhitespaceAndCaseButPreservesThaiMarksAndLiteralSymbols() passed after 0.001 seconds.
+􀟈  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() started.
+􁁛  Test equalClosenessUsesStableIdentityRatherThanSourceOrDisplayOrder() passed after 0.001 seconds.
+􀟈  Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() started.
+􁁛  Test largeMixedCandidatesRetainLateStrongMatchesAfterExclusionsAndDuplicates() passed after 0.533 seconds.
+􀙟  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() skipped.
+􀙟  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() skipped.
+􀙟  Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() skipped.
+􀟈  Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() started.
+􁁛  Test lateFileFailureAndRecoveryLeaveCatalogUsefulAndDeduplicateRecovery() passed after 0.001 seconds.
+􀟈  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() started.
+􁁛  Test strongerIndexedNameImprovesTierWithoutReplacingCatalogPresentation() passed after 0.001 seconds.
+􀟈  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() started.
+􁁛  Test unmatchedCatalogAliasCannotHideAMatchingMetadataFilename() passed after 0.001 seconds.
+􀟈  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() started.
+􁁛  Test visibleFoldersIncludingAnOrdinaryFolderNamedTrashRemainEligible() passed after 0.001 seconds.
+􀙟  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() skipped.
+􀟈  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() started.
+􁁛  Test replacingOrClearingAQueryCancelsFilesAndRejectsTheirLateSnapshots() passed after 0.006 seconds.
+􀟈  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() started.
+􁁛  Test filesMatchLiteralNamesAndMergeByDestinationBeforeVisibleLimit() passed after 0.005 seconds.
+􀟈  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() started.
+􁁛  Test mixedSearchKeepsApplicationsUsefulWhileFilesLoadThenFail() passed after 0.001 seconds.
+􀟈  Test failedSourceStatusStillDeliversAvailableMatches() started.
+􁁛  Test failedSourceStatusStillDeliversAvailableMatches() passed after 0.001 seconds.
+􀟈  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() started.
+􁁛  Test installationFilenameRemainsSearchableWhenBundleNameDiffers() passed after 0.045 seconds.
+􀟈  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() started.
+􁁛  Test emptyQueriesDoNotConsultASourceAndCancellationFinishesOldStream() passed after 0.005 seconds.
+􀟈  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() started.
+􁁛  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() passed after 2.111 seconds.
+􀟈  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() started.
+􁁛  Test successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() passed after 0.009 seconds.
+􀟈  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() started.
+􁁛  Test cachedCatalogDescendsFoldersButExcludesHiddenAndBundleInternals() passed after 0.084 seconds.
+􀟈  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() started.
+􁁛  Test literalUnicodeAndAllNameTokensMatchWithoutRewritingInput() passed after 0.001 seconds.
+􀟈  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() started.
+􁁛  Test distinctInstallationsSurviveDeduplicationBeforeTheLimit() passed after 0.001 seconds.
+􀟈  Test exactPrefixAndSubstringHaveDeterministicOrder() started.
+􁁛  Test exactPrefixAndSubstringHaveDeterministicOrder() passed after 0.001 seconds.
+􁁛  Suite SearchTests passed after 2.835 seconds.
+􀟈  Suite StrongMatchGateTests started.
+􀟈  Test onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Visual Studio", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "visual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Studio ", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "isual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget plan", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "plan ", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "udget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Call mom", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Call m", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "mom ", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "all m", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget.xlsx ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget p", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "plan ", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "udget p", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "xlsx ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􁁛  Test onlyStrongNameTiersBlock(_:) with 18 test cases passed after 0.002 seconds.
+􀟈  Test rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "remind ", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "  remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "	 remind	", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "call mom", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → " 
+", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􁁛  Test rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test unavailableCollectionAlwaysBlocks(_:) started.
+􀟈  Test case passing 1 argument buffer → "remind" to unavailableCollectionAlwaysBlocks(_:) started.
+􀟈  Test case passing 1 argument buffer → "remind " to unavailableCollectionAlwaysBlocks(_:) started.
+􀟈  Test case passing 1 argument buffer → "Visual Studio" to unavailableCollectionAlwaysBlocks(_:) started.
+􁁛  Test unavailableCollectionAlwaysBlocks(_:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .loading, titles → .ready, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .partial, titles → .ready, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .loading, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .ready, files → .loading, settled → true, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .ready, files → .partial, settled → true, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .ready, files → .ready, settled → true, allSettled → true to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .failed, titles → .ready, files → .failed, settled → true, allSettled → true to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􁁛  Test sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) with 7 test cases passed after 0.001 seconds.
+􀟈  Test aliasesAndExactFolderNamesBlock() started.
+􁁛  Test aliasesAndExactFolderNamesBlock() passed after 0.001 seconds.
+􁁛  Suite StrongMatchGateTests passed after 0.003 seconds.
+􀟈  Suite TaskLifecycleTests started.
+􀟈  Test newTasksGoToTheTopOfInboxByDefaultAndSurviveReopen() started.
+􁁛  Test newTasksGoToTheTopOfInboxByDefaultAndSurviveReopen() passed after 0.048 seconds.
+􀟈  Test titlesMustBeNonblankSingleLinesAndAreRejectedWholeRatherThanFlattened() started.
+􁁛  Test titlesMustBeNonblankSingleLinesAndAreRejectedWholeRatherThanFlattened() passed after 0.037 seconds.
+􀟈  Test explicitTodayCreationAndIdenticalRetriesReturnOneTask() started.
+􁁛  Test explicitTodayCreationAndIdenticalRetriesReturnOneTask() passed after 0.045 seconds.
+􀟈  Test everyCommandFromEveryCompletionAndArchiveStateFollowsTheOperationTable() started.
+􁁛  Test everyCommandFromEveryCompletionAndArchiveStateFollowsTheOperationTable() passed after 0.177 seconds.
+􀟈  Test staleOrMissingReferencesFailWithoutChangeEvenWhenTheResultAlreadyHolds() started.
+􁁛  Test staleOrMissingReferencesFailWithoutChangeEvenWhenTheResultAlreadyHolds() passed after 0.051 seconds.
+􀟈  Test competingTitleEditsAndArchiveOnOneRevisionLetExactlyOneWin() started.
+􁁛  Test competingTitleEditsAndArchiveOnOneRevisionLetExactlyOneWin() passed after 0.038 seconds.
+􀟈  Test topInsertionAtTheEndOfTheKeySpaceRenumbersAtomicallyAndKeepsOrderAndTies() started.
+􁁛  Test topInsertionAtTheEndOfTheKeySpaceRenumbersAtomicallyAndKeepsOrderAndTies() passed after 0.049 seconds.
+􀟈  Test completedAndArchiveSortByTheirTimesThenIDAndSearchEligibilityIsExplicit() started.
+􁁛  Test completedAndArchiveSortByTheirTimesThenIDAndSearchEligibilityIsExplicit() passed after 0.050 seconds.
+􀟈  Test failedTaskCommandsPublishNothingAndOldGenerationsCannotChangeTasks() started.
+􁁛  Test failedTaskCommandsPublishNothingAndOldGenerationsCannotChangeTasks() passed after 0.061 seconds.
+􀟈  Test theSchemaItselfRefusesTasksThatBreakPlacementOrTitleRules() started.
+􁁛  Test theSchemaItselfRefusesTasksThatBreakPlacementOrTitleRules() passed after 0.043 seconds.
+􀟈  Test todayMembershipIgnoresMidnightAndDaylightSavingChanges() started.
+􁁛  Test todayMembershipIgnoresMidnightAndDaylightSavingChanges() passed after 0.060 seconds.
+􀟈  Test observationsFollowCommittedTaskTransitionsAndNeverShowRolledBackOnes() started.
+􁁛  Test observationsFollowCommittedTaskTransitionsAndNeverShowRolledBackOnes() passed after 0.046 seconds.
+􁁛  Suite TaskLifecycleTests passed after 0.712 seconds.
+􁁛  Test run with 76 tests in 7 suites passed after 4.819 seconds.
