@@ -675,6 +675,82 @@ struct DestinationInteractionTests {
         #expect(interaction.currentInvocation != invocation)
     }
 
+    @Test func barClosesBeforeASlowNativeOpenAcknowledges() async throws {
+        _ = NSApplication.shared
+        let feed = CatalogFeed()
+        var completion: CheckedContinuation<Void, Error>?
+        var activated = false
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero), launchApplication: { _ in
+            .init(open: {
+                try await withCheckedThrowingContinuation { completion = $0 }
+                return { activated = true; return true }
+            })
+        })
+        interaction.presentBar()
+        defer { if let current = interaction.currentInvocation { interaction.dismiss(current, reason: .outsideClick) } }
+        interaction.updateQuery("App")
+        await feed.send([app("App", "/Applications/App.app")])
+        try await eventually { interaction.selectedResult != nil }
+        let opening = interaction.requestSelectedOpen()
+        try await eventually { completion != nil }
+        #expect(interaction.currentInvocation == nil)
+        #expect(!activated)
+        completion?.resume()
+        await opening?.value
+        #expect(activated)
+    }
+
+    @Test func aNewerBarBlocksALateNativeOpenActivation() async throws {
+        _ = NSApplication.shared
+        let feed = CatalogFeed()
+        var completion: CheckedContinuation<Void, Error>?
+        var activated = false
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero), launchApplication: { _ in
+            .init(open: {
+                try await withCheckedThrowingContinuation { completion = $0 }
+                return { activated = true; return true }
+            })
+        })
+        interaction.presentBar()
+        interaction.updateQuery("App")
+        await feed.send([app("App", "/Applications/App.app")])
+        try await eventually { interaction.selectedResult != nil }
+        let opening = interaction.requestSelectedOpen()
+        try await eventually { completion != nil }
+        let fresh = interaction.presentBar()
+        defer { interaction.dismiss(fresh, reason: .outsideClick) }
+        interaction.updateQuery("new")
+        completion?.resume()
+        await opening?.value
+        #expect(!activated)
+        #expect(interaction.currentInvocation == fresh)
+        #expect(interaction.query == "new")
+    }
+
+    @Test func aFailedNativeOpenNeverReachesANewerBar() async throws {
+        _ = NSApplication.shared
+        let feed = CatalogFeed()
+        var completion: CheckedContinuation<Void, Error>?
+        let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero), launchApplication: { _ in
+            .init(open: {
+                try await withCheckedThrowingContinuation { completion = $0 }
+                return { true }
+            })
+        })
+        interaction.presentBar()
+        interaction.updateQuery("App")
+        await feed.send([app("App", "/Applications/App.app")])
+        try await eventually { interaction.selectedResult != nil }
+        let opening = interaction.requestSelectedOpen()
+        try await eventually { completion != nil }
+        let fresh = interaction.presentBar()
+        defer { interaction.dismiss(fresh, reason: .outsideClick) }
+        completion?.resume(throwing: CocoaError(.fileReadUnknown))
+        await opening?.value
+        #expect(interaction.currentInvocation == fresh)
+        #expect(interaction.openFailure == nil)
+    }
+
     @Test func failureRetainsQueryAndOldAcknowledgmentCannotDismissNewInvocation() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
