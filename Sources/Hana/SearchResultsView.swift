@@ -1,15 +1,36 @@
 import SwiftUI
 
+/// A row in Search's list: an actual match, or a capture suggestion. Suggestions
+/// always follow every match.
+enum SearchRow: Identifiable, Equatable {
+    case result(SearchResult)
+    case suggestion(CaptureSession.Suggestion)
+
+    enum ID: Hashable {
+        case result(SearchResult.ID)
+        case suggestion(CaptureSession.Suggestion)
+    }
+
+    var id: ID {
+        switch self {
+        case .result(let result): .result(result.id)
+        case .suggestion(let suggestion): .suggestion(suggestion)
+        }
+    }
+}
+
 struct SearchResultsView: View {
-    var results: [SearchResult] = []
-    var selectedID: SearchResult.ID?
+    var rows: [SearchRow] = []
+    /// The Search text a suggestion would capture, on one line.
+    var query = ""
+    var selectedID: SearchRow.ID?
     var status: String?
     /// Values only: the view owns no cache and does no filesystem work.
     var icons: [SearchResult.ID: ResultIcon] = [:]
     var scrollResetID: UUID?
     var followsFirstResult = true
     var scrollOffsetChanged: (CGFloat) -> Void = { _ in }
-    var select: (SearchResult.ID) -> Void = { _ in }
+    var select: (SearchRow.ID) -> Void = { _ in }
     var rowAppeared: (SearchResult.ID) -> Void = { _ in }
 
     @State private var scroll = ScrollMetrics()
@@ -26,17 +47,17 @@ struct SearchResultsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if !results.isEmpty {
+            if !rows.isEmpty {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 0) {
-                            ForEach(results) { result in
-                                Button { select(result.id) } label: { row(result) }
+                            ForEach(rows) { row in
+                                Button { select(row.id) } label: { label(row) }
                                     .buttonStyle(.plain)
-                                    .accessibilityLabel("\(result.name), \(result.typeLabel), \(result.subtitle)")
-                                    .accessibilityAddTraits(selectedID == result.id ? .isSelected : [])
-                                    .id(result.id)
-                                    .onAppear { rowAppeared(result.id) }
+                                    .accessibilityLabel(accessibilityLabel(row))
+                                    .accessibilityAddTraits(selectedID == row.id ? .isSelected : [])
+                                    .id(row.id)
+                                    .onAppear { if case .result(let result) = row { rowAppeared(result.id) } }
                             }
                         }
                         .padding(.trailing, BarStyle.cardPadding)
@@ -49,7 +70,7 @@ struct SearchResultsView: View {
                         scrollOffsetChanged(metrics.offset)
                     }
                     .overlay(alignment: .topTrailing) { scrollThumb }
-                    .frame(height: CGFloat(min(results.count, Self.maxVisibleRows)) * Self.rowHeight)
+                    .frame(height: CGFloat(min(rows.count, Self.maxVisibleRows)) * Self.rowHeight)
                     .onChange(of: selectedID) { _, id in
                         if let id { proxy.scrollTo(id, anchor: followsFirstResult ? .top : nil) }
                     }
@@ -99,24 +120,48 @@ struct SearchResultsView: View {
     private static let rowInset = BarStyle.resultIconInset
     private static let nameLeading = BarStyle.textInset - BarStyle.cardPadding - rowInset - BarStyle.resultIconSize
 
-    private func row(_ result: SearchResult) -> some View {
+    private func accessibilityLabel(_ row: SearchRow) -> String {
+        switch row {
+        case .result(let result): "\(result.name), \(result.typeLabel), \(result.subtitle)"
+        case .suggestion(let suggestion): "\(suggestion.title), \(query)"
+        }
+    }
+
+    @ViewBuilder private func label(_ row: SearchRow) -> some View {
+        switch row {
+        case .result(let result):
+            self.row(id: row.id, name: result.name, subtitle: result.subtitle, typeLabel: result.typeLabel) { icon(result) }
+        case .suggestion(let suggestion):
+            // The capture keeps every character; only this preview is one line.
+            self.row(id: row.id, name: suggestion.title, subtitle: query, typeLabel: nil) {
+                Image(systemName: suggestion.symbolName)
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color(nsColor: BarStyle.iconColor))
+            }
+        }
+    }
+
+    private func row(id: SearchRow.ID, name: String, subtitle: String, typeLabel: String?,
+                     @ViewBuilder icon: () -> some View) -> some View {
         HStack(spacing: Self.nameLeading) {
-            icon(result)
+            icon()
                 .frame(width: BarStyle.resultIconSize, height: BarStyle.resultIconSize)
                 // Arrival swaps the image in place, never animated.
                 .transaction { $0.animation = nil }
             VStack(alignment: .leading, spacing: 1) {
-                Text(result.name).font(.system(size: 16)).tracking(-0.16).lineLimit(1)
-                Text(result.subtitle).font(.system(size: 12))
+                Text(name).font(.system(size: 16)).tracking(-0.16).lineLimit(1)
+                Text(subtitle).font(.system(size: 12))
                     .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
                     .lineLimit(1).truncationMode(.middle)
             }
             Spacer(minLength: 8)
-            Text(result.typeLabel).font(.system(size: 12))
-                .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
+            if let typeLabel {
+                Text(typeLabel).font(.system(size: 12))
+                    .foregroundStyle(Color(nsColor: BarStyle.secondaryColor))
+            }
         }
         .padding(.horizontal, Self.rowInset).frame(height: Self.rowHeight)
-        .background(selectedID == result.id ? Color.black.opacity(0.06) : Color.clear)
+        .background(selectedID == id ? Color.black.opacity(0.06) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: BarStyle.cardRadius - BarStyle.cardPadding))
         .contentShape(Rectangle())
     }
@@ -146,6 +191,23 @@ private extension SearchResult {
         case .application: "app.dashed"
         case .file: "doc"
         case .folder: "folder"
+        }
+    }
+}
+
+private extension CaptureSession.Suggestion {
+    var title: String {
+        switch self {
+        case .note: "New note"
+        case .task: "New task"
+        }
+    }
+
+    /// Echo the Note and Task mode icons: lines on a rounded square, a checked circle.
+    var symbolName: String {
+        switch self {
+        case .note: "note.text"
+        case .task: "checkmark.circle"
         }
     }
 }

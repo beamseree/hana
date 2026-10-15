@@ -146,3 +146,11 @@ restored and launched with diagnostics. Its installed executable SHA-256 is
 matching the build installed before these checks. Local detailed observations,
 temporary helper sources and build identities are retained under the ignored
 `build/issue-67-ui-validation/` directory.
+
+## Merge resolution — 2026-10-15
+
+Merged `main` at `ae8bda4` (#68 capture suggestions). Both prefixes and suggestions
+use `enterCapture`, with #67's payload-change handling retained after validation.
+The combined Capture Session, suggestion and Store tests pass: **68 tests in
+7 suites**. The test build also compiled the AppKit suites; native UI tests were
+not rerun for this merge resolution.

@@ -60,7 +60,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private var fileStatus: SourceStatus = .ready
     private var searchTask: Task<Void, Never>?
     private var request: Search.Request?
-    private var selectedID: SearchResult.ID?
+    /// A match or a capture suggestion; nil only while there are no rows.
+    private(set) var selectedRow: SearchRow.ID?
     private var userMovedSelection = false
     private var resultSurface: NSHostingView<SearchResultsView>?
     private var resizeTarget: NSRect?
@@ -73,8 +74,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// The request whose batch supplied the displayed snapshot, which can
     /// outlive that request while the next query loads its replacement.
     private var displayedResultsGeneration: UUID?
-    /// Enter on an outdated row waits for the current request's batches.
-    private var heldEnter = false
+    /// What Enter was pressed on while it waits for the current request's batches.
+    private enum HeldEnter {
+        /// An outdated row.
+        case result
+        /// An unnavigated suggestion while a source could still deliver a match.
+        case suggestion
+    }
+    private var heldEnter: HeldEnter?
     private(set) var results: [SearchResult] = []
     private(set) var openFailure: String?
     var query: String { editor.string }
@@ -94,7 +101,16 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     var placeholderText: String? { editor.visiblePlaceholder }
     var captureMessage: String? { captureNotice.isHidden ? nil : captureNotice.stringValue }
     var resultsVisible: Bool { resultSurface?.isHidden == false }
-    var selectedResult: SearchResult? { results.first { $0.id == selectedID } }
+    var selectedResult: SearchResult? {
+        guard case .result(let id) = selectedRow else { return nil }
+        return results.first { $0.id == id }
+    }
+    /// Search's list: every match, then New note and New task while it has a query.
+    var rows: [SearchRow] {
+        guard mode == .search else { return [] }
+        return results.map(SearchRow.result) + (hasQuery ? CaptureSession.Suggestion.allCases.map(SearchRow.suggestion) : [])
+    }
+    private var hasQuery: Bool { !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     private let diagnostics: Diagnostics
     private var origin: NSRunningApplication?
     private weak var originWindow: NSWindow?
@@ -823,7 +839,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // A new query owns a new open intent; an old acknowledgment cannot
         // block Enter or report an error into this context.
         pendingLaunch = nil
-        heldEnter = false
+        heldEnter = nil
         let request = Search.Request(text: CaptureSession.searchQuery(for: text))
         self.request = request
         userMovedSelection = false
@@ -836,7 +852,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             results = stream.initial.results
             displayedResultsGeneration = request.generation
         }
-        selectedID = results.first?.id
+        selectedRow = rows.first?.id
         icons = icons.filter { id, _ in results.contains { $0.id == id } }
         sourceStatus = stream.initial.appStatus
         fileStatus = stream.initial.fileStatus
@@ -859,13 +875,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                     self.results = batch.results
                     self.displayedResultsGeneration = batch.generation
                     self.icons = self.icons.filter { id, _ in batch.results.contains { $0.id == id } }
-                    if !self.userMovedSelection || !batch.results.contains(where: { $0.id == self.selectedID }) {
-                        self.selectedID = batch.results.first?.id
+                    if !self.userMovedSelection || !self.rows.contains(where: { $0.id == self.selectedRow }) {
+                        self.selectedRow = self.rows.first?.id
                         self.userMovedSelection = false
                     }
                 }
                 self.renderResults()
-                if self.heldEnter { self.releaseHeldEnter() }
+                if self.heldEnter != nil { self.releaseHeldEnter() }
                 self.record("search.batch", extra: ["resultCount": batch.results.count, "appStatus": batch.appStatus.rawValue, "fileStatus": batch.fileStatus.rawValue,
                     "applicationCount": batch.results.filter { $0.kind == .application }.count,
                     "fileCount": batch.results.filter { $0.kind != .application }.count,
@@ -875,43 +891,78 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     func moveSelection(by offset: Int) {
-        guard !results.isEmpty else { return }
-        let index = selectedID.flatMap { id in results.firstIndex { $0.id == id } }
-        let next = index.map { min(results.count - 1, max(0, $0 + offset)) } ?? (offset < 0 ? results.count - 1 : 0)
-        selectedID = results[next].id
+        let rows = rows
+        guard !rows.isEmpty else { return }
+        let index = selectedRow.flatMap { id in rows.firstIndex { $0.id == id } }
+        let next = index.map { min(rows.count - 1, max(0, $0 + offset)) } ?? (offset < 0 ? rows.count - 1 : 0)
+        selectedRow = rows[next].id
         userMovedSelection = true
         renderResults()
         record("search.selection", extra: ["index": next])
     }
 
-    /// Returns nil when nothing was opened now, including when Enter is held
-    /// because the selected row does not match the current request.
+    /// Enter in Search: opens the selected result or chooses the selected
+    /// suggestion; unmatched text is never saved from Search. Returns nil when
+    /// nothing was opened now, including when Enter is held because the
+    /// selected row does not match the current request.
     @discardableResult
     func requestSelectedOpen() -> Task<Void, Never>? {
-        guard let invocation = currentInvocation, let destination = selectedResult, pendingLaunch == nil else { return nil }
-        // Enter again after navigating to a matching row opens it at once.
-        guard currentMatchIDs.contains(destination.id) else {
-            heldEnter = true
-            openFailure = nil
-            renderResults()
-            record("launch.held", extra: ["destinationKind": destination.typeLabel])
+        guard currentInvocation != nil, pendingLaunch == nil else { return nil }
+        if case .suggestion(let suggestion) = selectedRow {
+            // Unnavigated, it is the top row only for now: a strong late match must not be skipped.
+            if !userMovedSelection, sourceStatus == .loading || fileStatus == .loading {
+                hold(.suggestion, destinationKind: "Suggestion")
+            } else {
+                heldEnter = nil
+                choose(suggestion)
+            }
             return nil
         }
-        heldEnter = false
+        guard let invocation = currentInvocation, let destination = selectedResult else { return nil }
+        // Enter again after navigating to a matching row opens it at once.
+        guard currentMatchIDs.contains(destination.id) else {
+            hold(.result, destinationKind: destination.typeLabel)
+            return nil
+        }
+        heldEnter = nil
         return openResult(destination, from: invocation)
     }
 
+    private func hold(_ held: HeldEnter, destinationKind: String) {
+        heldEnter = held
+        openFailure = nil
+        renderResults()
+        record("launch.held", extra: ["destinationKind": destinationKind])
+    }
+
+    /// Switches to the suggestion's mode keeping the text, or explains why
+    /// multiline text can't become a task. Never saves.
+    private func choose(_ suggestion: CaptureSession.Suggestion) {
+        record("search.suggestion", extra: ["mode": suggestion.mode.rawValue])
+        let effects = capture.handle(.chooseSuggestion(suggestion))
+        if effects.isEmpty, capture.state.notice == .multilineTask {
+            record("capture.refused-multiline", extra: ["mode": mode.rawValue])
+            renderResults()
+        }
+        effects.forEach(perform)
+    }
+
     /// Opens the row selected under the usual rules once it matches the
-    /// current request; both sources finishing without one cancels the hold.
+    /// current request. Once both sources finish without one, Enter on a
+    /// suggestion chooses the suggestion then selected; any other hold ends.
     private func releaseHeldEnter() {
-        guard let invocation = currentInvocation else { return }
+        guard let invocation = currentInvocation, let held = heldEnter else { return }
         if let destination = selectedResult, currentMatchIDs.contains(destination.id) {
-            heldEnter = false
+            heldEnter = nil
             openResult(destination, from: invocation)
         } else if sourceStatus != .loading && fileStatus != .loading {
-            heldEnter = false
-            renderResults()
-            record("launch.held-cancelled")
+            heldEnter = nil
+            if held == .suggestion, case .suggestion(let suggestion) = selectedRow {
+                choose(suggestion)
+            } else {
+                renderResults()
+                record("launch.held-cancelled")
+            }
         }
     }
 
@@ -1016,11 +1067,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // Invalidate an already-issued native open; it cannot be recalled, but
         // its acknowledgment must never close a subsequent invocation.
         pendingLaunch = nil
-        heldEnter = false
+        heldEnter = nil
         results = []
         displayedResultsGeneration = nil
         icons = [:]
-        selectedID = nil
+        selectedRow = nil
         openFailure = nil
         sourceStatus = .ready
         fileStatus = .ready
@@ -1057,14 +1108,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // switch to Task, as its status; returning leaves the others behind.
         captureNotice.isHidden = true
         let notice = capture.state.notice.map { Self.noticeMessage($0, mode: mode) }
-        let hasQuery = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let loading = hasQuery && (sourceStatus == .loading || fileStatus == .loading)
         loadingIndicator.isHidden = !loading
         if loading { loadingIndicator.startAnimation(nil) } else { loadingIndicator.stopAnimation(nil) }
         let status: String?
         if !hasQuery { status = notice }
         else if let openFailure { status = openFailure }
-        else if pendingLaunch != nil || heldEnter { status = "Opening selected destination…" }
+        else if pendingLaunch != nil || heldEnter != nil { status = "Opening selected destination…" }
         else if let notice { status = notice }
         else if sourceStatus == .failed || fileStatus == .failed {
             status = !results.isEmpty && displayedResultsGeneration == request?.generation
@@ -1076,7 +1126,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         else { status = results.isEmpty ? "No matches returned. Indexing and access can limit results." : nil }
         // Results extend the card downward below the input row, so the input
         // position never moves while expanding.
-        let needed = hasQuery || notice != nil ? SearchResultsView.height(rowCount: results.count, hasStatus: status != nil) : 0
+        let needed = hasQuery || notice != nil ? SearchResultsView.height(rowCount: rows.count, hasStatus: status != nil) : 0
         let finished = sourceStatus != .loading && fileStatus != .loading
         retainedContentHeight = !hasQuery || finished ? needed : max(retainedContentHeight, needed)
         let content = retainedContentHeight
@@ -1099,12 +1149,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                                          height: height)
             resultSurface.isHidden = content == 0
         }
-        resultSurface?.rootView = SearchResultsView(results: results, selectedID: selectedID, status: status, icons: icons,
+        resultSurface?.rootView = SearchResultsView(rows: rows, query: CaptureSession.searchQuery(for: query),
+            selectedID: selectedRow, status: status, icons: icons,
             scrollResetID: request?.generation, followsFirstResult: !userMovedSelection,
             scrollOffsetChanged: { [weak self] in self?.resultsScrollOffset = $0 },
             select: { [weak self] id in
-                guard let self, self.results.contains(where: { $0.id == id }) else { return }
-                self.selectedID = id
+                guard let self, self.rows.contains(where: { $0.id == id }) else { return }
+                self.selectedRow = id
                 self.userMovedSelection = true
                 self.renderResults()
                 self.panel.makeFirstResponder(self.editor)

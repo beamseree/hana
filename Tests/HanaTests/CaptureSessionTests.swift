@@ -477,3 +477,51 @@ struct CaptureTaskTests {
         #expect(session.state == .init(mode: .search, text: "[milk", selection: NSRange(location: 1, length: 0), prefixesArmed: false))
     }
 }
+
+/// Capture suggestions: chosen from Search's list, never automatic.
+struct CaptureSuggestionTests {
+    private let start = NSRange(location: 0, length: 0)
+
+    @Test(arguments: [(CaptureSession.Suggestion.note, CaptureSession.Mode.note), (.task, .task)])
+    func choosingASuggestionEntersItsModeKeepingTheExactTextAndSelectionWithoutSaving(
+        suggestion: CaptureSession.Suggestion, mode: CaptureSession.Mode
+    ) {
+        var session = CaptureSession()
+        let selection = NSRange(location: 2, length: 3)
+        _ = session.handle(.edited(text: "  call mum บ้าน ", selection: selection))
+        #expect(session.handle(.chooseSuggestion(suggestion)) == [.enterMode(mode)])
+        #expect(session.state == .init(mode: mode, text: "  call mum บ้าน ", selection: selection))
+    }
+
+    @Test(arguments: ["one\ntwo", "one\r\ntwo", "one\u{2029}two", "trailing\n"])
+    func choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text: String) {
+        var session = CaptureSession()
+        _ = session.handle(.edited(text: text, selection: start))
+        #expect(session.handle(.chooseSuggestion(.task)).isEmpty)
+        #expect(session.state == .init(mode: .search, text: text, selection: start, notice: .multilineTask))
+        // New note keeps every line and leaves the explanation behind.
+        #expect(session.handle(.chooseSuggestion(.note)) == [.enterMode(.note)])
+        #expect(session.state == .init(mode: .note, text: text, selection: start))
+    }
+
+    @Test(arguments: [true, false])
+    func choosingASuggestionLeavesPrefixArmingAsItWas(armed: Bool) {
+        var session = CaptureSession()
+        _ = session.handle(.edited(text: "milk", selection: start))
+        if !armed {
+            _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+            _ = session.handle(.deleteBackward)
+        }
+        #expect(session.state.prefixesArmed == armed)
+        _ = session.handle(.chooseSuggestion(.note))
+        #expect(session.state.prefixesArmed == armed)
+    }
+
+    @Test func aSuggestionOutsideSearchChangesNothing() {
+        var session = CaptureSession()
+        _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+        _ = session.handle(.edited(text: "note", selection: start))
+        #expect(session.handle(.chooseSuggestion(.task)).isEmpty)
+        #expect(session.state == .init(mode: .note, text: "note", selection: start))
+    }
+}
