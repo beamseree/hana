@@ -1,0 +1,18 @@
+{
+  "checkedLocalDate": "2026-10-15",
+  "timeZone": "Asia/Bangkok",
+  "method": "GET",
+  "url": "https://api.typesafe.ai/v1/models",
+  "sentAuthorizationHeader": false,
+  "sentRequestBody": false,
+  "sentSearchText": false,
+  "httpStatus": 403,
+  "response": {
+    "detail": {
+      "error_type": "authentication_error",
+      "message": "Must supply an API key! Check your request and try again."
+    }
+  },
+  "provenance": "Manual integration-agent check; independently inspected retained response and status. Not an automated test.",
+  "limits": "Does not establish quota usage or connection warming. Cookies and response headers omitted."
+}
