@@ -1,9 +1,10 @@
 import AppKit
 import Observation
 import SwiftUI
+import UniformTypeIdentifiers
 
 enum TaskWorkspaceAction: Int, CaseIterable {
-    case complete, moveToToday, moveToInbox, rename, archive
+    case complete, moveToToday, moveToInbox, rename, archive, moveUp, moveDown
 
     var title: String {
         switch self {
@@ -12,8 +13,35 @@ enum TaskWorkspaceAction: Int, CaseIterable {
         case .moveToInbox: "Move to Inbox"
         case .rename: "Rename Task"
         case .archive: "Archive Task"
+        case .moveUp: "Move Up"
+        case .moveDown: "Move Down"
         }
     }
+}
+
+/// A user intent carries the order the user saw, rather than recomputing a
+/// position after an asynchronous Store opening or a concurrent capture.
+struct TaskReorderRequest: Sendable {
+    let id: UUID
+    let placement: TaskPlacement
+    let predecessor: UUID?
+    let expectedOrder: [UUID]
+}
+
+/// The drag freezes the visible order; only IDs and placement cross the native
+/// drag pasteboard. An Inbox payload cannot be used as a Today move command.
+struct TaskOrderDrag: Codable, Sendable, Transferable {
+    let id: UUID
+    let placement: String
+    let expectedOrder: [UUID]
+
+    static var transferRepresentation: some TransferRepresentation {
+        CodableRepresentation(contentType: .hanaTaskOrder)
+    }
+}
+
+private extension UTType {
+    static let hanaTaskOrder = UTType(exportedAs: "com.beamseree.hana.task-order", conformingTo: .data)
 }
 
 /// Organizer values and intents shared by Mac Interaction and the native task list.
@@ -63,12 +91,14 @@ final class TaskWorkspacePresentation {
         switch section { case .inbox: inbox; case .today: today; default: [] }
     }
 
-    func canPerform(_ action: TaskWorkspaceAction, in section: MainSection) -> Bool {
+    func canPerform(_ action: TaskWorkspaceAction, in section: MainSection, taskID: UUID? = nil) -> Bool {
         guard availability == .available, !isPerforming, editing == nil,
-              let row = rows(in: section).first(where: { $0.id == selectedID }) else { return false }
+              let row = rows(in: section).first(where: { $0.id == (taskID ?? selectedID) }) else { return false }
         switch action {
         case .moveToToday: return row.placement == .inbox
         case .moveToInbox: return row.placement == .today
+        case .moveUp: return rows(in: section).first?.id != row.id
+        case .moveDown: return rows(in: section).last?.id != row.id
         default: return true
         }
     }
@@ -78,6 +108,10 @@ final class TaskWorkspacePresentation {
         guard canPerform(action, in: section),
               let row = rows(in: section).first(where: { $0.id == selectedID }),
               let collection else { return false }
+        if action == .moveUp || action == .moveDown {
+            guard let request = requestReorder(action, in: section) else { return false }
+            return await reorder(request)
+        }
         if action == .rename {
             editing = Editing(id: row.id, expectedRevision: row.revision, text: row.title)
             notice = nil
@@ -92,7 +126,7 @@ final class TaskWorkspacePresentation {
             case .moveToToday: .moveTask(row.id, to: .today, expectedRevision: row.revision)
             case .moveToInbox: .moveTask(row.id, to: .inbox, expectedRevision: row.revision)
             case .archive: .archiveTask(row.id, expectedRevision: row.revision)
-            case .rename: preconditionFailure("Rename starts an editor")
+            case .rename, .moveUp, .moveDown: preconditionFailure("Handled before status commands")
             }
             _ = try await store.perform(command, in: store.generation)
             notice = nil
@@ -101,6 +135,68 @@ final class TaskWorkspacePresentation {
             notice = "The task change couldn’t be confirmed. Check the current list before trying again."
             return false
         }
+    }
+
+    func requestReorder(_ action: TaskWorkspaceAction, in section: MainSection) -> TaskReorderRequest? {
+        guard (action == .moveUp || action == .moveDown), canPerform(action, in: section),
+              let id = selectedID, let placement = section.taskPlacement else { return nil }
+        let order = rows(in: section).map(\.id)
+        guard let index = order.firstIndex(of: id) else { return nil }
+        let predecessor = action == .moveUp ? (index > 1 ? order[index - 2] : nil) : order[index + 1]
+        return TaskReorderRequest(id: id, placement: placement, predecessor: predecessor, expectedOrder: order)
+    }
+
+    @discardableResult
+    func reorder(_ request: TaskReorderRequest) async -> Bool {
+        guard availability == .available, editing == nil, !isPerforming, let collection else { return false }
+        isPerforming = true
+        defer { isPerforming = false }
+        do {
+            let store = try await collection.value
+            _ = try await store.perform(.reorderTask(request.id, in: request.placement, after: request.predecessor,
+                                                    expectedOrder: request.expectedOrder), in: store.generation)
+            notice = nil
+            return true
+        } catch {
+            if error as? CollectionStoreError == .staleList,
+               let store = try? await collection.value,
+               let current = try? await store.read(.tasks(in: request.placement), in: store.generation) {
+                if request.placement == .inbox { inbox = current } else { today = current }
+                notice = "The task order changed. The list is refreshed; nothing was moved. Review it before trying again."
+            } else {
+                notice = "The task order couldn’t be confirmed. Check the current list before trying again."
+            }
+            return false
+        }
+    }
+
+    func beginDrag(_ id: UUID, in section: MainSection) -> TaskOrderDrag? {
+        guard availability == .available, !isPerforming, editing == nil,
+              let placement = section.taskPlacement,
+              rows(in: section).contains(where: { $0.id == id }) else { return nil }
+        return TaskOrderDrag(id: id, placement: placement.rawValue, expectedOrder: rows(in: section).map(\.id))
+    }
+
+    func requestDrop(_ drag: TaskOrderDrag, before target: UUID?, in section: MainSection) -> TaskReorderRequest? {
+        guard let placement = section.taskPlacement, placement.rawValue == drag.placement,
+              let sourceIndex = drag.expectedOrder.firstIndex(of: drag.id) else { return nil }
+        let remaining = drag.expectedOrder.filter { $0 != drag.id }
+        let predecessor: UUID?
+        if target == drag.id {
+            predecessor = sourceIndex > 0 ? drag.expectedOrder[sourceIndex - 1] : nil
+        } else if let target {
+            guard let targetIndex = remaining.firstIndex(of: target) else { return nil }
+            predecessor = targetIndex > 0 ? remaining[targetIndex - 1] : nil
+        } else {
+            predecessor = remaining.last
+        }
+        return TaskReorderRequest(id: drag.id, placement: placement, predecessor: predecessor, expectedOrder: drag.expectedOrder)
+    }
+
+    @discardableResult
+    func drop(_ drag: TaskOrderDrag, before target: UUID?, in section: MainSection) async -> Bool {
+        guard let request = requestDrop(drag, before: target, in: section) else { return false }
+        return await reorder(request)
     }
 
     func editTitle(_ text: String) {
@@ -208,20 +304,28 @@ struct TaskWorkspaceView: View {
                                 }
                             }
                             .padding(.vertical, 3)
+                            .modifier(TaskOrderDragModifier(drag: tasks.beginDrag(row.id, in: section)))
+                            .modifier(TaskOrderDropModifier(tasks: tasks, section: section, before: row.id))
                             .tag(row.id)
                             .listRowBackground(Color(nsColor: HanaColor.Surface.group))
                             .contextMenu {
                                 ForEach(TaskWorkspaceAction.allCases, id: \.rawValue) { action in
                                     Button(action.title) {
                                         tasks.select(row.id)
-                                        Task { await tasks.perform(action, in: section) }
+                                        if let request = tasks.requestReorder(action, in: section) {
+                                            Task { await tasks.reorder(request) }
+                                        } else {
+                                            Task { await tasks.perform(action, in: section) }
+                                        }
                                     }
-                                    .disabled(tasks.editing != nil || tasks.isPerforming ||
-                                              (action == .moveToInbox && row.placement == .inbox) ||
-                                              (action == .moveToToday && row.placement == .today))
+                                    .disabled(!tasks.canPerform(action, in: section, taskID: row.id))
                                 }
                             }
                         }
+                        Color.clear.frame(height: 12)
+                            .contentShape(Rectangle())
+                            .modifier(TaskOrderDropModifier(tasks: tasks, section: section, before: nil))
+                            .accessibilityLabel("Move task to end")
                     }
                     .scrollContentBackground(.hidden)
                     .accessibilityLabel(section.rawValue)
@@ -354,9 +458,15 @@ final class TaskWorkspaceMenuTarget: NSObject, NSMenuItemValidation {
             case .moveToInbox: "i"
             case .rename: "r"
             case .archive: "a"
+            case .moveUp: "\u{F700}"
+            case .moveDown: "\u{F701}"
             }
             let item = NSMenuItem(title: action.title, action: #selector(run(_:)), keyEquivalent: key)
-            item.keyEquivalentModifierMask = action == .rename ? [.command] : [.command, .shift]
+            item.keyEquivalentModifierMask = switch action {
+            case .rename: [.command]
+            case .moveUp, .moveDown: [.command, .option]
+            default: [.command, .shift]
+            }
             item.tag = action.rawValue
             item.target = self
             menu.addItem(item)
@@ -373,6 +483,43 @@ final class TaskWorkspaceMenuTarget: NSObject, NSMenuItemValidation {
     @objc private func run(_ item: NSMenuItem) {
         guard let interaction, let action = TaskWorkspaceAction(rawValue: item.tag),
               interaction.canPerformTaskAction(action) else { return }
-        Task { await interaction.performTaskAction(action) }
+        if let request = interaction.requestTaskReorder(action) {
+            Task { await interaction.performTaskReorder(request) }
+        } else {
+            Task { await interaction.performTaskAction(action) }
+        }
+    }
+}
+
+extension MainSection {
+    var taskPlacement: TaskPlacement? {
+        switch self { case .inbox: .inbox; case .today: .today; default: nil }
+    }
+}
+
+private struct TaskOrderDragModifier: ViewModifier {
+    let drag: TaskOrderDrag?
+    @ViewBuilder func body(content: Content) -> some View {
+        if let drag { content.draggable(drag) } else { content }
+    }
+}
+
+private struct TaskOrderDropModifier: ViewModifier {
+    let tasks: TaskWorkspacePresentation
+    let section: MainSection
+    let before: UUID?
+    @State private var isTargeted = false
+
+    func body(content: Content) -> some View {
+        content
+            .overlay(alignment: .top) {
+                if isTargeted { Rectangle().fill(Color(nsColor: HanaColor.Focus.ring)).frame(height: 1) }
+            }
+            .dropDestination(for: TaskOrderDrag.self) { drags, _ in
+                guard drags.count == 1, let drag = drags.first,
+                      let request = tasks.requestDrop(drag, before: before, in: section) else { return false }
+                Task { await tasks.reorder(request) }
+                return true
+            } isTargeted: { isTargeted = $0 }
     }
 }
