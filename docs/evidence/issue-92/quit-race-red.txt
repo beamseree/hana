@@ -1,0 +1,24 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests NoteSaveSafetyNativeTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.41s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NoteSaveSafetyNativeTests started.
+◇ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() started.
+✘ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() recorded an issue at NoteSaveSafetyNativeTests.swift:160:9: Expectation failed: editors.allSatisfy { !$0.isEditable }
+✘ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() recorded an issue at NoteSaveSafetyNativeTests.swift:163:9: Expectation failed: (flushed.text → "LATE direct event") == (body → "First edited")
+✘ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() recorded an issue at NoteSaveSafetyNativeTests.swift:164:9: Expectation failed: (editors.map(\.string) → ["First edited LATE", "Second edited LATE"]) == ["First edited", "Second edited"]
+± inserted ["First edited LATE", "Second edited LATE"], removed ["First edited", "Second edited"]
+✘ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() recorded an issue at NoteSaveSafetyNativeTests.swift:165:9: Expectation failed: !((interaction → <Hana.MacInteraction: 0x9dce89800>).open(.note(unopened.id) → .note(F5F7A881-C066-45FC-8400-7A477710F3D3)) → true)
+✘ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() recorded an issue at NoteSaveSafetyNativeTests.swift:167:9: Expectation failed: (interaction.currentInvocation → Invocation(id: FEEFE63B-1579-4471-9FD9-C6FAAAC5A0EC)) == nil
+✘ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() recorded an issue at NoteSaveSafetyNativeTests.swift:170:9: Expectation failed: !((interaction → <Hana.MacInteraction: 0x9dce89800>).open(.note(unopened.id) → .note(F5F7A881-C066-45FC-8400-7A477710F3D3)) → true)
+✘ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() recorded an issue at NoteSaveSafetyNativeTests.swift:172:9: Expectation failed: Set(try await reopened.read(.notes, in: reopened.generation).map(\.body)) == ["First edited", "Second edited", "Unopened"]
+✘ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() failed after 0.468 seconds with 7 issues.
+✘ Suite NoteSaveSafetyNativeTests failed after 0.468 seconds with 7 issues.
+✘ Test run with 1 test in 1 suite failed after 0.469 seconds with 7 issues.

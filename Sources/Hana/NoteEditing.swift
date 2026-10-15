@@ -36,7 +36,11 @@ final class NoteEditing {
     }
 
     func flush() async throws {
-        for session in sessions.values where !session.isClosed { try await session.flush() }
+        var firstFailure: (any Error)?
+        for session in sessions.values where !session.isClosed {
+            do { try await session.flush() } catch { if firstFailure == nil { firstFailure = error } }
+        }
+        if let firstFailure { throw firstFailure }
     }
 }
 
@@ -47,6 +51,8 @@ final class NoteEditingSession {
         case failed(CollectionStoreError)
     }
 
+    enum FlushError: Error, Equatable { case compositionActive }
+
     static let blankExplanation = "Empty notes aren't saved. Archive the note to remove it."
     private(set) var textRevision: UInt64 = 0
     private(set) var text: String
@@ -54,13 +60,24 @@ final class NoteEditingSession {
     private(set) var state: SaveState
     private(set) var isComposing = false
     private(set) var isClosed = false
-    var isEditable: Bool { !isClosed && state != .invalidated && committed.archivedAt == nil }
+    private(set) var isEditingSuspended = false
+    var isEditable: Bool { !isEditingSuspended && !isClosed && state != .invalidated && committed.archivedAt == nil }
+    var hasUnsavedChanges: Bool { !sameBytes(text, committed.body) && Note.isNonblank(text) }
+    var canRetry: Bool { if case .failed = state { true } else { false } }
+    var status: String {
+        switch state {
+        case .saved: "Saved"
+        case .dirty: "Unsaved changes"
+        case .saving: "Saving…"
+        default: explanation ?? "Unsaved changes"
+        }
+    }
     var explanation: String? {
         switch state {
         case .blank: Self.blankExplanation
         case .readOnly: "This note is archived. Restore it to edit."
-        case .invalidated: "The collection is no longer available. Reopen the note to continue."
-        case .failed(let reason): "The note couldn’t be saved (\(reason)). Your text is still here."
+        case .invalidated: "The collection is no longer available. Copy your text before closing and reopen Hana to continue."
+        case .failed(let reason): Self.failureMessage(reason)
         default: nil
         }
     }
@@ -97,6 +114,8 @@ final class NoteEditingSession {
         }
     }
 
+    func suspendEditing(_ suspended: Bool) { isEditingSuspended = suspended }
+
     func edit(_ text: String, isComposing: Bool = false) {
         guard isEditable else { return }
         if !sameBytes(self.text, text) { textRevision += 1 }
@@ -109,6 +128,7 @@ final class NoteEditingSession {
             return
         }
         dirtySince = dirtySince ?? now()
+        if case .failed = state, Note.isNonblank(text) { return }
         state = Note.isNonblank(text) ? (saving == nil ? .dirty : .saving) : .blank
         guard !isComposing, Note.isNonblank(text) else { return }
         let deadline = min(now() + .milliseconds(300), (dirtySince ?? now()) + .seconds(1))
@@ -122,35 +142,71 @@ final class NoteEditingSession {
     func flush() async throws {
         timer?.cancel()
         timer = nil
-        if let saving { try await saving.value; return }
-        guard !isClosed, state != .invalidated, !isComposing, committed.archivedAt == nil else { return }
+        guard !isClosed else { return }
+        if state == .invalidated {
+            if hasUnsavedChanges { throw CollectionStoreError.closed }
+            return
+        }
+        guard !isComposing else { throw FlushError.compositionActive }
+        if let saving {
+            try await saving.value
+            try await flush()
+            return
+        }
+        if committed.archivedAt != nil {
+            if hasUnsavedChanges { throw CollectionStoreError.archivedNote }
+            return
+        }
         guard Note.isNonblank(text) else { state = .blank; return }
         guard !sameBytes(text, committed.body) else { state = .saved; dirtySince = nil; return }
         let operation = Task { [self] in
+            defer { saving = nil; inFlightBody = nil }
             // One operation owns the entire drain. Edits arriving during a commit
             // stay dirty and use that commit's revision for the next submission.
-            while !sameBytes(text, committed.body), Note.isNonblank(text), !isComposing {
+            while !isClosed, state != .invalidated, !sameBytes(text, committed.body), Note.isNonblank(text), !isComposing {
                 let body = text
                 let revision = committed.revision
                 inFlightBody = body
                 state = .saving
                 do {
                     let note = try await store.perform(.editNote(committed.id, expectedRevision: revision, body: body), in: generation)
-                    guard state != .invalidated else { return }
+                    guard !isClosed, state != .invalidated else { throw CollectionStoreError.closed }
                     if note.revision >= committed.revision { committed = note }
                 } catch {
                     let reason = error as? CollectionStoreError ?? .storageFailure(code: 0)
+                    guard !isClosed else { throw error }
                     if reason == .closed || reason == .staleGeneration { invalidate() }
-                    else { state = .failed(reason) }
+                    else if state != .invalidated {
+                        // A lost acknowledgment can follow an actual commit.
+                        // Adopt its revision only when the submitted bytes are
+                        // present, so Retry never writes them twice or goes stale.
+                        if let saved = try? await store.read(.note(committed.id), in: generation),
+                           !isClosed, state != .invalidated, saved.revision > revision, sameBytes(saved.body, body) {
+                            committed = saved
+                        }
+                        if !isClosed, state != .invalidated { state = .failed(reason) }
+                    }
                     throw error
                 }
             }
+            guard !isClosed, state != .invalidated else { throw CollectionStoreError.closed }
+            if isComposing { throw FlushError.compositionActive }
             dirtySince = nil
             state = !Note.isNonblank(text) ? .blank : (sameBytes(text, committed.body) ? .saved : .dirty)
         }
         saving = operation
-        defer { saving = nil; inFlightBody = nil }
         try await operation.value
+    }
+
+    func retry() async throws { try await flush() }
+
+    /// Cancels this session's uncommitted transaction and any later drain.
+    /// A transaction already committed is retained as saved collection state.
+    func discardChanges() {
+        isClosed = true
+        timer?.cancel()
+        saving?.cancel()
+        observation?.cancel()
     }
 
     func close() async throws {
@@ -161,7 +217,7 @@ final class NoteEditingSession {
     }
 
     private func receive(_ note: Note) {
-        guard note.revision > committed.revision else { return }
+        guard !isClosed, state != .invalidated, note.revision > committed.revision else { return }
         // Our own commit may be observed before perform returns. Preserve every
         // unsaved byte; only a clean session adopts another surface's body.
         let clean = sameBytes(text, committed.body) && saving == nil
@@ -181,6 +237,20 @@ final class NoteEditingSession {
     private func invalidate() {
         timer?.cancel()
         state = .invalidated
+    }
+
+    private static func failureMessage(_ reason: CollectionStoreError) -> String {
+        let detail: String = switch reason {
+        case .storageFailure(code: 13): "The disk is full."
+        case .storageFailure(code: 8): "The collection is read-only."
+        case .storageFailure(code: 10): "An input/output error interrupted the save."
+        case .storageFailure(code: 5), .storageFailure(code: 6): "The collection is busy."
+        case .staleRevision: "This note changed elsewhere."
+        case .archivedNote: "This note is archived."
+        case .noteNotFound: "This note is no longer in the collection."
+        default: "The collection couldn’t complete the save."
+        }
+        return "\(detail) Your text is still here. Retry or copy it before closing."
     }
 
     private func sameBytes(_ lhs: String, _ rhs: String) -> Bool { lhs.utf8.elementsEqual(rhs.utf8) }

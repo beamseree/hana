@@ -21,6 +21,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// The live collection. Only normal launch opens it, and only through the
     /// production location; validation runs and the fixture harness never do.
     private var collection: Task<CollectionStore, any Error>?
+    private var termination: Task<Void, Never>?
 
     init(interaction: MacInteraction? = nil) {
         self.interaction = interaction
@@ -69,12 +70,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
-    /// Orderly quit closes the Store: checkpointed and its owner lock released.
+    /// Termination is acknowledged only after all note sessions flush and the
+    /// collection closes. A failed flush cancels quit and presents its choices.
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        guard let collection else { return .terminateNow }
-        Task {
-            if let store = try? await collection.value { await store.close() }
-            sender.reply(toApplicationShouldTerminate: true)
+        guard interaction != nil || collection != nil else { return .terminateNow }
+        guard termination == nil else { return .terminateLater }
+        termination = Task {
+            let allowed: Bool
+            if let interaction {
+                allowed = await interaction.prepareForQuit()
+            } else {
+                if let collection, let store = try? await collection.value { await store.close() }
+                allowed = true
+            }
+            termination = nil
+            sender.reply(toApplicationShouldTerminate: allowed)
         }
         return .terminateLater
     }

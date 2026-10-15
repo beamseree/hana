@@ -49,7 +49,7 @@ struct NoteEditingTests {
         try await eventually { session.committed.body == "4" }
         session.edit("ไทย", isComposing: true)
         clock.advance(by: .seconds(3))
-        try await session.flush()
+        await #expect(throws: NoteEditingSession.FlushError.compositionActive) { try await session.flush() }
         #expect(session.committed.body == "4")
         session.edit("ไทย", isComposing: false)
         clock.advance(by: .milliseconds(300))
