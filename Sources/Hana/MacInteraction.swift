@@ -153,6 +153,28 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         return await tasks.perform(action, in: presentation.selectedSection)
     }
 
+    func requestTaskReorder(_ action: TaskWorkspaceAction) -> TaskReorderRequest? {
+        guard let section = mainWindowPresentation?.selectedSection else { return nil }
+        return taskWorkspacePresentation?.requestReorder(action, in: section)
+    }
+
+    @discardableResult
+    func performTaskReorder(_ request: TaskReorderRequest) async -> Bool {
+        guard mainWindowPresentation?.selectedSection.taskPlacement == request.placement else { return false }
+        return await taskWorkspacePresentation?.reorder(request) ?? false
+    }
+
+    func beginTaskDrag(_ id: UUID) -> TaskOrderDrag? {
+        guard let section = mainWindowPresentation?.selectedSection else { return nil }
+        return taskWorkspacePresentation?.beginDrag(id, in: section)
+    }
+
+    @discardableResult
+    func dropTask(_ drag: TaskOrderDrag, before target: UUID?) async -> Bool {
+        guard let section = mainWindowPresentation?.selectedSection else { return false }
+        return await taskWorkspacePresentation?.drop(drag, before: target, in: section) ?? false
+    }
+
     func editTaskTitle(_ text: String) { taskWorkspacePresentation?.editTitle(text) }
     func cancelTaskRename() { taskWorkspacePresentation?.cancelRename() }
     @discardableResult

@@ -546,6 +546,12 @@ Notes rows now include the revision they observed. Mac Interaction exposes selec
 
 SwiftUI row context menus and the native Note menu share these intents. Control+Command+P toggles Pin/Unpin, and Control+Command+A archives; selection/availability and an in-flight action gate menu validation. These key equivalents are engineering starting points. [Issue #90 evidence](evidence/issue-90/validation.md) records real fixture Store and native menu checks. Coordination with pending note-window edits and Archive restoration belongs to the following #88 slices.
 
+## Manual task order in the main window — issue #95
+
+`TaskReorderRequest` freezes the task, placement, predecessor and observed `expectedOrder` at the user event. Move Up/Down compute the predecessor from that snapshot, and `TaskOrderDrag` carries the original IDs/placement/order across SwiftUI's native drag transfer. Dropping before a row or at the list end derives the predecessor from the frozen order, never the refreshed list. Cross-list payloads are refused. Native menu and row-context callbacks capture requests before scheduling asynchronous work; no optimistic reorder changes are shown.
+
+Both paths delegate to `reorderTask`. A stale-list refusal refreshes the committed query and displays a notice without retry. Successful order comes from Store observation and persists independently in Inbox and Today. Command-Option-Up/Down are the engineering shortcut defaults, disabled at list boundaries and during title editing. The insertion indicator uses the existing focus role. [Issue #95 evidence](evidence/issue-95/validation.md) records fixture races, native menu dispatch, reopening and the remaining physical drag limitation.
+
 ## Working-window appearance clarification — issue #88
 
 On 2026-10-15 Beam explicitly chose to keep the current light appearance for this milestone, resolving #88's light/dark-aware wording against the design system's light-only rule. Both main and note windows use the current roles with a light appearance. See the [decision record](evidence/issue-88/decisions.md). This changes the milestone's appearance requirement; it does not establish physical acceptance or settle future dark-mode design.
