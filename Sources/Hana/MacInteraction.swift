@@ -39,8 +39,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private let captureNotice = NSTextField(wrappingLabelWithString: "")
     /// Task's Inbox/Today choice, before its mode label. Tab toggles it too.
     /// Internal so tests can click it.
-    let destinationSelector = NSSegmentedControl(labels: TaskPlacement.allCases.map(\.title),
-                                                 trackingMode: .selectOne, target: nil, action: nil)
+    let destinationSelector = NSHostingView(rootView: SegmentedControl(
+        labels: TaskPlacement.allCases.map(\.title), accessibilityTitle: "Task destination"))
     /// The live collection, opened in the background at launch. Nil, or a
     /// failed opening, leaves Search working and capture unavailable.
     private let collection: Task<CollectionStore, any Error>?
@@ -95,7 +95,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     var modeIconShowsTask: Bool { modeIcon.glyph == .task }
     var taskDestination: TaskPlacement { capture.state.destination }
     var destinationSelectorTitle: String? {
-        destinationSelector.isHidden ? nil : destinationSelector.label(forSegment: destinationSelector.selectedSegment)
+        destinationSelector.isHidden ? nil : destinationSelector.rootView.labels[destinationSelector.rootView.selection]
     }
     var modeLabelText: String? { modeLabel.isHidden ? nil : modeLabel.stringValue }
     var placeholderText: String? { editor.visiblePlaceholder }
@@ -420,14 +420,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         modeLabel.isHidden = true
         card.addSubview(modeLabel)
 
-        destinationSelector.target = self
-        destinationSelector.action = #selector(destinationChosen(_:))
-        destinationSelector.controlSize = .small
-        destinationSelector.font = HanaFont.label.nsFont
-        // Clicking it must leave typing in the editor.
-        destinationSelector.refusesFirstResponder = true
-        destinationSelector.setAccessibilityLabel("Task destination")
-        destinationSelector.sizeToFit()
+        // Choosing hands typing back to the editor.
+        destinationSelector.rootView.choose = { [weak self] index in self?.destinationChosen(index) }
+        destinationSelector.frame.size = destinationSelector.fittingSize
         destinationSelector.autoresizingMask = [.minXMargin, .minYMargin]
         destinationSelector.isHidden = true
         card.addSubview(destinationSelector)
@@ -671,9 +666,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     /// A click on Task's selector. The session decides; the selector then shows its choice.
-    @objc private func destinationChosen(_ sender: NSSegmentedControl) {
-        guard currentInvocation != nil, TaskPlacement.allCases.indices.contains(sender.selectedSegment) else { return }
-        _ = capture.handle(.chooseDestination(TaskPlacement.allCases[sender.selectedSegment]))
+    private func destinationChosen(_ index: Int) {
+        guard currentInvocation != nil, TaskPlacement.allCases.indices.contains(index) else { return }
+        _ = capture.handle(.chooseDestination(TaskPlacement.allCases[index]))
         record("capture.destination", extra: ["destination": capture.state.destination.rawValue])
         renderResults()
         panel.makeFirstResponder(editor)
@@ -1173,14 +1168,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         retainedContentHeight = 0
         // Submitted text and destination are frozen until a failure returns them for editing.
         editor.isEditable = capture.state.phase == .editing
-        destinationSelector.isEnabled = capture.state.phase == .editing
+        destinationSelector.rootView.isEnabled = capture.state.phase == .editing
         switch capture.state.phase {
         case .saving: setModeLabel("Saving…")
         case .editing: setModeLabel(mode == .task ? "Task" : "Note")
         case .saved: break
         }
         if let index = TaskPlacement.allCases.firstIndex(of: capture.state.destination) {
-            destinationSelector.selectedSegment = index
+            destinationSelector.rootView.selection = index
         }
         let notice = capture.state.notice.map { Self.noticeMessage($0, mode: mode) }
         captureNotice.stringValue = notice ?? ""

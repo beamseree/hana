@@ -136,9 +136,7 @@ struct TaskSaveTests {
         let editor = try await firstResponderEditor()
         editor.insertText("[", replacementRange: none)
         #expect(interaction.destinationSelectorTitle == "Inbox")
-        let selector = interaction.destinationSelector
-        selector.selectedSegment = 1
-        #expect(selector.sendAction(selector.action, to: selector.target))
+        interaction.destinationSelector.rootView.choose(1)
         #expect(interaction.taskDestination == .today && interaction.destinationSelectorTitle == "Today")
         #expect(editor.window?.firstResponder === editor)
         editor.insertText("picked", replacementRange: none)

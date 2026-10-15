@@ -60,9 +60,9 @@ enum HanaFont {
         static let body = FontRole(size: 15, lineHeight: 22, weight: .regular)
     }
 
-    /// List rows, task titles, controls and fields.
+    /// List rows, task titles, controls such as segmented controls, and fields.
     static let body = FontRole(size: 13, lineHeight: 18, weight: .regular)
-    /// Mode label, notices, buttons and the task destination selector.
+    /// Mode label, notices and buttons.
     static let label = FontRole(size: 13, lineHeight: 16, weight: .medium)
     /// Paths, type labels and the results status line.
     static let detail = FontRole(size: 12, lineHeight: 16, weight: .regular)

@@ -101,8 +101,8 @@ Hana uses the system font, SF Pro, through `NSFont.systemFont` and SwiftUI's `.s
 | `heading.window` | 20 / 26 | Medium | −1% | Main window list titles |
 | `row.title` | 16 / 20 | Regular | −1% | Search bar result names |
 | `note.body` | 15 / 22 | Regular | 0 | Writing in a Note window |
-| `body` | 13 / 18 | Regular | 0 | List rows, task titles, controls, fields |
-| `label` | 13 / 16 | Medium | 0 | Mode label, notices, buttons, the task destination selector |
+| `body` | 13 / 18 | Regular | 0 | List rows, task titles, controls such as segmented controls, fields |
+| `label` | 13 / 16 | Medium | 0 | Mode label, notices, buttons |
 | `heading.section` | 12 / 16 | Medium | 0 | Group labels in working windows |
 | `detail` | 12 / 16 | Regular | 0 | Paths, type labels, the results status line |
 | `caption` | 11 / 14 | Regular, tabular digits | 0 | Counts, dates, key hints, shortcuts |
@@ -175,4 +175,20 @@ Drop layers read as x offset, y offset, blur and spread in points, as in CSS. Th
 - **Native things keep native shadows.** Windows, the Search bar panel, menus and system popovers are never given a painted shadow; the [technical design](technical-design.md) explains why the bar's shadow must stay native.
 - **No lift on hover.** Hover changes fill (`row.hover`, `surface.groupHover`), never elevation.
 - **Light only.** The values are tuned for light surfaces; dark mode would need its own.
+
+## Components
+
+Components are built only from the roles above.
+
+### Segmented control
+
+[`SegmentedControl`](../Sources/Hana/SegmentedControl.swift): a one-of-several choice, such as Task's Inbox/Today destination in the Search bar.
+
+| Part | Roles |
+| --- | --- |
+| Track | `control.fill`, `radius.control`, 28 points tall |
+| Selected segment | `surface.card`, `shadow.raised`, 3 points inside the track, so 12 − 3 = 9 radius |
+| Labels | `body`; `text.primary` when selected, `text.secondary` otherwise, `text.tertiary` while disabled |
+
+Choosing a segment never takes keyboard focus: in the Search bar, typing stays in the editor.
 
