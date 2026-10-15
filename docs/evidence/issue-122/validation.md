@@ -28,7 +28,7 @@ Part of #120. **Word-paced** replaces **Jev pipeline (100 ms, up to 3)** in the 
 
 ## Acceptance mapping
 
-| Criterion | Automated evidence (not yet run; see below) |
+| Criterion | Automated evidence |
 | --- | --- |
 | Word-boundary send happens immediately | `AutomaticSwitchWordPacedTests.wordBoundarySendsImmediately` (space, `.`, `?`), `apostrophesAndHyphensDoNotCompleteAWord` |
 | Pause send at exactly the adaptive threshold and not 1 ms before, incl. 120 ms floor and 180 ms before five gaps | `pauseSendsAtExactlyTheAdaptiveThreshold` (150 ms gaps → 210 ms; 50 ms gaps → 120 ms floor; four gaps → 180 ms), `typingGapsAreSharedAcrossSessionsInTheLaunch`; wake-up time in `AutomaticSwitchWakeUpTests.wordPacedPauseAndDeadlineAreReportedAndBusySlotsStillReportThePause` |
@@ -57,3 +57,20 @@ Remaining before #122 can close:
 2. Beam's trial observations, kept separate from the automated results: requests per session (`autoswitch.session` rows), how the switch timing feels, and wrong and missed switch counts compared with the pipeline candidate. These belong to #115.
 
 No real classifier was called, and no app was installed or launched. The native tests establish AppKit command delivery and automated timing only, not physical keyboard focus, perceived latency or classifier quality.
+
+## macOS validation — 2026-10-15 (Asia/Bangkok)
+
+The results below supersede the initial unrun status above.
+
+- Source: `37bac99135ea5a354bd09cdbea4dbe4b385390d7`, pulled from `feature/automatic-switch` into `codex/issue-120-integration`.
+- `xcrun swift build`: passed, exit 0 ([log](macos-build.log)).
+- `xcrun swift test --no-parallel`: passed, exit 0; **421 tests in 54 suites**, in 73.772 s ([log](macos-tests.log)). Eleven live-index tests remain environment-gated and skipped.
+- Includes `AutomaticSwitchWordPacedTests`, `JevSharedTransportTests`, `JevWordPacedNativeTests`, the existing policy, interaction, wake-up, menu and diagnostics suites. Native suites use the shared `.nativeWindowSlot` trait.
+- Beam explicitly handed over the native testing slot. The native tests use fake classifiers and fixture stores; no real Jev request was made by automated tests.
+- `origin/main` (`ced5e5f`) is already an ancestor of this source; the prototype remains on the automatic-switch feature line.
+
+These results establish scripted behavior and AppKit integration. Physical focus, perceived latency and classifier quality remain human trial evidence under #128/#115. No trial completion is claimed.
+
+## Final integration validation — 2026-10-15
+
+At `b31ae3260922790218cbbf7f38b51a62c7573311`, `xcrun swift test --no-parallel` passed with **491 tests in 66 suites** (74.511 s), including all native Word-paced tests. Eleven unrelated environment-gated live-index checks remain skipped. This supersedes earlier native-unrun status in this ticket’s initial implementation phase. [Combined record and logs](../issue-120/validation.md). Physical focus, perceived/live latency and normal-use quality remain #128/#115 human evidence.

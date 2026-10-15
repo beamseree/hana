@@ -250,7 +250,7 @@ struct AutomaticSwitchInteractionTests {
         interaction.start()
         defer { interaction.stop(); NSApp.mainMenu = previousMenu; NSApp.windowsMenu = previousWindows }
         let menu = try #require(interaction.automaticSwitchMenu)
-        let groups = menu.items.compactMap(\.submenu)
+        let groups = menu.items.filter { !$0.isHidden }.compactMap(\.submenu)
         #expect(groups.count == 12)
         #expect(groups.allSatisfy { $0.items.filter { $0.state == .on }.count == 1 })
         let invocation = interaction.presentBar()

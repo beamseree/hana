@@ -9,15 +9,16 @@ final class AutomaticSwitchDiagnostics {
     enum WordingVersion: String, Codable, Sendable { case v1 = "automatic-switch-v1" }
     enum Outcome: String, Codable, Sendable {
         case switched, belowThreshold = "below-threshold", unsure, awaitingAgreement = "awaiting-agreement"
-        case blocked, stale, multiline, suspended, error, timeout
+        case blocked, stale, multiline, suspended, error, timeout, backoff
     }
     enum ErrorKind: String, Codable, Sendable {
         case unavailable, authentication, rateLimited, malformedResponse, network, refusal, guardrail, other
     }
+    enum BackoffReason: String, Codable, Sendable { case keyRejected = "key-rejected", rateLimited = "rate-limited", network }
     enum GateReason: String, Codable, Sendable { case oneWord, strongMatch, collectionUnavailable }
     enum MatchedKind: String, Codable, Sendable { case application, note, task, file, folder }
     enum ReversalMethod: String, Codable, Sendable { case escape, backspace }
-    enum End: String, Codable, Sendable { case saved, reversed, dismissed }
+    enum End: String, Codable, Sendable { case saved, reversed, withdrawn, dismissed }
     enum LateOutcome: String, Codable, Sendable { case returnedToSearch, stayed }
 
     struct Verdict: Sendable {
@@ -32,11 +33,14 @@ final class AutomaticSwitchDiagnostics {
         var gateReason: GateReason? = nil
         var matchedKind: MatchedKind? = nil
         var wordCount: Int? = nil
+        var backoffReason: BackoffReason? = nil
+        var cached = false
     }
     enum Event: Sendable {
         case verdict(Verdict)
         case switched(mode: Mode)
         case reversed(method: ReversalMethod, millisecondsSinceSwitch: Double)
+        case withdrawn(mode: Mode)
         case lateStrongMatch(kind: MatchedKind, outcome: LateOutcome)
         case missed(mode: Mode, lastVerdict: Label)
         case ended(End)
@@ -61,6 +65,7 @@ final class AutomaticSwitchDiagnostics {
         var switches = 0
         var wrongSwitches = 0
         var reversals = 0
+        var withdrawn = 0
         var ambiguous = 0
         var missed = 0
         var errors = 0
@@ -85,6 +90,7 @@ final class AutomaticSwitchDiagnostics {
             case "autoswitch.reset": result = Counts(); samples = [:]
             case "autoswitch.switched": result.switches += 1
             case "autoswitch.reversed": result.reversals += 1; result.wrongSwitches += 1
+            case "autoswitch.withdrawn": result.withdrawn += 1
             case "autoswitch.late-strong-match" where row.lateOutcome == .returnedToSearch:
                 result.wrongSwitches += 1
             case "autoswitch.missed": result.missed += 1
@@ -143,6 +149,8 @@ final class AutomaticSwitchDiagnostics {
         var gateReason: GateReason?
         var matchedKind: MatchedKind?
         var wordCount: Int?
+        var backoffReason: BackoffReason?
+        var cached: Bool?
         var mode: Mode?
         var reversalMethod: ReversalMethod?
         var millisecondsSinceSwitch: Double?
@@ -165,9 +173,12 @@ final class AutomaticSwitchDiagnostics {
                 latencyMilliseconds = verdict.latencyMilliseconds; outcome = verdict.outcome
                 errorKind = verdict.errorKind; gateReason = verdict.gateReason
                 matchedKind = verdict.matchedKind; wordCount = verdict.wordCount
+                backoffReason = verdict.backoffReason
+                cached = verdict.cached
             case .switched(let mode): self.event = "autoswitch.switched"; self.mode = mode
             case .reversed(let method, let milliseconds):
                 self.event = "autoswitch.reversed"; reversalMethod = method; millisecondsSinceSwitch = milliseconds
+            case .withdrawn(let mode): self.event = "autoswitch.withdrawn"; self.mode = mode
             case .lateStrongMatch(let kind, let outcome):
                 self.event = "autoswitch.late-strong-match"; matchedKind = kind; lateOutcome = outcome
             case .missed(let mode, let lastVerdict):

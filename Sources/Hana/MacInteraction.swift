@@ -176,14 +176,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
          automaticSwitchDiagnostics: AutomaticSwitchDiagnostics = AutomaticSwitchDiagnostics(),
          classifierServices: ClassifierServices? = nil,
          classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)? = nil,
-         jevLaunchMemory: JevLaunchMemory = JevLaunchMemory(),
+         jevLaunchMemory: JevLaunchMemory? = nil,
          frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
         self.diagnostics = diagnostics
         self.automaticSwitchOptions = automaticSwitchOptions
         self.automaticSwitchDiagnostics = automaticSwitchDiagnostics
         self.classifierFactory = classifierFactory
         self.classifierServices = classifierServices
-        self.jevLaunchMemory = jevLaunchMemory
+        self.jevLaunchMemory = jevLaunchMemory ?? classifierServices?.jevLaunchMemory ?? JevLaunchMemory()
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -747,11 +747,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         for (item, matches) in automaticSwitchChoices { item.state = matches(options) ? .on : .off }
         automaticSwitchMenu?.item(withTitle: "Fires")?.submenu?
             .item(withTitle: "Word-paced")?.isEnabled = options.classifier == .jev
+        let wordPaced = options.classifier == .jev && options.firing == .wordPaced
+        automaticSwitchMenu?.item(withTitle: "After reversing a switch")?.isHidden = !wordPaced
+        automaticSwitchMenu?.item(withTitle: "Reversing stops switching")?.isHidden = wordPaced
         automaticSwitchReset?.isEnabled = options.isEnabled
         let counts = automaticSwitchDiagnostics.counts()
         let titles = [
             "Switches \(counts.switches) · Wrong \(counts.wrongSwitches) · Ambiguous \(counts.ambiguous)",
-            "Reversals \(counts.reversals) · Missed \(counts.missed) · Errors \(counts.errors) · Timeouts \(counts.timeouts)"
+            "Reversals \(counts.reversals) · Withdrawn \(counts.withdrawn) · Missed \(counts.missed) · Errors \(counts.errors) · Timeouts \(counts.timeouts)"
         ] + AutomaticSwitchOptions.Classifier.allCases.map { classifier in
             let name = classifier == .foundationModels ? "Foundation Models" : "Jev"
             guard let latency = counts.latencies[classifier] else { return "\(name): median 0 ms · max 0 ms" }
@@ -782,6 +785,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             choices: [(.returnsToSearch, "Returns to Search"), (.dismisses, "Dismisses")])
         addOptionMenu("Reversing stops switching", to: menu, keyPath: \.reversalSuspends,
             choices: [(true, "On"), (false, "Off")])
+        addOptionMenu("After reversing a switch", to: menu, keyPath: \.reversalBehavior,
+            choices: [(.blockModeForText, "Block that mode for this text"), (.stopUntilCleared, "Stop until the bar is cleared")])
         addOptionMenu("Wait before switching", to: menu, keyPath: \.wait,
             choices: [(.allSources, "For all Search sources"), (.appsAndCollection, "For apps and collection only"), (.none, "Don't wait")])
         addOptionMenu("Strong match lands after a switch", to: menu, keyPath: \.lateStrongMatch,
@@ -844,8 +849,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     private func beginAutomaticSwitch(_ invocation: Invocation) {
-        let epoch = ContinuousClock.now
-        automaticSwitchEpoch = epoch
+        // Shared launch backoff uses the same clock across every bar session.
+        let epoch = automaticSwitchEpoch
         automaticSwitch = AutomaticSwitch(options: automaticSwitchSessionOptions, memory: jevLaunchMemory,
             now: { epoch.duration(to: ContinuousClock.now) })
         performAutomaticSwitch(automaticSwitch?.handle(.invoked) ?? [])
@@ -900,7 +905,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         guard currentInvocation != nil else { return }
         updateAutomaticSwitchEligibility()
         performAutomaticSwitch(automaticSwitch?.handle(.bufferChanged(text: editor.string,
-            composing: editor.hasMarkedText(), gate: automaticSwitchGate())) ?? [])
+            composing: editor.hasMarkedText(), gate: automaticSwitchGate(), edit: editor.automaticSwitchEdit)) ?? [])
     }
 
     private func refreshAutomaticSwitchGate() {
@@ -936,7 +941,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                     } catch {
                         let duration = started.duration(to: ContinuousClock.now)
                         let latency = Double(duration.components.seconds) * 1000 + Double(duration.components.attoseconds) / 1e15
-                        event = .failed(id: id, (error as? ClassifierFailure)?.kind ?? .other, latencyMilliseconds: latency)
+                        let failure = error as? ClassifierFailure
+                        event = .failed(id: id, failure?.kind ?? .other, latencyMilliseconds: latency, retryAfter: failure?.retryAfter)
                     }
                     guard let self else { return }
                     // The launch-wide slot lasts until the work ends, even after its bar session closed.
@@ -1691,6 +1697,9 @@ private final class SearchEditor: NSTextView {
     /// Whether the key event being handled has Shift down.
     private(set) var shiftHeld = false
     private var provenance: CaptureSession.Provenance?
+    /// The actual changed range, carried through the synchronous change
+    /// notification. This distinguishes replacements from look-alike appends.
+    private(set) var automaticSwitchEdit: AutomaticSwitch.Edit?
     override var needsPanelToBecomeKey: Bool { true }
 
     override func keyDown(with event: NSEvent) {
@@ -1738,7 +1747,15 @@ private final class SearchEditor: NSTextView {
                 : undoManager?.isRedoing == true ? .redo : self.provenance ?? .programmatic
             guard shouldInsert?(replacementString, range, provenance) ?? true else { return false }
         }
-        return super.shouldChangeText(in: range, replacementString: replacementString)
+        guard super.shouldChangeText(in: range, replacementString: replacementString) else { return false }
+        if let replacementString {
+            let end = (string as NSString).length
+            let edit: AutomaticSwitch.Edit = range.location == end && range.length == 0 && !replacementString.isEmpty
+                ? .append : .replacement(caretAtEnd: NSMaxRange(range) == end)
+            // A multi-part operation is an append only when every part is.
+            if case .replacement = automaticSwitchEdit {} else { automaticSwitchEdit = edit }
+        }
+        return true
     }
 
     // NSTextView has no public placeholder, and overriding `draw(_:)` to paint
@@ -1760,6 +1777,7 @@ private final class SearchEditor: NSTextView {
     }
 
     override func didChangeText() {
+        defer { automaticSwitchEdit = nil }
         super.didChangeText()
         updatePlaceholder()
     }

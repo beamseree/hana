@@ -1,0 +1,219 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests AutomaticSwitchWordPacedTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (3.55s)
+Test Suite 'Selected tests' started at 2026-10-15 22:16:36.152.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:16:36.153.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:16:36.153.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:16:36.154.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchDeletionTests started.
+􀟈  Test aQualifyingAnswerWaitsUntilTheDeletionPause() started.
+􁁛  Test aQualifyingAnswerWaitsUntilTheDeletionPause() passed after 0.001 seconds.
+􀟈  Test heldAnswersAreRecheckedAgainstTheFinalText(finalText:) started.
+􀟈  Test case passing 1 argument finalText → "call mom tomorr" to heldAnswersAreRecheckedAgainstTheFinalText(finalText:) started.
+􀟈  Test case passing 1 argument finalText → "call mo" to heldAnswersAreRecheckedAgainstTheFinalText(finalText:) started.
+􁁛  Test heldAnswersAreRecheckedAgainstTheFinalText(finalText:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test twoConsecutiveHeldAnswersCanAgreeAtThePause() started.
+􁁛  Test twoConsecutiveHeldAnswersCanAgreeAtThePause() passed after 0.001 seconds.
+􀟈  Test nativeReplacementStartsABurstEvenWhenTheTextLooksAppendedOrUnchanged(before:) started.
+􀟈  Test case passing 1 argument before → "call mo" to nativeReplacementStartsABurstEvenWhenTheTextLooksAppendedOrUnchanged(before:) started.
+􀟈  Test case passing 1 argument before → "call mom " to nativeReplacementStartsABurstEvenWhenTheTextLooksAppendedOrUnchanged(before:) started.
+􁁛  Test nativeReplacementStartsABurstEvenWhenTheTextLooksAppendedOrUnchanged(before:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test aWordBoundaryDuringACorrectionWaitsForThePauseThenSendingResumes() started.
+􁁛  Test aWordBoundaryDuringACorrectionWaitsForThePauseThenSendingResumes() passed after 0.001 seconds.
+􀟈  Test aNewerFailureDiscardsAnOlderHeldAnswer() started.
+􁁛  Test aNewerFailureDiscardsAnOlderHeldAnswer() passed after 0.001 seconds.
+􀟈  Test holdingBackspaceSendsNothingUntilThePause() started.
+􁁛  Test holdingBackspaceSendsNothingUntilThePause() passed after 0.001 seconds.
+􀟈  Test onlyRemovedRequestsAreCancelledAndCancellationHasNoLatencyOrContent() started.
+􁁛  Test onlyRemovedRequestsAreCancelledAndCancellationHasNoLatencyOrContent() passed after 0.003 seconds.
+􀟈  Test clearingResetsConfidenceAndNavigationSuspension() started.
+􁁛  Test clearingResetsConfidenceAndNavigationSuspension() passed after 0.001 seconds.
+􀟈  Test enterHoldingAnOpenDiscardsHeldAnswersAndCancelsRemainingRequests() started.
+􁁛  Test enterHoldingAnOpenDiscardsHeldAnswersAndCancelsRemainingRequests() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchDeletionTests passed after 0.007 seconds.
+􀟈  Suite AutomaticSwitchDiagnosticsTests started.
+􀟈  Test optionsDefaultOffAndPersistAcrossStoreInstances() started.
+􁁛  Test optionsDefaultOffAndPersistAcrossStoreInstances() passed after 0.004 seconds.
+􀟈  Test disabledLoggingCreatesNothingAndEnabledScriptNeverRecordsInput() started.
+􁁛  Test disabledLoggingCreatesNothingAndEnabledScriptNeverRecordsInput() passed after 0.001 seconds.
+􀟈  Test countsAndPerClassifierLatenciesRebuildFromLogAndResetWithoutDeletingHistory() started.
+􁁛  Test countsAndPerClassifierLatenciesRebuildFromLogAndResetWithoutDeletingHistory() passed after 0.004 seconds.
+􀟈  Test storedPipelineChoiceMigratesToWordPaced() started.
+􁁛  Test storedPipelineChoiceMigratesToWordPaced() passed after 0.001 seconds.
+􀟈  Test sessionRowCountsRequestsAndLegacyPipelineRowsStillCount() started.
+􁁛  Test sessionRowCountsRequestsAndLegacyPipelineRowsStillCount() passed after 0.001 seconds.
+􀟈  Test cancelledRequestsOfEveryStrategyAddNoLatencySample() started.
+􁁛  Test cancelledRequestsOfEveryStrategyAddNoLatencySample() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchDiagnosticsTests passed after 0.015 seconds.
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() started.
+􁁛  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() passed after 0.001 seconds.
+􀟈  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() started.
+􁁛  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() passed after 0.001 seconds.
+􀟈  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .escape to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .backspace to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􁁛  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() started.
+􁁛  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() passed after 0.001 seconds.
+􀟈  Test firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .debounced to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .onPause to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .wordPaced to firingStrategiesRespectTheirDelay(firing:) started.
+􁁛  Test firingStrategiesRespectTheirDelay(firing:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() started.
+􁁛  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() passed after 0.001 seconds.
+􀟈  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() started.
+􁁛  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() passed after 0.001 seconds.
+􀟈  Test jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p50 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p60 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p70 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p80 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p90 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p95 to jevNeedsTheSelectedThreshold(threshold:) started.
+􁁛  Test jevNeedsTheSelectedThreshold(threshold:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() started.
+􁁛  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() passed after 0.001 seconds.
+􀟈  Test afterSwitchStaysOrKeepsClassifying(option:) started.
+􀟈  Test case passing 1 argument option → .stay to afterSwitchStaysOrKeepsClassifying(option:) started.
+􀟈  Test case passing 1 argument option → .keepClassifying to afterSwitchStaysOrKeepsClassifying(option:) started.
+􁁛  Test afterSwitchStaysOrKeepsClassifying(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → true to navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → false to navigationSuspensionIsAnOption(suspends:) started.
+􁁛  Test navigationSuspensionIsAnOption(suspends:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􁁛  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .saves to enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .ignoreFor300Milliseconds to enterGraceEndsAt300Milliseconds(option:) started.
+􁁛  Test enterGraceEndsAt300Milliseconds(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .allSources to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .appsAndCollection to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .none to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􁁛  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .returnToSearch to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .stay to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􁁛  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() started.
+􁁛  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() passed after 0.001 seconds.
+􀟈  Test disabledAndIneligibleSessionsNeverSwitch() started.
+􁁛  Test disabledAndIneligibleSessionsNeverSwitch() passed after 0.001 seconds.
+􀟈  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() started.
+􁁛  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() passed after 0.001 seconds.
+􀟈  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() started.
+􁁛  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() passed after 0.001 seconds.
+􀟈  Test escapeDismissOptionDoesNotReverseAndReinvocationClearsSuspension() started.
+􁁛  Test escapeDismissOptionDoesNotReverseAndReinvocationClearsSuspension() passed after 0.001 seconds.
+􀟈  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() started.
+􁁛  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() passed after 0.001 seconds.
+􀟈  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → false to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → true to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􁁛  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) with 2 test cases passed after 0.002 seconds.
+􁁛  Suite AutomaticSwitchTests passed after 0.008 seconds.
+􀟈  Suite AutomaticSwitchWakeUpTests started.
+􀟈  Test firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, delay → 0.0 seconds to firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, delay → 0.15 seconds to firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, delay → 0.5 seconds to firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) started.
+􁁛  Test firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test wordPacedPauseAndDeadlineAreReportedAndBusySlotsStillReportThePause() started.
+􁁛  Test wordPacedPauseAndDeadlineAreReportedAndBusySlotsStillReportThePause() passed after 0.001 seconds.
+􀟈  Test requestTimeoutIsReportedAndConsumedAtOnePointFiveSeconds() started.
+􁁛  Test requestTimeoutIsReportedAndConsumedAtOnePointFiveSeconds() passed after 0.001 seconds.
+􀟈  Test allSourcesWaitCapIsReportedOneSecondAfterTheEdit() started.
+􁁛  Test allSourcesWaitCapIsReportedOneSecondAfterTheEdit() passed after 0.001 seconds.
+􀟈  Test enterGraceWindowEndIsReportedThreeHundredMillisecondsAfterTheSwitch() started.
+􁁛  Test enterGraceWindowEndIsReportedThreeHundredMillisecondsAfterTheSwitch() passed after 0.001 seconds.
+􀟈  Test enterThatSavesReportsNoGraceWindow() started.
+􁁛  Test enterThatSavesReportsNoGraceWindow() passed after 0.001 seconds.
+􀟈  Test earliestOfSeveralPendingDeadlinesIsReported() started.
+􁁛  Test earliestOfSeveralPendingDeadlinesIsReported() passed after 0.001 seconds.
+􀟈  Test nothingPendingReportsNone() started.
+􁁛  Test nothingPendingReportsNone() passed after 0.001 seconds.
+􀟈  Test wakingOnlyAtReportedTimesMatchesTheEarlier25MillisecondTicks() started.
+􁁛  Test wakingOnlyAtReportedTimesMatchesTheEarlier25MillisecondTicks() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchWakeUpTests passed after 0.001 seconds.
+􀟈  Suite AutomaticSwitchWordPacedTests started.
+􀟈  Test wordBoundarySendsImmediately(boundary:sent:) started.
+􀟈  Test case passing 2 arguments boundary → " ", sent → "call mom" to wordBoundarySendsImmediately(boundary:sent:) started.
+􀟈  Test case passing 2 arguments boundary → ".", sent → "call mom." to wordBoundarySendsImmediately(boundary:sent:) started.
+􀟈  Test case passing 2 arguments boundary → "?", sent → "call mom?" to wordBoundarySendsImmediately(boundary:sent:) started.
+􁁛  Test wordBoundarySendsImmediately(boundary:sent:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test apostrophesAndHyphensDoNotCompleteAWord() started.
+􁁛  Test apostrophesAndHyphensDoNotCompleteAWord() passed after 0.001 seconds.
+􀟈  Test pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) started.
+􀟈  Test case passing 3 arguments text → "buy milk", gap → 0.15 seconds, threshold → 0.21 seconds to pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) started.
+􀟈  Test case passing 3 arguments text → "buy milk", gap → 0.05 seconds, threshold → 0.12 seconds to pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) started.
+􀟈  Test case passing 3 arguments text → "go up", gap → 0.1 seconds, threshold → 0.18 seconds to pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) started.
+􁁛  Test pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test typingGapsAreSharedAcrossSessionsInTheLaunch() started.
+􁁛  Test typingGapsAreSharedAcrossSessionsInTheLaunch() passed after 0.001 seconds.
+􀟈  Test noSendForOneNormalizedWord() started.
+􁁛  Test noSendForOneNormalizedWord() passed after 0.001 seconds.
+􀟈  Test noSendForGateBlockedText() started.
+􁁛  Test noSendForGateBlockedText() passed after 0.001 seconds.
+􀟈  Test noSendWhileComposing() started.
+􁁛  Test noSendWhileComposing() passed after 0.001 seconds.
+􀟈  Test noSendAfterASwitchThatStays() started.
+􁁛  Test noSendAfterASwitchThatStays() passed after 0.001 seconds.
+􀟈  Test aPauseFollowedByASpaceSendsOnce() started.
+􁁛  Test aPauseFollowedByASpaceSendsOnce() passed after 0.001 seconds.
+􀟈  Test nfdAndNfcAreTheSameText() started.
+􁁛  Test nfdAndNfcAreTheSameText() passed after 0.001 seconds.
+􀟈  Test capacityIsTwoPlusOneWaitingSlotHoldingOnlyTheNewestText() started.
+􁁛  Test capacityIsTwoPlusOneWaitingSlotHoldingOnlyTheNewestText() passed after 0.001 seconds.
+􀟈  Test waitingTextIsDroppedWhenItIsRemoved() started.
+􁁛  Test waitingTextIsDroppedWhenItIsRemoved() passed after 0.001 seconds.
+􀟈  Test capacityCountsRequestsLeftOverFromAnEarlierSession() started.
+􁁛  Test capacityCountsRequestsLeftOverFromAnEarlierSession() passed after 0.001 seconds.
+􀟈  Test answerForEarlierWordsSwitches() started.
+􁁛  Test answerForEarlierWordsSwitches() passed after 0.001 seconds.
+􀟈  Test answerForRemovedTextDoesNotSwitch(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "call mo" to answerForRemovedTextDoesNotSwitch(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "call" to answerForRemovedTextDoesNotSwitch(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "buy milk" to answerForRemovedTextDoesNotSwitch(replacement:) started.
+􁁛  Test answerForRemovedTextDoesNotSwitch(replacement:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test appendingKeepsEveryRequestRunning() started.
+􁁛  Test appendingKeepsEveryRequestRunning() passed after 0.001 seconds.
+􀟈  Test answerOlderThanAHandledAnswerDoesNotSwitch(newerFails:) started.
+􀟈  Test case passing 1 argument newerFails → false to answerOlderThanAHandledAnswerDoesNotSwitch(newerFails:) started.
+􀟈  Test case passing 1 argument newerFails → true to answerOlderThanAHandledAnswerDoesNotSwitch(newerFails:) started.
+􁁛  Test answerOlderThanAHandledAnswerDoesNotSwitch(newerFails:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test answerLaterThanOnePointTwoSecondsIsATimeout(answerAt:) started.
+􀟈  Test case passing 1 argument answerAt → 1199 to answerLaterThanOnePointTwoSecondsIsATimeout(answerAt:) started.
+􀟈  Test case passing 1 argument answerAt → 1200 to answerLaterThanOnePointTwoSecondsIsATimeout(answerAt:) started.
+􁁛  Test answerLaterThanOnePointTwoSecondsIsATimeout(answerAt:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test deadlineTimesOutAndKeepsTheSlotUntilTheProviderAcknowledges() started.
+􁁛  Test deadlineTimesOutAndKeepsTheSlotUntilTheProviderAcknowledges() passed after 0.001 seconds.
+􀟈  Test clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) started.
+􀟈  Test case passing 1 argument reverseFirst → false to clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) started.
+􀟈  Test case passing 1 argument reverseFirst → true to clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) started.
+􁁛  Test clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test gateBecomingAllowedSendsAfterThePause() started.
+􁁛  Test gateBecomingAllowedSendsAfterThePause() passed after 0.001 seconds.
+􀟈  Test secondAgreeingVerdictComesFromTheNextAnswerNeverAResend() started.
+􁁛  Test secondAgreeingVerdictComesFromTheNextAnswerNeverAResend() passed after 0.001 seconds.
+􀟈  Test sessionRecordsRequestsSentAndCancelledRequestsAddNoLatency() started.
+􁁛  Test sessionRecordsRequestsSentAndCancelledRequestsAddNoLatency() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchWordPacedTests passed after 0.005 seconds.
+􁁛  Test run with 70 tests in 5 suites passed after 0.037 seconds.

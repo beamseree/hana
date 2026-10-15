@@ -11,7 +11,7 @@ struct JevWordPacedNativeTests {
 
     @Test func typingAPhraseSendsOnlyBoundaryAndPauseRequestsAndASwitchKeepsTextAndSelection() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
@@ -58,7 +58,7 @@ struct JevWordPacedNativeTests {
 
     @Test func prefixAnswerKeepsTheCurrentBufferAndSelectionAndEnterSavesExactlyOnce() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
@@ -95,7 +95,7 @@ struct JevWordPacedNativeTests {
 
     @Test func captureStopsRequestsUntilNativeDeleteClearsItAndRearmsSearch() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
@@ -132,7 +132,9 @@ struct JevWordPacedNativeTests {
 
     @Test func backspaceAtTheStartKeepsTextAndSuspendsUntilTheBufferIsCleared() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
+        var options = fixture.options.read(); options.reversalBehavior = .stopUntilCleared
+        fixture.options.write(options)
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
@@ -168,7 +170,7 @@ struct JevWordPacedNativeTests {
 
     @Test func requestsLeftOverFromAClosedBarStillCountTowardTheCapOfTwo() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = HeldJev()
@@ -201,7 +203,7 @@ struct JevWordPacedNativeTests {
 
     @Test func firesMenuShowsWordPacedOnlyForJevAndMigratesAStoredPipelineChoice() throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
         var legacy = AutomaticSwitchOptions(); legacy.classifier = .jev; legacy.firing = .wordPaced
         let encoded = try #require(String(data: JSONEncoder().encode(legacy), encoding: .utf8))
         let stored = encoded.replacingOccurrences(of: "\"wordPaced\"", with: "\"pipelinedJev\"")
@@ -236,7 +238,7 @@ struct JevWordPacedNativeTests {
         return try #require(NSApp.keyWindow?.firstResponder as? NSTextView)
     }
 
-    private func logRows(_ fixture: Fixture) throws -> [[String: Any]] {
+    private func logRows(_ fixture: JevWordPacedNativeFixture) throws -> [[String: Any]] {
         guard let text = try? String(contentsOf: fixture.log.url, encoding: .utf8) else { return [] }
         return try text.split(separator: "\n").map {
             try #require(JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any])
@@ -257,37 +259,4 @@ struct JevWordPacedNativeTests {
         func finishAll() { while !pending.isEmpty { finishFirst() } }
     }
 
-    @MainActor private struct Fixture {
-        let name = "Hana.JevWordPacedNativeTests.\(UUID())"
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let defaults: UserDefaults
-        let options: AutomaticSwitchOptionsStore
-        let log: AutomaticSwitchDiagnostics
-
-        init() throws {
-            defaults = try #require(UserDefaults(suiteName: name))
-            options = AutomaticSwitchOptionsStore(defaults: defaults)
-            var value = AutomaticSwitchOptions()
-            value.isEnabled = true
-            value.classifier = .jev
-            value.firing = .wordPaced
-            value.afterSwitch = .stay
-            value.wait = .none
-            options.write(value)
-            log = AutomaticSwitchDiagnostics(file: directory.appendingPathComponent("automatic-switch.jsonl"))
-        }
-
-        func interaction(store: CollectionStore, classifier: any Classifier,
-                         memory: JevLaunchMemory = JevLaunchMemory()) -> MacInteraction {
-            MacInteraction(search: Search(source: { AsyncStream { $0.finish() } }, typingGap: .zero),
-                collection: Task { store }, confirmationDuration: .zero,
-                automaticSwitchOptions: options, automaticSwitchDiagnostics: log,
-                classifierFactory: { _ in classifier }, jevLaunchMemory: memory)
-        }
-
-        func remove() {
-            defaults.removePersistentDomain(forName: name)
-            try? FileManager.default.removeItem(at: directory)
-        }
-    }
 }

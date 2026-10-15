@@ -1,0 +1,16 @@
+Test Suite 'Selected tests' started at 2026-10-15 22:29:19.184.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:29:19.185.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:29:19.185.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:29:19.185.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchWithdrawalTests started.
+􀟈  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() started.
+􀢄  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() recorded an issue at AutomaticSwitchWithdrawalTests.swift:18:9: Expectation failed: returns(withdrawn → [])
+􀢄  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() recorded an issue at AutomaticSwitchWithdrawalTests.swift:7:6: Caught error: Error Domain=NSCocoaErrorDomain Code=260 "The file “automatic-switch.jsonl” couldn’t be opened because there is no such file." UserInfo={NSFilePath=/var/folders/4n/ydpyp2b97mb8zn_7v0xpyd4r0000gn/T/E1069980-FB37-473A-ADB7-9A5265E0D42A/automatic-switch.jsonl, NSURL=file:///var/folders/4n/ydpyp2b97mb8zn_7v0xpyd4r0000gn/T/E1069980-FB37-473A-ADB7-9A5265E0D42A/automatic-switch.jsonl, NSUnderlyingError=0x10092d920 {Error Domain=NSPOSIXErrorDomain Code=2 "No such file or directory"}}
+􀢄  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() failed after 0.008 seconds with 2 issues.
+􀢄  Suite AutomaticSwitchWithdrawalTests failed after 0.008 seconds with 2 issues.
+􀢄  Test run with 1 test in 1 suite failed after 0.008 seconds with 2 issues.

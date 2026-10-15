@@ -82,10 +82,10 @@ struct JevSharedTransportTests {
     @MainActor private final class HeldTransport {
         struct Start { let path: String; let time: ContinuousClock.Instant }
         private(set) var starts: [Start] = []
-        private(set) var pending: [CheckedContinuation<(Data, Int), Never>] = []
+        private(set) var pending: [CheckedContinuation<JevClassifier.Response, Never>] = []
         private(set) var maximumActive = 0
 
-        func perform(_ request: URLRequest) async throws -> (Data, Int) {
+        func perform(_ request: URLRequest) async throws -> JevClassifier.Response {
             starts.append(Start(path: request.url!.path, time: ContinuousClock.now))
             return await withCheckedContinuation { continuation in
                 pending.append(continuation)
@@ -94,7 +94,7 @@ struct JevSharedTransportTests {
         }
         func finishFirst() {
             guard !pending.isEmpty else { return }
-            pending.removeFirst().resume(returning: (Data(), 200))
+            pending.removeFirst().resume(returning: .init(data: Data(), status: 200))
         }
         func finishAll() { while !pending.isEmpty { finishFirst() } }
     }

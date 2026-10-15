@@ -1,0 +1,118 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--112E4EF74740DA65.txt
+[3/7] Emitting module HanaTests
+[4/7] Compiling HanaTests AutomaticSwitchReversalOptionsTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchReversalOptionsTests.swift:23:18: error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
+21 |         let store = AutomaticSwitchOptionsStore(defaults: defaults)
+22 |         var expected = old
+23 |         expected.reversalBehavior = suspends ? .stopUntilCleared : .blockModeForText
+   |                  `- error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
+24 |         #expect(store.read() == expected)
+25 |         store.write(store.read())
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchReversalOptionsTests.swift:23:49: error: cannot infer contextual base in reference to member 'stopUntilCleared'
+21 |         let store = AutomaticSwitchOptionsStore(defaults: defaults)
+22 |         var expected = old
+23 |         expected.reversalBehavior = suspends ? .stopUntilCleared : .blockModeForText
+   |                                                 `- error: cannot infer contextual base in reference to member 'stopUntilCleared'
+24 |         #expect(store.read() == expected)
+25 |         store.write(store.read())
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchReversalOptionsTests.swift:30:42: error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
+28 |
+29 |     @Test func freshWordPacedUsesModeBlocking() {
+30 |         #expect(AutomaticSwitchOptions().reversalBehavior == .blockModeForText)
+   |                                          `- error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
+31 |     }
+32 | }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchReversalOptionsTests.swift:30:63: error: cannot infer contextual base in reference to member 'blockModeForText'
+28 |
+29 |     @Test func freshWordPacedUsesModeBlocking() {
+30 |         #expect(AutomaticSwitchOptions().reversalBehavior == .blockModeForText)
+   |                                                               `- error: cannot infer contextual base in reference to member 'blockModeForText'
+31 |     }
+32 | }
+[5/7] Compiling HanaTests AutomaticSwitchWithdrawalTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:59:30: error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
+ 57 |
+ 58 |     @Test func stopUntilClearedStillSuspendsBothModes() throws {
+ 59 |         var h = Harness { $0.reversalBehavior = .stopUntilCleared }
+    |                              `- error: value of type 'AutomaticSwitchOptions' has no member 'reversalBehavior'
+ 60 |         let id = try #require(requests(h.edit("call mom ")).first?.id)
+ 61 |         _ = h.answer(id, .task)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:59:50: error: cannot infer contextual base in reference to member 'stopUntilCleared'
+ 57 |
+ 58 |     @Test func stopUntilClearedStillSuspendsBothModes() throws {
+ 59 |         var h = Harness { $0.reversalBehavior = .stopUntilCleared }
+    |                                                  `- error: cannot infer contextual base in reference to member 'stopUntilCleared'
+ 60 |         let id = try #require(requests(h.edit("call mom ")).first?.id)
+ 61 |         _ = h.answer(id, .task)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:61:27: error: cannot infer contextual base in reference to member 'task'
+ 59 |         var h = Harness { $0.reversalBehavior = .stopUntilCleared }
+ 60 |         let id = try #require(requests(h.edit("call mom ")).first?.id)
+ 61 |         _ = h.answer(id, .task)
+    |                           `- error: cannot infer contextual base in reference to member 'task'
+ 62 |         _ = h.policy.handle(.reversed(.backspace))
+ 63 |         #expect(requests(h.edit("call mom tomorrow ")).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:62:30: error: cannot infer contextual base in reference to member 'reversed'
+ 60 |         let id = try #require(requests(h.edit("call mom ")).first?.id)
+ 61 |         _ = h.answer(id, .task)
+ 62 |         _ = h.policy.handle(.reversed(.backspace))
+    |                              `- error: cannot infer contextual base in reference to member 'reversed'
+ 63 |         #expect(requests(h.edit("call mom tomorrow ")).isEmpty)
+ 64 |         h.advance(to: .seconds(1))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:62:40: error: cannot infer contextual base in reference to member 'backspace'
+ 60 |         let id = try #require(requests(h.edit("call mom ")).first?.id)
+ 61 |         _ = h.answer(id, .task)
+ 62 |         _ = h.policy.handle(.reversed(.backspace))
+    |                                        `- error: cannot infer contextual base in reference to member 'backspace'
+ 63 |         #expect(requests(h.edit("call mom tomorrow ")).isEmpty)
+ 64 |         h.advance(to: .seconds(1))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:64:24: error: cannot infer contextual base in reference to member 'seconds'
+ 62 |         _ = h.policy.handle(.reversed(.backspace))
+ 63 |         #expect(requests(h.edit("call mom tomorrow ")).isEmpty)
+ 64 |         h.advance(to: .seconds(1))
+    |                        `- error: cannot infer contextual base in reference to member 'seconds'
+ 65 |         #expect(requests(h.policy.handle(.tick)).isEmpty)
+ 66 |         _ = h.edit("")
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:65:43: error: cannot infer contextual base in reference to member 'tick'
+ 63 |         #expect(requests(h.edit("call mom tomorrow ")).isEmpty)
+ 64 |         h.advance(to: .seconds(1))
+ 65 |         #expect(requests(h.policy.handle(.tick)).isEmpty)
+    |                                           `- error: cannot infer contextual base in reference to member 'tick'
+ 66 |         _ = h.edit("")
+ 67 |         let fresh = try #require(requests(h.edit("buy milk ")).first?.id)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:68:40: error: cannot infer contextual base in reference to member 'note'
+ 66 |         _ = h.edit("")
+ 67 |         let fresh = try #require(requests(h.edit("buy milk ")).first?.id)
+ 68 |         #expect(modes(h.answer(fresh, .note)) == [.note])
+    |                                        `- error: cannot infer contextual base in reference to member 'note'
+ 69 |     }
+ 70 |
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:60:18: warning: no calls to throwing functions occur within 'try' expression
+ 58 |     @Test func stopUntilClearedStillSuspendsBothModes() throws {
+ 59 |         var h = Harness { $0.reversalBehavior = .stopUntilCleared }
+ 60 |         let id = try #require(requests(h.edit("call mom ")).first?.id)
+    |                  `- warning: no calls to throwing functions occur within 'try' expression
+ 61 |         _ = h.answer(id, .task)
+ 62 |         _ = h.policy.handle(.reversed(.backspace))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-125-word-veto/hana/Tests/HanaTests/AutomaticSwitchWithdrawalTests.swift:67:21: warning: no calls to throwing functions occur within 'try' expression
+ 65 |         #expect(requests(h.policy.handle(.tick)).isEmpty)
+ 66 |         _ = h.edit("")
+ 67 |         let fresh = try #require(requests(h.edit("buy milk ")).first?.id)
+    |                     `- warning: no calls to throwing functions occur within 'try' expression
+ 68 |         #expect(modes(h.answer(fresh, .note)) == [.note])
+ 69 |     }
+error: fatalError

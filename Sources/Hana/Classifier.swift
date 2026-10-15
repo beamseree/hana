@@ -19,6 +19,7 @@ struct ClassifierVerdict: Sendable {
 /// A content-free failure classification; adapters never pass response bodies to diagnostics.
 struct ClassifierFailure: Error {
     let kind: AutomaticSwitchDiagnostics.ErrorKind
+    var retryAfter: Duration? = nil
 }
 
 extension Classifier { func prewarm() {} }

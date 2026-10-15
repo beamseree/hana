@@ -233,7 +233,7 @@ struct AutomaticSwitchWordPacedTests {
 
     @Test(arguments: [false, true])
     func clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst: Bool) throws {
-        var h = Harness { $0.reversalSuspends = true }
+        var h = Harness { $0.reversalBehavior = .stopUntilCleared }
         let first = try #require(requests(h.edit("call mom ")).first?.id)
         _ = h.policy.handle(.verdict(id: first, task, latencyMilliseconds: 20))
         if reverseFirst {
@@ -241,7 +241,9 @@ struct AutomaticSwitchWordPacedTests {
             #expect(requests(h.edit("call mom tomorrow ")).isEmpty)
         }
         let cleared = h.edit("")
-        #expect(returns(cleared) == !reverseFirst)
+        #expect(!returns(cleared))
+        h.advance(to: .milliseconds(180))
+        #expect(returns(h.policy.handle(.tick)) == !reverseFirst)
         #expect(!h.policy.lastModeChangeWasAutomatic)
         #expect(requests(h.edit("buy milk ")).map(\.text) == ["buy milk"])
     }
@@ -281,7 +283,9 @@ struct AutomaticSwitchWordPacedTests {
         let second = try #require(requests(h.edit(secret + " secret ")).first?.id)
         #expect(cancels(h.edit("private word")) == [second])
         record(h.policy.handle(.failed(id: second, .other, latencyMilliseconds: 90)))
-        let third = try #require(requests(h.edit("private word again ")).first?.id)
+        _ = h.edit("private word again ")
+        h.advance(to: .milliseconds(180))
+        let third = try #require(requests(h.policy.handle(.tick)).first?.id)
         let dismissed = h.policy.handle(.dismissed(.dismissed))
         #expect(cancels(dismissed) == [third])
         record(dismissed)

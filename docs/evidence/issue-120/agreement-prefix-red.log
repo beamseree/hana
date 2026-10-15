@@ -1,0 +1,112 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write sources
+[2/7] Write swift-version--112E4EF74740DA65.txt
+[4/12] Compiling Hana AutomaticSwitchOptions.swift
+[5/12] Compiling Hana AutomaticSwitch.swift
+[6/20] Compiling Hana ClassifierServices.swift
+[7/20] Compiling Hana PerformanceValidation.swift
+[8/20] Compiling Hana MainWindowValidation.swift
+[9/20] Compiling Hana TrickyInputCheck.swift
+[10/20] Compiling Hana SearchCorrectnessValidation.swift
+[11/20] Compiling Hana MixedSearchValidation.swift
+[12/20] Compiling Hana HanaApp.swift
+[13/20] Compiling Hana CoverageValidation.swift
+[14/20] Compiling Hana AutomaticSwitchDiagnostics.swift
+[15/20] Compiling Hana MacInteraction.swift
+[16/20] Emitting module Hana
+[16/21] Write Objects.LinkFileList
+[17/21] Linking Hana
+[18/21] Applying Hana
+[20/51] Compiling HanaTests AutomaticSwitchReversalOptionsTests.swift
+[21/51] Compiling HanaTests AutomaticSwitchReviewPolicyTests.swift
+[22/51] Compiling HanaTests AutomaticSwitchSessionCountTests.swift
+[23/53] Compiling HanaTests MainWindowTests.swift
+[24/53] Compiling HanaTests ModeIconTests.swift
+[25/53] Compiling HanaTests JevRejectionMenuTests.swift
+[26/53] Compiling HanaTests JevWordPacedDeletionNativeTests.swift
+[27/53] Compiling HanaTests JevWordPacedNativeTests.swift
+[28/53] Compiling HanaTests NativeEditingTests.swift
+[29/53] Compiling HanaTests NoteModeTests.swift
+[30/53] Compiling HanaTests DisplayPlacementTests.swift
+[31/53] Compiling HanaTests JevBackoffTests.swift
+[32/53] Compiling HanaTests JevKeychainTests.swift
+[33/53] Compiling HanaTests AutomaticSwitchWordPacedTests.swift
+[34/53] Compiling HanaTests CaptureSafetyNativeTests.swift
+[35/53] Compiling HanaTests ClassifierMenuTests.swift
+[36/53] Compiling HanaTests NoteSaveTests.swift
+[37/53] Compiling HanaTests SuggestionInteractionTests.swift
+[38/53] Compiling HanaTests AutomaticSwitchDeletionTests.swift
+[39/53] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+[40/53] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[41/53] Compiling HanaTests AutomaticSwitchWithdrawalDiagnosticsTests.swift
+[42/53] Compiling HanaTests AutomaticSwitchWithdrawalTests.swift
+[43/53] Compiling HanaTests AutomaticSwitchWordCacheTests.swift
+[44/53] Compiling HanaTests TaskSaveTests.swift
+[45/53] Compiling HanaTests TrickyInputCheckTests.swift
+[46/53] Emitting module HanaTests
+[47/53] Compiling HanaTests AutomaticSwitchTests.swift
+[48/53] Compiling HanaTests AutomaticSwitchWakeUpInteractionTests.swift
+[49/53] Compiling HanaTests AutomaticSwitchWakeUpTests.swift
+[50/53] Compiling HanaTests JevWordPacedWithdrawalNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[51/53] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-120-review-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[51/53] Write Objects.LinkFileList
+[52/53] Linking HanaPackageTests
+Build complete! (14.13s)
+Test Suite 'Selected tests' started at 2026-10-15 22:51:40.720.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:51:40.721.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:51:40.721.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:51:40.722.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchReviewPolicyTests started.
+􀟈  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "buy milk " to replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) started.
+􀢄  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) recorded an issue with 1 argument replacement → "buy milk " at AutomaticSwitchReviewPolicyTests.swift:17:9: Expectation failed: (modes(newAnswer).isEmpty → false) && (outcomes(newAnswer) == [.awaitingAgreement] → <not evaluated>)
+􀢄  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) recorded an issue with 1 argument replacement → "buy milk " at AutomaticSwitchReviewPolicyTests.swift:18:30: Expectation failed: (requests(h.edit(replacement + "tomorrow ")).first → nil).id → nil → nil
+􀟈  Test case passing 1 argument replacement → "call mo " to replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) started.
+􀢄  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) recorded an issue with 1 argument replacement → "call mo " at AutomaticSwitchReviewPolicyTests.swift:17:9: Expectation failed: (modes(newAnswer).isEmpty → false) && (outcomes(newAnswer) == [.awaitingAgreement] → <not evaluated>)
+􀢄  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) recorded an issue with 1 argument replacement → "call mo " at AutomaticSwitchReviewPolicyTests.swift:18:30: Expectation failed: (requests(h.edit(replacement + "tomorrow ")).first → nil).id → nil → nil
+􀢄  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) with 2 test cases failed after 0.002 seconds with 4 issues.
+􀢄  Suite AutomaticSwitchReviewPolicyTests failed after 0.002 seconds with 4 issues.
+􀄵  /// Integration-review regressions at the agreed policy seam. Terminal callbacks are deliberately withheld.
+􀢄  Test run with 1 test in 1 suite failed after 0.002 seconds with 4 issues.
