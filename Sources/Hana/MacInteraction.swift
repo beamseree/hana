@@ -82,6 +82,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     var mode: CaptureSession.Mode { capture.state.mode }
     var modeIconShowsNote: Bool { modeIcon.glyph == .note }
     var modeLabelText: String? { modeLabel.isHidden ? nil : modeLabel.stringValue }
+    var placeholderText: String? { editor.visiblePlaceholder }
     var captureMessage: String? { captureNotice.isHidden ? nil : captureNotice.stringValue }
     var resultsVisible: Bool { resultSurface?.isHidden == false }
     var selectedResult: SearchResult? { results.first { $0.id == selectedID } }
@@ -1084,17 +1085,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editorScroll.frame.size.width = modeLabel.frame.minX - 8 - BarStyle.textInset
     }
 
+    /// The editor's frame lags behind its text, so measure TextKit 2's laid-out
+    /// lines. A native editing test fails if the editor falls back to TextKit 1;
+    /// asking for its TextKit 1 layout manager here would switch it over.
     private var textHeight: CGFloat {
-        let inset = 2 * editor.textContainerInset.height
-        if let layout = editor.textLayoutManager {
-            layout.ensureLayout(for: layout.documentRange)
-            return layout.usageBoundsForTextContainer.height + inset
-        }
-        // Overriding drawing makes AppKit give this editor TextKit 1. Its frame
-        // lags behind the text, so measure the laid-out lines instead.
-        guard let layout = editor.layoutManager, let container = editor.textContainer else { return editor.frame.height }
-        layout.ensureLayout(for: container)
-        return layout.usedRect(for: container).height + inset
+        guard let layout = editor.textLayoutManager else { return editor.frame.height }
+        layout.ensureLayout(for: layout.documentRange)
+        return layout.usageBoundsForTextContainer.height + 2 * editor.textContainerInset.height
     }
 
     /// Called as a row is about to appear. A late icon only fills the cache:
@@ -1165,8 +1162,17 @@ private final class SearchEditor: NSTextView {
     /// False drops it: no text change and no undo entry.
     var shouldInsert: ((String, NSRange, CaptureSession.Provenance) -> Bool)?
     var placeholder: String? = "Search" {
-        didSet { needsDisplay = true }
+        didSet { updatePlaceholder() }
     }
+    /// The placeholder while it is showing.
+    var visiblePlaceholder: String? { placeholderView.isHidden ? nil : placeholder }
+    /// Behind TextKit 2's insertion indicator, which is also a subview.
+    private lazy var placeholderView: PlaceholderView = {
+        let view = PlaceholderView()
+        view.isHidden = true
+        addSubview(view, positioned: .below, relativeTo: nil)
+        return view
+    }()
     /// Whether the key event being handled has Shift down.
     private(set) var shiftHeld = false
     private var provenance: CaptureSession.Provenance?
@@ -1220,35 +1226,57 @@ private final class SearchEditor: NSTextView {
         return super.shouldChangeText(in: range, replacementString: replacementString)
     }
 
-    // NSTextView has no public placeholder. Hide it during composition too,
-    // because marked text is not yet part of `string`.
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-        guard let placeholder, string.isEmpty, !hasMarkedText() else { return }
-        NSAttributedString(string: placeholder, attributes: BarStyle.placeholderAttributes)
-            .draw(at: textContainerOrigin)
+    // NSTextView has no public placeholder, and overriding `draw(_:)` to paint
+    // one makes AppKit fall back to TextKit 1, so a separate view shows it.
+    // Composition always hides it, whether or not its marked text is in `string` yet.
+    private func updatePlaceholder() {
+        placeholderView.text = placeholder.map { NSAttributedString(string: $0, attributes: BarStyle.placeholderAttributes) }
+        placeholderView.frame = NSRect(origin: textContainerOrigin, size: placeholderView.text?.size() ?? .zero)
+        placeholderView.isHidden = placeholder == nil || !string.isEmpty || hasMarkedText()
     }
 
     override var string: String {
-        didSet { needsDisplay = true }
+        didSet { updatePlaceholder() }
+    }
+
+    override func invalidateTextContainerOrigin() {
+        super.invalidateTextContainerOrigin()
+        updatePlaceholder()
     }
 
     override func didChangeText() {
         super.didChangeText()
-        needsDisplay = true
+        updatePlaceholder()
     }
 
     override func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
         performing(.composition) {
             super.setMarkedText(string, selectedRange: selectedRange, replacementRange: replacementRange)
         }
-        needsDisplay = true
+        updatePlaceholder()
         compositionChanged?()
     }
 
     override func unmarkText() {
         super.unmarkText()
-        needsDisplay = true
+        updatePlaceholder()
         compositionChanged?()
+    }
+}
+
+/// Draws the editor's placeholder where its text begins. It never takes a
+/// click, so the editor beneath it keeps every mouse interaction.
+@MainActor
+private final class PlaceholderView: NSView {
+    var text: NSAttributedString? {
+        didSet { needsDisplay = true }
+    }
+
+    override var isFlipped: Bool { true }
+
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
+    override func draw(_ dirtyRect: NSRect) {
+        text?.draw(at: .zero)
     }
 }
