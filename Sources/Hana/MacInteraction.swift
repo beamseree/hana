@@ -448,7 +448,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         record("capture.mode", extra: ["mode": mode.rawValue])
         resetSearch()
         applyModePresentation(animated: panel.isVisible)
-        renderResults()
+        // Search shows the results for the text it kept.
+        if mode == .search { updateQuery(editor.string) } else { renderResults() }
     }
 
     private func applyModePresentation(animated: Bool) {
@@ -459,13 +460,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         modeLabel.isHidden = !note
         setModeLabel("Note")
         // Search's glyph follows its query; clearing the editor restores the logo.
-        if note { modeIcon.setGlyph(.note, animated: animated) }
+        if note { modeIcon.setGlyph(.note, animated: animated) } else { updateModeIcon() }
         editorScroll.hasVerticalScroller = note
         guard let card = editorScroll.superview else { return }
-        // Note leaves room for its label; Search's single line stays pinned to the top.
+        // Note leaves room for its label. The height follows the text; layout sets it.
         let trailing = note ? card.bounds.width - modeLabel.frame.minX + 8 : 44
-        editorScroll.frame = NSRect(x: BarStyle.textInset, y: card.bounds.height - BarStyle.editorTopInset - BarStyle.editorHeight,
-                                    width: card.bounds.width - BarStyle.textInset - trailing, height: BarStyle.editorHeight)
+        editorScroll.frame = NSRect(x: BarStyle.textInset, y: editorScroll.frame.minY,
+                                    width: card.bounds.width - BarStyle.textInset - trailing, height: editorScroll.frame.height)
     }
 
     private func applyPlacement(displays: [Display], pointer: CGPoint, focus: WindowFocus) {
@@ -703,6 +704,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         guard !textView.hasMarkedText() else { return false }
+        // Backspace at the start of a capture returns to Search instead of deleting.
+        if commandSelector == #selector(NSResponder.deleteBackward(_:)) {
+            let effects = capture.handle(.deleteBackward)
+            effects.forEach(perform)
+            return !effects.isEmpty
+        }
         if mode == .note {
             // Shift+Enter writes a new line; plain Enter saves.
             guard commandSelector == #selector(NSResponder.insertNewline(_:)), !editor.shiftHeld else { return false }
@@ -734,7 +741,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         // block Enter or report an error into this context.
         pendingLaunch = nil
         heldEnter = false
-        let request = Search.Request(text: text)
+        let request = Search.Request(text: CaptureSession.searchQuery(for: text))
         self.request = request
         userMovedSelection = false
         openFailure = nil
@@ -752,7 +759,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         fileStatus = stream.initial.fileStatus
         // Interrupt a preceding finished batch's shrink at the actual current
         // height; holding its smaller target would keep shrinking during typing.
-        retainedContentHeight = max(retainedContentHeight, contentHeight - BarStyle.collapsedHeight - BarStyle.cardPadding)
+        let editorGrowth = editorScroll.frame.height - BarStyle.editorHeight
+        retainedContentHeight = max(retainedContentHeight, contentHeight - BarStyle.collapsedHeight - editorGrowth - BarStyle.cardPadding)
         renderResults()
         let started = ProcessInfo.processInfo.systemUptime
         searchTask = Task { [weak self] in
@@ -962,6 +970,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     private func renderResults() {
         guard mode == .search else { return layoutNote() }
+        // Capture notices belong to Note; returning to Search leaves them behind.
+        captureNotice.isHidden = true
         let hasQuery = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let loading = hasQuery && (sourceStatus == .loading || fileStatus == .loading)
         loadingIndicator.isHidden = !loading
@@ -984,17 +994,21 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         let finished = sourceStatus != .loading && fileStatus != .loading
         retainedContentHeight = !hasQuery || finished ? needed : max(retainedContentHeight, needed)
         let content = retainedContentHeight
+        // Text kept from a multiline note stays fully visible above the results.
+        let editorHeight = self.editorHeight
+        let editorGrowth = editorHeight - BarStyle.editorHeight
         let frame = currentPlacement?.frame(
-            height: BarStyle.collapsedHeight + (content > 0 ? BarStyle.cardPadding + content : 0)) ?? panel.frame
+            height: BarStyle.collapsedHeight + editorGrowth + (content > 0 ? BarStyle.cardPadding + content : 0)) ?? panel.frame
         setPanelFrame(frame, animated: true)
+        pinEditor(height: editorHeight)
         // Results are laid out at their final size, pinned under the input, so
         // the card's clip reveals them as it grows instead of moving them. The
         // surface runs to the card's trailing edge so the scroll thumb can sit in
         // the padding beside the rows.
         if let resultSurface, let card = resultSurface.superview {
-            let height = max(0, frame.height - BarStyle.collapsedHeight - BarStyle.cardPadding)
+            let height = max(0, frame.height - BarStyle.collapsedHeight - editorGrowth - BarStyle.cardPadding)
             resultSurface.frame = NSRect(x: BarStyle.cardPadding,
-                                         y: card.bounds.height - BarStyle.inputHeight - height,
+                                         y: card.bounds.height - BarStyle.inputHeight - editorGrowth - height,
                                          width: max(0, frame.width - 2 * BarStyle.inset - BarStyle.cardPadding),
                                          height: height)
             resultSurface.isHidden = content == 0
@@ -1025,18 +1039,29 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         captureNotice.stringValue = notice ?? ""
         captureNotice.isHidden = notice == nil
         let noticeHeight = notice == nil ? 0 : BarStyle.noticeHeight
-        let height = min(BarStyle.noteMaxTextHeight, max(BarStyle.editorHeight, noteTextHeight))
+        let height = editorHeight
         let frame = currentPlacement?.frame(
             height: BarStyle.collapsedHeight + height - BarStyle.editorHeight + noticeHeight) ?? panel.frame
         setPanelFrame(frame, animated: true)
-        // Laid out at the final height, pinned under the card's top, so the card
-        // reveals it as it grows.
+        pinEditor(height: height)
         guard let card = editorScroll.superview else { return }
-        editorScroll.frame = NSRect(x: editorScroll.frame.minX, y: card.bounds.height - BarStyle.editorTopInset - height,
-                                    width: editorScroll.frame.width, height: height)
         captureNotice.frame = NSRect(x: BarStyle.textInset, y: editorScroll.frame.minY - noticeHeight,
                                      width: card.bounds.width - BarStyle.textInset - BarStyle.cardPadding - BarStyle.resultIconInset,
                                      height: noticeHeight)
+    }
+
+    /// The editor is as tall as its text, from one line up to Note's maximum,
+    /// in every mode, so switching modes never hides a line.
+    private var editorHeight: CGFloat {
+        min(BarStyle.noteMaxTextHeight, max(BarStyle.editorHeight, textHeight))
+    }
+
+    /// Laid out at the final height, pinned under the card's top, so the card
+    /// reveals it as it grows.
+    private func pinEditor(height: CGFloat) {
+        guard let card = editorScroll.superview else { return }
+        editorScroll.frame = NSRect(x: editorScroll.frame.minX, y: card.bounds.height - BarStyle.editorTopInset - height,
+                                    width: editorScroll.frame.width, height: height)
     }
 
     private static func noticeMessage(_ notice: CaptureSession.Notice) -> String {
@@ -1059,10 +1084,17 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editorScroll.frame.size.width = modeLabel.frame.minX - 8 - BarStyle.textInset
     }
 
-    private var noteTextHeight: CGFloat {
-        guard let layout = editor.textLayoutManager else { return editor.frame.height }
-        layout.ensureLayout(for: layout.documentRange)
-        return layout.usageBoundsForTextContainer.height + 2 * editor.textContainerInset.height
+    private var textHeight: CGFloat {
+        let inset = 2 * editor.textContainerInset.height
+        if let layout = editor.textLayoutManager {
+            layout.ensureLayout(for: layout.documentRange)
+            return layout.usageBoundsForTextContainer.height + inset
+        }
+        // Overriding drawing makes AppKit give this editor TextKit 1. Its frame
+        // lags behind the text, so measure the laid-out lines instead.
+        guard let layout = editor.layoutManager, let container = editor.textContainer else { return editor.frame.height }
+        layout.ensureLayout(for: container)
+        return layout.usedRect(for: container).height + inset
     }
 
     /// Called as a row is about to appear. A late icon only fills the cache:

@@ -199,6 +199,21 @@ struct NoteSaveTests {
         #expect(editor.string == "note")
     }
 
+    @Test func returningToSearchLeavesTheNoteNoticeBehind() async throws {
+        let interaction = MacInteraction(search: Search(source: { CatalogFeed().stream() }, typingGap: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await firstResponderEditor()
+        editor.insertText("-", replacementRange: none)
+        editor.insertText("note", replacementRange: none)
+        editor.keyDown(with: try returnKey())
+        try await eventually { interaction.captureMessage != nil }
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
+        editor.keyDown(with: try backspaceKey())
+        #expect(interaction.mode == .search && editor.string == "note")
+        #expect(interaction.captureMessage == nil)
+    }
+
     @Test func diagnosticsNeverRecordCapturedText() async throws {
         let fixture = try TemporaryFixture()
         let log = fixture.directory.appendingPathComponent("diagnostics.jsonl")
@@ -287,6 +302,15 @@ func returnKey(shift: Bool = false) throws -> NSEvent {
                                   windowNumber: NSApp.keyWindow?.windowNumber ?? 0, context: nil,
                                   characters: "\r", charactersIgnoringModifiers: "\r",
                                   isARepeat: false, keyCode: 36))
+}
+
+@MainActor
+func backspaceKey() throws -> NSEvent {
+    try #require(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
+                                  timestamp: ProcessInfo.processInfo.systemUptime,
+                                  windowNumber: NSApp.keyWindow?.windowNumber ?? 0, context: nil,
+                                  characters: "\u{7f}", charactersIgnoringModifiers: "\u{7f}",
+                                  isARepeat: false, keyCode: 51))
 }
 
 @MainActor

@@ -21,6 +21,9 @@ struct CaptureSession {
         case insert(String, replacing: NSRange, provenance: Provenance)
         /// The native editor's text and selection after any change it applied.
         case edited(text: String, selection: NSRange)
+        /// Backspace, before the editor deletes anything. Without an effect it
+        /// is ordinary deletion, which the editor performs and reports as `edited`.
+        case deleteBackward
         /// A new invocation, or a dismissal discarding any unsaved capture.
         case invoked, dismissed
         /// Enter outside composition.
@@ -62,6 +65,12 @@ struct CaptureSession {
     /// creates at most one note. Each invocation gets a new one.
     private(set) var operation = UUID()
 
+    /// The query Search receives for the buffer: whitespace runs, line breaks
+    /// included, become single spaces. The buffer itself is never changed.
+    static func searchQuery(for text: String) -> String {
+        text.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+    }
+
     mutating func handle(_ event: Event) -> [Effect] {
         switch event {
         case .insert(let text, let range, let provenance):
@@ -78,6 +87,16 @@ struct CaptureSession {
             if !text.isEmpty || range.length > 0 { state.notice = nil }
             state.selection = NSRange(location: range.location + (text as NSString).length, length: 0)
             return []
+        case .deleteBackward:
+            // Backspace with nothing before the cursor leaves a capture for
+            // Search, keeping every character. Prefixes stay off from then on.
+            // Once submitted, the capture stays put until the save settles.
+            guard state.mode != .search, state.phase == .editing,
+                  state.selection == NSRange(location: 0, length: 0) else { return [] }
+            state.mode = .search
+            state.prefixesArmed = false
+            state.notice = nil
+            return [.enterMode(.search)]
         case .edited(let text, let selection):
             guard state.phase == .editing else { return [] }
             if text != state.text { state.notice = nil }
