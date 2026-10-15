@@ -13,6 +13,8 @@ enum BarStyle {
     static let cardRadius = bezelRadius - inset
     /// Card padding around the input row and the results, and the gap between them.
     static let cardPadding: CGFloat = 8
+    static let scrollThumbWidth: CGFloat = 3
+    static let scrollThumbOpacity: CGFloat = 0.16
     /// Card height changes. Short because Search is invoked many times a day.
     static let resizeDuration: TimeInterval = 0.15
     /// Strong ease-out, cubic-bezier(0.23, 1, 0.32, 1).

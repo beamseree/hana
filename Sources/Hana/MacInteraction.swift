@@ -447,6 +447,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         scroll.drawsBackground = false
         scroll.hasHorizontalScroller = false
         scroll.hasVerticalScroller = false
+        scroll.verticalScroller = NoteScroller()
+        scroll.scrollerStyle = .legacy
+        scroll.autohidesScrollers = true
         editor.frame = scroll.bounds
         editor.minSize = NSSize(width: 0, height: BarStyle.editorHeight)
         editor.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
