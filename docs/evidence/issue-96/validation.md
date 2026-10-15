@@ -31,3 +31,5 @@ One early combined CLT run exited 0 before a test summary and was not counted. E
 ## Limits
 
 These are automated fixture events and native state observations. Physical keyboard/input-method use, rendered visual polish, full-screen Space routing and integrated acceptance remain #99. No screenshot or physical acceptance is claimed. This slice adds no persistence schema, deletion behavior or broad new validation harness.
+
+Post-merge primary integration `becc0ee`: `integration-tests.txt` records a fresh-scratch run of 33 tests in 6 suites passing in 9.344 seconds, covering Completed/Archive, prior task lists/manual order, main-window behavior and open-note organization.
