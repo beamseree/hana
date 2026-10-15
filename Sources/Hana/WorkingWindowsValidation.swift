@@ -44,12 +44,13 @@ func validateWorkingWindows(_ options: WorkingWindowsOptions,
                                                             "noteIDs": seed.notes.mapValues(\.uuidString)])
         if options.mode == .interactive { return }
         if options.mode == .smokeVerify {
-            guard try await store.read(.note(noteID), in: store.generation)?.body == WorkingWindowsFixture.smokeBody,
+            guard let saved = try await store.read(.note(noteID), in: store.generation),
+                  saved.body.utf8.elementsEqual(WorkingWindowsFixture.smokeBody.utf8),
                   try await store.read(.inbox, in: store.generation).map(\.id) == [seed.tasks["inbox2"]!, seed.tasks["inbox1"]!, seed.tasks["inbox3"]!],
                   try await store.read(.today, in: store.generation).map(\.id) == [seed.tasks["today3"]!, seed.tasks["today2"]!, seed.tasks["today1"]!] else { throw WorkingWindowsOptions.Failure.persistence }
             diagnostics.record("working-windows.relaunch-verified", state: ["exactBytes": true, "stableIDs": true, "independentOrders": true])
         } else {
-            guard editor.string == WorkingWindowsFixture.quitBody else { throw WorkingWindowsOptions.Failure.persistence }
+            guard editor.string.utf8.elementsEqual(WorkingWindowsFixture.quitBody.utf8) else { throw WorkingWindowsOptions.Failure.persistence }
             platform.open(.main, section: .inbox)
             let orderDeadline = ContinuousClock.now + .seconds(5)
             while platform.taskWorkspacePresentation?.inbox.count != 3, ContinuousClock.now < orderDeadline {
@@ -68,8 +69,8 @@ func validateWorkingWindows(_ options: WorkingWindowsOptions,
             editor.insertText(WorkingWindowsFixture.smokeBody, replacementRange: NSRange(location: NSNotFound, length: 0))
             // No await, flush or Store close between the native insertion and
             // termination request: AppDelegate must drain this editor itself.
-            guard let session = platform.noteSession(noteID), session.text == WorkingWindowsFixture.smokeBody,
-                  session.committed.body == WorkingWindowsFixture.quitBody, session.hasUnsavedChanges else { throw WorkingWindowsOptions.Failure.editor }
+            guard let session = platform.noteSession(noteID), session.text.utf8.elementsEqual(WorkingWindowsFixture.smokeBody.utf8),
+                  session.committed.body.utf8.elementsEqual(WorkingWindowsFixture.quitBody.utf8), session.hasUnsavedChanges else { throw WorkingWindowsOptions.Failure.editor }
             diagnostics.record("working-windows.edited-before-quit", state: ["pendingEdit": true])
         }
         diagnostics.record("working-windows.normal-quit-request", state: ["writePhase": options.mode == .smokeWrite])

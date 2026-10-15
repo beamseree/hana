@@ -5,7 +5,7 @@ import Foundation
 struct WorkingWindowsFixture: Codable, Sendable, Equatable {
     static let sidecarName = "working-windows-seed.json"
     static let quitBody = "Fixture — Quit/relaunch\nType the physical persistence marker below this line.\n"
-    static let smokeBody = quitBody + "hana99-normal-quit-ไทย🌸\n"
+    static let smokeBody = quitBody + "hana99-normal-quit-ไทย🌸-e\u{301}\n"
     let version: Int
     let notes: [String: UUID]
     let tasks: [String: UUID]
