@@ -1,0 +1,179 @@
+[0/1] Planning build
+Building for debugging...
+[0/7] Write sources
+[2/7] Write swift-version--1AB21518FC5DEDBE.txt
+[4/10] Compiling Hana MacInteraction.swift
+[5/10] Emitting module Hana
+[6/10] Compiling Hana WorkingWindowController.swift
+[7/24] Compiling Hana SearchCorrectnessValidation.swift
+[8/24] Compiling Hana MainWindowValidation.swift
+[9/24] Compiling Hana CollectionFixtureHarness.swift
+[10/24] Compiling Hana CollectionSnapshots.swift
+[11/24] Compiling Hana CaptureSession.swift
+[12/24] Compiling Hana CollectionExport.swift
+[13/24] Compiling Hana TaskWorkspace.swift
+[14/24] Compiling Hana DisplayPlacement.swift
+[15/24] Compiling Hana FocusedWindowGeometry.swift
+[16/24] Compiling Hana MixedSearchValidation.swift
+[17/24] Compiling Hana PerformanceValidation.swift
+[18/24] Compiling Hana CollectionStore.swift
+[19/24] Compiling Hana CoverageValidation.swift
+[20/24] Compiling Hana HanaApp.swift
+[20/25] Write Objects.LinkFileList
+[21/25] Linking Hana
+[22/25] Applying Hana
+[24/57] Compiling HanaTests SearchExclusionTests.swift
+[25/57] Compiling HanaTests SearchRankingTests.swift
+[26/57] Compiling HanaTests SearchResponsivenessTests.swift
+[27/60] Compiling HanaTests NoteSaveTests.swift
+[28/60] Compiling HanaTests OrganizedCollectionFixture.swift
+[29/60] Compiling HanaTests ResultIconsTests.swift
+[30/60] Compiling HanaTests SearchTests.swift
+[31/60] Compiling HanaTests SearchTypingGapTests.swift
+[32/60] Compiling HanaTests SpotlightStageTests.swift
+[33/60] Compiling HanaTests TaskSaveTests.swift
+[34/60] Compiling HanaTests TaskWorkspaceTests.swift
+[35/60] Compiling HanaTests TestClock.swift
+[36/60] Emitting module HanaTests
+[37/60] Compiling HanaTests CollectionExportTests.swift
+[38/60] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[39/60] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[40/60] Compiling HanaTests CollectionSnapshotTests.swift
+[41/60] Compiling HanaTests CaptureSafetyNativeTests.swift
+[42/60] Compiling HanaTests CaptureSafetyTests.swift
+[43/60] Compiling HanaTests CaptureSessionTests.swift
+[44/60] Compiling HanaTests CollectionExportHarnessTests.swift
+[45/60] Compiling HanaTests SuggestionInteractionTests.swift
+[46/60] Compiling HanaTests TaskLifecycleTests.swift
+[47/60] Compiling HanaTests TaskOrderingTests.swift
+[48/60] Compiling HanaTests NativeEditingTests.swift
+[49/60] Compiling HanaTests NoteModeTests.swift
+[50/60] Compiling HanaTests NoteOrganizationTests.swift
+[51/60] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[52/60] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[53/60] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[54/60] Compiling HanaTests ModeIconTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[55/60] Compiling HanaTests CollectionStoreOpeningTests.swift
+[56/60] Compiling HanaTests CollectionStoreTests.swift
+[57/60] Compiling HanaTests DisplayPlacementTests.swift
+[58/60] Compiling HanaTests IndependentExportDecoder.swift
+[58/60] Write Objects.LinkFileList
+[59/60] Linking HanaPackageTests
+Build complete! (8.87s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite MainWindowTests started.
+◇ Suite MainNoteOrganizationTests started.
+◇ Suite TaskWorkspaceTests started.
+◇ Test activeListsObserveStoreOrderAndNewTasksAtTheTop() started.
+✔ Test activeListsObserveStoreOrderAndNewTasksAtTheTop() passed after 0.286 seconds.
+◇ Test taskActionsCommitStoreTransitionsAndObserveBothLists() started.
+✔ Test taskActionsCommitStoreTransitionsAndObserveBothLists() passed after 0.218 seconds.
+◇ Test renameKeepsInvalidDraftAndReloadsStaleCommittedTitle() started.
+✔ Test renameKeepsInvalidDraftAndReloadsStaleCommittedTitle() passed after 0.169 seconds.
+◇ Test nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "return" to nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "focusLoss" to nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "escape" to nativeInlineEditorCommitsOrCancels(command:) started.
+✔ Test nativeInlineEditorCommitsOrCancels(command:) with 3 test cases passed after 0.451 seconds.
+◇ Test nativePasteIsRefusedWholeAndBlankReturnKeepsEditor() started.
+✔ Test nativePasteIsRefusedWholeAndBlankReturnKeepsEditor() passed after 0.157 seconds.
+◇ Test taskMenuCommandsHaveKeyEquivalentsAndRouteSelectedTask() started.
+✔ Test taskMenuCommandsHaveKeyEquivalentsAndRouteSelectedTask() passed after 0.219 seconds.
+✔ Suite TaskWorkspaceTests passed after 1.504 seconds.
+◇ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() started.
+✔ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() passed after 0.149 seconds.
+◇ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → false to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → true to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+✔ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) with 2 test cases passed after 0.149 seconds.
+◇ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() started.
+✔ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() passed after 1.400 seconds.
+◇ Test menusOpenTheSameMainWindowWithoutMockDestinations() started.
+✔ Test menusOpenTheSameMainWindowWithoutMockDestinations() passed after 0.297 seconds.
+✔ Suite MainWindowTests passed after 3.502 seconds.
+◇ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() started.
+✔ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() passed after 0.156 seconds.
+◇ Test archiveRemovesTheRowAndPreservesWritingAndPin() started.
+✔ Test archiveRemovesTheRowAndPreservesWritingAndPin() passed after 0.141 seconds.
+◇ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .setPinned(true) to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .archive to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+✔ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) with 2 test cases passed after 0.258 seconds.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+✔ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 0.300 seconds.
+✔ Suite MainNoteOrganizationTests passed after 4.359 seconds.
+✔ Test run with 14 tests in 3 suites passed after 4.359 seconds.
