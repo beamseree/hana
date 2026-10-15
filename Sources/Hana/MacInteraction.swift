@@ -747,11 +747,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         for (item, matches) in automaticSwitchChoices { item.state = matches(options) ? .on : .off }
         automaticSwitchMenu?.item(withTitle: "Fires")?.submenu?
             .item(withTitle: "Word-paced")?.isEnabled = options.classifier == .jev
+        let wordPaced = options.classifier == .jev && options.firing == .wordPaced
+        automaticSwitchMenu?.item(withTitle: "After reversing a switch")?.isHidden = !wordPaced
+        automaticSwitchMenu?.item(withTitle: "Reversing stops switching")?.isHidden = wordPaced
         automaticSwitchReset?.isEnabled = options.isEnabled
         let counts = automaticSwitchDiagnostics.counts()
         let titles = [
             "Switches \(counts.switches) · Wrong \(counts.wrongSwitches) · Ambiguous \(counts.ambiguous)",
-            "Reversals \(counts.reversals) · Missed \(counts.missed) · Errors \(counts.errors) · Timeouts \(counts.timeouts)"
+            "Reversals \(counts.reversals) · Withdrawn \(counts.withdrawn) · Missed \(counts.missed) · Errors \(counts.errors) · Timeouts \(counts.timeouts)"
         ] + AutomaticSwitchOptions.Classifier.allCases.map { classifier in
             let name = classifier == .foundationModels ? "Foundation Models" : "Jev"
             guard let latency = counts.latencies[classifier] else { return "\(name): median 0 ms · max 0 ms" }
@@ -782,6 +785,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             choices: [(.returnsToSearch, "Returns to Search"), (.dismisses, "Dismisses")])
         addOptionMenu("Reversing stops switching", to: menu, keyPath: \.reversalSuspends,
             choices: [(true, "On"), (false, "Off")])
+        addOptionMenu("After reversing a switch", to: menu, keyPath: \.reversalBehavior,
+            choices: [(.blockModeForText, "Block that mode for this text"), (.stopUntilCleared, "Stop until the bar is cleared")])
         addOptionMenu("Wait before switching", to: menu, keyPath: \.wait,
             choices: [(.allSources, "For all Search sources"), (.appsAndCollection, "For apps and collection only"), (.none, "Don't wait")])
         addOptionMenu("Strong match lands after a switch", to: menu, keyPath: \.lateStrongMatch,

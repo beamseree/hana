@@ -25,6 +25,7 @@ struct AutomaticSwitchOptions: Codable, Equatable, Sendable {
         case p50 = 0.50, p60 = 0.60, p70 = 0.70, p80 = 0.80, p90 = 0.90, p95 = 0.95
     }
     enum Agreement: Int, Codable, CaseIterable, Sendable { case one = 1, two = 2 }
+    enum ReversalBehavior: String, Codable, CaseIterable, Sendable { case blockModeForText, stopUntilCleared }
 
     var isEnabled = false
     var classifier = Classifier.foundationModels
@@ -37,8 +38,40 @@ struct AutomaticSwitchOptions: Codable, Equatable, Sendable {
     var enterBehavior = EnterBehavior.ignoreFor300Milliseconds
     var escapeBehavior = EscapeBehavior.returnsToSearch
     var reversalSuspends = true
+    /// Word-paced only. The legacy flag still governs the other strategies.
+    var reversalBehavior = ReversalBehavior.blockModeForText
     var wait = Wait.appsAndCollection
     var lateStrongMatch = LateStrongMatch.stay
+
+    init() {}
+
+    private enum CodingKeys: String, CodingKey {
+        case isEnabled, classifier, firing, jevThreshold, foundationModelsUnsure, agreeingVerdicts
+        case afterSwitch, navigationSuspends, enterBehavior, escapeBehavior, reversalSuspends, reversalBehavior
+        case wait, lateStrongMatch
+    }
+
+    /// Decode historical settings and JSONL options without losing the rest
+    /// of the snapshot when Word-paced's reversal choice is introduced.
+    init(from decoder: any Decoder) throws {
+        self.init()
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        isEnabled = try values.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? isEnabled
+        classifier = try values.decodeIfPresent(Classifier.self, forKey: .classifier) ?? classifier
+        firing = try values.decodeIfPresent(Firing.self, forKey: .firing) ?? firing
+        jevThreshold = try values.decodeIfPresent(Threshold.self, forKey: .jevThreshold) ?? jevThreshold
+        foundationModelsUnsure = try values.decodeIfPresent(Bool.self, forKey: .foundationModelsUnsure) ?? foundationModelsUnsure
+        agreeingVerdicts = try values.decodeIfPresent(Agreement.self, forKey: .agreeingVerdicts) ?? agreeingVerdicts
+        afterSwitch = try values.decodeIfPresent(AfterSwitch.self, forKey: .afterSwitch) ?? afterSwitch
+        navigationSuspends = try values.decodeIfPresent(Bool.self, forKey: .navigationSuspends) ?? navigationSuspends
+        enterBehavior = try values.decodeIfPresent(EnterBehavior.self, forKey: .enterBehavior) ?? enterBehavior
+        escapeBehavior = try values.decodeIfPresent(EscapeBehavior.self, forKey: .escapeBehavior) ?? escapeBehavior
+        reversalSuspends = try values.decodeIfPresent(Bool.self, forKey: .reversalSuspends) ?? reversalSuspends
+        reversalBehavior = try values.decodeIfPresent(ReversalBehavior.self, forKey: .reversalBehavior)
+            ?? (reversalSuspends ? .stopUntilCleared : .blockModeForText)
+        wait = try values.decodeIfPresent(Wait.self, forKey: .wait) ?? wait
+        lateStrongMatch = try values.decodeIfPresent(LateStrongMatch.self, forKey: .lateStrongMatch) ?? lateStrongMatch
+    }
 }
 
 /// Stores one typed snapshot, never text or credentials.

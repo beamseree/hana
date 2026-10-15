@@ -1,0 +1,34 @@
+Test Suite 'Selected tests' started at 2026-10-15 22:35:34.747.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:35:34.748.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:35:34.748.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:35:34.748.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchReversalOptionsTests started.
+􀟈  Test legacyReversalChoicesMigrateWithoutResettingTheSnapshot(suspends:) started.
+􀟈  Test case passing 1 argument suspends → true to legacyReversalChoicesMigrateWithoutResettingTheSnapshot(suspends:) started.
+􀟈  Test case passing 1 argument suspends → false to legacyReversalChoicesMigrateWithoutResettingTheSnapshot(suspends:) started.
+􁁛  Test legacyReversalChoicesMigrateWithoutResettingTheSnapshot(suspends:) with 2 test cases passed after 0.007 seconds.
+􀟈  Test freshWordPacedUsesModeBlocking() started.
+􁁛  Test freshWordPacedUsesModeBlocking() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchReversalOptionsTests passed after 0.007 seconds.
+􀟈  Suite AutomaticSwitchWithdrawalTests started.
+􀟈  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() started.
+􁁛  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() passed after 0.003 seconds.
+􀟈  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() started.
+􁁛  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() passed after 0.001 seconds.
+􀟈  Test reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) started.
+􀟈  Test case passing 1 argument method → .backspace to reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) started.
+􀟈  Test case passing 1 argument method → .escape to reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) started.
+􁁛  Test reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test stopUntilClearedStillSuspendsBothModes() started.
+􁁛  Test stopUntilClearedStillSuspendsBothModes() passed after 0.001 seconds.
+􀟈  Test clearingAutomaticCaptureWithdrawsAtThePauseAndRearms() started.
+􀢄  Test clearingAutomaticCaptureWithdrawsAtThePauseAndRearms() recorded an issue at AutomaticSwitchWithdrawalTests.swift:75:9: Expectation failed: !(returns(h.edit("", edit: .replacement(caretAtEnd: true)) → [Hana.AutomaticSwitch.Effect.returnToSearch, Hana.AutomaticSwitch.Effect.record(Hana.AutomaticSwitchDiagnostics.Event.ended(Hana.AutomaticSwitchDiagnostics.End.reversed))]) → true)
+􀢄  Test clearingAutomaticCaptureWithdrawsAtThePauseAndRearms() recorded an issue at AutomaticSwitchWithdrawalTests.swift:79:9: Expectation failed: returns(h.policy.handle(.tick) → [])
+􀢄  Test clearingAutomaticCaptureWithdrawsAtThePauseAndRearms() failed after 0.001 seconds with 2 issues.
+􀢄  Suite AutomaticSwitchWithdrawalTests failed after 0.004 seconds with 2 issues.
+􀢄  Test run with 7 tests in 2 suites failed after 0.013 seconds with 2 issues.
