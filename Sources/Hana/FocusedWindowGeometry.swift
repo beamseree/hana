@@ -4,16 +4,18 @@ import Foundation
 extension MacInteraction {
     /// Race the OS boundary against a deadline without awaiting cancellation of
     /// foreign IPC. Only the first value is used; late replies cannot move UI.
-    nonisolated static func focusedWindowWithinDeadline(
+    nonisolated static func focusedWindowWithinDeadline<C: Clock<Duration>>(
+        clock: C = ContinuousClock(),
         lookup: @escaping @Sendable () async -> CGRect?
     ) async -> CGRect? {
         let (stream, continuation) = AsyncStream<CGRect?>.makeStream(bufferingPolicy: .bufferingOldest(1))
+        let expiry = clock.now.advanced(by: .milliseconds(60))
         let worker = Task.detached(priority: .userInitiated) {
             continuation.yield(await lookup())
             continuation.finish()
         }
         let deadline = Task {
-            try? await Task.sleep(for: .milliseconds(60))
+            try? await clock.sleep(until: expiry, tolerance: nil)
             guard !Task.isCancelled else { return }
             continuation.yield(nil)
             continuation.finish()

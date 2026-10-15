@@ -68,7 +68,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     var isLoading: Bool { !loadingIndicator.isHidden }
     var modeIconShowsQuery: Bool { modeIcon.showsQuery }
     var mode: CaptureSession.Mode { capture.state.mode }
-    var modeIconShowsNote: Bool { modeIcon.showsNote }
+    var modeIconShowsNote: Bool { modeIcon.glyph == .note }
     var modeLabelText: String? { modeLabel.isHidden ? nil : modeLabel.stringValue }
     var resultsVisible: Bool { resultSurface?.isHidden == false }
     var selectedResult: SearchResult? { results.first { $0.id == selectedID } }
@@ -427,7 +427,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         editor.setAccessibilityLabel(note ? "Note" : "Search")
         editor.setAccessibilityPlaceholderValue(note ? nil : "Search")
         modeLabel.isHidden = !note
-        modeIcon.setShowsNote(note, animated: animated)
+        // Search's glyph follows its query; clearing the editor restores the logo.
+        if note { modeIcon.setGlyph(.note, animated: animated) }
         editorScroll.hasVerticalScroller = note
         guard let card = editorScroll.superview else { return }
         // Note leaves room for its label; Search's single line stays pinned to the top.

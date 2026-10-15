@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logo Task Morph</title>
+<!--
+  Tuning prototype: the Hana logo in the bar morphs into the Task icon (a circle
+  with a checkmark) when `[` switches Search to Task, and back. Open this file
+  directly in a browser. A sibling of prototypes/logo-note-morph, with the same
+  driver, springs and controls.
+
+  There is no Figma frame for the Task icon; it is drawn here in the same
+  28-point space as the logo and the Note icon (stroke 2, the bloom's extent):
+    bloom outline  -> circle, radius 13.067
+    top-left spoke -> the check's short arm (both run down-right)
+    top-right spoke -> the check's long arm (both run up-right)
+    ring, bottom spokes -> collapse into the check's corner
+  The top spokes already point the way the arms do, so they slide and stretch
+  without rotating.
+
+  Every part is a stroked polyline. The outline follows its own spring (po), the
+  rest follows p (0 = logo, 1 = task), so each variant ports to one CAShapeLayer
+  per part with path keyframes, as ModeIconView already does for the magnifier.
+-->
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --panel: #ffffff;
+    --line: rgba(0, 0, 0, 0.09);
+    --text: #171717;
+    --muted: #6b6b6b;
+    --icon: #3a3a3a;
+    --accent: #171717;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 13px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 1040px; margin: 0 auto; padding: 32px 16px 64px; }
+  header h1 { font-size: 17px; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header p { margin: 0 0 20px; color: var(--muted); max-width: 680px; }
+  kbd { font: 12px ui-monospace, "SF Mono", Menlo, monospace; background: #fff; border-radius: 5px; padding: 1px 5px; box-shadow: 0 0 0 0.5px var(--line), 0 1px 0 rgba(0,0,0,.06); }
+
+  .stage {
+    border-radius: 18px;
+    padding: 72px 16px;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(60% 80% at 15% 20%, #9fb7d9 0%, transparent 60%),
+      radial-gradient(50% 70% at 85% 30%, #e7b98f 0%, transparent 60%),
+      radial-gradient(70% 90% at 50% 100%, #6f86a8 0%, transparent 70%),
+      #c9ced6;
+  }
+  .bezel {
+    width: 660px;
+    max-width: 100%;
+    padding: 4px;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.35);
+    -webkit-backdrop-filter: blur(30px) saturate(1.6);
+    backdrop-filter: blur(30px) saturate(1.6);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22), 0 0 0 0.5px rgba(0, 0, 0, 0.14);
+  }
+  .card { position: relative; height: 60px; background: #fff; border-radius: 22px; }
+  .mode-icon { position: absolute; left: 20px; top: 16px; width: 28px; height: 28px; color: var(--icon); overflow: visible; }
+  .query {
+    position: absolute; left: 58px; right: 16px; top: 10px; height: 40px;
+    border: 0; outline: 0; background: transparent; padding: 0;
+    font: 26px -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+    letter-spacing: -0.26px; color: #171717; caret-color: #171717;
+  }
+  .query::placeholder { color: #666; }
+  .stage-hint { margin-top: 14px; color: rgba(255, 255, 255, 0.92); font-size: 12px; text-shadow: 0 1px 2px rgba(0,0,0,.25); text-align: center; }
+
+  .grid { display: grid; grid-template-columns: 300px 1fr; gap: 16px; margin-top: 16px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border-radius: 14px; box-shadow: 0 0 0 0.5px var(--line), 0 1px 2px rgba(0,0,0,.04); padding: 16px; }
+  .panel h2 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 12px; }
+
+  .inspector svg.big { display: block; width: 100%; max-width: 268px; aspect-ratio: 1; margin: 0 auto; color: var(--icon); overflow: visible; }
+  .readout { font: 11px/1.4 ui-monospace, "SF Mono", Menlo, monospace; color: var(--muted); margin: 10px 0 8px; text-align: center; font-variant-numeric: tabular-nums; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  button {
+    font: inherit; font-weight: 500; color: var(--text);
+    background: #f1f1ef; border: 0; border-radius: 8px; padding: 6px 10px; cursor: pointer;
+    transition: transform 160ms var(--ease-out), background-color 160ms ease;
+  }
+  button:active { transform: scale(0.97); }
+  @media (hover: hover) and (pointer: fine) { button:hover { background: #e8e8e5; } }
+
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
+  @media (max-width: 560px) { .controls { grid-template-columns: 1fr; } }
+  .field { min-width: 0; }
+  .field.wide { grid-column: 1 / -1; }
+  .field label.title { display: flex; justify-content: space-between; font-weight: 500; margin-bottom: 6px; }
+  .field label.title output { color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 400; }
+  .field .help { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .field[hidden] { display: none; }
+  input[type=range] { width: 100%; accent-color: var(--accent); margin: 0; }
+  .checks { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .checks label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+  input[type=checkbox] { accent-color: var(--accent); margin: 0; }
+
+  .seg { display: flex; background: #f1f1ef; border-radius: 9px; padding: 2px; gap: 2px; flex-wrap: wrap; }
+  .seg label { flex: 1 1 auto; text-align: center; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg span {
+    display: block; padding: 5px 8px; border-radius: 7px; cursor: pointer; white-space: nowrap; color: var(--muted);
+    transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+  }
+  .seg input:checked + span { background: #fff; color: var(--text); box-shadow: 0 0 0 0.5px var(--line), 0 1px 2px rgba(0,0,0,.08); }
+  .seg input:focus-visible + span { outline: 2px solid #4b8bf5; outline-offset: 1px; }
+
+  .strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+  .frame { background: #fff; border-radius: 10px; box-shadow: 0 0 0 0.5px var(--line); padding: 10px 6px 6px; text-align: center; }
+  .frame svg { width: 100%; max-width: 64px; aspect-ratio: 1; color: var(--icon); overflow: visible; }
+  .frame div { font: 10px ui-monospace, "SF Mono", Menlo, monospace; color: var(--muted); margin-top: 4px; }
+
+  .settings { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
+  .settings code { flex: 1; min-width: 0; font: 11px ui-monospace, "SF Mono", Menlo, monospace; background: #f6f6f4; padding: 7px 9px; border-radius: 8px; overflow-x: auto; white-space: nowrap; }
+  .notes { color: var(--muted); margin-top: 16px; }
+  .notes ul { margin: 6px 0 0; padding-left: 18px; }
+  .notes li + li { margin-top: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Logo → Task morph</h1>
+    <p>Type <kbd>[</kbd> at the start of the bar to switch Search to Task; the mode icon morphs from the Hana logo into the Task icon. <kbd>⌫</kbd> on an empty Task, or <kbd>Esc</kbd>, goes back to Search. Try switching back mid-morph: it has to reverse from where it is without snapping.</p>
+  </header>
+
+  <section class="stage">
+    <div class="bezel">
+      <div class="card">
+        <svg class="mode-icon" id="barIcon" viewBox="0 0 28 28" aria-hidden="true"></svg>
+        <input class="query" id="query" placeholder="Search" autocomplete="off" spellcheck="false" autofocus>
+      </div>
+    </div>
+    <div class="stage-hint">Actual size · <b>[</b> switches to Task · ⌫ on empty or Esc returns to Search<br>Search's own logo → magnifier morph is left out here</div>
+  </section>
+
+  <div class="grid">
+    <section class="panel inspector">
+      <h2>Inspector</h2>
+      <svg class="big" id="bigIcon" viewBox="0 0 28 28" aria-hidden="true"></svg>
+      <div class="readout" id="readout">p 0.000 · target 0</div>
+      <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Scrub progress">
+      <div class="row" style="margin-top:10px">
+        <button id="toTask">→ Task</button>
+        <button id="toLogo">→ Logo</button>
+        <button id="jitter" title="Task, Search, Task, Search at 90ms intervals">Rapid toggle</button>
+      </div>
+      <div class="checks" style="margin-top:12px">
+        <label><input type="checkbox" id="slowmo"> Slow-mo ×5</label>
+        <label><input type="checkbox" id="pixelGrid"> Grid</label>
+        <label><input type="checkbox" id="overlay"> Figma logo</label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Tuning</h2>
+      <div class="controls">
+        <div class="field wide">
+          <label class="title">Variant</label>
+          <div class="seg" id="variant">
+            <label><input type="radio" name="variant" value="slide"><span>Slide</span></label>
+            <label><input type="radio" name="variant" value="fold"><span>Fold</span></label>
+            <label><input type="radio" name="variant" value="smart"><span>Smart Animate</span></label>
+            <label><input type="radio" name="variant" value="crossfade"><span>Crossfade</span></label>
+            <label><input type="radio" name="variant" value="instant"><span>Instant</span></label>
+          </div>
+          <div class="help" id="variantHelp"></div>
+        </div>
+
+        <div class="field wide" data-for="animated">
+          <label class="title">Motion</label>
+          <div class="seg" id="motion">
+            <label><input type="radio" name="motion" value="spring"><span>Spring</span></label>
+            <label><input type="radio" name="motion" value="easeOut"><span>Ease-out</span></label>
+            <label><input type="radio" name="motion" value="easeInOut"><span>Ease-in-out</span></label>
+          </div>
+        </div>
+
+        <div class="field" data-for="animated">
+          <label class="title" for="duration">Duration <output id="durationOut"></output></label>
+          <input type="range" id="duration" min="80" max="600" step="10">
+        </div>
+        <div class="field" data-for="spring">
+          <label class="title" for="bounce">Check bounce <output id="bounceOut"></output></label>
+          <input type="range" id="bounce" min="0" max="0.5" step="0.05">
+          <div class="help">The ring, spokes and checkmark.</div>
+        </div>
+        <div class="field" data-for="spring">
+          <label class="title" for="outlineBounce">Outline bounce <output id="outlineBounceOut"></output></label>
+          <input type="range" id="outlineBounce" min="0" max="0.5" step="0.05">
+          <div class="help">The bloom ↔ circle. Same duration, its own spring.</div>
+        </div>
+        <div class="field" data-for="staggered">
+          <label class="title" for="lag">Check lag <output id="lagOut"></output></label>
+          <input type="range" id="lag" min="0" max="0.5" step="0.05">
+          <div class="help">The outline leads; the check starts this far into the morph.</div>
+        </div>
+        <div class="field">
+          <label class="title" for="checkSize">Check size <output id="checkSizeOut"></output></label>
+          <input type="range" id="checkSize" min="0.8" max="1.3" step="0.02">
+          <div class="help">About the circle's centre. 1 is 8.5 points wide.</div>
+        </div>
+        <div class="field" data-for="crossfade">
+          <label class="title" for="fadeBlur">Crossfade blur <output id="fadeBlurOut"></output></label>
+          <input type="range" id="fadeBlur" min="0" max="4" step="0.25">
+        </div>
+        <div class="field">
+          <label class="title" for="stroke">Stroke <output id="strokeOut"></output></label>
+          <input type="range" id="stroke" min="1.5" max="2.6" step="0.05">
+          <div class="help">The app draws the mode icon at 2; Figma's is 1.867 at this size.</div>
+        </div>
+        <div class="field wide">
+          <div class="checks">
+            <label><input type="checkbox" id="reduced"> Reduce Motion (opacity-only fade)</label>
+          </div>
+        </div>
+      </div>
+      <div class="settings">
+        <code id="settingsLine"></code>
+        <button id="copy">Copy</button>
+        <button id="reset">Reset</button>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top:16px">
+    <h2>Frames</h2>
+    <div class="strip" id="strip"></div>
+    <div class="notes">
+      <ul>
+        <li>Frames show geometry at fixed p. With a spring or eased curve, the time spent near each frame differs.</li>
+        <li>The outline trades places: the bloom's notches push out and its lobes pull in to meet the circle, which shares the bloom's bounding box.</li>
+        <li>Mode switches come from a keystroke. Keep the morph short and never let it hold back the typed text.</li>
+        <li>Turn on <b>Figma logo</b> to check p = 0 against the Figma "Line Logo" vectors (red). The Task icon has no Figma frame yet.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  // ---------- Geometry (28 × 28 box, the app's mode-icon space) ----------
+  const C = 14, R2 = Math.SQRT2;
+  // Figma exports both frames at 375 units with the 350-unit frame inset by
+  // 12.5, and draws the logo 15/14 the size of HanaLogo.svg. fig() maps those
+  // units into the app's 28-point space, centred on 14.
+  const K = 0.08 * 14 / 15;
+  const fig = v => C + (v - 187.5) * K;
+
+  // Logo: the same constants as SearchIconMorph in Sources/Hana/ModeIcon.swift.
+  const LOBE_R = 7.467;
+  const LOBE_D = 5.6 * R2;
+  const RING_R = 2.61;
+  const SPOKE_OUT = (C - 9.968) * R2;     // cap centres; Figma's 133.5 maps to 9.968
+  const SPOKE_IN = (C - fig(156.5)) * R2; // Figma's inner end, hidden under the ring at rest
+  const TL = 0, TR = 1, BL = 2, BR = 3;
+  const U = [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([x, y]) => [x / R2, y / R2]);
+
+  // Task: a circle with a checkmark, drawn to match the Note icon. The circle
+  // has the bloom's (and the Note square's) extent.
+  const CIRCLE_R = fig(362.5) - C;        // 13.067
+
+  // The check's arms run along the spoke diagonals: the short arm down-right
+  // like the top-left spoke, the long arm up-right like the top-right one. Its
+  // bounding box is centred on the icon; checkSize scales it.
+  let CHECK, FOLD_CHECK;
+  function buildCheck(size) {
+    const short = 4 * size / R2, long = 8 * size / R2;  // arm projections on x and y
+    const v = [C - (short + long) / 2 + short, C + long / 2];
+    CHECK = { a: [v[0] - short, v[1] - short], v, b: [v[0] + long, v[1] - long] };
+    // Fold: the top half's first half becomes the short arm, its second the long arm.
+    const half = FOLD_N / 2;
+    FOLD_CHECK = [...line({ a: CHECK.a, b: CHECK.v }, half), ...line({ a: CHECK.v, b: CHECK.b }, half)];
+  }
+
+  // Both outlines are star-shaped about the centre, so they're sampled at the
+  // same angles and morph point for point. 192 is a multiple of 4, so samples
+  // land on the bloom's cusps.
+  const N = 192;
+  const THETA = Array.from({ length: N }, (_, i) => -Math.PI / 2 + (2 * Math.PI * i) / N);
+  const PHI = [1, 3, 5, 7].map(k => (k * Math.PI) / 4);
+  const BLOOM = THETA.map(t => {
+    let r = 0;
+    for (const phi of PHI) {
+      const a = t - phi, s = LOBE_D * Math.sin(a), k = LOBE_R * LOBE_R - s * s;
+      if (k >= 0) r = Math.max(r, LOBE_D * Math.cos(a) + Math.sqrt(k));
+    }
+    return [C + r * Math.cos(t), C + r * Math.sin(t)];
+  });
+  const CIRCLE = THETA.map(t => [C + CIRCLE_R * Math.cos(t), C + CIRCLE_R * Math.sin(t)]);
+
+  // The Figma "Line Logo" vectors, for the overlay (export units).
+  const FIGMA = {
+    logo: [
+      "M43.8444 189.793C24.5441 208.024 12.5 233.856 12.5 262.501C12.5 317.729 57.2715 362.501 112.5 362.501C141.145 362.501 166.977 350.457 185.208 331.156C186.447 329.844 188.553 329.844 189.792 331.156C208.023 350.457 233.855 362.501 262.5 362.501C317.728 362.501 362.5 317.729 362.5 262.501C362.5 233.856 350.456 208.024 331.156 189.793C329.844 188.553 329.844 186.448 331.156 185.209C350.456 166.978 362.5 141.145 362.5 112.5C362.5 57.2715 317.728 12.5 262.5 12.5C233.855 12.5 208.023 24.5441 189.792 43.8444C188.553 45.1564 186.447 45.1564 185.208 43.8444C166.977 24.5441 141.145 12.5 112.5 12.5C57.2715 12.5 12.5 57.2715 12.5 112.5C12.5 141.145 24.5441 166.978 43.8444 185.209C45.1564 186.448 45.1564 188.553 43.8444 189.793Z",
+      "M152.18 187A35 35 0 1 0 222.18 187A35 35 0 1 0 152.18 187Z",
+      "M133.5 240.5L156.5 217.5", "M240.68 240.5L217.68 217.5", "M133.5 133.5L156.5 156.5", "M240.68 133.5L217.68 156.5",
+    ],
+  };
+
+  const clamp01 = x => Math.min(1, Math.max(0, x));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t)];
+  const along = (d, u) => [C + d * u[0], C + d * u[1]];
+  const arc = (r, a0, a1, n) => Array.from({ length: n + 1 }, (_, i) => {
+    const a = lerp(a0, a1, i / n);
+    return [C + r * Math.cos(a), C + r * Math.sin(a)];
+  });
+  const DEG = Math.PI / 180;
+
+  // A polyline resampled to n points evenly by length, so two can be lerped.
+  function resample(pts, n) {
+    const seg = [0];
+    for (let i = 1; i < pts.length; i++) seg.push(seg[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    const total = seg[seg.length - 1];
+    return Array.from({ length: n }, (_, i) => {
+      const s = (total * i) / (n - 1);
+      let j = 1;
+      while (j < pts.length - 1 && seg[j] < s) j++;
+      const t = seg[j] === seg[j - 1] ? 0 : (s - seg[j - 1]) / (seg[j] - seg[j - 1]);
+      return lerpPt(pts[j - 1], pts[j], clamp01(t));
+    });
+  }
+
+  // "Fold": the top half of the centre (two spokes and the ring arc between
+  // them) is one path that bends into the check; the ring's top dips into its
+  // corner. At p = 0 the spokes run to the ring's centreline, as
+  // SearchIconMorph draws them, so it matches the logo.
+  const FOLD_N = 64;
+  const halfPath = (outerA, ringA0, ringA1, outerB) => {
+    const h = FOLD_N / 2;
+    return [
+      ...resample([along(SPOKE_OUT, U[outerA]), ...arc(RING_R, ringA0, (ringA0 + ringA1) / 2, 12)], h),
+      ...resample([...arc(RING_R, (ringA0 + ringA1) / 2, ringA1, 12), along(SPOKE_OUT, U[outerB])], h),
+    ];
+  };
+  const FOLD_TOP = halfPath(TL, 225 * DEG, 315 * DEG, TR);
+  const FOLD_BOTTOM = halfPath(BL, 135 * DEG, 45 * DEG, BR);
+  const line = (l, n) => Array.from({ length: n }, (_, i) => lerpPt(l.a, l.b, i / (n - 1)));
+
+  // ---------- Settings ----------
+  // Beam's chosen settings (2026-10-14); see README.md.
+  const DEFAULTS = {
+    variant: "slide", motion: "spring", duration: 240, bounce: 0.25, outlineBounce: 0.4,
+    lag: 0, checkSize: 1, fadeBlur: 2, stroke: 2,
+    reduced: matchMedia("(prefers-reduced-motion: reduce)").matches,
+  };
+  const KEY = "hana-logo-task-morph";
+  let S = { ...DEFAULTS };
+  try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+
+  const HELP = {
+    slide: "The bloom rounds into the circle. The top spokes slide down and stretch into the check's arms without turning; the ring drops into the check's corner and the bottom spokes retract into it.",
+    fold: "The bloom rounds into the circle. The top half of the centre, two spokes and the ring arc between them, bends into the check; the bottom half collapses into its corner.",
+    smart: "A Smart Animate pairing taken literally: the top spokes travel straight to the arms, and the ring and bottom spokes fade where they are.",
+    crossfade: "Logo and task swap with scale and blur. Simplest to ship; reads as a swap, not a morph.",
+    instant: "No animation. The baseline every variant has to beat.",
+  };
+
+  // ---------- Geometry for a given progress ----------
+  // Returns groups of stroked polylines: [{ o, s, blur, parts: [{ pts, closed, o }] }].
+  // p drives the centre (ring, spokes, check); po drives the outline, which
+  // runs on its own spring so it can bounce less.
+  function morphParts(variant, p, po = p) {
+    const q = clamp01(p), over = p - q;              // over ≠ 0 only on spring overshoot
+    const win = (a, b) => clamp01((q - a) / (b - a)) + over; // geometry may overshoot
+    const fade = (a, b) => clamp01((q - a) / (b - a));       // opacity never does
+    const lag = variant === "smart" ? 0 : S.lag;
+    const l = win(lag, 1);
+    const parts = [{ pts: BLOOM.map((b, i) => lerpPt(b, CIRCLE[i], po)), closed: true, o: 1 }];
+
+    if (variant === "fold") {
+      parts.push({ pts: FOLD_TOP.map((a, i) => lerpPt(a, FOLD_CHECK[i], l)), o: 1 });
+      // The bottom half and the ring's sides aren't part of the check: the
+      // bottom half collapses into its corner, the sides close up, and all fade.
+      const shut = win(0, 0.4), o = 1 - fade(0.05, 0.35);
+      parts.push({ pts: FOLD_BOTTOM.map(a => lerpPt(a, CHECK.v, win(0, 0.5))), o: 1 - fade(0.05, 0.4) });
+      parts.push({ pts: arc(RING_R, lerp(135, 180, shut) * DEG, lerp(225, 180, shut) * DEG, 12), o });
+      parts.push({ pts: arc(RING_R, lerp(-45, 0, shut) * DEG, lerp(45, 0, shut) * DEG, 12), o });
+      return parts;
+    }
+
+    // Top spokes -> arms. Each spoke already points along its arm, so moving
+    // the ends in straight lines slides and stretches it without turning.
+    const tl = [along(SPOKE_OUT, U[TL]), along(SPOKE_IN, U[TL])];
+    const tr = [along(SPOKE_IN, U[TR]), along(SPOKE_OUT, U[TR])];
+    parts.push({ pts: [lerpPt(tl[0], CHECK.a, l), lerpPt(tl[1], CHECK.v, l)], o: 1 });
+    parts.push({ pts: [lerpPt(tr[0], CHECK.v, l), lerpPt(tr[1], CHECK.b, l)], o: 1 });
+
+    for (const i of [BL, BR]) {
+      if (variant === "smart") {
+        parts.push({ pts: [along(SPOKE_IN, U[i]), along(SPOKE_OUT, U[i])], o: 1 - q });
+        continue;
+      }
+      const len = lerp(SPOKE_OUT - SPOKE_IN, 0, win(0, 0.45));
+      parts.push({ pts: [along(SPOKE_IN, U[i]), along(SPOKE_IN + len, U[i])], o: 1 - fade(0.1, 0.4) });
+    }
+    if (variant === "smart") {
+      parts.push({ pts: arc(RING_R, 0, 2 * Math.PI, 48), closed: true, o: 1 - q });
+    } else {
+      // The ring drops into the check's corner as it shrinks away.
+      const drop = win(0, 0.5), r = Math.max(0, lerp(RING_R, RING_R * 0.3, drop));
+      const at = lerpPt([C, C], CHECK.v, drop);
+      parts.push({ pts: arc(r, 0, 2 * Math.PI, 48).map(([x, y]) => [x - C + at[0], y - C + at[1]]), closed: true, o: 1 - fade(0, 0.45) });
+    }
+    return parts;
+  }
+
+  function geometry(p, po = p) {
+    const variant = S.reduced ? "fade" : S.variant;
+    const q = clamp01(p), over = p - q;
+    if (variant === "slide" || variant === "fold" || variant === "smart") {
+      return [{ o: 1, s: 1, blur: 0, parts: morphParts(variant, p, po) }];
+    }
+    const logo = morphParts("slide", 0), task = morphParts("slide", 1);
+    if (variant === "crossfade") {
+      return [
+        { o: 1 - q, s: lerp(1, 0.9, q), blur: S.fadeBlur * q, parts: logo },
+        { o: q, s: lerp(0.9, 1, q) + over * 0.1, blur: S.fadeBlur * (1 - q), parts: task },
+      ];
+    }
+    if (variant === "fade") return [{ o: 1 - q, s: 1, blur: 0, parts: logo }, { o: q, s: 1, blur: 0, parts: task }];
+    const on = p >= 0.5;
+    return [{ o: on ? 0 : 1, s: 1, blur: 0, parts: logo }, { o: on ? 1 : 0, s: 1, blur: 0, parts: task }];
+  }
+
+  // ---------- SVG rigs ----------
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  const f3 = n => n.toFixed(3);
+  const scaleAbout = s => `translate(${C} ${C}) scale(${f3(s)}) translate(${-C} ${-C})`;
+  const toD = (pts, closed) => "M" + pts.map(pt => f3(pt[0]) + " " + f3(pt[1])).join("L") + (closed ? "Z" : "");
+
+  let rigCount = 0;
+  function makeRig(svg, { inspector = false } = {}) {
+    const id = "rig" + rigCount++;
+    const defs = el("defs", {}, svg);
+    const rig = { svg, groups: [] };
+    if (inspector) {
+      rig.grid = el("g", { stroke: "#000", "stroke-opacity": 0.07, "stroke-width": 0.03 }, svg);
+      for (let i = 0; i <= 28; i++) {
+        el("line", { x1: i, y1: 0, x2: i, y2: 28 }, rig.grid);
+        el("line", { x1: 0, y1: i, x2: 28, y2: i }, rig.grid);
+      }
+    }
+    for (let g = 0; g < 2; g++) {
+      const filter = el("filter", { id: id + "f" + g, x: "-50%", y: "-50%", width: "200%", height: "200%" }, defs);
+      const group = el("g", { fill: "none", stroke: "currentColor", "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
+      rig.groups.push({ group, fx: { id: id + "f" + g, fe: el("feGaussianBlur", { stdDeviation: 0 }, filter) }, paths: [] });
+    }
+    if (inspector) {
+      const overlay = (paths) => {
+        const g = el("g", { fill: "none", stroke: "#e5484d", "stroke-opacity": 0.45, "stroke-width": 25, "stroke-linecap": "round", transform: `translate(${C} ${C}) scale(${K}) translate(-187.5 -187.5)` }, svg);
+        paths.forEach(d => el("path", { d }, g));
+        return g;
+      };
+      rig.overlayLogo = overlay(FIGMA.logo);
+    }
+    return rig;
+  }
+
+  function draw(rig, groups) {
+    rig.groups.forEach((slot, gi) => {
+      const g = groups[gi];
+      slot.group.style.display = g ? "" : "none";
+      if (!g) return;
+      slot.group.setAttribute("opacity", f3(clamp01(g.o)));
+      slot.group.setAttribute("transform", scaleAbout(g.s));
+      slot.group.setAttribute("stroke-width", f3(S.stroke));
+      if (g.blur > 0.02) {
+        slot.fx.fe.setAttribute("stdDeviation", f3(g.blur));
+        slot.group.setAttribute("filter", `url(#${slot.fx.id})`);
+      } else slot.group.removeAttribute("filter");
+      while (slot.paths.length < g.parts.length) slot.paths.push(el("path", {}, slot.group));
+      slot.paths.forEach((path, i) => {
+        const part = g.parts[i];
+        path.style.display = part ? "" : "none";
+        if (!part) return;
+        path.setAttribute("d", toD(part.pts, part.closed));
+        path.setAttribute("opacity", f3(clamp01(part.o)));
+      });
+    });
+  }
+
+  const barRig = makeRig(document.getElementById("barIcon"));
+  const bigRig = makeRig(document.getElementById("bigIcon"), { inspector: true });
+
+  const strip = document.getElementById("strip");
+  const FRAMES = [0, 1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6, 1];
+  const stripRigs = FRAMES.map(p => {
+    const frame = document.createElement("div");
+    frame.className = "frame";
+    const svg = el("svg", { viewBox: "0 0 28 28", "aria-hidden": "true" });
+    frame.appendChild(svg);
+    const label = document.createElement("div");
+    label.textContent = "p " + p.toFixed(2);
+    frame.appendChild(label);
+    strip.appendChild(frame);
+    return { p, rig: makeRig(svg) };
+  });
+  const drawStrip = () => stripRigs.forEach(({ p, rig }) => draw(rig, geometry(p)));
+
+  // ---------- Driver: one scalar p, retargetable mid-flight ----------
+  // p/v is the centre's spring, po/vo the outline's.
+  const anim = { p: 0, v: 0, po: 0, vo: 0, target: 0, from: 0, elapsed: 0, span: 0, raf: 0, last: 0 };
+
+  function bezier(x1, y1, x2, y2) {
+    const ax = 3 * x1 - 3 * x2 + 1, bx = 3 * x2 - 6 * x1, cx = 3 * x1;
+    const ay = 3 * y1 - 3 * y2 + 1, by = 3 * y2 - 6 * y1, cy = 3 * y1;
+    const X = t => ((ax * t + bx) * t + cx) * t, Y = t => ((ay * t + by) * t + cy) * t;
+    const dX = t => (3 * ax * t + 2 * bx) * t + cx;
+    return x => {
+      let t = x;
+      for (let i = 0; i < 8; i++) {
+        const d = dX(t);
+        if (Math.abs(d) < 1e-6) break;
+        t -= (X(t) - x) / d;
+      }
+      t = clamp01(t);
+      let lo = 0, hi = 1;
+      for (let i = 0; i < 20 && Math.abs(X(t) - x) > 1e-5; i++) {
+        if (X(t) < x) lo = t; else hi = t;
+        t = (lo + hi) / 2;
+      }
+      return Y(t);
+    };
+  }
+  const EASE = {
+    easeOut: bezier(0.23, 1, 0.32, 1),   // BarStyle.easeOut
+    easeInOut: bezier(0.77, 0, 0.175, 1),
+    linear: x => x,
+  };
+
+  const motionKind = () => (S.reduced ? "linear" : S.motion);
+  const durationSec = () => (S.reduced ? 0.15 : S.duration / 1000);
+
+  function retarget(target) {
+    anim.target = target;
+    if (!S.reduced && S.variant === "instant") {
+      anim.p = anim.po = target; anim.v = anim.vo = 0;
+      stop(); render();
+      return;
+    }
+    // Tweens restart from the current p with a duration scaled by the remaining
+    // distance; the spring keeps its velocity, which is why it reverses smoothly.
+    anim.from = anim.p;
+    anim.elapsed = 0;
+    anim.span = durationSec() * Math.abs(target - anim.p);
+    if (!anim.raf) {
+      anim.last = performance.now();
+      anim.raf = requestAnimationFrame(tick);
+    }
+  }
+  function stop() {
+    if (anim.raf) cancelAnimationFrame(anim.raf);
+    anim.raf = 0;
+  }
+  function tick(now) {
+    let dt = Math.min((now - anim.last) / 1000, 1 / 20);
+    anim.last = now;
+    if (slowmo.checked) dt /= 5;
+    let done;
+    if (motionKind() === "spring") {
+      const d = durationSec(), k = (2 * Math.PI / d) ** 2;
+      const c = (4 * Math.PI * (1 - S.bounce)) / d, co = (4 * Math.PI * (1 - S.outlineBounce)) / d;
+      const steps = Math.max(1, Math.ceil(dt / 0.001)), h = dt / steps;
+      for (let i = 0; i < steps; i++) {
+        anim.v += (-k * (anim.p - anim.target) - c * anim.v) * h;
+        anim.p += anim.v * h;
+        anim.vo += (-k * (anim.po - anim.target) - co * anim.vo) * h;
+        anim.po += anim.vo * h;
+      }
+      done = [anim.p - anim.target, anim.po - anim.target].every(x => Math.abs(x) < 1e-4)
+        && Math.abs(anim.v) < 1e-3 && Math.abs(anim.vo) < 1e-3;
+    } else {
+      anim.elapsed += dt;
+      const x = anim.span > 0 ? clamp01(anim.elapsed / anim.span) : 1;
+      anim.p = anim.po = lerp(anim.from, anim.target, EASE[motionKind()](x));
+      anim.v = anim.vo = 0;
+      done = x >= 1;
+    }
+    if (done) { anim.p = anim.po = anim.target; anim.v = anim.vo = 0; anim.raf = 0; }
+    render();
+    if (!done) anim.raf = requestAnimationFrame(tick);
+  }
+
+  // ---------- Rendering & readouts ----------
+  const readout = document.getElementById("readout");
+  const scrub = document.getElementById("scrub");
+  let scrubbing = false;
+  function render() {
+    const g = geometry(anim.p, anim.po);
+    draw(barRig, g);
+    draw(bigRig, g);
+    readout.textContent = `p ${anim.p.toFixed(3)} · target ${anim.target}` + (motionKind() === "spring" ? ` · outline ${anim.po.toFixed(3)}` : "");
+    if (!scrubbing) scrub.value = Math.round(clamp01(anim.p) * 1000);
+    applyOverlay();
+  }
+
+  // ---------- Input: `[` at the start of Search switches to Task ----------
+  const query = document.getElementById("query");
+  let mode = "search";
+  function setMode(next) {
+    if (next === mode) return;
+    mode = next;
+    query.placeholder = mode === "task" ? "Task" : "Search";
+    retarget(mode === "task" ? 1 : 0);
+  }
+  query.addEventListener("beforeinput", e => {
+    // Only typing recognises the prefix; pasting keeps the current mode.
+    if (mode === "search" && e.inputType === "insertText" && e.data === "[" && query.selectionStart === 0 && query.selectionEnd === 0) {
+      e.preventDefault();
+      setMode("task");
+    }
+  });
+  query.addEventListener("keydown", e => {
+    if (e.key === "Escape") { query.value = ""; setMode("search"); }
+    else if (e.key === "Backspace" && mode === "task" && query.selectionStart === 0 && query.selectionEnd === 0) {
+      e.preventDefault();
+      setMode("search");
+    }
+  });
+
+  scrub.addEventListener("pointerdown", () => { scrubbing = true; stop(); });
+  addEventListener("pointerup", () => { scrubbing = false; });
+  scrub.addEventListener("input", () => {
+    stop();
+    anim.p = anim.po = scrub.value / 1000; anim.v = anim.vo = 0;
+    render();
+  });
+
+  document.getElementById("toTask").onclick = () => { setMode("task"); query.focus(); };
+  document.getElementById("toLogo").onclick = () => { setMode("search"); query.focus(); };
+  document.getElementById("jitter").onclick = () => {
+    query.value = "";
+    setMode("search");
+    ["task", "search", "task", "search"].forEach((m, i) => setTimeout(() => setMode(m), 90 * (i + 1)));
+    query.focus();
+  };
+
+  const slowmo = document.getElementById("slowmo");
+  const pixelGrid = document.getElementById("pixelGrid");
+  const overlay = document.getElementById("overlay");
+  function applyOverlay() {
+    bigRig.overlayLogo.style.display = overlay.checked && anim.p < 0.5 ? "" : "none";
+  }
+  const applyInspectorToggles = () => {
+    bigRig.grid.style.display = pixelGrid.checked ? "" : "none";
+    applyOverlay();
+  };
+  pixelGrid.onchange = overlay.onchange = applyInspectorToggles;
+
+  // ---------- Tuning controls ----------
+  const fmt = {
+    duration: v => `${v} ms`, bounce: v => (+v).toFixed(2), outlineBounce: v => (+v).toFixed(2), lag: v => (+v).toFixed(2),
+    checkSize: v => `${(+v).toFixed(2)}×`, fadeBlur: v => `${(+v).toFixed(2)} pt`, stroke: v => (+v).toFixed(2),
+  };
+  for (const key of Object.keys(fmt)) {
+    const input = document.getElementById(key), out = document.getElementById(key + "Out");
+    input.value = S[key];
+    out.textContent = fmt[key](S[key]);
+    input.addEventListener("input", () => {
+      S[key] = +input.value;
+      out.textContent = fmt[key](input.value);
+      changed();
+    });
+  }
+  for (const name of ["variant", "motion"]) {
+    document.querySelectorAll(`input[name=${name}]`).forEach(radio => {
+      radio.checked = radio.value === S[name];
+      radio.addEventListener("change", () => { S[name] = radio.value; changed(); });
+    });
+  }
+  const reduced = document.getElementById("reduced");
+  reduced.checked = S.reduced;
+  reduced.onchange = () => { S.reduced = reduced.checked; changed(); };
+
+  function updateVisibility() {
+    const show = {
+      animated: S.variant !== "instant",
+      spring: S.variant !== "instant" && S.motion === "spring",
+      staggered: S.variant === "slide" || S.variant === "fold",
+      crossfade: S.variant === "crossfade",
+    };
+    document.querySelectorAll("[data-for]").forEach(f => { f.hidden = S.reduced || !show[f.dataset.for]; });
+    document.getElementById("variantHelp").textContent = S.reduced
+      ? "Reduce Motion is on: every variant becomes a 150 ms opacity fade."
+      : HELP[S.variant];
+  }
+  const settingsLine = document.getElementById("settingsLine");
+  function describe() {
+    if (S.reduced) return "reduceMotion: opacity fade 150ms";
+    const parts = [`variant: ${S.variant}`];
+    if (S.variant !== "instant") {
+      parts.push(S.motion === "spring" ? `spring(duration: ${S.duration / 1000}, bounce: ${S.bounce}, outlineBounce: ${S.outlineBounce})` : `${S.motion} ${S.duration}ms`);
+    }
+    if (S.variant === "slide" || S.variant === "fold") parts.push(`lag: ${S.lag}`);
+    if (S.variant === "crossfade") parts.push(`blur: ${S.fadeBlur}pt`);
+    parts.push(`checkSize: ${S.checkSize}`, `stroke: ${S.stroke}`);
+    return parts.join(" · ");
+  }
+  function changed() {
+    buildCheck(S.checkSize);
+    save();
+    updateVisibility();
+    settingsLine.textContent = describe();
+    drawStrip();
+    render();
+  }
+  document.getElementById("copy").onclick = async () => {
+    try { await navigator.clipboard.writeText(settingsLine.textContent); } catch {}
+  };
+  document.getElementById("reset").onclick = () => {
+    S = { ...DEFAULTS };
+    try { localStorage.removeItem(KEY); } catch {}
+    location.reload();
+  };
+
+  applyInspectorToggles();
+  changed();
+  query.focus();
+})();
+</script>
+</body>
+</html>

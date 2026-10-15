@@ -2,9 +2,9 @@ import AppKit
 import Testing
 @testable import Hana
 
-// Requires the coordinated native testing slot. Uses the real first responder
+// Holds the coordinated native testing slot. Uses the real first responder
 // and editor commands, never a replacement editor or private view hierarchy.
-@Suite(.serialized)
+@Suite(.serialized, .nativeWindowSlot)
 @MainActor
 struct NativeEditingTests {
     @Test func lateResultsPreserveEditorSelectionUndoAndInputPosition() async throws {
@@ -19,6 +19,8 @@ struct NativeEditingTests {
         let text = "- [ 'hello' *? บันทึก"
         editor.insertText(text, replacementRange: NSRange(location: NSNotFound, length: 0))
         editor.breakUndoCoalescing()
+        // The key window must be this test's bar, not another test's.
+        try #require(interaction.query == text)
         editor.setSelectedRange(NSRange(location: 5, length: 5))
         let inputTop = window.frame.maxY
         let responder = window.firstResponder

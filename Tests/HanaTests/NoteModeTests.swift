@@ -3,7 +3,7 @@ import Testing
 @testable import Hana
 
 /// Note mode's presentation in the real panel, entered through the real editor.
-@Suite(.serialized)
+@Suite(.serialized, .nativeWindowSlot)
 @MainActor
 struct NoteModeTests {
     private let none = NSRange(location: NSNotFound, length: 0)
