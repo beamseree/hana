@@ -3,10 +3,16 @@ import Foundation
 /// Pure session policy. Time is read only at events. After each event the
 /// adapter reads `nextWakeUp` and sends `.tick` at that time, never periodically.
 struct AutomaticSwitch {
+    /// Native edit provenance is necessary: replacing a selection can leave
+    /// text that looks like a suffix append, or even the same text.
+    enum Edit: Equatable {
+        case append
+        case replacement(caretAtEnd: Bool)
+    }
     enum Event {
         case invoked
         case dismissed(AutomaticSwitchDiagnostics.End)
-        case bufferChanged(text: String, composing: Bool, gate: StrongMatchGate.Evaluation? = nil)
+        case bufferChanged(text: String, composing: Bool, gate: StrongMatchGate.Evaluation? = nil, edit: Edit? = nil)
         case gateChanged(StrongMatchGate.Evaluation)
         case eligibilityChanged(Bool)
         case verdict(id: UUID, ClassifierVerdict, latencyMilliseconds: Double)
@@ -69,6 +75,12 @@ struct AutomaticSwitch {
     // A timeout already sampled latency and a cancelled request has none; their later stale rows sample nothing.
     private var unsampledRequests: Set<UUID> = []
     private var due: Duration?
+    /// A non-append edit starts a burst. Even appended corrections stay in
+    /// that burst until the adaptive pause, holding answers and sends.
+    private var deletionPause: Duration?
+    /// Arrival order is already constrained by newestHandledSequence. Keep
+    /// earlier answers for confidence, while only the newest may switch.
+    private var heldWordAnswers: [Candidate] = []
     private var changedAt: Duration = .zero
     private var candidate: Candidate?
     private var agreementLabel: ClassifierVerdict.Label?
@@ -95,6 +107,7 @@ struct AutomaticSwitch {
         if let due, !composing, canClassify, isWordPaced || request == nil {
             times.append(due)
         }
+        if let deletionPause, !composing, eligible { times.append(deletionPause) }
         if isWordPaced {
             times += wordRequests.values.filter(\.valid).map { $0.started + requestDeadline }
         } else if let request {
@@ -127,12 +140,13 @@ struct AutomaticSwitch {
             active = true; text = ""; composing = false; eligible = true; suspended = false
             mode = .search; candidate = nil; due = nil; agreements = 0; agreementLabel = nil
             waitingText = nil; answeredText = nil; lastInsertAt = nil; requestsSent = 0
+            deletionPause = nil; heldWordAnswers = []
             switchedAt = nil; enterGraceEnds = nil; hadSwitch = false; actedOnText = nil; ended = false
             lastVerdict = .none; lateKind = nil
             return effects
         case .dismissed(let end):
             let wasActive = active
-            active = false; due = nil; candidate = nil
+            active = false; due = nil; candidate = nil; deletionPause = nil
             var effects = cancel()
             if hadSwitch, !ended { effects.append(.record(.ended(end))); ended = true }
             if wasActive { effects.append(.record(.session(requestsSent: requestsSent))) }
@@ -150,8 +164,8 @@ struct AutomaticSwitch {
             }
         }
         switch event {
-        case .bufferChanged(let text, let composing, let newGate):
-            if isWordPaced { return wordPacedBufferChanged(text: text, composing: composing, gate: newGate) }
+        case .bufferChanged(let text, let composing, let newGate, let edit):
+            if isWordPaced { return wordPacedBufferChanged(text: text, composing: composing, gate: newGate, edit: edit) }
             guard !self.text.utf8.elementsEqual(text.utf8) || self.composing != composing else { return [] }
             if let newGate { gate = newGate }
             self.text = text; self.composing = composing; changedAt = now(); candidate = nil; lateKind = nil
@@ -226,9 +240,10 @@ struct AutomaticSwitch {
             return cancel()
         case .tick:
             if let enterGraceEnds, now() >= enterGraceEnds { self.enterGraceEnds = nil }
-            if let timeout = timeoutIfDue() { return timeout + fireIfDue() }
-            if let candidate { return apply(candidate) + fireIfDue() }
-            return fireIfDue()
+            let timeout = timeoutIfDue() ?? []
+            let held = finishDeletionBurstIfDue()
+            if let candidate { return timeout + held + apply(candidate) + fireIfDue() }
+            return timeout + held + fireIfDue()
         case .slotReleased:
             return isWordPaced ? sendWaiting() : []
         case .invoked, .dismissed: return []
@@ -279,7 +294,7 @@ struct AutomaticSwitch {
     private var canClassify: Bool { eligible && !suspended && (mode == .search || options.afterSwitch == .keepClassifying && switchedAt != nil) }
     private mutating func cancel() -> [Effect] {
         if isWordPaced {
-            waitingText = nil
+            waitingText = nil; heldWordAnswers = []
             return cancelWordRequests { _ in true }
         }
         guard let request else { return [] }
@@ -301,7 +316,8 @@ struct AutomaticSwitch {
         let id = UUID(); request = Request(id: id, started: now())
         return [.classify(id: id, text: text)]
     }
-    private mutating func apply(_ incoming: Candidate) -> [Effect] {
+    private mutating func apply(_ incoming: Candidate, allowingSwitch: Bool = true) -> [Effect] {
+        guard deletionPause == nil else { return [] }
         var value = incoming
         if let prefix = value.prefix, !Self.normalized(text).utf8.starts(with: prefix.utf8) {
             candidate = nil
@@ -341,7 +357,7 @@ struct AutomaticSwitch {
         }
         let requiredAgreements = isWordPaced && (value.verdict.probability ?? 0) < 0.90
             ? max(2, options.agreeingVerdicts.rawValue) : options.agreeingVerdicts.rawValue
-        if (value.agreementCount ?? agreements) < requiredAgreements {
+        if (value.agreementCount ?? agreements) < requiredAgreements || !allowingSwitch {
             // Word-paced never resends the same text for a second opinion; the next answer may agree.
             if !isWordPaced { due = now() + max(firingDelay, .milliseconds(150)) }
             return [diagnostic(value, .awaitingAgreement)]
@@ -359,10 +375,11 @@ struct AutomaticSwitch {
         return effects
     }
     private mutating func wordPacedBufferChanged(text newText: String, composing newComposing: Bool,
-                                                 gate newGate: StrongMatchGate.Evaluation?) -> [Effect] {
-        guard !text.utf8.elementsEqual(newText.utf8) || composing != newComposing else { return [] }
+                                                 gate newGate: StrongMatchGate.Evaluation?, edit: Edit?) -> [Effect] {
+        guard !text.utf8.elementsEqual(newText.utf8) || composing != newComposing || edit != nil else { return [] }
         let previousNormalized = Self.normalized(text)
-        let appending = !composing && !newComposing && newText.utf8.count > text.utf8.count
+        let replaced: Bool = if case .replacement = edit { true } else { false }
+        let appending = !replaced && !composing && !newComposing && newText.utf8.count > text.utf8.count
             && newText.utf8.starts(with: text.utf8)
         let time = now()
         // Gaps are measured only between consecutive insertions in this session.
@@ -375,6 +392,10 @@ struct AutomaticSwitch {
             && newText.dropLast().last.map { !Self.endsWord($0) } == true
         if let newGate { gate = newGate }
         text = newText; composing = newComposing; changedAt = time; lateKind = nil
+        if !appending || deletionPause != nil { deletionPause = time + memory.pauseThreshold }
+        if deletionPause != nil, let candidate {
+            heldWordAnswers.append(candidate); self.candidate = nil
+        }
         var effects: [Effect] = []
         if gate.decision != .allowed {
             effects += cancel()
@@ -384,9 +405,12 @@ struct AutomaticSwitch {
             if let waitingText, !current.utf8.starts(with: waitingText.utf8) { self.waitingText = nil }
             effects += cancelWordRequests { !current.utf8.starts(with: $0.text.utf8) }
         }
-        if !appending || gate.decision != .allowed { candidate = nil; agreements = 0; agreementLabel = nil }
+        // A held answer is checked against the final prefix at the pause,
+        // rather than discarded by each further deletion in the burst.
+        if gate.decision != .allowed { candidate = nil; agreements = 0; agreementLabel = nil }
         due = nil
         if text.isEmpty {
+            deletionPause = nil; heldWordAnswers = []; candidate = nil; agreements = 0; agreementLabel = nil
             if eligible, !composing, switchedAt != nil, mode != .search {
                 effects += returnToSearch()
             }
@@ -395,6 +419,7 @@ struct AutomaticSwitch {
         }
         if suspended, !composing { return effects + [diagnostic(nil, .suspended)] }
         guard !composing, canClassify else { return effects }
+        if let deletionPause { due = deletionPause; return effects }
         let normalized = Self.normalized(text)
         if !normalized.utf8.elementsEqual(previousNormalized.utf8), let cached = applyCachedAnswer(for: normalized) {
             return effects + cached
@@ -408,7 +433,7 @@ struct AutomaticSwitch {
     /// Word-paced condition holds. With both launch-wide slots busy, the text
     /// takes the single waiting slot, replacing any older waiting text.
     private mutating func sendWordPaced(_ waiting: String? = nil) -> [Effect] {
-        guard !composing, canClassify else { return [] }
+        guard deletionPause == nil, !composing, canClassify else { return [] }
         let value = waiting ?? Self.normalized(text)
         // One word is never sent, whatever the gate says, so it records nothing.
         guard value.split(separator: " ").count >= 2 else { return [] }
@@ -471,14 +496,38 @@ struct AutomaticSwitch {
         }
         newestHandledSequence = request.sequence
         if let error {
-            candidate = nil; agreements = 0; agreementLabel = nil
+            candidate = nil; heldWordAnswers = []; agreements = 0; agreementLabel = nil
             return [diagnostic(value, .error, error: error)] + sendWaiting()
         }
         lastVerdict = diagnosticLabel(verdict.label)
         answeredText = request.text
         let prefixed = Candidate(verdict: verdict, latency: latency, prefix: request.text)
+        if deletionPause != nil {
+            heldWordAnswers.append(prefixed)
+            return sendWaiting()
+        }
         candidate = prefixed
         return apply(prefixed) + sendWaiting()
+    }
+
+    /// Ends one burst at the pause, rechecking every held prefix. Earlier
+    /// answers can establish agreement; only the latest applicable answer
+    /// may change the mode, so the bar never briefly visits an older mode.
+    private mutating func finishDeletionBurstIfDue() -> [Effect] {
+        guard let deletionPause, now() >= deletionPause, !composing, eligible else { return [] }
+        self.deletionPause = nil
+        let held = heldWordAnswers
+        heldWordAnswers = []
+        let current = Self.normalized(text)
+        let applicable = held.filter { $0.prefix.map { current.utf8.starts(with: $0.utf8) } ?? true }
+        var effects = held.filter { value in
+            value.prefix.map { !current.utf8.starts(with: $0.utf8) } ?? false
+        }.map { diagnostic($0, .stale) }
+        for (index, value) in applicable.enumerated() {
+            candidate = value
+            effects += apply(value, allowingSwitch: index == applicable.count - 1)
+        }
+        return effects
     }
 
     /// Apostrophes and hyphens join a word ("don't", "e-mail") rather than end it.
