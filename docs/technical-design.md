@@ -588,3 +588,12 @@ A failed or pending close is held with native Retry, Copy Text and explicit Disc
 Orderly quit first commits native marked text, then freezes every note session and editor before any suspension. New working-window/bar requests and late note-opening continuations are blocked. Every session flushes; an existing submitted capture is also awaited. A failure cancels termination, restores editable sessions and brings the failing note's choices forward. Only successful preparation closes the Store and acknowledges termination, with input kept frozen through that reply. See [#92 evidence](evidence/issue-92/validation.md). Forced process termination can still lose uncommitted source within the autosave window.
 
 Note close owns an independent `isClosing` edit guard before its first suspension. Failure releases that guard while preserving the quit suspension and any metadata operation guard. The paused close test verifies late direct edits cannot enter the closing source.
+
+
+## Organizing an open note — issue #93
+
+Mac Interaction now owns one organization route for Notes context/menu actions and a note window's Restore action. It finds the existing Note Editing session when present; otherwise it submits the revision-bearing row command directly. The main controller retains presentation/busy/error handling and supplies no independent Store mutation path.
+
+The session sets its independent organization freeze before its first flush suspension, refuses active composition, and keeps input frozen until the metadata acknowledgment. After flushing, commands use the latest committed revision; body and metadata results share that session's revision ownership. Failed flushes stop metadata and retain #92's save failure choices. Organization releases only its own freeze, preserving close/quit suspension, and terminal state is rechecked after each await. Metadata-only observations adopt revisions while preserving pending source, and peer Restore updates the read-only save state.
+
+Native note windows expose read-only Archive state and a keyboard-accessible Restore button/menu command (Control+Command+R). Restore uses the same route and preserves body, pin and content-edited time. The [#93 evidence](evidence/issue-93/validation.md) records real fixture race/failure checks and the existing app-loop's menu key-equivalent observations, separately from physical acceptance.

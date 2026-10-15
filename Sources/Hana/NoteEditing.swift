@@ -87,7 +87,8 @@ final class NoteEditingSession {
     var hasUnsavedChanges: Bool { !sameBytes(text, committed.body) && Note.isNonblank(text) }
     var canRetry: Bool { if case .failed = state { true } else { false } }
     var status: String {
-        switch state {
+        if isOrganizing, state != .invalidated { return "Organizing…" }
+        return switch state {
         case .saved: "Saved"
         case .dirty: "Unsaved changes"
         case .saving: "Saving…"
@@ -276,6 +277,9 @@ final class NoteEditingSession {
             text = note.body
         }
         if note.archivedAt != nil { state = .readOnly; timer?.cancel() }
+        else if state == .readOnly {
+            state = !Note.isNonblank(text) ? .blank : (sameBytes(text, note.body) ? .saved : .dirty)
+        }
     }
 
     private func invalidate() {
