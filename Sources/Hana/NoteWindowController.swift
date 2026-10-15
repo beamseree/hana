@@ -64,6 +64,8 @@ final class NoteWindowController: NSWindowController, NSTextViewDelegate {
         editor.smartInsertDeleteEnabled = false
         editor.isAutomaticTextCompletionEnabled = false
         editor.font = HanaFont.Note.body.nsFont
+        editor.defaultParagraphStyle = HanaFont.Note.body.wrappedParagraphStyle
+        editor.typingAttributes = HanaFont.Note.body.wrappedAttributes(color: HanaColor.Text.primary)
         editor.textColor = HanaColor.Text.primary
         editor.backgroundColor = HanaColor.Surface.window
         editor.textContainerInset = NSSize(width: 20, height: 20)

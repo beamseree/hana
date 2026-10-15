@@ -1,0 +1,16 @@
+Build complete! (51.73s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite WorkingWindowReviewTests started.
+◇ Test quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) started.
+◇ Test case passing 1 argument blank → false to quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) started.
+✘ Test quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) recorded an issue with 1 argument blank → false at WorkingWindowReviewTests.swift:42:13: Expectation failed: await rename.value
+✘ Test quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) recorded an issue with 1 argument blank → false at WorkingWindowReviewTests.swift:46:9: Expectation failed: try await reopened.read(.task(task.id), in: reopened.generation)?.title == (blank ? "Retry after refused quit" : "Renamed before quit")
+◇ Test case passing 1 argument blank → true to quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) started.
+✘ Test quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) recorded an issue with 1 argument blank → true at WorkingWindowReviewTests.swift:28:13: Expectation failed: await interaction.prepareForQuit() == false
+✘ Test quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) recorded an issue with 1 argument blank → true at WorkingWindowReviewTests.swift:30:13: Expectation failed: (interaction.taskWorkspacePresentation?.notice → nil) != nil
+✘ Test quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) recorded an issue with 1 argument blank → true at WorkingWindowReviewTests.swift:46:9: Expectation failed: try await reopened.read(.task(task.id), in: reopened.generation)?.title == (blank ? "Retry after refused quit" : "Renamed before quit")
+✘ Test quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) with 2 test cases failed after 0.401 seconds with 5 issues.
+✘ Suite WorkingWindowReviewTests failed after 0.401 seconds with 5 issues.
+✘ Test run with 1 test in 1 suite failed after 0.401 seconds with 5 issues.

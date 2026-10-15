@@ -111,8 +111,8 @@ struct TaskWorkspaceTests {
         try await eventually { interaction.taskWorkspacePresentation?.inbox.count == 1 }
         interaction.selectTask(original.id)
         #expect(await interaction.performTaskAction(.rename))
-        try await eventually { taskEditor(in: window.contentView) != nil }
-        let editor = try #require(taskEditor(in: window.contentView))
+        try await eventually { nativeTaskTitleEditor(in: window.contentView) != nil }
+        let editor = try #require(nativeTaskTitleEditor(in: window.contentView))
         #expect(window.makeFirstResponder(editor))
         editor.setSelectedRange(NSRange(location: 0, length: (editor.string as NSString).length))
         editor.insertText("Renamed", replacementRange: NSRange(location: NSNotFound, length: 0))
@@ -141,8 +141,8 @@ struct TaskWorkspaceTests {
         try await eventually { interaction.taskWorkspacePresentation?.inbox.count == 1 }
         interaction.selectTask(original.id)
         #expect(await interaction.performTaskAction(.rename))
-        try await eventually { taskEditor(in: window.contentView) != nil }
-        let editor = try #require(taskEditor(in: window.contentView))
+        try await eventually { nativeTaskTitleEditor(in: window.contentView) != nil }
+        let editor = try #require(nativeTaskTitleEditor(in: window.contentView))
         window.makeFirstResponder(editor)
         let pasteboard = NSPasteboard.general
         let contents = pasteboard.pasteboardItems?.compactMap { item -> NSPasteboardItem? in
@@ -200,13 +200,7 @@ struct TaskWorkspaceTests {
 }
 
 
-@MainActor
-private func taskEditor(in view: NSView?) -> NSTextView? {
-    guard let view else { return nil }
-    if let editor = view as? NSTextView, editor.identifier?.rawValue == "task-title-editor" { return editor }
-    for child in view.subviews { if let editor = taskEditor(in: child) { return editor } }
-    return nil
-}
+
 
 @MainActor
 private func taskKey(window: NSWindow, characters: String, code: UInt16) throws -> NSEvent {

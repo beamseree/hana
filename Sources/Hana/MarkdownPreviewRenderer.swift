@@ -54,7 +54,12 @@ final class MarkdownPreviewSurface: NSObject, NSTextViewDelegate {
 @MainActor
 private enum NativeMarkdownRenderer {
     struct Style {
-        var font = HanaFont.Note.body.nsFont
+        var role = HanaFont.Note.body
+        var overrideFont: NSFont?
+        var font: NSFont {
+            get { overrideFont ?? role.nsFont }
+            set { overrideFont = newValue }
+        }
         var color = HanaColor.Text.primary
         var indent: CGFloat = 0
         var link: URL?
@@ -68,11 +73,11 @@ private enum NativeMarkdownRenderer {
     }
 
     private static func append(_ text: String, style: Style, output: NSMutableAttributedString) {
-        let paragraph = NSMutableParagraphStyle()
+        let paragraph = style.role.wrappedParagraphStyle
         paragraph.firstLineHeadIndent = style.indent
         paragraph.headIndent = style.indent
         paragraph.paragraphSpacing = 6
-        var attributes: [NSAttributedString.Key: Any] = [.font: style.font, .foregroundColor: style.color, .paragraphStyle: paragraph]
+        var attributes: [NSAttributedString.Key: Any] = [.font: style.font, .kern: style.role.kern, .foregroundColor: style.color, .paragraphStyle: paragraph]
         if style.code { attributes[.backgroundColor] = HanaColor.Control.fill }
         if let link = style.link { attributes[.link] = link }
         output.append(NSAttributedString(string: text, attributes: attributes))
@@ -83,7 +88,7 @@ private enum NativeMarkdownRenderer {
             switch block {
             case .heading(let level, let children):
                 var heading = style
-                heading.font = level == 1 ? HanaFont.Heading.window.nsFont : HanaFont.Note.previewHeading.nsFont
+                heading.role = level == 1 ? HanaFont.Heading.window : HanaFont.Note.previewHeading
                 inlines(children, style: heading, output: output)
                 append("\n", style: heading, output: output)
             case .paragraph(let children):
@@ -94,7 +99,8 @@ private enum NativeMarkdownRenderer {
                 append("\n", style: style, output: output)
             case .code(let text):
                 var code = style
-                code.font = HanaFont.Note.code.nsFont
+                code.role = HanaFont.Note.code
+                code.overrideFont = nil
                 code.code = true
                 append(text, style: code, output: output)
                 append("\n", style: style, output: output)
@@ -121,7 +127,8 @@ private enum NativeMarkdownRenderer {
             case .text(let text), .literal(let text): append(text, style: style, output: output)
             case .code(let text):
                 var code = style
-                code.font = HanaFont.Note.code.nsFont
+                code.role = HanaFont.Note.code
+                code.overrideFont = nil
                 code.code = true
                 append(text, style: code, output: output)
             case .emphasis(let nested):

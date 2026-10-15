@@ -1,0 +1,19 @@
+Build complete! (5.70s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite WorkingWindowReviewTests started.
+◇ Suite NoteEditingLifetimeReviewTests started.
+◇ Test ownerFlushKeepsAnUnclosedDraftAfterCallerRelease() started.
+◇ Test releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test menusOpenNotesNavigateSectionsAndToggleOnlyTheFrontNotesPreview() started.
+◇ Test case passing 1 argument ending → "abandon" to releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test case passing 1 argument ending → "close" to releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test case passing 1 argument ending → "discard" to releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+✔ Test ownerFlushKeepsAnUnclosedDraftAfterCallerRelease() passed after 0.059 seconds.
+✘ Test menusOpenNotesNavigateSectionsAndToggleOnlyTheFrontNotesPreview() recorded an issue at WorkingWindowReviewTests.swift:133:24: Expectation failed: (NSApp.mainMenu?.item(withTitle: "View") → nil).submenu → nil → nil
+✘ Test menusOpenNotesNavigateSectionsAndToggleOnlyTheFrontNotesPreview() failed after 0.280 seconds with 1 issue.
+✘ Suite WorkingWindowReviewTests failed after 0.280 seconds with 1 issue.
+✔ Test releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) with 3 test cases passed after 0.443 seconds.
+✔ Suite NoteEditingLifetimeReviewTests passed after 0.443 seconds.
+✘ Test run with 3 tests in 2 suites failed after 0.443 seconds with 1 issue.

@@ -8,7 +8,7 @@ enum WorkingWindow: Hashable {
     case note(UUID)
 }
 
-enum MainSection: String, CaseIterable, Identifiable {
+enum MainSection: String, CaseIterable, Identifiable, Sendable {
     case notes = "Notes", inbox = "Inbox", today = "Today", completed = "Completed", archive = "Archive"
     var id: Self { self }
 

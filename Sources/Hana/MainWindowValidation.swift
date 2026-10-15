@@ -29,6 +29,39 @@ func validateMainWindow(register: (MacInteraction) -> Void) async {
         try await check("notes") { platform.mainWindowPresentation?.rows.map(\.id) == [note.id] }
         diagnostics.record("main-window.ready", state: ["key": window.isKeyWindow, "regular": NSApp.activationPolicy() == .regular])
 
+        guard let viewMenu = NSApp.mainMenu?.item(withTitle: "View")?.submenu,
+              let noteMenu = NSApp.mainMenu?.item(withTitle: "Note")?.submenu else { throw MainWindowCheck.failed("review-menus") }
+        for section in MainSection.allCases {
+            viewMenu.performActionForItem(at: viewMenu.indexOfItem(withTitle: "Show " + section.rawValue))
+            try await check("menu-section") { platform.mainWindowPresentation?.selectedSection == section }
+        }
+        viewMenu.performActionForItem(at: viewMenu.indexOfItem(withTitle: "Show Notes"))
+        platform.selectMainNote(note.id)
+        try workspaceShortcut(code: 31, modifiers: [.command])
+        try await check("menu-note-open") { NSApp.keyWindow === platform.window(for: .note(note.id)) }
+        guard let pin = noteMenu.item(withTitle: "Pin Note"), !platform.validateMenuItem(pin) else { throw MainWindowCheck.failed("background-note-command") }
+        noteMenu.performActionForItem(at: noteMenu.index(of: pin))
+        try workspaceShortcut(code: 35, modifiers: [.command, .option])
+        try await check("menu-preview") { platform.notePreview(note.id)?.isVisible == true }
+        platform.open(.main)
+        try await check("preview-background-main-key") { NSApp.keyWindow === window }
+        viewMenu.performActionForItem(at: viewMenu.indexOfItem(withTitle: "Markdown Preview"))
+        guard platform.notePreview(note.id)?.isVisible == true,
+              try await openedStore.read(.note(note.id), in: openedStore.generation)?.isPinned == false else { throw MainWindowCheck.failed("scoped-preview") }
+        platform.open(.note(note.id))
+        try await check("preview-note-key") { NSApp.keyWindow === platform.window(for: .note(note.id)) }
+        try workspaceShortcut(code: 35, modifiers: [.command, .option])
+        try await check("menu-source") { platform.notePreview(note.id)?.isVisible == false }
+        platform.open(.main)
+        try await check("pin-main-key") { NSApp.keyWindow === window }
+        guard platform.validateMenuItem(pin) else { throw MainWindowCheck.failed("main-note-menu-enabled") }
+        try workspaceShortcut(code: 35, modifiers: [.command, .control])
+        try await check("menu-pin") { platform.mainWindowPresentation?.rows.first(where: { $0.id == note.id })?.isPinned == true }
+        guard platform.validateMenuItem(pin), pin.title == "Unpin Note" else { throw MainWindowCheck.failed("menu-unpin-title") }
+        try workspaceShortcut(code: 35, modifiers: [.command, .control])
+        try await check("menu-unpin") { platform.mainWindowPresentation?.rows.first(where: { $0.id == note.id })?.isPinned == false }
+        diagnostics.record("main-window.review-menus", state: ["allSections": true, "noteOpenShortcut": true, "previewShortcut": true, "backgroundSelectionKept": true, "scopedPreview": true])
+
         platform.open(.main, section: .today)
         guard platform.window(for: .main) === window, platform.mainWindowPresentation?.selectedSection == .today else {
             throw MainWindowCheck.failed("singleton-section")
@@ -63,7 +96,10 @@ func validateMainWindow(register: (MacInteraction) -> Void) async {
         platform.selectTask(task.id)
         try workspaceShortcut(code: 0, modifiers: [.command, .shift])
         try await check("keyboard-task-archive") { platform.taskWorkspacePresentation?.inbox.contains { $0.id == task.id } == false && platform.taskWorkspacePresentation?.isPerforming == false }
-        _ = try await openedStore.perform(.archiveNote(note.id, expectedRevision: note.revision), in: openedStore.generation)
+        platform.open(.main, section: .notes)
+        platform.selectMainNote(note.id)
+        try workspaceShortcut(code: 0, modifiers: [.command, .control])
+        try await check("menu-note-archive") { platform.noteSession(note.id)?.committed.archivedAt != nil }
         platform.open(.main, section: .archive)
         try await check("mixed-archive") { platform.archiveWorkspacePresentation?.rows.count == 2 }
         platform.selectArchived(.task(task.id))
@@ -151,6 +187,7 @@ private func workspaceShortcut(code: UInt16, modifiers: NSEvent.ModifierFlags) t
     if modifiers.contains(.command) { flags.insert(.maskCommand) }
     if modifiers.contains(.shift) { flags.insert(.maskShift) }
     if modifiers.contains(.control) { flags.insert(.maskControl) }
+    if modifiers.contains(.option) { flags.insert(.maskAlternate) }
     keyboard.flags = flags
     guard let event = NSEvent(cgEvent: keyboard) else { throw MainWindowCheck.failed("organization-event") }
     guard NSApp.mainMenu?.performKeyEquivalent(with: event) == true else { throw MainWindowCheck.failed("organization-shortcut-\(code)") }

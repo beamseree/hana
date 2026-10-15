@@ -3,7 +3,7 @@ import Observation
 import SwiftUI
 import UniformTypeIdentifiers
 
-enum TaskWorkspaceAction: Int, CaseIterable {
+enum TaskWorkspaceAction: Int, CaseIterable, Sendable {
     case complete, reopen, moveToToday, moveToInbox, rename, archive, moveUp, moveDown
 
     var title: String {
@@ -18,6 +18,13 @@ enum TaskWorkspaceAction: Int, CaseIterable {
         case .moveDown: "Move Down"
         }
     }
+}
+
+struct TaskActionRequest: Sendable {
+    let action: TaskWorkspaceAction
+    let id: UUID
+    let expectedRevision: Int64
+    let section: MainSection
 }
 
 /// A user intent carries the order the user saw, rather than recomputing a
@@ -62,6 +69,19 @@ final class TaskWorkspacePresentation {
     private(set) var selectedID: UUID?
     private(set) var notice: String?
     private(set) var isPerforming = false
+    private(set) var isEditingSuspended = false
+    fileprivate weak var titleEditor: NSTextView?
+    var isTitleEditable: Bool { !isPerforming && !isEditingSuspended }
+
+    func suspendEditing(_ suspended: Bool) {
+        if suspended, let editor = titleEditor, editor.hasMarkedText() { editor.unmarkText(); editTitle(editor.string) }
+        isEditingSuspended = suspended
+        titleEditor?.isEditable = isTitleEditable
+    }
+
+    func focusRename() {
+        if let editor = titleEditor, editing != nil { editor.window?.makeFirstResponder(editor) }
+    }
     private let collection: Task<CollectionStore, any Error>?
     private var observations: [Task<Void, Never>] = []
     private var renameSave: Task<Bool, Never>?
@@ -109,7 +129,7 @@ final class TaskWorkspacePresentation {
     }
 
     func canPerform(_ action: TaskWorkspaceAction, in section: MainSection, taskID: UUID? = nil) -> Bool {
-        guard availability == .available, !isPerforming, editing == nil,
+        guard availability == .available, !isEditingSuspended, !isPerforming, editing == nil,
               let row = rows(in: section).first(where: { $0.id == (taskID ?? selectedID) }) else { return false }
         switch action {
         case .complete: return section != .completed
@@ -122,14 +142,30 @@ final class TaskWorkspacePresentation {
         }
     }
 
+    func requestAction(_ action: TaskWorkspaceAction, in section: MainSection, task: TaskItem? = nil) -> TaskActionRequest? {
+        guard action != .moveUp, action != .moveDown,
+              canPerform(action, in: section, taskID: task?.id),
+              let row = task ?? rows(in: section).first(where: { $0.id == selectedID }) else { return nil }
+        return TaskActionRequest(action: action, id: row.id, expectedRevision: row.revision, section: section)
+    }
+
     @discardableResult
     func perform(_ action: TaskWorkspaceAction, in section: MainSection) async -> Bool {
-        guard canPerform(action, in: section),
-              let row = rows(in: section).first(where: { $0.id == selectedID }),
-              let collection else { return false }
         if action == .moveUp || action == .moveDown {
             guard let request = requestReorder(action, in: section) else { return false }
             return await reorder(request)
+        }
+        guard let request = requestAction(action, in: section) else { return false }
+        return await perform(request)
+    }
+
+    @discardableResult
+    func perform(_ request: TaskActionRequest) async -> Bool {
+        let action = request.action
+        guard canPerform(action, in: request.section, taskID: request.id), let collection else { return false }
+        guard let row = rows(in: request.section).first(where: { $0.id == request.id }), row.revision == request.expectedRevision else {
+            notice = "This task changed. Review its latest version before trying again."
+            return false
         }
         if action == .rename {
             editing = Editing(id: row.id, expectedRevision: row.revision, text: row.title)
@@ -168,7 +204,7 @@ final class TaskWorkspacePresentation {
 
     @discardableResult
     func reorder(_ request: TaskReorderRequest) async -> Bool {
-        guard availability == .available, editing == nil, !isPerforming, let collection else { return false }
+        guard availability == .available, !isEditingSuspended, editing == nil, !isPerforming, let collection else { return false }
         isPerforming = true
         defer { isPerforming = false }
         do {
@@ -191,7 +227,7 @@ final class TaskWorkspacePresentation {
     }
 
     func beginDrag(_ id: UUID, in section: MainSection) -> TaskOrderDrag? {
-        guard availability == .available, !isPerforming, editing == nil,
+        guard availability == .available, !isEditingSuspended, !isPerforming, editing == nil,
               let placement = section.taskPlacement,
               rows(in: section).contains(where: { $0.id == id }) else { return nil }
         return TaskOrderDrag(id: id, placement: placement.rawValue, expectedOrder: rows(in: section).map(\.id))
@@ -220,7 +256,7 @@ final class TaskWorkspacePresentation {
     }
 
     func editTitle(_ text: String) {
-        guard !isPerforming else { return }
+        guard isTitleEditable else { return }
         editing?.text = text
         notice = nil
     }
@@ -230,7 +266,7 @@ final class TaskWorkspacePresentation {
     }
 
     func cancelRename() {
-        guard !isPerforming else { return }
+        guard isTitleEditable else { return }
         editing = nil
         notice = nil
     }
@@ -314,7 +350,9 @@ struct TaskWorkspaceView: View {
                             HStack(spacing: 10) {
                                 Button {
                                     tasks.select(row.id)
-                                    Task { await tasks.perform(section == .completed ? .reopen : .complete, in: section) }
+                                    if let request = tasks.requestAction(section == .completed ? .reopen : .complete, in: section, task: row) {
+                                        Task { await tasks.perform(request) }
+                                    }
                                 } label: {
                                     Image(systemName: section == .completed ? "checkmark.circle.fill" : "circle")
                                         .foregroundStyle(Color(nsColor: HanaColor.Text.faint))
@@ -329,7 +367,9 @@ struct TaskWorkspaceView: View {
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .onTapGesture(count: 2) {
                                             tasks.select(row.id)
-                                            Task { await tasks.perform(.rename, in: section) }
+                                            if let request = tasks.requestAction(.rename, in: section, task: row) {
+                                                Task { await tasks.perform(request) }
+                                            }
                                         }
                                 }
                             }
@@ -345,7 +385,9 @@ struct TaskWorkspaceView: View {
                                         if let request = tasks.requestReorder(action, in: section) {
                                             Task { await tasks.reorder(request) }
                                         } else {
-                                            Task { await tasks.perform(action, in: section) }
+                                            if let request = tasks.requestAction(action, in: section, task: row) {
+                                                Task { await tasks.perform(request) }
+                                            }
                                         }
                                     }
                                     .disabled(!tasks.canPerform(action, in: section, taskID: row.id))
@@ -362,8 +404,8 @@ struct TaskWorkspaceView: View {
                     .scrollContentBackground(.hidden)
                     .accessibilityLabel(section.rawValue)
                     .onKeyPress(.return) {
-                        guard tasks.canPerform(.rename, in: section) else { return .ignored }
-                        Task { await tasks.perform(.rename, in: section) }
+                        guard let request = tasks.requestAction(.rename, in: section) else { return .ignored }
+                        Task { await tasks.perform(request) }
                         return .handled
                     }
                 }
@@ -412,12 +454,13 @@ private struct TaskTitleEditor: NSViewRepresentable {
         editor.string = tasks.editing?.text ?? ""
         scroll.documentView = editor
         context.coordinator.editor = editor
+        tasks.titleEditor = editor
         return scroll
     }
 
     func updateNSView(_ view: NSScrollView, context: Context) {
         guard let editor = view.documentView as? NSTextView else { return }
-        editor.isEditable = !tasks.isPerforming
+        editor.isEditable = tasks.isTitleEditable
         if let draft = tasks.editing, draft.id == taskID, editor.string != draft.text {
             editor.string = draft.text
         }
@@ -436,6 +479,7 @@ private struct TaskTitleEditor: NSViewRepresentable {
 
         func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange,
                       replacementString: String?) -> Bool {
+            guard tasks.isTitleEditable else { return false }
             guard let replacementString, TaskItem.isMultiline(replacementString) else { return true }
             tasks.refuseMultilineInsertion()
             return false
@@ -518,7 +562,8 @@ final class TaskWorkspaceMenuTarget: NSObject, NSMenuItemValidation {
         if let request = interaction.requestTaskReorder(action) {
             Task { await interaction.performTaskReorder(request) }
         } else {
-            Task { await interaction.performTaskAction(action) }
+            guard let request = interaction.requestTaskAction(action) else { return }
+            Task { await interaction.performTaskAction(request) }
         }
     }
 }

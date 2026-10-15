@@ -1,0 +1,1 @@
+0967ea20c05aa6c4f78d6c30f950ab34e2e126570d092755788fe35ae040d27c  /tmp/hana-spec-88/HanaReview88.app/Contents/MacOS/Hana

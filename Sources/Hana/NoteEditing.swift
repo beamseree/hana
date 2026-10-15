@@ -21,7 +21,11 @@ final class NoteEditing {
     private let store: CollectionStore
     private let now: () -> Duration
     private let sleep: (Duration) async throws -> Void
-    private var sessions: [UUID: NoteEditingSession] = [:]
+    private struct SessionReference { weak var value: NoteEditingSession? }
+    private var sessions: [UUID: SessionReference] = [:]
+    // Untouched openings may disappear with their last caller. Once edited,
+    // this owner keeps the draft through flush/failure until explicit close.
+    private var editedSessions: [UUID: NoteEditingSession] = [:]
     private var openings: [UUID: Task<NoteEditingSession, any Error>] = [:]
 
     init<C: Clock>(store: CollectionStore, clock: C) where C.Duration == Duration {
@@ -34,31 +38,38 @@ final class NoteEditing {
     convenience init(store: CollectionStore) { self.init(store: store, clock: ContinuousClock()) }
 
     func open(_ noteID: UUID) async throws -> NoteEditingSession {
-        if let session = sessions[noteID], !session.isClosed { return session }
+        if let session = sessions[noteID]?.value, !session.isClosed { return session }
         if let opening = openings[noteID] { return try await opening.value }
         let opening = Task {
             guard let note = try await store.read(.note(noteID), in: store.generation) else {
                 throw CollectionStoreError.noteNotFound
             }
-            return NoteEditingSession(note: note, store: store, now: now, sleep: sleep)
+            let session = NoteEditingSession(note: note, store: store, now: now, sleep: sleep)
+            sessions = sessions.filter { $0.value.value != nil }
+            sessions[noteID] = SessionReference(value: session)
+            session.onEdit = { [weak self] edited in self?.editedSessions[noteID] = edited }
+            session.onClose = { [weak self] closed in
+                guard self?.sessions[noteID]?.value === closed else { return }
+                self?.sessions[noteID] = nil
+                self?.editedSessions[noteID] = nil
+            }
+            return session
         }
         openings[noteID] = opening
         defer { openings[noteID] = nil }
-        let session = try await opening.value
-        sessions[noteID] = session
-        return session
+        return try await opening.value
     }
 
     func flush() async throws {
         var firstFailure: (any Error)?
-        for session in sessions.values where !session.isClosed {
+        for session in sessions.values.compactMap(\.value) where !session.isClosed {
             do { try await session.flush() } catch { if firstFailure == nil { firstFailure = error } }
         }
         if let firstFailure { throw firstFailure }
     }
 
     func existingSession(_ id: UUID) -> NoteEditingSession? {
-        guard let session = sessions[id], !session.isClosed else { return nil }
+        guard let session = sessions[id]?.value, !session.isClosed else { return nil }
         return session
     }
 }
@@ -79,6 +90,8 @@ final class NoteEditingSession {
     private(set) var state: SaveState
     private(set) var isComposing = false
     private(set) var isClosed = false
+    fileprivate var onEdit: ((NoteEditingSession) -> Void)?
+    fileprivate var onClose: ((NoteEditingSession) -> Void)?
     private(set) var isOrganizing = false
     var canOrganize: Bool { !isOrganizing && !isEditingSuspended && !isClosing && !isClosed && state != .invalidated }
     private(set) var isEditingSuspended = false
@@ -141,6 +154,7 @@ final class NoteEditingSession {
 
     func edit(_ text: String, isComposing: Bool = false) {
         guard isEditable else { return }
+        onEdit?(self)
         if !sameBytes(self.text, text) { textRevision += 1 }
         self.text = text
         self.isComposing = isComposing
@@ -227,6 +241,8 @@ final class NoteEditingSession {
     /// A transaction already committed is retained as saved collection state.
     func discardChanges() {
         isClosed = true
+        onClose?(self)
+        onClose = nil
         timer?.cancel()
         saving?.cancel()
         observation?.cancel()
@@ -237,6 +253,8 @@ final class NoteEditingSession {
         defer { isClosing = false }
         try await flush()
         isClosed = true
+        onClose?(self)
+        onClose = nil
         timer?.cancel()
         observation?.cancel()
     }

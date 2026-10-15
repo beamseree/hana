@@ -35,6 +35,18 @@ struct FontRole: Sendable {
     func attributes(color: NSColor) -> [NSAttributedString.Key: Any] {
         [.font: nsFont, .foregroundColor: color, .kern: kern]
     }
+    /// Opt in only for wrapped note text; fixed bar/list geometry stays intact.
+    var wrappedParagraphStyle: NSMutableParagraphStyle {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.minimumLineHeight = lineHeight
+        paragraph.maximumLineHeight = lineHeight
+        return paragraph
+    }
+
+    func wrappedAttributes(color: NSColor) -> [NSAttributedString.Key: Any] {
+        attributes(color: color).merging([.paragraphStyle: wrappedParagraphStyle]) { _, wrapped in wrapped }
+    }
+
 }
 
 /// Named type roles. The role `bar.input` in docs/design-system.md is
