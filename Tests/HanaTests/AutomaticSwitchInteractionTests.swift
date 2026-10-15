@@ -392,6 +392,11 @@ struct AutomaticSwitchInteractionTests {
         }
         let records = try await store.read(.allRecords, in: store.generation)
         #expect(records.notes.map(\.body) == ["call mom tomorrow"] && records.tasks.isEmpty)
+        #expect(fixture.log.counts().ambiguous == 0)
+        let rows = try String(contentsOf: fixture.log.url, encoding: .utf8).split(separator: "\n")
+            .map { try #require(JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any]) }
+        #expect(rows.filter { $0["event"] as? String == "autoswitch.ended" }.count == 1)
+        #expect(rows.first { $0["event"] as? String == "autoswitch.ended" }?["end"] as? String == "saved")
         await store.close()
     }
 

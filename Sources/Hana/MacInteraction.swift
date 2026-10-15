@@ -296,7 +296,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             return
         }
         record("dismiss.\(reason.rawValue)")
-        endAutomaticSwitch(reason == .saved ? .saved : .dismissed)
+        endAutomaticSwitch(reason == .saved || capture.state.phase == .saved ? .saved : .dismissed)
         currentInvocation = nil
         placementTask?.cancel()
         placementTask = nil
