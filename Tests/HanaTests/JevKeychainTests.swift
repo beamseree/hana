@@ -22,7 +22,8 @@ struct JevKeychainTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         let diagnostics = AutomaticSwitchDiagnostics(file: url)
         var options = AutomaticSwitchOptions(); options.isEnabled = true
-        let key = try #require(store.read())
+        let savedKey = try store.read()
+        let key = try #require(savedKey)
         let adapter = JevClassifier(key: key, transport: { request in
             #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer replacement-test-secret")
             return (Data(ClassifierAdapterTests.taskResponse.utf8), 200)
