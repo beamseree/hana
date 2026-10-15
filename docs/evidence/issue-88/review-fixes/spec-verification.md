@@ -1,0 +1,10 @@
+Targeted independent Spec verification of immutable commit a17608f53d74dc59821dac167c204c4d0084960e against 6319140. Read-only source/test/evidence inspection; no native tests run.
+
+No remaining actionable spec defects identified in this targeted review.
+
+- Pending task rename on Quit is addressed. `MacInteraction.prepareForQuit()` suspends organizer input synchronously, awaits the current/pending `commitRename()` before Store close, and cancels termination with the draft and notice intact on refusal. Existing note/capture preparation remains in the drain. `WorkingWindowReviewTests` covers a paused already-submitted rename, refusal/retry, and native/model task and note input frozen while the rename is pending.
+- Independent note-open requests are addressed. Ordinary delayed requests create/register a visible background window after another destination takes focus; only activation/responder ownership is superseded. Invocation-bound requests retain the stale-focus suppression. Lifetime identity/cancellation and quit checks prevent late creation after stop or during termination. The tests cover both a newer note and a raised main window; the existing capture test now explicitly carries its initial invocation token and retains the original key/query assertions.
+- The closed-note Archive/open race uses one shared editing session, so opening during organization observes the same editing freeze. Closed-row actions still compare the observed revision, and the new regression checks native typing cannot strand unsaved read-only text.
+- Additional inspected fixes preserve immutable task targets, scope organizer Note commands to the key main window, expose Open/section/Preview menu alternatives, and evict terminal session ownership while retaining unowned edited drafts until explicit close/discard.
+
+The validation record clearly limits its 68-test result and identifies excluded global-key cases. Locked-session native failures are not presented as passes or as a proven product/CLT defect. Native suite/harness reruns after unlock and Beam's physical observations remain acceptance gates, not findings against this fix.

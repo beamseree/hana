@@ -48,3 +48,7 @@ All actionable items above are assigned to one implementer branch. Findings are 
 ## Implementer dispositions — 2026-10-16
 
 All eight findings plus the additional confirmed closed-note Archive/open race are addressed on `codex/issue-88-review-fixes`, based at exact `6319140`. [Review-fix evidence](review-fixes/validation.md) records each disposition and red/green behavior, including the unsafe weak-only ownership variant that was rejected by an owner-flush regression. The final bounded check passed **68 tests / 14 suites**; original global key/query and scoped native menu assertions remain intact for an unlocked run. Signed app-loop/menu/focus attempts and isolated Capture tests were blocked by an actual locked session (`loginwindow` traces plus root's `IOConsoleUsers` confirmation), not accepted as passes or diagnosed as product/CLT defects. Final full native suite, actual app-loop proof, reviewed release identity and physical acceptance remain root-owned gates after unlock. No Search, backup or design expansion was introduced.
+
+## Independent fix verification
+
+Both reviewers inspected immutable `a17608f` against `6319140` after implementation. [Standards verification](review-fixes/standards-verification.md) and [Spec verification](review-fixes/spec-verification.md) found no remaining actionable finding in the targeted fixes. These were source/test/evidence inspections, not new native test runs. All original findings above remain recorded; final native and physical acceptance gates are separate.

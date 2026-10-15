@@ -1,6 +1,6 @@
 # Working windows — Beam's physical checks
 
-All observations below are **pending**. The current bundle is a provisional debug build; root's final reviewed release identity and hash must replace it before acceptance. The launcher checks the signed executable hash and bundle ID, holds the native testing slot for its owned process, and preserves the marked fixture across normal quit/relaunch.
+All observations below are **pending**. The launcher now uses the reviewed release at source `df98878`; [final-identity.json](final-identity.json) records its signed hash and build environment. Final native suite/app-loop checks are pending because the Mac was locked; automated fixture observations below remain separate from physical acceptance. The launcher checks the signed executable hash and bundle ID, holds the native testing slot for its owned process, and preserves the marked fixture across normal quit/relaunch.
 
 When the agent hands over the final bundle, run the same command for first launch and every relaunch:
 
