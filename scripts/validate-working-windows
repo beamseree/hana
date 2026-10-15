@@ -1,0 +1,34 @@
+#!/bin/bash
+# Run against an already built, isolated signed bundle. Retains its marked
+# fixture for inspection; never launches or terminates the installed Hana.
+set -euo pipefail
+if [[ $# != 3 || "$1" != /* || "$2" != /* || "$3" != /* ]]; then
+    printf '%s\n' 'Usage: validate-working-windows /absolute/Fixture.app /absolute/NEW-root /absolute/report.jsonl' >&2
+    exit 2
+fi
+fixture_app="$1"
+fixture_root="$2"
+fixture_report="$3"
+fixture_slot='/tmp/hana-spec-88-native-lock'
+[[ ! -e "$fixture_root" ]] || { printf '%s\n' 'Smoke requires a new fixture root.' >&2; exit 2; }
+[[ "$(/usr/bin/plutil -extract CFBundleIdentifier raw -o - "$fixture_app/Contents/Info.plist")" == 'com.beamseree.hana.validation.issue99' ]] || exit 2
+/usr/bin/codesign --verify --deep --strict "$fixture_app"
+/bin/mkdir "$fixture_slot" || { printf '%s\n' 'Native testing slot is busy.' >&2; exit 2; }
+fixture_pid=''
+release_slot() {
+    if [[ -n "$fixture_pid" ]] && /bin/kill -0 "$fixture_pid" 2>/dev/null; then
+        printf '%s\n' 'Owned fixture is still running; its testing slot is retained.' >&2
+        return
+    fi
+    /bin/rmdir "$fixture_slot"
+}
+trap release_slot EXIT
+for phase in write verify; do
+    "$fixture_app/Contents/MacOS/Hana" --validate-working-windows \
+        "--working-windows-smoke-$phase" --working-windows-fixture-root "$fixture_root" \
+        --working-windows-report "$fixture_report" &
+    fixture_pid=$!
+    wait "$fixture_pid"
+    fixture_pid=''
+    printf '%s\n' "Normal quit/relaunch $phase phase exited successfully."
+done
