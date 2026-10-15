@@ -1,0 +1,187 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Write sources
+[2/8] Write swift-version--112E4EF74740DA65.txt
+[4/11] Emitting module Hana
+[5/11] Compiling Hana TrickyInputCheck.swift
+[6/11] Compiling Hana TrickyInputRequest.swift
+[7/12] Compiling Hana ClassifierServices.swift
+[7/12] Write Objects.LinkFileList
+[8/12] Linking Hana
+[9/12] Applying Hana
+[11/51] Emitting module HanaTests
+[12/54] Compiling HanaTests TaskSaveTests.swift
+[13/54] Compiling HanaTests TestClock.swift
+[14/54] Compiling HanaTests TrickyInputCheckTests.swift
+[15/54] Compiling HanaTests CollectionExportTests.swift
+[16/54] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[17/54] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[18/54] Compiling HanaTests CollectionSnapshotTests.swift
+[19/54] Compiling HanaTests CollectionStoreOpeningTests.swift
+[20/54] Compiling HanaTests CollectionStoreTests.swift
+[21/54] Compiling HanaTests CollectionTitleSourceTests.swift
+[22/54] Compiling HanaTests DisplayPlacementTests.swift
+[23/54] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+[24/54] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[25/54] Compiling HanaTests AutomaticSwitchTests.swift
+[26/54] Compiling HanaTests CaptureSafetyNativeTests.swift
+[27/54] Compiling HanaTests IndependentExportDecoder.swift
+<worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[28/54] Compiling HanaTests JevKeychainTests.swift
+<worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[29/54] Compiling HanaTests MacInteractionTests.swift
+<worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[30/54] Compiling HanaTests MainWindowTests.swift
+<worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[31/54] Compiling HanaTests ModeIconTests.swift
+[32/54] Compiling HanaTests NativeEditingTests.swift
+[33/54] Compiling HanaTests NoteModeTests.swift
+[34/54] Compiling HanaTests SearchRankingTests.swift
+[35/54] Compiling HanaTests SearchResponsivenessTests.swift
+[36/54] Compiling HanaTests SearchTests.swift
+[37/54] Compiling HanaTests CaptureSafetyTests.swift
+[38/54] Compiling HanaTests CaptureSessionTests.swift
+[39/54] Compiling HanaTests ClassifierAdapterTests.swift
+[40/54] Compiling HanaTests CollectionExportHarnessTests.swift
+[41/54] Compiling HanaTests SuggestionInteractionTests.swift
+[42/54] Compiling HanaTests TaskLifecycleTests.swift
+[43/54] Compiling HanaTests TaskOrderingTests.swift
+[44/54] Compiling HanaTests NoteOrganizationTests.swift
+[45/54] Compiling HanaTests NoteSaveTests.swift
+[46/54] Compiling HanaTests OrganizedCollectionFixture.swift
+[47/54] Compiling HanaTests ResultIconsTests.swift
+[48/54] Compiling HanaTests ScriptedClassifier.swift
+[49/54] Compiling HanaTests SearchExclusionTests.swift
+[50/54] Compiling HanaTests SearchTypingGapTests.swift
+[51/54] Compiling HanaTests SpotlightStageTests.swift
+[52/54] Compiling HanaTests StrongMatchGateTests.swift
+[52/54] Write Objects.LinkFileList
+[53/54] Linking HanaPackageTests
+Build complete! (8.25s)
+Test Suite 'Selected tests' started at 2026-10-15 18:23:29.796.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 18:23:29.798.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 18:23:29.798.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 18:23:29.798.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+START  Test run started.
+INFO  Testing Library Version: 1902
+INFO  Target Platform: arm64e-apple-macos14.0
+START  Suite ClassifierAdapterTests started.
+START  Test jevUsesPinnedChoiceRequestAndWinningProbability() started.
+PASS  Test jevUsesPinnedChoiceRequestAndWinningProbability() passed after 0.003 seconds.
+START  Test foundationUnavailableNeverRunsModel() started.
+PASS  Test foundationUnavailableNeverRunsModel() passed after 0.001 seconds.
+START  Test jevHTTPFailuresAreContentFree(status:kind:) started.
+START  Test case passing 2 arguments status → 401, kind → .authentication to jevHTTPFailuresAreContentFree(status:kind:) started.
+START  Test case passing 2 arguments status → 429, kind → .rateLimited to jevHTTPFailuresAreContentFree(status:kind:) started.
+START  Test case passing 2 arguments status → 503, kind → .network to jevHTTPFailuresAreContentFree(status:kind:) started.
+PASS  Test jevHTTPFailuresAreContentFree(status:kind:) with 3 test cases passed after 0.001 seconds.
+START  Test jevOtherMapsToUnsure() started.
+PASS  Test jevOtherMapsToUnsure() passed after 0.001 seconds.
+START  Test jevMalformedResponsesFail(_:) started.
+START  Test case passing 1 argument body → "{}" to jevMalformedResponsesFail(_:) started.
+START  Test case passing 1 argument body → "not json" to jevMalformedResponsesFail(_:) started.
+START  Test case passing 1 argument body → "{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Note":0.04,"Task":1.9,"Other":0.03},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+START  Test case passing 1 argument body → "{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Note":0.04,"Task":0.8,"Other":0.03},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+START  Test case passing 1 argument body → "{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Search","probabilities":{"Search":0.03,"Note":0.04,"Task":0.9,"Other":0.03},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+START  Test case passing 1 argument body → "{"model":"jev-latest","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Note":0.04,"Task":0.9,"Other":0.03},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+START  Test case passing 1 argument body → "{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Note":0.04,"Task":0.9,"Unknown":0.03},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+PASS  Test jevMalformedResponsesFail(_:) with 7 test cases passed after 0.001 seconds.
+START  Test jevTimeoutAndCancellationFailWithoutVerdict() started.
+PASS  Test jevTimeoutAndCancellationFailWithoutVerdict() passed after 0.001 seconds.
+START  Test foundationConsumesWarmedSessionThenUsesFreshSessions() started.
+PASS  Test foundationConsumesWarmedSessionThenUsesFreshSessions() passed after 0.001 seconds.
+START  Test foundationRunnerFailuresStayTyped(_:) started.
+START  Test case passing 1 argument kind → .guardrail to foundationRunnerFailuresStayTyped(_:) started.
+START  Test case passing 1 argument kind → .refusal to foundationRunnerFailuresStayTyped(_:) started.
+START  Test case passing 1 argument kind → .other to foundationRunnerFailuresStayTyped(_:) started.
+PASS  Test foundationRunnerFailuresStayTyped(_:) with 3 test cases passed after 0.001 seconds.
+START  Test foundationCancelledRunnerCannotPublishVerdict() started.
+PASS  Test foundationCancelledRunnerCannotPublishVerdict() passed after 0.001 seconds.
+START  Test availabilityText(availability:text:) started.
+START  Test case passing 2 arguments availability → .available, text → nil to availabilityText(availability:text:) started.
+START  Test case passing 2 arguments availability → .deviceNotEligible, text → "Mac not eligible for Apple Intelligence" to availabilityText(availability:text:) started.
+START  Test case passing 2 arguments availability → .modelNotReady, text → "Foundation Models is not ready" to availabilityText(availability:text:) started.
+START  Test case passing 2 arguments availability → .unknown, text → "Foundation Models is unavailable" to availabilityText(availability:text:) started.
+PASS  Test availabilityText(availability:text:) with 4 test cases passed after 0.001 seconds.
+PASS  Suite ClassifierAdapterTests passed after 0.006 seconds.
+START  Suite JevKeychainTests started.
+START  Test keySavesReadsReplacesAndRemovesInAnIsolatedService() started.
+PASS  Test keySavesReadsReplacesAndRemovesInAnIsolatedService() passed after 0.049 seconds.
+PASS  Suite JevKeychainTests passed after 0.049 seconds.
+START  Suite TrickyInputCheckTests started.
+START  Test fakeClassifierReportContainsFixedInputsGateLabelScoreAndLatency() started.
+PASS  Test fakeClassifierReportContainsFixedInputsGateLabelScoreAndLatency() passed after 0.005 seconds.
+START  Test timeoutAbandonsRunWithoutIssuingConcurrentInferenceOrInventingLatency() started.
+PASS  Test timeoutAbandonsRunWithoutIssuingConcurrentInferenceOrInventingLatency() passed after 0.013 seconds.
+PASS  Suite TrickyInputCheckTests passed after 0.019 seconds.
+PASS  Test run with 13 tests in 3 suites passed after 0.075 seconds.
