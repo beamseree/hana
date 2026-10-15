@@ -16,13 +16,22 @@ struct HanaApp {
 }
 
 @MainActor
-private final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate {
     private var interaction: MacInteraction?
     /// The live collection. Only normal launch opens it, and only through the
     /// production location; validation runs and the fixture harness never do.
     private var collection: Task<CollectionStore, any Error>?
 
+    init(interaction: MacInteraction? = nil) {
+        self.interaction = interaction
+        super.init()
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        if CommandLine.arguments.contains("--validate-main-window") {
+            Task { await validateMainWindow { self.interaction = $0 } }
+            return
+        }
         let diagnostics = Diagnostics(enabled: CommandLine.arguments.contains("--diagnostics"))
         let validation = CommandLine.arguments.contains("--validate-search-correctness") ? SearchCorrectnessValidation() : nil
         let search = validation?.makeSearch() ?? Search(roots: ApplicationCatalog.conventionalRoots, indexedFiles: true,
