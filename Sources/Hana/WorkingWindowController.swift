@@ -5,6 +5,7 @@ import SwiftUI
 /// Window identity is independent of the section it presents.
 enum WorkingWindow: Hashable {
     case main
+    case note(UUID)
 }
 
 enum MainSection: String, CaseIterable, Identifiable {
@@ -57,6 +58,7 @@ final class MainWindowPresentation {
     }
 
     private(set) var selectedSection: MainSection = .notes
+    var selectedNoteID: UUID?
     private(set) var rows: [Row] = []
     private(set) var availability: Availability = .loading
 
@@ -76,6 +78,7 @@ final class MainWindowPresentation {
 @MainActor
 final class WorkingWindowController: NSWindowController {
     let presentation = MainWindowPresentation()
+    var openNote: ((UUID) -> Void)?
     private var observation: Task<Void, Never>?
 
     init(collection: Task<CollectionStore, any Error>?) {
@@ -90,7 +93,7 @@ final class WorkingWindowController: NSWindowController {
         window.minSize = NSSize(width: 600, height: 360)
         window.appearance = NSAppearance(named: .aqua)
         window.backgroundColor = HanaColor.Surface.window
-        window.contentView = NSHostingView(rootView: MainWindowView(presentation: presentation))
+        window.contentView = NSHostingView(rootView: MainWindowView(presentation: presentation, openNote: { [weak self] id in self?.openNote?(id) }))
         window.center()
         guard let collection else {
             presentation.unavailable(.noCollection)
@@ -127,6 +130,7 @@ final class WorkingWindowController: NSWindowController {
 
 private struct MainWindowView: View {
     let presentation: MainWindowPresentation
+    let openNote: (UUID) -> Void
 
     var body: some View {
         NavigationSplitView {
@@ -168,7 +172,7 @@ private struct MainWindowView: View {
             } else if presentation.rows.isEmpty {
                 message("No notes yet", detail: "Capture a note from the search bar to see it here.")
             } else {
-                List(presentation.rows) { row in
+                List(presentation.rows, selection: Binding(get: { presentation.selectedNoteID }, set: { presentation.selectedNoteID = $0 })) { row in
                     HStack(spacing: 8) {
                         if row.isPinned {
                             Image(systemName: "pin.fill")
@@ -177,11 +181,18 @@ private struct MainWindowView: View {
                         }
                         Text(row.title).lineLimit(1).help(row.title)
                     }
+                    .tag(row.id)
+                    .onTapGesture(count: 2) { openNote(row.id) }
                     .accessibilityElement(children: .combine)
                     .listRowBackground(Color(nsColor: HanaColor.Surface.group))
                 }
                 .scrollContentBackground(.hidden)
                 .accessibilityLabel("Notes")
+                .onKeyPress(.return) {
+                    guard let id = presentation.selectedNoteID else { return .ignored }
+                    openNote(id)
+                    return .handled
+                }
             }
         }
     }
