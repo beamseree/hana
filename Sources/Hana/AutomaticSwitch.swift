@@ -1,6 +1,7 @@
 import Foundation
 
-/// Pure session policy. Time is read only at events; the adapter supplies ticks.
+/// Pure session policy. Time is read only at events. After each event the
+/// adapter reads `nextWakeUp` and sends `.tick` at that time, never periodically.
 struct AutomaticSwitch {
     enum Event {
         case invoked
@@ -62,6 +63,7 @@ struct AutomaticSwitch {
     private var agreementLabel: ClassifierVerdict.Label?
     private var agreements = 0
     private var switchedAt: Duration?
+    private var enterGraceEnds: Duration?
     private var hadSwitch = false
     private var actedOnText: String?
     var hasActedOnCurrentBuffer: Bool { actedOnText.map { $0.utf8.elementsEqual(text.utf8) } ?? false }
@@ -69,6 +71,30 @@ struct AutomaticSwitch {
     private var lateKind: StrongMatchGate.Kind?
     private(set) var lastVerdict = AutomaticSwitchDiagnostics.Label.none
     var lastModeChangeWasAutomatic: Bool { switchedAt != nil }
+
+    /// The earliest time on the `now` clock at which a `.tick` can change
+    /// anything: a debounce, pause or pipeline deadline that can fire, a
+    /// request's 1.5 s timeout, the 1 s all-sources wait cap, or the end of the
+    /// 300 ms Enter grace window. Nil while nothing time-based is pending.
+    var nextWakeUp: Duration? {
+        guard options.isEnabled, active else { return nil }
+        var times: [Duration] = []
+        // A deadline blocked by a slot or request waits for that event, not for time.
+        if let due, !composing, canClassify,
+           isPipelined ? pipelineRequests.count < 3 && !text.isEmpty : request == nil {
+            times.append(due)
+        }
+        if isPipelined {
+            times += pipelineRequests.values.filter(\.valid).map { $0.started + .milliseconds(1500) }
+        } else if let request {
+            times.append(request.started + .milliseconds(1500))
+        }
+        if candidate != nil, options.wait == .allSources, !gate.allSourcesSettled {
+            times.append(changedAt + .seconds(1))
+        }
+        if let enterGraceEnds { times.append(enterGraceEnds) }
+        return times.min()
+    }
 
     init(options: AutomaticSwitchOptions, now: @escaping () -> Duration) {
         self.options = options; self.now = now
@@ -83,7 +109,8 @@ struct AutomaticSwitch {
             mode = .search; candidate = nil; due = nil; agreements = 0; agreementLabel = nil
             timedOutRequests = []
             lastPipelineText = nil; agreementRetry = false
-            switchedAt = nil; hadSwitch = false; actedOnText = nil; ended = false; lastVerdict = .none; lateKind = nil
+            switchedAt = nil; enterGraceEnds = nil; hadSwitch = false; actedOnText = nil; ended = false
+            lastVerdict = .none; lateKind = nil
             return effects
         case .dismissed(let end):
             active = false; due = nil; candidate = nil
@@ -173,9 +200,10 @@ struct AutomaticSwitch {
             return returnToSearch(recording: .reversed(method: method,
                 millisecondsSinceSwitch: milliseconds(now() - switchedAt)))
         case .manualModeChanged(let mode):
-            self.mode = mode; switchedAt = nil; candidate = nil; due = nil
+            self.mode = mode; switchedAt = nil; enterGraceEnds = nil; candidate = nil; due = nil
             return cancel()
         case .tick:
+            if let enterGraceEnds, now() >= enterGraceEnds { self.enterGraceEnds = nil }
             if let timeout = timeoutIfDue() { return timeout + fireIfDue() }
             if let candidate { return apply(candidate) + fireIfDue() }
             return fireIfDue()
@@ -186,7 +214,7 @@ struct AutomaticSwitch {
     /// Both reversal routes reset the same session state and end a switch once.
     private mutating func returnToSearch(recording event: AutomaticSwitchDiagnostics.Event? = nil) -> [Effect] {
         var effects = cancel()
-        switchedAt = nil; mode = .search; candidate = nil; due = nil
+        switchedAt = nil; enterGraceEnds = nil; mode = .search; candidate = nil; due = nil
         suspended = options.reversalSuspends && (!isPipelined || !text.isEmpty); agreements = 0; agreementLabel = nil
         effects.append(.returnToSearch)
         if let event { effects.append(.record(event)) }
@@ -273,6 +301,7 @@ struct AutomaticSwitch {
             return [diagnostic(value, .awaitingAgreement)]
         }
         mode = target; switchedAt = target == .search ? nil : now(); hadSwitch = true; actedOnText = text; ended = false
+        enterGraceEnds = options.enterBehavior == .ignoreFor300Milliseconds ? switchedAt.map { $0 + .milliseconds(300) } : nil
         agreements = 0; agreementLabel = nil
         let transition: Effect = target == .search ? .returnToSearch : .enterMode(target)
         var effects = [diagnostic(value, .switched), transition,

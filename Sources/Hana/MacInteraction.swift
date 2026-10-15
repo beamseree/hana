@@ -136,7 +136,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private var classifier: (any Classifier)?
     private var automaticSwitch: AutomaticSwitch?
     private var classificationTasks: [UUID: Task<Void, Never>] = [:]
-    private var automaticSwitchTicker: Task<Void, Never>?
+    private var automaticSwitchEpoch = ContinuousClock.now
+    /// One sleep until the policy's reported time; replaced when that time changes.
+    private var automaticSwitchWake: Task<Void, Never>?
+    private(set) var automaticSwitchWakeTime: ContinuousClock.Instant?
+    /// Wake-ups delivered to the policy; tests read it to show there are no periodic ticks.
+    private(set) var automaticSwitchWakeUps = 0
     private var titleObservation: Task<Void, Never>?
     private var titleSource: CollectionTitleSource?
     private var gateTitles = StrongMatchGate.Titles(status: .unavailable)
@@ -836,6 +841,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
 
     private func beginAutomaticSwitch(_ invocation: Invocation) {
         let epoch = ContinuousClock.now
+        automaticSwitchEpoch = epoch
         automaticSwitch = AutomaticSwitch(options: automaticSwitchSessionOptions,
             now: { epoch.duration(to: ContinuousClock.now) })
         performAutomaticSwitch(automaticSwitch?.handle(.invoked) ?? [])
@@ -855,18 +861,27 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                 self.refreshAutomaticSwitchGate()
             }
         }
-        automaticSwitchTicker = Task { [weak self] in
-            while !Task.isCancelled {
-                do { try await Task.sleep(for: .milliseconds(25)) } catch { return }
-                guard let self, self.currentInvocation == invocation else { return }
-                self.performAutomaticSwitch(self.automaticSwitch?.handle(.tick) ?? [])
-            }
+    }
+
+    /// Sleeps until exactly the policy's next wake-up time, or not at all when nothing is pending.
+    private func scheduleAutomaticSwitchWake() {
+        let time = automaticSwitch?.nextWakeUp.map { automaticSwitchEpoch + $0 }
+        guard time != automaticSwitchWakeTime else { return }
+        automaticSwitchWake?.cancel(); automaticSwitchWake = nil
+        automaticSwitchWakeTime = time
+        guard let time, let invocation = currentInvocation else { return }
+        automaticSwitchWake = Task { [weak self] in
+            do { try await Task.sleep(until: time, clock: .continuous) } catch { return }
+            guard let self, self.currentInvocation == invocation, self.automaticSwitchWakeTime == time else { return }
+            self.automaticSwitchWake = nil; self.automaticSwitchWakeTime = nil
+            self.automaticSwitchWakeUps += 1
+            self.performAutomaticSwitch(self.automaticSwitch?.handle(.tick) ?? [])
         }
     }
 
     private func endAutomaticSwitch(_ end: AutomaticSwitchDiagnostics.End) {
         performAutomaticSwitch(automaticSwitch?.handle(.dismissed(end)) ?? [])
-        automaticSwitchTicker?.cancel(); automaticSwitchTicker = nil
+        automaticSwitchWake?.cancel(); automaticSwitchWake = nil; automaticSwitchWakeTime = nil
         titleObservation?.cancel(); titleObservation = nil; titleSource = nil
         classificationTasks.values.forEach { $0.cancel() }; classificationTasks = [:]
         classifier = nil; automaticSwitch = nil; gateResults = []
@@ -935,6 +950,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             case .swallowEnter: break
             }
         }
+        scheduleAutomaticSwitchWake()
     }
 
     /// A click on Task's selector. The session decides; the selector then shows its choice.
