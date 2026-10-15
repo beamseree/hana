@@ -1,0 +1,93 @@
+import AppKit
+import Synchronization
+
+/// Uses the app's real run loop for minimized-window and last-close policy
+/// checks. Every byte belongs to a newly marked disposable fixture.
+@MainActor
+func validateNoteWindow(register: (MacInteraction) -> Void) async {
+    guard let index = CommandLine.arguments.firstIndex(of: "--note-window-report"), index + 1 < CommandLine.arguments.count else { exit(2) }
+    let report = URL(fileURLWithPath: CommandLine.arguments[index + 1])
+    let diagnostics = Diagnostics(file: report)
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent("hana-note-window-\(UUID().uuidString)")
+    let held = Mutex(false)
+    let arrived = Mutex(false)
+    let gate = DispatchSemaphore(value: 0)
+    var store: CollectionStore?
+    var interaction: MacInteraction?
+    do {
+        let location = try CollectionLocation.createFixtureRoot(at: root)
+        let opened = try await CollectionStore.open(location, faults: .init(beforeCommit: { _ in
+            if held.withLock({ $0 }) {
+                arrived.withLock { $0 = true }
+                gate.wait()
+            }
+        }))
+        store = opened
+        let note = try await opened.perform(.createNote(operation: UUID(), body: "Fixture note"), in: opened.generation)
+        let platform = MacInteraction(diagnostics: diagnostics, collection: Task { opened })
+        interaction = platform
+        register(platform)
+        platform.start()
+        _ = platform.open(.main)
+        _ = platform.open(.note(note.id))
+        try await noteCheck("editor") { platform.window(for: .note(note.id))?.firstResponder is NSTextView }
+        guard let window = platform.window(for: .note(note.id)), let editor = window.firstResponder as? NSTextView else { throw NoteWindowCheck.failed("editor") }
+        guard editor.textLayoutManager != nil else { throw NoteWindowCheck.failed("textkit-two") }
+        window.miniaturize(nil)
+        try await noteCheck("minimized") { window.isMiniaturized }
+        guard NSApp.activationPolicy() == .regular else { throw NoteWindowCheck.failed("minimized-policy") }
+        diagnostics.record("note-window.minimized", state: ["regular": true])
+        _ = platform.open(.note(note.id))
+        try await noteCheck("raised") { !window.isMiniaturized && NSApp.keyWindow === window }
+        guard platform.window(for: .note(note.id)) === window else { throw NoteWindowCheck.failed("singleton") }
+        let origin = platform.presentBar()
+        try await noteCheck("bar-editor") { NSApp.keyWindow is NSPanel }
+        platform.dismiss(origin, reason: .escape)
+        try await noteCheck("escape-origin") { NSApp.keyWindow === window && window.firstResponder === editor }
+        editor.selectAll(nil)
+        editor.insertText("Renamed fixture\n**Markdown**", replacementRange: NSRange(location: NSNotFound, length: 0))
+        NotificationCenter.default.post(name: NSApplication.didResignActiveNotification, object: NSApp)
+        try await noteCheck("deactivation-title") { window.title == "Renamed fixture" && platform.mainWindowPresentation?.rows.first?.title == "Renamed fixture" }
+        guard platform.menuBarMenu?.items.contains(where: { $0.title == "Renamed fixture" }) == true,
+              NSApp.windowsMenu?.items.contains(where: { $0.title == "Renamed fixture" }) == true else { throw NoteWindowCheck.failed("committed-menus") }
+        guard NSApp.windowsMenu?.items.filter({ $0.title == "Renamed fixture" }).count == 1 else { throw NoteWindowCheck.failed("window-menu-singleton") }
+        diagnostics.record("note-window.deactivation", state: ["titleCommitted": true, "menus": true, "nativeWindowEntries": 1])
+        platform.window(for: .main)?.close()
+        held.withLock { $0 = true }
+        editor.selectAll(nil)
+        editor.insertText("Saved before last close ไทย\n**Markdown**", replacementRange: NSRange(location: NSNotFound, length: 0))
+        window.performClose(nil)
+        try await noteCheck("close-flush-started") { arrived.withLock { $0 } }
+        guard platform.window(for: .note(note.id)) === window, NSApp.activationPolicy() == .regular else { throw NoteWindowCheck.failed("close-held-policy") }
+        diagnostics.record("note-window.close-held", state: ["regular": true, "windowRetained": true])
+        held.withLock { $0 = false }
+        gate.signal()
+        try await noteCheck("last-close") { platform.window(for: .note(note.id)) == nil && NSApp.activationPolicy() == .accessory }
+        let saved = try await opened.read(.note(note.id), in: opened.generation)
+        guard saved?.body == "Saved before last close ไทย\n**Markdown**" else { throw NoteWindowCheck.failed("close-bytes") }
+        diagnostics.record("note-window.closed", state: ["accessory": true, "committed": true])
+        await opened.close()
+        try FileManager.default.removeItem(at: root)
+        diagnostics.record("note-window.validation-passed", state: [:])
+        platform.stop()
+        NSApp.terminate(nil)
+    } catch {
+        gate.signal()
+        diagnostics.record("note-window.validation-failed", state: ["step": (error as? NoteWindowCheck)?.step ?? "storage"])
+        interaction?.stop()
+        await store?.close()
+        try? FileManager.default.removeItem(at: root)
+        exit(1)
+    }
+}
+
+private enum NoteWindowCheck: Error {
+    case failed(String)
+    var step: String { switch self { case .failed(let step): step } }
+}
+@MainActor
+private func noteCheck(_ step: String, _ condition: () -> Bool) async throws {
+    let deadline = ContinuousClock.now + .seconds(5)
+    while !condition(), ContinuousClock.now < deadline { try await Task.sleep(for: .milliseconds(10)) }
+    guard condition() else { throw NoteWindowCheck.failed(step) }
+}

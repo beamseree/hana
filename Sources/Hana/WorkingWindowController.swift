@@ -5,6 +5,7 @@ import SwiftUI
 /// Window identity is independent of the section it presents.
 enum WorkingWindow: Hashable {
     case main
+    case note(UUID)
 }
 
 enum MainSection: String, CaseIterable, Identifiable {
@@ -103,6 +104,7 @@ final class MainWindowPresentation {
 @MainActor
 final class WorkingWindowController: NSWindowController {
     let presentation = MainWindowPresentation()
+    var openNote: ((UUID) -> Void)?
     let taskWorkspace: TaskWorkspacePresentation
     private var observation: Task<Void, Never>?
     private let collection: Task<CollectionStore, any Error>?
@@ -122,7 +124,9 @@ final class WorkingWindowController: NSWindowController {
         window.appearance = NSAppearance(named: .aqua)
         window.backgroundColor = HanaColor.Surface.window
         window.contentView = NSHostingView(rootView: MainWindowView(
-            presentation: presentation, tasks: taskWorkspace,
+            presentation: presentation,
+            openNote: { [weak self] id in self?.openNote?(id) },
+            tasks: taskWorkspace,
             organizeNote: { [weak self] row, action in await self?.organizeNote(row, action: action) }
         ))
         window.center()
@@ -185,6 +189,7 @@ final class WorkingWindowController: NSWindowController {
 
 private struct MainWindowView: View {
     let presentation: MainWindowPresentation
+    let openNote: (UUID) -> Void
     let tasks: TaskWorkspacePresentation
     let organizeNote: @MainActor (MainWindowPresentation.Row, MainNoteAction) async -> Void
 
@@ -247,6 +252,7 @@ private struct MainWindowView: View {
                         Text(row.title).lineLimit(1).help(row.title)
                     }
                     .tag(row.id)
+                    .onTapGesture(count: 2) { openNote(row.id) }
                     .contextMenu {
                         Button(row.isPinned ? "Unpin Note" : "Pin Note") {
                             Task { await organizeNote(row, .setPinned(!row.isPinned)) }
@@ -261,6 +267,11 @@ private struct MainWindowView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .accessibilityLabel("Notes")
+                .onKeyPress(.return) {
+                    guard let id = presentation.selectedNoteID else { return .ignored }
+                    openNote(id)
+                    return .handled
+                }
             }
         }
     }

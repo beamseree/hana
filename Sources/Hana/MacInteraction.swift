@@ -128,8 +128,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     // Membership ends on close, never on minimize or temporary invisibility.
     private let taskMenuTarget = TaskWorkspaceMenuTarget()
     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
-    var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
+    private var noteWindows: [UUID: NoteWindowController] = [:]
+    private var noteOpenings: [UUID: Task<Void, Never>] = [:]
+    private var noteEditing: NoteEditing?
+    func noteSession(_ id: UUID) -> NoteEditingSession? { noteWindows[id]?.session }
     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
+    func window(for destination: WorkingWindow) -> NSWindow? {
+        switch destination {
+        case .main: workingWindows[.main]?.window
+        case .note(let id): noteWindows[id]?.window
+        }
+    }
+    var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
     func canPerformTaskAction(_ action: TaskWorkspaceAction) -> Bool {
         guard currentInvocation == nil, let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
         return tasks.canPerform(action, in: presentation.selectedSection)
@@ -174,7 +184,6 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         await workingWindows[.main]?.organizeNote(row, action: action)
     }
     func selectMainNote(_ id: UUID?) { mainWindowPresentation?.selectedNoteID = id }
-    func window(for destination: WorkingWindow) -> NSWindow? { workingWindows[destination]?.window }
     private var localMouse: Any?
     private var globalMouse: Any?
     private var menuDepth = 0
@@ -202,6 +211,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         self.loadIcon = loadIcon ?? { await icons.icon(for: $0, scale: $1) }
         super.init()
         configurePanel()
+        NotificationCenter.default.addObserver(self, selector: #selector(flushNotesOnDeactivation),
+                                               name: NSApplication.didResignActiveNotification, object: nil)
     }
 
     /// Called once by the app delegate, never as a side effect of a test's init.
@@ -235,6 +246,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     func stop() {
         if let invocation = currentInvocation { dismiss(invocation, reason: .environmentChange) }
         for controller in Array(workingWindows.values) { controller.close() }
+        for controller in Array(noteWindows.values) { controller.window?.performClose(nil) }
         hotKey?.unregister()
         if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
         statusItem = nil
@@ -347,9 +359,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             return false
         }
         if let currentInvocation { dismiss(currentInvocation, reason: .destination) }
+        if case .note(let id) = destination { return openNote(id) }
         if workingWindows[destination] == nil {
             let controller = WorkingWindowController(collection: collection)
             controller.window?.delegate = self
+            controller.openNote = { [weak self] id in self?.open(.note(id)) }
             workingWindows[destination] = controller
         }
         updateActivationPolicy()
@@ -373,19 +387,85 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     private func updateActivationPolicy() {
-        let desired: NSApplication.ActivationPolicy = workingWindows.isEmpty ? .accessory : .regular
+        let desired: NSApplication.ActivationPolicy = workingWindows.isEmpty && noteWindows.isEmpty ? .accessory : .regular
         guard NSApp.activationPolicy() != desired else { return }
         let accepted = NSApp.setActivationPolicy(desired)
         record("policy.changed", extra: ["accepted": accepted])
     }
 
+    private func openNote(_ id: UUID) -> Bool {
+        if let controller = noteWindows[id] {
+            showNote(controller)
+            return true
+        }
+        guard noteOpenings[id] == nil, let collection else { return noteOpenings[id] != nil }
+        noteOpenings[id] = Task { [weak self] in
+            guard let self else { return }
+            defer { noteOpenings[id] = nil }
+            do {
+                let store = try await collection.value
+                if noteEditing == nil { noteEditing = NoteEditing(store: store) }
+                guard let session = try await noteEditing?.open(id) else { return }
+                let controller = NoteWindowController(session: session)
+                controller.window?.delegate = self
+                controller.onTitleChange = { [weak self] in self?.refreshNoteMenu() }
+                noteWindows[id] = controller
+                refreshNoteMenu()
+                showNote(controller)
+            } catch {
+                record("note.open-failed")
+            }
+        }
+        return true
+    }
+
+    private func showNote(_ controller: NoteWindowController) {
+        updateActivationPolicy()
+        if let window = controller.window {
+            if window.isMiniaturized { window.deminiaturize(nil) }
+            NSApp.activate()
+            window.makeKeyAndOrderFront(nil)
+            controller.focus()
+        }
+    }
+
+    func flushNoteEdits() async throws { try await noteEditing?.flush() }
+
+    @objc private func flushNotesOnDeactivation() {
+        Task { [weak self] in try? await self?.flushNoteEdits() }
+    }
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        noteWindows.values.first(where: { $0.window === sender })?.shouldClose() ?? true
+    }
+
     func windowWillClose(_ notification: Notification) {
-        guard let window = notification.object as? NSWindow,
-              let destination = workingWindows.first(where: { $0.value.window === window })?.key else { return }
-        workingWindows.removeValue(forKey: destination)?.stopObserving()
+        guard let window = notification.object as? NSWindow else { return }
+        if let id = noteWindows.first(where: { $0.value.window === window })?.key {
+            noteWindows[id] = nil
+            refreshNoteMenu()
+        } else if let destination = workingWindows.first(where: { $0.value.window === window })?.key {
+            workingWindows.removeValue(forKey: destination)?.stopObserving()
+        } else { return }
         if originWindow === window { originWindow = nil; originResponder = nil }
         updateActivationPolicy()
-        record("working.closed", extra: ["destination": "main"])
+        record("working.closed")
+    }
+
+    private func refreshNoteMenu() {
+        guard let menu = statusItem?.menu else { return }
+        for item in menu.items where item.action == #selector(openNoteFromMenu(_:)) { menu.removeItem(item) }
+        let index = menu.items.firstIndex(where: { $0.action == #selector(openMainWindow) }).map { $0 + 1 } ?? 0
+        for (offset, entry) in noteWindows.sorted(by: { ($0.value.window?.title ?? "") < ($1.value.window?.title ?? "") }).enumerated() {
+            let item = NSMenuItem(title: entry.value.window?.title ?? "Untitled", action: #selector(openNoteFromMenu(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = entry.key
+            menu.insertItem(item, at: index + offset)
+        }
+    }
+
+    @objc private func openNoteFromMenu(_ sender: NSMenuItem) {
+        if let id = sender.representedObject as? UUID { _ = open(.note(id)) }
     }
 
     func windowDidBecomeKey(_ notification: Notification) {
@@ -678,9 +758,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         for (title, action, key) in [
             ("Undo", "undo:", "z"), ("Redo", "redo:", "Z"),
             ("Cut", "cut:", "x"), ("Copy", "copy:", "c"),
-            ("Paste", "paste:", "v"), ("Select All", "selectAll:", "a")
+            ("Paste", "paste:", "v"), ("Select All", "selectAll:", "a"),
+            ("Find", "performFindPanelAction:", "f")
         ] {
-            edit.submenu?.addItem(NSMenuItem(title: title, action: Selector(action), keyEquivalent: key))
+            let item = NSMenuItem(title: title, action: Selector(action), keyEquivalent: key)
+            if title == "Find" { item.tag = Int(NSFindPanelAction.showFindPanel.rawValue) }
+            edit.submenu?.addItem(item)
         }
         main.addItem(edit)
         taskMenuTarget.interaction = self
@@ -1373,6 +1456,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                 return ["id": "main", "minimized": window.isMiniaturized,
                         "visible": window.isVisible, "key": window.isKeyWindow,
                         "onActiveSpace": window.isOnActiveSpace]
+            } + noteWindows.map { id, controller -> [String: Any] in
+                let window = controller.window
+                return ["id": "note-\(id.uuidString)", "minimized": window?.isMiniaturized ?? false,
+                        "visible": window?.isVisible ?? false, "key": window?.isKeyWindow ?? false,
+                        "onActiveSpace": window?.isOnActiveSpace ?? false]
             },
             "session": currentInvocation?.id.uuidString ?? "none",
             "policy": NSApp.activationPolicy() == .accessory ? "accessory" : NSApp.activationPolicy() == .regular ? "regular" : "prohibited",
