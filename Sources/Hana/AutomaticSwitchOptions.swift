@@ -4,7 +4,7 @@ import Foundation
 /// deliberately apply to the next invocation, including the opt-in toggle.
 struct AutomaticSwitchOptions: Codable, Equatable, Sendable {
     enum Classifier: String, Codable, CaseIterable, Sendable { case foundationModels, jev }
-    enum Firing: String, Codable, CaseIterable, Sendable { case everyKeystroke, debounced, onPause }
+    enum Firing: String, Codable, CaseIterable, Sendable { case everyKeystroke, debounced, onPause, pipelinedJev }
     enum AfterSwitch: String, Codable, CaseIterable, Sendable { case stay, keepClassifying }
     enum EnterBehavior: String, Codable, CaseIterable, Sendable { case saves, ignoreFor300Milliseconds }
     enum EscapeBehavior: String, Codable, CaseIterable, Sendable { case returnsToSearch, dismisses }

@@ -258,7 +258,7 @@ struct AutomaticSwitchInteractionTests {
         }
         #expect(interaction.automaticSwitchSessionOptions == snapshot)
         let stored = fixture.options.read()
-        #expect(stored.classifier == .jev && stored.firing == .onPause && stored.jevThreshold == .p95)
+        #expect(stored.classifier == .jev && stored.firing == .pipelinedJev && stored.jevThreshold == .p95)
         #expect(!stored.foundationModelsUnsure && stored.agreeingVerdicts == .two && stored.afterSwitch == .keepClassifying)
         #expect(!stored.navigationSuspends && stored.enterBehavior == .ignoreFor300Milliseconds && stored.escapeBehavior == .dismisses)
         #expect(!stored.reversalSuspends && stored.wait == .none && stored.lateStrongMatch == .stay)

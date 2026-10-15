@@ -15,7 +15,11 @@ final class ClassifierServices {
         switch options.classifier {
         case .foundationModels: FoundationModelsClassifier(unsure: options.foundationModelsUnsure, availability: availability)
         case .jev:
-            if let key = try? keychain.read(), !key.isEmpty { JevClassifier(key: key) } else { nil }
+            if let key = try? keychain.read(), !key.isEmpty {
+                if options.firing == .pipelinedJev {
+                    JevClassifier(key: key, transport: { try await JevPipelineTransport.live.perform($0) })
+                } else { JevClassifier(key: key) }
+            } else { nil }
         }
     }
 }

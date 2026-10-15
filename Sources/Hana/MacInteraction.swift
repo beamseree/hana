@@ -736,6 +736,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let options = automaticSwitchOptions.read()
         automaticSwitchToggle?.state = options.isEnabled ? .on : .off
         for (item, matches) in automaticSwitchChoices { item.state = matches(options) ? .on : .off }
+        automaticSwitchMenu?.item(withTitle: "Fires")?.submenu?
+            .item(withTitle: "Jev pipeline (100 ms, up to 3)")?.isEnabled = options.classifier == .jev
         automaticSwitchReset?.isEnabled = options.isEnabled
         let counts = automaticSwitchDiagnostics.counts()
         let titles = [
@@ -754,7 +756,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         addOptionMenu("Classifier", to: menu, keyPath: \.classifier,
             choices: [(.foundationModels, "Foundation Models"), (.jev, "Jev")])
         addOptionMenu("Fires", to: menu, keyPath: \.firing,
-            choices: [(.everyKeystroke, "Every keystroke"), (.debounced, "Debounced (150 ms)"), (.onPause, "On pause (500 ms)")])
+            choices: [(.everyKeystroke, "Every keystroke"), (.debounced, "Debounced (150 ms)"),
+                      (.onPause, "On pause (500 ms)"), (.pipelinedJev, "Jev pipeline (100 ms, up to 3)")])
         addOptionMenu("Jev threshold", to: menu, keyPath: \.jevThreshold,
             choices: AutomaticSwitchOptions.Threshold.allCases.map { ($0, String(format: "%.2f", $0.rawValue)) })
         addOptionMenu("Foundation Models unsure", to: menu, keyPath: \.foundationModelsUnsure,
@@ -793,7 +796,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     @objc private func selectAutomaticSwitchOption(_ sender: NSMenuItem) {
         guard automaticSwitchMutations.indices.contains(sender.tag) else { return }
         var options = automaticSwitchOptions.read()
+        let previousClassifier = options.classifier
         automaticSwitchMutations[sender.tag](&options)
+        if options.classifier != previousClassifier, options.classifier == .foundationModels,
+           options.firing == .pipelinedJev {
+            options.firing = .debounced
+        }
         automaticSwitchOptions.write(options)
         refreshAutomaticSwitchMenu()
     }
