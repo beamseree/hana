@@ -135,6 +135,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private var classifierMenuController: ClassifierMenuController?
     private var classifier: (any Classifier)?
     private var automaticSwitch: AutomaticSwitch?
+    /// One per launch; injected into each bar session's policy.
+    let jevLaunchMemory: JevLaunchMemory
     private var classificationTasks: [UUID: Task<Void, Never>] = [:]
     private var automaticSwitchEpoch = ContinuousClock.now
     /// One sleep until the policy's reported time; replaced when that time changes.
@@ -174,12 +176,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
          automaticSwitchDiagnostics: AutomaticSwitchDiagnostics = AutomaticSwitchDiagnostics(),
          classifierServices: ClassifierServices? = nil,
          classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)? = nil,
+         jevLaunchMemory: JevLaunchMemory = JevLaunchMemory(),
          frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
         self.diagnostics = diagnostics
         self.automaticSwitchOptions = automaticSwitchOptions
         self.automaticSwitchDiagnostics = automaticSwitchDiagnostics
         self.classifierFactory = classifierFactory
         self.classifierServices = classifierServices
+        self.jevLaunchMemory = jevLaunchMemory
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -742,7 +746,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         automaticSwitchToggle?.state = options.isEnabled ? .on : .off
         for (item, matches) in automaticSwitchChoices { item.state = matches(options) ? .on : .off }
         automaticSwitchMenu?.item(withTitle: "Fires")?.submenu?
-            .item(withTitle: "Jev pipeline (100 ms, up to 3)")?.isEnabled = options.classifier == .jev
+            .item(withTitle: "Word-paced")?.isEnabled = options.classifier == .jev
         automaticSwitchReset?.isEnabled = options.isEnabled
         let counts = automaticSwitchDiagnostics.counts()
         let titles = [
@@ -762,7 +766,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             choices: [(.foundationModels, "Foundation Models"), (.jev, "Jev")])
         addOptionMenu("Fires", to: menu, keyPath: \.firing,
             choices: [(.everyKeystroke, "Every keystroke"), (.debounced, "Debounced (150 ms)"),
-                      (.onPause, "On pause (500 ms)"), (.pipelinedJev, "Jev pipeline (100 ms, up to 3)")])
+                      (.onPause, "On pause (500 ms)"), (.wordPaced, "Word-paced")])
         addOptionMenu("Jev threshold", to: menu, keyPath: \.jevThreshold,
             choices: AutomaticSwitchOptions.Threshold.allCases.map { ($0, String(format: "%.2f", $0.rawValue)) })
         addOptionMenu("Foundation Models unsure", to: menu, keyPath: \.foundationModelsUnsure,
@@ -804,7 +808,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let previousClassifier = options.classifier
         automaticSwitchMutations[sender.tag](&options)
         if options.classifier != previousClassifier, options.classifier == .foundationModels,
-           options.firing == .pipelinedJev {
+           options.firing == .wordPaced {
             options.firing = .debounced
         }
         automaticSwitchOptions.write(options)
@@ -842,7 +846,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private func beginAutomaticSwitch(_ invocation: Invocation) {
         let epoch = ContinuousClock.now
         automaticSwitchEpoch = epoch
-        automaticSwitch = AutomaticSwitch(options: automaticSwitchSessionOptions,
+        automaticSwitch = AutomaticSwitch(options: automaticSwitchSessionOptions, memory: jevLaunchMemory,
             now: { epoch.duration(to: ContinuousClock.now) })
         performAutomaticSwitch(automaticSwitch?.handle(.invoked) ?? [])
         guard automaticSwitchSessionOptions.isEnabled else { return }
@@ -918,7 +922,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             case .cancel(let id):
                 classificationTasks.removeValue(forKey: id)?.cancel()
             case .classify(let id, let text):
-                guard let invocation = currentInvocation else { continue }
+                guard let invocation = currentInvocation else { jevLaunchMemory.requestFinished(id); continue }
                 let classifier = classifier
                 classificationTasks[id] = Task { [weak self] in
                     let started = ContinuousClock.now
@@ -934,7 +938,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                         let latency = Double(duration.components.seconds) * 1000 + Double(duration.components.attoseconds) / 1e15
                         event = .failed(id: id, (error as? ClassifierFailure)?.kind ?? .other, latencyMilliseconds: latency)
                     }
-                    guard let self, self.currentInvocation == invocation else { return }
+                    guard let self else { return }
+                    // The launch-wide slot lasts until the work ends, even after its bar session closed.
+                    self.jevLaunchMemory.requestFinished(id)
+                    guard self.currentInvocation == invocation else {
+                        self.performAutomaticSwitch(self.automaticSwitch?.handle(.slotReleased) ?? [])
+                        return
+                    }
                     self.classificationTasks[id] = nil
                     self.updateAutomaticSwitchEligibility()
                     self.performAutomaticSwitch(self.automaticSwitch?.handle(event) ?? [])

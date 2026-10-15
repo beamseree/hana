@@ -40,6 +40,8 @@ final class AutomaticSwitchDiagnostics {
         case lateStrongMatch(kind: MatchedKind, outcome: LateOutcome)
         case missed(mode: Mode, lastVerdict: Label)
         case ended(End)
+        /// One per bar session with automatic switch on: a count, never text.
+        case session(requestsSent: Int)
     }
 
     let url: URL
@@ -147,6 +149,7 @@ final class AutomaticSwitchDiagnostics {
         var lastVerdict: Label?
         var end: End?
         var lateOutcome: LateOutcome?
+        var requestsSent: Int?
 
         init(resetOptions: AutomaticSwitchOptions) {
             event = "autoswitch.reset"; options = resetOptions
@@ -170,6 +173,7 @@ final class AutomaticSwitchDiagnostics {
             case .missed(let mode, let lastVerdict):
                 self.event = "autoswitch.missed"; self.mode = mode; self.lastVerdict = lastVerdict
             case .ended(let end): self.event = "autoswitch.ended"; self.end = end
+            case .session(let requestsSent): self.event = "autoswitch.session"; self.requestsSent = requestsSent
             }
         }
     }

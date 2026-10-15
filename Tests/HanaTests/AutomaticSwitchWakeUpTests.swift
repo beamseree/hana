@@ -27,21 +27,25 @@ struct AutomaticSwitchWakeUpTests {
         #expect(h.policy.nextWakeUp == .milliseconds(40) + delay + .milliseconds(1500))
     }
 
-    @Test func pipelineSpacingDeadlineIsReportedAndFullSlotsReportOnlyTimeouts() throws {
-        var h = Harness { $0.classifier = .jev; $0.firing = .pipelinedJev }
-        #expect(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).count == 1)
-        #expect(h.policy.nextWakeUp == .milliseconds(1500))
-        h.clock.advance(by: .milliseconds(40))
-        #expect(requests(h.policy.handle(.bufferChanged(text: "call mom t", composing: false))).isEmpty)
-        #expect(h.policy.nextWakeUp == .milliseconds(100))
-        h.advance(to: .milliseconds(100))
-        #expect(requests(h.policy.handle(.tick)).map(\.text) == ["call mom t"])
+    @Test func wordPacedPauseAndDeadlineAreReportedAndBusySlotsStillReportThePause() throws {
+        var h = Harness { $0.classifier = .jev; $0.firing = .wordPaced }
+        _ = h.policy.handle(.bufferChanged(text: "call mom", composing: false))
+        // 180 ms pause until five typing gaps exist.
+        #expect(h.policy.nextWakeUp == .milliseconds(180))
+        h.advance(to: .milliseconds(180))
+        #expect(requests(h.policy.handle(.tick)).map(\.text) == ["call mom"])
+        // Only the request's 1.2 s deadline remains.
+        #expect(h.policy.nextWakeUp == .milliseconds(1380))
         h.advance(to: .milliseconds(200))
-        #expect(requests(h.policy.handle(.bufferChanged(text: "call mom to", composing: false))).count == 1)
+        #expect(requests(h.policy.handle(.bufferChanged(text: "call mom tomorrow ", composing: false))).count == 1)
+        #expect(h.policy.nextWakeUp == .milliseconds(1380))
         h.advance(to: .milliseconds(300))
-        // Three requests are in flight; the queued snapshot waits for a slot, not for time.
-        #expect(requests(h.policy.handle(.bufferChanged(text: "call mom tomorrow", composing: false))).isEmpty)
-        #expect(h.policy.nextWakeUp == .milliseconds(1500))
+        // Both slots are busy; the pause still fires to fill the waiting slot.
+        _ = h.policy.handle(.bufferChanged(text: "call mom tomorrow at", composing: false))
+        #expect(h.policy.nextWakeUp == .milliseconds(480))
+        h.advance(to: .milliseconds(480))
+        #expect(requests(h.policy.handle(.tick)).isEmpty)
+        #expect(h.policy.nextWakeUp == .milliseconds(1380))
     }
 
     @Test func requestTimeoutIsReportedAndConsumedAtOnePointFiveSeconds() throws {

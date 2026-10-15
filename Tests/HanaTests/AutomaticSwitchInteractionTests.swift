@@ -157,12 +157,14 @@ struct AutomaticSwitchInteractionTests {
         await store.close()
     }
 
-    @Test func heldEnterCancelsClassificationAndCannotTurnIntoAnAutomaticCapture() async throws {
+    @Test(arguments: [false, true])
+    func heldEnterCancelsClassificationAndCannotTurnIntoAnAutomaticCapture(wordPaced: Bool) async throws {
         _ = NSApplication.shared
         let fixture = try Fixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier(), apps = CatalogFeed(), files = CatalogFeed()
         var options = fixture.options.read(); options.isEnabled = true; options.wait = .none
+        if wordPaced { options.classifier = .jev; options.firing = .wordPaced }
         fixture.options.write(options)
         let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero),
             collection: Task { store }, automaticSwitchOptions: fixture.options,
@@ -173,7 +175,7 @@ struct AutomaticSwitchInteractionTests {
         try await eventually { fake.pendingCount == 1 }
         interaction.requestSelectedOpen()
         #expect(interaction.statusMessage == "Opening selected destination…")
-        fake.reply(.task)
+        fake.reply(.task, probability: 0.95)
         try await Task.sleep(for: .milliseconds(50))
         #expect(interaction.mode == .search && fixture.log.counts().switches == 0)
         await apps.send([]); await files.send([])
@@ -182,12 +184,15 @@ struct AutomaticSwitchInteractionTests {
         await store.close()
     }
 
-    @Test func pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch() async throws {
+    @Test(arguments: [false, true])
+    func pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch(wordPaced: Bool) async throws {
         _ = NSApplication.shared
         let fixture = try Fixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier(), apps = CatalogFeed()
-        var options = fixture.options.read(); options.isEnabled = true; fixture.options.write(options)
+        var options = fixture.options.read(); options.isEnabled = true
+        if wordPaced { options.classifier = .jev; options.firing = .wordPaced }
+        fixture.options.write(options)
         var release: (() -> Void)?
         let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
             launchApplication: { _ in
@@ -202,7 +207,7 @@ struct AutomaticSwitchInteractionTests {
         await apps.send([weak]); try await eventually { interaction.selectedResult == weak && fake.pendingCount == 1 }
         let opening = interaction.requestSelectedOpen()
         try await eventually { release != nil }
-        fake.reply(.task)
+        fake.reply(.task, probability: 0.95)
         try await Task.sleep(for: .milliseconds(50))
         #expect(interaction.mode == .search && fixture.log.counts().switches == 0)
         release?(); await opening?.value
@@ -258,7 +263,7 @@ struct AutomaticSwitchInteractionTests {
         }
         #expect(interaction.automaticSwitchSessionOptions == snapshot)
         let stored = fixture.options.read()
-        #expect(stored.classifier == .jev && stored.firing == .pipelinedJev && stored.jevThreshold == .p95)
+        #expect(stored.classifier == .jev && stored.firing == .wordPaced && stored.jevThreshold == .p95)
         #expect(!stored.foundationModelsUnsure && stored.agreeingVerdicts == .two && stored.afterSwitch == .keepClassifying)
         #expect(!stored.navigationSuspends && stored.enterBehavior == .ignoreFor300Milliseconds && stored.escapeBehavior == .dismisses)
         #expect(!stored.reversalSuspends && stored.wait == .none && stored.lateStrongMatch == .stay)

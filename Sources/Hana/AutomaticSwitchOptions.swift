@@ -4,7 +4,18 @@ import Foundation
 /// deliberately apply to the next invocation, including the opt-in toggle.
 struct AutomaticSwitchOptions: Codable, Equatable, Sendable {
     enum Classifier: String, Codable, CaseIterable, Sendable { case foundationModels, jev }
-    enum Firing: String, Codable, CaseIterable, Sendable { case everyKeystroke, debounced, onPause, pipelinedJev }
+    enum Firing: String, Codable, CaseIterable, Sendable {
+        case everyKeystroke, debounced, onPause, wordPaced
+        /// Word-paced replaced the Jev pipeline trial option (#122); a stored pipeline choice migrates to it.
+        init(from decoder: any Decoder) throws {
+            let raw = try decoder.singleValueContainer().decode(String.self)
+            guard let value = Firing(rawValue: raw == "pipelinedJev" ? Firing.wordPaced.rawValue : raw) else {
+                throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath,
+                    debugDescription: "Unknown automatic switch firing strategy"))
+            }
+            self = value
+        }
+    }
     enum AfterSwitch: String, Codable, CaseIterable, Sendable { case stay, keepClassifying }
     enum EnterBehavior: String, Codable, CaseIterable, Sendable { case saves, ignoreFor300Milliseconds }
     enum EscapeBehavior: String, Codable, CaseIterable, Sendable { case returnsToSearch, dismisses }

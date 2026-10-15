@@ -16,6 +16,8 @@ struct AutomaticSwitch {
         case reversed(AutomaticSwitchDiagnostics.ReversalMethod)
         case manualModeChanged(CaptureSession.Mode)
         case tick
+        /// A launch-wide Jev slot was freed by a request from an earlier bar session.
+        case slotReleased
     }
     enum Effect {
         case classify(id: UUID, text: String)
@@ -31,13 +33,15 @@ struct AutomaticSwitch {
         let latency: Double?
         var prefix: String? = nil
     }
-    private struct PipelineRequest {
+    private struct WordRequest {
         let started: Duration
+        /// Normalized text, as sent.
         let text: String
         let sequence: UInt64
         var valid = true
     }
     let options: AutomaticSwitchOptions
+    private let memory: JevLaunchMemory
     private let now: () -> Duration
     private var active = false
     private var text = ""
@@ -47,16 +51,19 @@ struct AutomaticSwitch {
     private var mode = CaptureSession.Mode.search
     private var gate = StrongMatchGate.Evaluation(decision: .blocked(.collectionUnavailable), settled: false, allSourcesSettled: false)
     private var request: Request?
-    // Invalidated work retains its slot until its terminal callback acknowledges cancellation.
-    private var pipelineRequests: [UUID: PipelineRequest] = [:]
+    // Invalidated work keeps its launch-wide slot until its terminal callback acknowledges cancellation.
+    private var wordRequests: [UUID: WordRequest] = [:]
     private var sequence: UInt64 = 0
     private var newestHandledSequence: UInt64 = 0
-    private var lastPipelineStart: Duration?
-    private var lastPipelineText: String?
-    private var agreementRetry = false
-    private var isPipelined: Bool { options.classifier == .jev && options.firing == .pipelinedJev }
-    // A timeout already sampled latency; retain the later stale row without sampling it again.
-    private var timedOutRequests: Set<UUID> = []
+    /// The one waiting slot: only the newest normalized text waits for capacity.
+    private var waitingText: String?
+    /// The normalized text of the last handled answer; sending it again cannot change anything.
+    private var answeredText: String?
+    private var lastInsertAt: Duration?
+    private var requestsSent = 0
+    private var isWordPaced: Bool { options.classifier == .jev && options.firing == .wordPaced }
+    // A timeout already sampled latency and a cancelled request has none; their later stale rows sample nothing.
+    private var unsampledRequests: Set<UUID> = []
     private var due: Duration?
     private var changedAt: Duration = .zero
     private var candidate: Candidate?
@@ -73,21 +80,21 @@ struct AutomaticSwitch {
     var lastModeChangeWasAutomatic: Bool { switchedAt != nil }
 
     /// The earliest time on the `now` clock at which a `.tick` can change
-    /// anything: a debounce, pause or pipeline deadline that can fire, a
-    /// request's 1.5 s timeout, the 1 s all-sources wait cap, or the end of the
-    /// 300 ms Enter grace window. Nil while nothing time-based is pending.
+    /// anything: a debounce or pause deadline that can fire, a request's
+    /// timeout (1.5 s, or Word-paced's 1.2 s), the 1 s all-sources wait cap, or
+    /// the end of the 300 ms Enter grace window. Nil while nothing time-based is pending.
     var nextWakeUp: Duration? {
         guard options.isEnabled, active else { return nil }
         var times: [Duration] = []
-        // A deadline blocked by a slot or request waits for that event, not for time.
-        if let due, !composing, canClassify,
-           isPipelined ? pipelineRequests.count < 3 && !text.isEmpty : request == nil {
+        // A deadline behind an in-flight request waits for that request's event, not for time.
+        // A Word-paced pause still fires with both slots busy, to fill the waiting slot.
+        if let due, !composing, canClassify, isWordPaced || request == nil {
             times.append(due)
         }
-        if isPipelined {
-            times += pipelineRequests.values.filter(\.valid).map { $0.started + .milliseconds(1500) }
+        if isWordPaced {
+            times += wordRequests.values.filter(\.valid).map { $0.started + requestDeadline }
         } else if let request {
-            times.append(request.started + .milliseconds(1500))
+            times.append(request.started + requestDeadline)
         }
         if candidate != nil, options.wait == .allSources, !gate.allSourcesSettled {
             times.append(changedAt + .seconds(1))
@@ -96,8 +103,15 @@ struct AutomaticSwitch {
         return times.min()
     }
 
-    init(options: AutomaticSwitchOptions, now: @escaping () -> Duration) {
-        self.options = options; self.now = now
+    init(options: AutomaticSwitchOptions, memory: JevLaunchMemory = JevLaunchMemory(),
+         now: @escaping () -> Duration) {
+        self.options = options; self.memory = memory; self.now = now
+    }
+
+    /// Word-paced request text: trimmed, whitespace runs collapsed to one space, Unicode NFC.
+    /// Case is kept. Word counts, duplicate checks and prefix checks all use it.
+    static func normalized(_ text: String) -> String {
+        text.precomposedStringWithCanonicalMapping.split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }
 
     mutating func handle(_ event: Event) -> [Effect] {
@@ -107,21 +121,23 @@ struct AutomaticSwitch {
             let effects = cancel()
             active = true; text = ""; composing = false; eligible = true; suspended = false
             mode = .search; candidate = nil; due = nil; agreements = 0; agreementLabel = nil
-            timedOutRequests = []
-            lastPipelineText = nil; agreementRetry = false
+            waitingText = nil; answeredText = nil; lastInsertAt = nil; requestsSent = 0
             switchedAt = nil; enterGraceEnds = nil; hadSwitch = false; actedOnText = nil; ended = false
             lastVerdict = .none; lateKind = nil
             return effects
         case .dismissed(let end):
+            let wasActive = active
             active = false; due = nil; candidate = nil
             var effects = cancel()
             if hadSwitch, !ended { effects.append(.record(.ended(end))); ended = true }
+            if wasActive { effects.append(.record(.session(requestsSent: requestsSent))) }
             return effects
         default:
             guard active else {
-                if isPipelined {
+                if isWordPaced {
                     switch event {
-                    case .verdict(let id, _, _), .failed(let id, _, _): pipelineRequests[id] = nil
+                    case .verdict(let id, _, _), .failed(let id, _, _):
+                        wordRequests[id] = nil; memory.requestFinished(id)
                     default: break
                     }
                 }
@@ -130,7 +146,7 @@ struct AutomaticSwitch {
         }
         switch event {
         case .bufferChanged(let text, let composing, let newGate):
-            if isPipelined { return pipelineBufferChanged(text: text, composing: composing, gate: newGate) }
+            if isWordPaced { return wordPacedBufferChanged(text: text, composing: composing, gate: newGate) }
             guard !self.text.utf8.elementsEqual(text.utf8) || self.composing != composing else { return [] }
             if let newGate { gate = newGate }
             self.text = text; self.composing = composing; changedAt = now(); candidate = nil; lateKind = nil
@@ -155,7 +171,7 @@ struct AutomaticSwitch {
                 }
                 return effects
             }
-            if isPipelined, gate.decision != .allowed {
+            if isWordPaced, gate.decision != .allowed {
                 due = nil; candidate = nil
                 return cancel()
             }
@@ -170,7 +186,7 @@ struct AutomaticSwitch {
             if !value { due = nil; candidate = nil; return cancel() }
             return []
         case .verdict(let id, let verdict, let latency):
-            if isPipelined { return pipelineCompleted(id: id, verdict: verdict, error: nil, latency: latency) }
+            if isWordPaced { return wordPacedCompleted(id: id, verdict: verdict, error: nil, latency: latency) }
             let value = Candidate(verdict: verdict, latency: latency)
             guard request?.id == id else { return [staleDiagnostic(id: id, value: value)] }
             if let timeout = timeoutIfDue() { return timeout }
@@ -179,7 +195,7 @@ struct AutomaticSwitch {
             candidate = value
             return apply(value)
         case .failed(let id, let kind, let latency):
-            if isPipelined { return pipelineCompleted(id: id, verdict: .init(label: .unsure), error: kind, latency: latency) }
+            if isWordPaced { return wordPacedCompleted(id: id, verdict: .init(label: .unsure), error: kind, latency: latency) }
             guard request?.id == id else {
                 return [staleDiagnostic(id: id, value: Candidate(verdict: .init(label: .unsure), latency: latency))]
             }
@@ -207,6 +223,8 @@ struct AutomaticSwitch {
             if let timeout = timeoutIfDue() { return timeout + fireIfDue() }
             if let candidate { return apply(candidate) + fireIfDue() }
             return fireIfDue()
+        case .slotReleased:
+            return isWordPaced ? sendWaiting() : []
         case .invoked, .dismissed: return []
         }
     }
@@ -215,7 +233,7 @@ struct AutomaticSwitch {
     private mutating func returnToSearch(recording event: AutomaticSwitchDiagnostics.Event? = nil) -> [Effect] {
         var effects = cancel()
         switchedAt = nil; enterGraceEnds = nil; mode = .search; candidate = nil; due = nil
-        suspended = options.reversalSuspends && (!isPipelined || !text.isEmpty); agreements = 0; agreementLabel = nil
+        suspended = options.reversalSuspends && (!isWordPaced || !text.isEmpty); agreements = 0; agreementLabel = nil
         effects.append(.returnToSearch)
         if let event { effects.append(.record(event)) }
         if !ended { effects.append(.record(.ended(.reversed))); ended = true }
@@ -223,20 +241,20 @@ struct AutomaticSwitch {
     }
 
     private mutating func timeoutIfDue() -> [Effect]? {
-        if isPipelined {
+        if isWordPaced {
             var effects: [Effect] = []
-            for (id, request) in pipelineRequests.sorted(by: { $0.value.sequence < $1.value.sequence })
-                where request.valid && now() - request.started >= .milliseconds(1500) {
-                pipelineRequests[id]?.valid = false
-                timedOutRequests.insert(id)
+            for (id, request) in wordRequests.sorted(by: { $0.value.sequence < $1.value.sequence })
+                where request.valid && now() - request.started >= requestDeadline {
+                wordRequests[id]?.valid = false
+                unsampledRequests.insert(id)
                 effects += [.cancel(id), diagnostic(Candidate(verdict: .init(label: .unsure),
                     latency: milliseconds(now() - request.started)), .timeout)]
             }
             return effects.isEmpty ? nil : effects
         }
-        guard let request, now() - request.started >= .milliseconds(1500) else { return nil }
+        guard let request, now() - request.started >= requestDeadline else { return nil }
         self.request = nil; candidate = nil
-        timedOutRequests.insert(request.id)
+        unsampledRequests.insert(request.id)
         return [.cancel(request.id), diagnostic(Candidate(verdict: .init(label: .unsure),
             latency: milliseconds(now() - request.started)), .timeout)]
     }
@@ -246,23 +264,29 @@ struct AutomaticSwitch {
         case .everyKeystroke: .zero
         case .debounced: .milliseconds(150)
         case .onPause: .milliseconds(500)
-        case .pipelinedJev: isPipelined ? .zero : .milliseconds(150)
+        // Word-paced applies only to Jev; with Foundation Models it behaves as debounced.
+        case .wordPaced: isWordPaced ? memory.pauseThreshold : .milliseconds(150)
         }
     }
+    /// An answer this much later than its send is dropped as a timeout.
+    private var requestDeadline: Duration { isWordPaced ? .milliseconds(1200) : .milliseconds(1500) }
     private var canClassify: Bool { eligible && !suspended && (mode == .search || options.afterSwitch == .keepClassifying && switchedAt != nil) }
     private mutating func cancel() -> [Effect] {
-        if isPipelined {
-            lastPipelineText = nil; agreementRetry = false
-            let ids = pipelineRequests.filter { $0.value.valid }.sorted { $0.value.sequence < $1.value.sequence }.map(\.key)
-            for id in ids { pipelineRequests[id]?.valid = false }
-            return ids.map(Effect.cancel)
+        if isWordPaced {
+            waitingText = nil
+            return cancelWordRequests { _ in true }
         }
         guard let request else { return [] }
         self.request = nil
+        unsampledRequests.insert(request.id)
         return [.cancel(request.id)]
     }
     private mutating func fireIfDue() -> [Effect] {
-        if isPipelined { return firePipelineIfDue() }
+        if isWordPaced {
+            guard let due, now() >= due else { return [] }
+            self.due = nil
+            return sendWordPaced()
+        }
         guard let due, now() >= due, request == nil, !composing, canClassify else { return [] }
         self.due = nil
         guard gate.decision == .allowed else {
@@ -272,7 +296,7 @@ struct AutomaticSwitch {
         return [.classify(id: id, text: text)]
     }
     private mutating func apply(_ value: Candidate) -> [Effect] {
-        if let prefix = value.prefix, !text.utf8.starts(with: prefix.utf8) {
+        if let prefix = value.prefix, !Self.normalized(text).utf8.starts(with: prefix.utf8) {
             candidate = nil
             return [diagnostic(value, .stale)]
         }
@@ -296,8 +320,8 @@ struct AutomaticSwitch {
         if agreementLabel == value.verdict.label { agreements += 1 }
         else { agreementLabel = value.verdict.label; agreements = 1 }
         if agreements < options.agreeingVerdicts.rawValue {
-            agreementRetry = isPipelined
-            due = now() + max(firingDelay, .milliseconds(150))
+            // Word-paced never resends the same text for a second opinion; the next answer may agree.
+            if !isWordPaced { due = now() + max(firingDelay, .milliseconds(150)) }
             return [diagnostic(value, .awaitingAgreement)]
         }
         mode = target; switchedAt = target == .search ? nil : now(); hadSwitch = true; actedOnText = text; ended = false
@@ -306,23 +330,38 @@ struct AutomaticSwitch {
         let transition: Effect = target == .search ? .returnToSearch : .enterMode(target)
         var effects = [diagnostic(value, .switched), transition,
                 .record(.switched(mode: AutomaticSwitchDiagnostics.Mode(rawValue: target.rawValue)!))]
-        if isPipelined, target != .search, options.afterSwitch == .stay {
+        if isWordPaced, target != .search, options.afterSwitch == .stay {
             due = nil
             effects += cancel()
         }
         return effects
     }
-    private mutating func pipelineBufferChanged(text newText: String, composing newComposing: Bool,
-                                               gate newGate: StrongMatchGate.Evaluation?) -> [Effect] {
+    private mutating func wordPacedBufferChanged(text newText: String, composing newComposing: Bool,
+                                                 gate newGate: StrongMatchGate.Evaluation?) -> [Effect] {
         guard !text.utf8.elementsEqual(newText.utf8) || composing != newComposing else { return [] }
-        let appending = !text.isEmpty && !composing && !newComposing && newText.utf8.starts(with: text.utf8)
+        let appending = !composing && !newComposing && newText.utf8.count > text.utf8.count
+            && newText.utf8.starts(with: text.utf8)
+        let time = now()
+        // Gaps are measured only between consecutive insertions in this session.
+        if appending {
+            if let lastInsertAt { memory.recordTypingGap(time - lastInsertAt) }
+            lastInsertAt = time
+        } else { lastInsertAt = nil }
+        // An inserted space or punctuation that follows a word character completes that word.
+        let completesWord = appending && newText.last.map(Self.endsWord) == true
+            && newText.dropLast().last.map { !Self.endsWord($0) } == true
         if let newGate { gate = newGate }
-        text = newText; composing = newComposing; changedAt = now(); lateKind = nil
+        text = newText; composing = newComposing; changedAt = time; lateKind = nil
         var effects: [Effect] = []
-        if !appending || gate.decision != .allowed {
+        if gate.decision != .allowed {
             effects += cancel()
-            candidate = nil; agreements = 0; agreementLabel = nil
+        } else {
+            // Appending keeps every request; other edits cancel those whose text was removed.
+            let current = Self.normalized(text)
+            if let waitingText, !current.utf8.starts(with: waitingText.utf8) { self.waitingText = nil }
+            effects += cancelWordRequests { !current.utf8.starts(with: $0.text.utf8) }
         }
+        if !appending || gate.decision != .allowed { candidate = nil; agreements = 0; agreementLabel = nil }
         due = nil
         if text.isEmpty {
             if eligible, !composing, switchedAt != nil, mode != .search {
@@ -333,55 +372,79 @@ struct AutomaticSwitch {
         }
         if suspended, !composing { return effects + [diagnostic(nil, .suspended)] }
         guard !composing, canClassify else { return effects }
-        due = max(now(), (lastPipelineStart ?? now() - .milliseconds(100)) + .milliseconds(100))
-        effects += fireIfDue()
+        if completesWord { return effects + sendWordPaced() }
+        due = time + memory.pauseThreshold
         return effects
     }
 
-    private mutating func firePipelineIfDue() -> [Effect] {
-        guard let due, now() >= due, pipelineRequests.count < 3, !text.isEmpty,
-              !composing, canClassify else { return [] }
-        self.due = nil
+    /// Sends the current normalized text, or the waiting text, when every
+    /// Word-paced condition holds. With both launch-wide slots busy, the text
+    /// takes the single waiting slot, replacing any older waiting text.
+    private mutating func sendWordPaced(_ waiting: String? = nil) -> [Effect] {
+        guard !composing, canClassify else { return [] }
+        let value = waiting ?? Self.normalized(text)
+        // One word is never sent, whatever the gate says, so it records nothing.
+        guard value.split(separator: " ").count >= 2 else { return [] }
         guard gate.decision == .allowed else { return [diagnostic(nil, .blocked)] }
-        guard agreementRetry || !(lastPipelineText?.utf8.elementsEqual(text.utf8) ?? false) else { return [] }
-        // Edits and agreement retries share the same provider-start spacing.
-        if let lastPipelineStart, now() - lastPipelineStart < .milliseconds(100) {
-            self.due = lastPipelineStart + .milliseconds(100)
-            return []
-        }
-        sequence += 1
+        guard !(answeredText?.utf8.elementsEqual(value.utf8) ?? false),
+              !wordRequests.values.contains(where: { $0.valid && $0.text.utf8.elementsEqual(value.utf8) }) else { return [] }
+        guard memory.hasCapacity else { waitingText = value; return [] }
+        waitingText = nil
+        sequence += 1; requestsSent += 1
         let id = UUID()
-        pipelineRequests[id] = PipelineRequest(started: now(), text: text, sequence: sequence)
-        lastPipelineStart = now(); lastPipelineText = text; agreementRetry = false
-        return [.classify(id: id, text: text)]
+        wordRequests[id] = WordRequest(started: now(), text: value, sequence: sequence)
+        memory.requestStarted(id)
+        return [.classify(id: id, text: value)]
     }
 
-    private mutating func pipelineCompleted(id: UUID, verdict: ClassifierVerdict,
-                                            error: AutomaticSwitchDiagnostics.ErrorKind?, latency: Double) -> [Effect] {
+    private mutating func sendWaiting() -> [Effect] {
+        guard let waiting = waitingText, memory.hasCapacity else { return [] }
+        waitingText = nil
+        guard Self.normalized(text).utf8.starts(with: waiting.utf8) else { return [] }
+        return sendWordPaced(waiting)
+    }
+
+    private mutating func cancelWordRequests(where removed: (WordRequest) -> Bool) -> [Effect] {
+        let ids = wordRequests.filter { $0.value.valid && removed($0.value) }
+            .sorted { $0.value.sequence < $1.value.sequence }.map(\.key)
+        for id in ids { wordRequests[id]?.valid = false; unsampledRequests.insert(id) }
+        return ids.map(Effect.cancel)
+    }
+
+    private mutating func wordPacedCompleted(id: UUID, verdict: ClassifierVerdict,
+                                             error: AutomaticSwitchDiagnostics.ErrorKind?, latency: Double) -> [Effect] {
+        memory.requestFinished(id)
         let value = Candidate(verdict: verdict, latency: latency)
-        guard let request = pipelineRequests.removeValue(forKey: id), request.valid,
-              request.sequence > newestHandledSequence, text.utf8.starts(with: request.text.utf8) else {
-            return [staleDiagnostic(id: id, value: value)] + fireIfDue()
+        guard let request = wordRequests.removeValue(forKey: id) else { return sendWaiting() }
+        guard request.valid, request.sequence > newestHandledSequence,
+              Self.normalized(text).utf8.starts(with: request.text.utf8) else {
+            return [staleDiagnostic(id: id, value: value)] + sendWaiting()
         }
-        if now() - request.started >= .milliseconds(1500) {
-            timedOutRequests.insert(id)
-            return [.cancel(id), diagnostic(Candidate(verdict: .init(label: .unsure),
-                latency: milliseconds(now() - request.started)), .timeout)] + fireIfDue()
+        if now() - request.started >= requestDeadline {
+            unsampledRequests.insert(id)
+            return [diagnostic(Candidate(verdict: .init(label: .unsure),
+                latency: milliseconds(now() - request.started)), .timeout)] + sendWaiting()
         }
         newestHandledSequence = request.sequence
         if let error {
             candidate = nil; agreements = 0; agreementLabel = nil
-            return [diagnostic(value, .error, error: error)] + fireIfDue()
+            return [diagnostic(value, .error, error: error)] + sendWaiting()
         }
         lastVerdict = diagnosticLabel(verdict.label)
+        answeredText = request.text
         let prefixed = Candidate(verdict: verdict, latency: latency, prefix: request.text)
         candidate = prefixed
-        return apply(prefixed) + fireIfDue()
+        return apply(prefixed) + sendWaiting()
+    }
+
+    /// Apostrophes and hyphens join a word ("don't", "e-mail") rather than end it.
+    private static func endsWord(_ character: Character) -> Bool {
+        (character.isWhitespace || character.isPunctuation) && !"'’-‐".contains(character)
     }
 
     private func staleDiagnostic(id: UUID, value: Candidate) -> Effect {
         diagnostic(Candidate(verdict: value.verdict,
-            latency: timedOutRequests.contains(id) ? nil : value.latency), .stale)
+            latency: unsampledRequests.contains(id) ? nil : value.latency), .stale)
     }
 
     private func diagnostic(_ value: Candidate?, _ outcome: AutomaticSwitchDiagnostics.Outcome,
