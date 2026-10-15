@@ -9,11 +9,12 @@ final class AutomaticSwitchDiagnostics {
     enum WordingVersion: String, Codable, Sendable { case v1 = "automatic-switch-v1" }
     enum Outcome: String, Codable, Sendable {
         case switched, belowThreshold = "below-threshold", unsure, awaitingAgreement = "awaiting-agreement"
-        case blocked, stale, multiline, suspended, error, timeout
+        case blocked, stale, multiline, suspended, error, timeout, backoff
     }
     enum ErrorKind: String, Codable, Sendable {
         case unavailable, authentication, rateLimited, malformedResponse, network, refusal, guardrail, other
     }
+    enum BackoffReason: String, Codable, Sendable { case keyRejected = "key-rejected", rateLimited = "rate-limited", network }
     enum GateReason: String, Codable, Sendable { case oneWord, strongMatch, collectionUnavailable }
     enum MatchedKind: String, Codable, Sendable { case application, note, task, file, folder }
     enum ReversalMethod: String, Codable, Sendable { case escape, backspace }
@@ -32,6 +33,7 @@ final class AutomaticSwitchDiagnostics {
         var gateReason: GateReason? = nil
         var matchedKind: MatchedKind? = nil
         var wordCount: Int? = nil
+        var backoffReason: BackoffReason? = nil
     }
     enum Event: Sendable {
         case verdict(Verdict)
@@ -143,6 +145,7 @@ final class AutomaticSwitchDiagnostics {
         var gateReason: GateReason?
         var matchedKind: MatchedKind?
         var wordCount: Int?
+        var backoffReason: BackoffReason?
         var mode: Mode?
         var reversalMethod: ReversalMethod?
         var millisecondsSinceSwitch: Double?
@@ -165,6 +168,7 @@ final class AutomaticSwitchDiagnostics {
                 latencyMilliseconds = verdict.latencyMilliseconds; outcome = verdict.outcome
                 errorKind = verdict.errorKind; gateReason = verdict.gateReason
                 matchedKind = verdict.matchedKind; wordCount = verdict.wordCount
+                backoffReason = verdict.backoffReason
             case .switched(let mode): self.event = "autoswitch.switched"; self.mode = mode
             case .reversed(let method, let milliseconds):
                 self.event = "autoswitch.reversed"; reversalMethod = method; millisecondsSinceSwitch = milliseconds

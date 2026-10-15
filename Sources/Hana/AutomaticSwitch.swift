@@ -10,7 +10,7 @@ struct AutomaticSwitch {
         case gateChanged(StrongMatchGate.Evaluation)
         case eligibilityChanged(Bool)
         case verdict(id: UUID, ClassifierVerdict, latencyMilliseconds: Double)
-        case failed(id: UUID, AutomaticSwitchDiagnostics.ErrorKind, latencyMilliseconds: Double)
+        case failed(id: UUID, AutomaticSwitchDiagnostics.ErrorKind, latencyMilliseconds: Double, retryAfter: Duration? = nil)
         case navigated
         case enter
         case reversed(AutomaticSwitchDiagnostics.ReversalMethod)
@@ -38,6 +38,7 @@ struct AutomaticSwitch {
         /// Normalized text, as sent.
         let text: String
         let sequence: UInt64
+        let keyRevision: UInt64
         var valid = true
     }
     let options: AutomaticSwitchOptions
@@ -136,7 +137,7 @@ struct AutomaticSwitch {
             guard active else {
                 if isWordPaced {
                     switch event {
-                    case .verdict(let id, _, _), .failed(let id, _, _):
+                    case .verdict(let id, _, _), .failed(let id, _, _, _):
                         wordRequests[id] = nil; memory.requestFinished(id)
                     default: break
                     }
@@ -194,8 +195,8 @@ struct AutomaticSwitch {
             lastVerdict = diagnosticLabel(verdict.label)
             candidate = value
             return apply(value)
-        case .failed(let id, let kind, let latency):
-            if isWordPaced { return wordPacedCompleted(id: id, verdict: .init(label: .unsure), error: kind, latency: latency) }
+        case .failed(let id, let kind, let latency, let retryAfter):
+            if isWordPaced { return wordPacedCompleted(id: id, verdict: .init(label: .unsure), error: kind, latency: latency, retryAfter: retryAfter) }
             guard request?.id == id else {
                 return [staleDiagnostic(id: id, value: Candidate(verdict: .init(label: .unsure), latency: latency))]
             }
@@ -388,11 +389,16 @@ struct AutomaticSwitch {
         guard gate.decision == .allowed else { return [diagnostic(nil, .blocked)] }
         guard !(answeredText?.utf8.elementsEqual(value.utf8) ?? false),
               !wordRequests.values.contains(where: { $0.valid && $0.text.utf8.elementsEqual(value.utf8) }) else { return [] }
+        if let reason = memory.backoffReason(at: now()) {
+            waitingText = nil
+            return [.record(.verdict(.init(classifier: .jev, label: .none, latencyMilliseconds: nil,
+                outcome: .backoff, backoffReason: reason)))]
+        }
         guard memory.hasCapacity else { waitingText = value; return [] }
         waitingText = nil
         sequence += 1; requestsSent += 1
         let id = UUID()
-        wordRequests[id] = WordRequest(started: now(), text: value, sequence: sequence)
+        wordRequests[id] = WordRequest(started: now(), text: value, sequence: sequence, keyRevision: memory.keyRevision)
         memory.requestStarted(id)
         return [.classify(id: id, text: value)]
     }
@@ -412,10 +418,14 @@ struct AutomaticSwitch {
     }
 
     private mutating func wordPacedCompleted(id: UUID, verdict: ClassifierVerdict,
-                                             error: AutomaticSwitchDiagnostics.ErrorKind?, latency: Double) -> [Effect] {
+                                             error: AutomaticSwitchDiagnostics.ErrorKind?, latency: Double, retryAfter: Duration? = nil) -> [Effect] {
         memory.requestFinished(id)
         let value = Candidate(verdict: verdict, latency: latency)
         guard let request = wordRequests.removeValue(forKey: id) else { return sendWaiting() }
+        // HTTP failures belong to the launch even when a newer answer already won.
+        if request.valid, let error, error != .authentication || request.keyRevision == memory.keyRevision {
+            memory.recordFailure(kind: error, retryAfter: retryAfter, at: now())
+        }
         guard request.valid, request.sequence > newestHandledSequence,
               Self.normalized(text).utf8.starts(with: request.text.utf8) else {
             return [staleDiagnostic(id: id, value: value)] + sendWaiting()
@@ -428,8 +438,11 @@ struct AutomaticSwitch {
         newestHandledSequence = request.sequence
         if let error {
             candidate = nil; agreements = 0; agreementLabel = nil
-            return [diagnostic(value, .error, error: error)] + sendWaiting()
+            var effects = [diagnostic(value, .error, error: error)]
+            if mode != .search { effects += returnToSearch(); suspended = false }
+            return effects + sendWaiting()
         }
+        memory.recordSuccess()
         lastVerdict = diagnosticLabel(verdict.label)
         answeredText = request.text
         let prefixed = Candidate(verdict: verdict, latency: latency, prefix: request.text)

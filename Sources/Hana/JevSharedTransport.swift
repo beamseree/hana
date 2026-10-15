@@ -20,7 +20,7 @@ final class JevSharedTransport {
         self.transport = transport
     }
 
-    func perform(_ request: URLRequest) async throws -> (Data, Int) {
+    func perform(_ request: URLRequest) async throws -> JevClassifier.Response {
         let id = UUID()
         try await withTaskCancellationHandler {
             try Task.checkCancellation()

@@ -176,14 +176,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
          automaticSwitchDiagnostics: AutomaticSwitchDiagnostics = AutomaticSwitchDiagnostics(),
          classifierServices: ClassifierServices? = nil,
          classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)? = nil,
-         jevLaunchMemory: JevLaunchMemory = JevLaunchMemory(),
+         jevLaunchMemory: JevLaunchMemory? = nil,
          frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
         self.diagnostics = diagnostics
         self.automaticSwitchOptions = automaticSwitchOptions
         self.automaticSwitchDiagnostics = automaticSwitchDiagnostics
         self.classifierFactory = classifierFactory
         self.classifierServices = classifierServices
-        self.jevLaunchMemory = jevLaunchMemory
+        self.jevLaunchMemory = jevLaunchMemory ?? classifierServices?.jevLaunchMemory ?? JevLaunchMemory()
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -844,8 +844,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     private func beginAutomaticSwitch(_ invocation: Invocation) {
-        let epoch = ContinuousClock.now
-        automaticSwitchEpoch = epoch
+        // Shared launch backoff uses the same clock across every bar session.
+        let epoch = automaticSwitchEpoch
         automaticSwitch = AutomaticSwitch(options: automaticSwitchSessionOptions, memory: jevLaunchMemory,
             now: { epoch.duration(to: ContinuousClock.now) })
         performAutomaticSwitch(automaticSwitch?.handle(.invoked) ?? [])
@@ -936,7 +936,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                     } catch {
                         let duration = started.duration(to: ContinuousClock.now)
                         let latency = Double(duration.components.seconds) * 1000 + Double(duration.components.attoseconds) / 1e15
-                        event = .failed(id: id, (error as? ClassifierFailure)?.kind ?? .other, latencyMilliseconds: latency)
+                        let failure = error as? ClassifierFailure
+                        event = .failed(id: id, failure?.kind ?? .other, latencyMilliseconds: latency, retryAfter: failure?.retryAfter)
                     }
                     guard let self else { return }
                     // The launch-wide slot lasts until the work ends, even after its bar session closed.
