@@ -23,6 +23,6 @@
     "scale": 2
   },
   "longFixtureUTF8Bytes": 1260022,
-  "signatureDetails": "Identifier=com.beamseree.hana.validation.issue99\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20400 size=31966 flags=0x2(adhoc) hashes=992+3 location=embedded\nSignature=adhoc\nInfo.plist entries=10\nTeamIdentifier=not set\nSealed Resources version=2 rules=13 files=2\nInternal requirements count=0 size=12",
+  "signatureDetails": "Identifier=com.beamseree.hana.validation.issue99\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20400 size=31966 flags=0x2(adhoc) hashes=992+3 location=embedded\nVersionPlatform=1\nVersionMin=1703936\nVersionSDK=1705216\nHash type=sha256 size=32\nCandidateCDHash sha256=a5576268fdb5cd0b98691cca166502195bdc2f71\nCandidateCDHashFull sha256=a5576268fdb5cd0b98691cca166502195bdc2f7187641afefe081b67259cdc29\nHash choices=sha256\nCMSDigest=a5576268fdb5cd0b98691cca166502195bdc2f7187641afefe081b67259cdc29\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=8208384\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=a5576268fdb5cd0b98691cca166502195bdc2f71\nSignature=adhoc\nInfo.plist entries=10\nTeamIdentifier=not set\nSealed Resources version=2 rules=13 files=2\nInternal requirements count=0 size=12",
   "strictSignatureExit": 0
 }
