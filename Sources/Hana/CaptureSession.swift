@@ -21,6 +21,9 @@ struct CaptureSession {
         case insert(String, replacing: NSRange, provenance: Provenance)
         /// The native editor's text and selection after any change it applied.
         case edited(text: String, selection: NSRange)
+        /// Backspace, before the editor deletes anything. Without an effect it
+        /// is ordinary deletion, which the editor performs and reports as `edited`.
+        case deleteBackward
         /// A new invocation, or a dismissal discarding any unsaved capture.
         case invoked, dismissed
     }
@@ -42,6 +45,12 @@ struct CaptureSession {
 
     private(set) var state = State()
 
+    /// The query Search receives for the buffer: whitespace runs, line breaks
+    /// included, become single spaces. The buffer itself is never changed.
+    static func searchQuery(for text: String) -> String {
+        text.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+    }
+
     mutating func handle(_ event: Event) -> [Effect] {
         switch event {
         case .insert(let text, let range, let provenance):
@@ -55,6 +64,13 @@ struct CaptureSession {
             state.text = (state.text as NSString).replacingCharacters(in: range, with: text)
             state.selection = NSRange(location: range.location + (text as NSString).length, length: 0)
             return []
+        case .deleteBackward:
+            // Backspace with nothing before the cursor leaves a capture for
+            // Search, keeping every character. Prefixes stay off from then on.
+            guard state.mode != .search, state.selection == NSRange(location: 0, length: 0) else { return [] }
+            state.mode = .search
+            state.prefixesArmed = false
+            return [.enterMode(.search)]
         case .edited(let text, let selection):
             state.text = text
             state.selection = selection

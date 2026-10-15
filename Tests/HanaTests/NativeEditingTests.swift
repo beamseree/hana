@@ -136,6 +136,61 @@ struct NativeEditingTests {
         #expect(editor.string == markdown)
     }
 
+    @Test func backspaceAtTheStartOfNoteReturnsToSearchAndATypedDashStaysLiteral() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let none = NSRange(location: NSNotFound, length: 0)
+        editor.insertText("-", replacementRange: none)
+        editor.insertText("milk", replacementRange: none)
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
+        editor.keyDown(with: try backspaceKey())
+        #expect(interaction.mode == .search)
+        #expect(editor.string == "milk")
+        #expect(editor.selectedRange() == NSRange(location: 0, length: 0))
+        #expect(interaction.modeLabelText == nil)
+        #expect(editor.window?.firstResponder === editor)
+
+        editor.insertText("-", replacementRange: none)
+        #expect(interaction.mode == .search)
+        #expect(editor.string == "-milk")
+        #expect(interaction.query == "-milk")
+    }
+
+    @Test func backspaceAfterTheStartOfNoteDeletesNormally() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let none = NSRange(location: NSNotFound, length: 0)
+        editor.insertText("-", replacementRange: none)
+        editor.insertText("milk", replacementRange: none)
+        editor.keyDown(with: try backspaceKey())
+        #expect(interaction.mode == .note)
+        #expect(editor.string == "mil")
+        editor.setSelectedRange(NSRange(location: 0, length: 2))
+        editor.keyDown(with: try backspaceKey())
+        #expect(interaction.mode == .note)
+        #expect(editor.string == "l")
+    }
+
+    @Test func undoAfterReturningToSearchChangesOnlyTheText() async throws {
+        let (interaction, invocation, editor) = try await presentEditor()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let none = NSRange(location: NSNotFound, length: 0)
+        editor.insertText("-", replacementRange: none)
+        editor.insertText("milk", replacementRange: none)
+        editor.breakUndoCoalescing()
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
+        editor.keyDown(with: try backspaceKey())
+        #expect(interaction.mode == .search)
+        // Returning was not an edit: the first undo removes the text.
+        editor.undoManager?.undo()
+        #expect(editor.string == "")
+        #expect(interaction.mode == .search)
+        editor.undoManager?.redo()
+        #expect(editor.string == "milk")
+        #expect(interaction.mode == .search)
+        #expect(interaction.query == "milk")
+    }
+
     private func returnKey(shift: Bool) throws -> NSEvent {
         try #require(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: shift ? .shift : [],
                                       timestamp: ProcessInfo.processInfo.systemUptime,

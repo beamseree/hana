@@ -98,6 +98,52 @@ struct NoteModeTests {
         #expect(interaction.mode == .note && editor.string == "")
     }
 
+    @Test func returningFromAMultilineNoteKeepsTheTextAndSearchesItsNormalisedQuery() async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed(), files = CatalogFeed()
+        var queries: [String] = []
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { text in
+            queries.append(text)
+            return files.stream()
+        }, typingGap: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let editor = try await firstResponderEditor()
+        let window = try #require(editor.window)
+        let inputTop = window.frame.maxY
+        let text = "  milk\n\tand  eggs\n\nบันทึก \n"
+        editor.insertText("-", replacementRange: none)
+        editor.insertText(text, replacementRange: none)
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
+        try await eventually { interaction.contentHeight > BarStyle.collapsedHeight }
+        #expect(queries.isEmpty)
+
+        editor.keyDown(with: try backspaceKey())
+        #expect(interaction.mode == .search)
+        #expect(editor.string == text)
+        #expect(editor.selectedRange() == NSRange(location: 0, length: 0))
+        #expect(interaction.modeLabelText == nil && interaction.modeIconShowsQuery)
+        try await eventually { queries == ["milk and eggs บันทึก"] }
+        let milk = app("Milk and Eggs บันทึก", "/fixture/Milk.app")
+        await apps.send([milk])
+        await files.send([])
+        try await eventually { interaction.resultsVisible && interaction.results == [milk] }
+        #expect(interaction.selectedResult == milk)
+        // Every line stays visible above the results, and the input never moved.
+        let scroll = try #require(editor.enclosingScrollView)
+        #expect(scroll.documentVisibleRect.height >= editor.frame.height)
+        #expect(scroll.frame.height > BarStyle.editorHeight)
+        #expect(window.frame.maxY == inputTop)
+        #expect(window.firstResponder === editor)
+
+        // Nothing about the tall return outlives the invocation.
+        interaction.dismiss(invocation, reason: .escape)
+        let next = interaction.presentBar()
+        defer { interaction.dismiss(next, reason: .outsideClick) }
+        #expect(interaction.contentHeight == BarStyle.collapsedHeight)
+        #expect(scroll.frame.height == BarStyle.editorHeight)
+    }
+
     private func firstResponderEditor() async throws -> NSTextView {
         try await eventually { NSApp.keyWindow?.firstResponder is NSTextView }
         return try #require(NSApp.keyWindow?.firstResponder as? NSTextView)
