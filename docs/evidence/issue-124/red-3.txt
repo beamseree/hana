@@ -1,0 +1,24 @@
+Test Suite 'Selected tests' started at 2026-10-15 22:07:46.535.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:07:46.536.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:07:46.536.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:07:46.536.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchDeletionTests started.
+􀟈  Test aQualifyingAnswerWaitsUntilTheDeletionPause() started.
+􁁛  Test aQualifyingAnswerWaitsUntilTheDeletionPause() passed after 0.001 seconds.
+􀟈  Test heldAnswersAreRecheckedAgainstTheFinalText(finalText:) started.
+􀟈  Test case passing 1 argument finalText → "call mom tomorr" to heldAnswersAreRecheckedAgainstTheFinalText(finalText:) started.
+􀟈  Test case passing 1 argument finalText → "call mo" to heldAnswersAreRecheckedAgainstTheFinalText(finalText:) started.
+􁁛  Test heldAnswersAreRecheckedAgainstTheFinalText(finalText:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test twoConsecutiveHeldAnswersCanAgreeAtThePause() started.
+􀢄  Test twoConsecutiveHeldAnswersCanAgreeAtThePause() recorded an issue at AutomaticSwitchDeletionTests.swift:46:9: Expectation failed: (modes(h.policy.handle(.tick)) → []) == ([.task] → [Hana.CaptureSession.Mode.task])
+􀅺  removed [Hana.CaptureSession.Mode.task]
+􀢄  Test twoConsecutiveHeldAnswersCanAgreeAtThePause() failed after 0.001 seconds with 1 issue.
+􀢄  Suite AutomaticSwitchDeletionTests failed after 0.002 seconds with 1 issue.
+􀄵  /// Deletion behavior through the agreed policy seam. The clock and answers
+􀄵  /// are controlled; no AppKit window or real classifier is used.
+􀢄  Test run with 3 tests in 1 suite failed after 0.002 seconds with 1 issue.
