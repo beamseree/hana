@@ -715,7 +715,7 @@ Test Suite 'All tests' passed at 2026-10-15 22:02:12.146.
 􀟈  Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
 􀟈  Test case passing 1 argument text → " " to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
 􀟈  Test case passing 1 argument text → "
-	  
+	 \u2028
 " to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
 􁁛  Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) with 3 test cases passed after 0.001 seconds.
 􀟈  Test submittedTextIsFrozenWhileSaving() started.
@@ -754,12 +754,12 @@ Test Suite 'All tests' passed at 2026-10-15 22:02:12.146.
 􀟈  Test case passing 1 argument prefix → "[" to typedPrefixesInTaskAreLiteralText(prefix:) started.
 􁁛  Test typedPrefixesInTaskAreLiteralText(prefix:) with 2 test cases passed after 0.001 seconds.
 􀟈  Test switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
-􀟈  Test case passing 1 argument text → "onetwo" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "one\rtwo" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 􀟈  Test case passing 1 argument text → "one
 two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 􀟈  Test case passing 1 argument text → "one
 two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
-􀟈  Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "one\u2028two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 􀟈  Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
 􀟈  Test case passing 1 argument text → "trailing
 " to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
@@ -767,39 +767,39 @@ two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) starte
 􀟈  Test aLongSingleLineThatSoftWrapsEntersTask() started.
 􁁛  Test aLongSingleLineThatSoftWrapsEntersTask() passed after 0.001 seconds.
 􀟈  Test aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .paste, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a\rb" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a\u2028b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .paste, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .drop, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a\rb" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a\u2028b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .drop, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a\rb" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a\u2028b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .typed, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a\rb" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a
 b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
-􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a\u2028b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
 􀟈  Test case passing 2 arguments provenance → .typed, pasted → "
 " to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
@@ -1375,8 +1375,8 @@ two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
 􁁛  Test enterDuringCompositionCommitsItWithoutSaving() passed after 0.151 seconds.
 􀟈  Test aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
 􀟈  Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
-􀟈  Test case passing 1 argument text → "  
-	  " to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
+􀟈  Test case passing 1 argument text → "
+	\u2028 " to aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) started.
 􁁛  Test aWhitespaceOnlyNoteIsRefusedWithoutReachingTheStore(text:) with 2 test cases passed after 0.308 seconds.
 􀟈  Test dismissingBeforeASaveWritesNothing(reason:) started.
 􀟈  Test case passing 1 argument reason → .escape to dismissingBeforeASaveWritesNothing(reason:) started.
@@ -1564,7 +1564,7 @@ two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
 􀟈  Test case passing 2 arguments buffer → "  remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􀟈  Test case passing 2 arguments buffer → "	 remind	", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􀟈  Test case passing 2 arguments buffer → "call mom", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
-􀟈  Test case passing 2 arguments buffer → " 
+􀟈  Test case passing 2 arguments buffer → "
 ", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
 􁁛  Test rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) with 6 test cases passed after 0.001 seconds.
 􀟈  Test unavailableCollectionAlwaysBlocks(_:) started.

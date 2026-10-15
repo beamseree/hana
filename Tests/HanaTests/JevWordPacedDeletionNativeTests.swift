@@ -26,7 +26,7 @@ struct JevWordPacedDeletionNativeTests {
     @Test(arguments: Deletion.allCases)
     func nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion: Deletion) async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = HeldJev()
@@ -68,7 +68,7 @@ struct JevWordPacedDeletionNativeTests {
 
     @Test func enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = HeldJev()
@@ -98,7 +98,7 @@ struct JevWordPacedDeletionNativeTests {
 
     @Test func replacingASelectionThatLooksLikeAnAppendStillHoldsTheAnswer() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = HeldJev()
@@ -151,34 +151,4 @@ struct JevWordPacedDeletionNativeTests {
         func finishAll() { while !pending.isEmpty { reply(.search) } }
     }
 
-    @MainActor private struct Fixture {
-        let name = "Hana.JevWordPacedDeletionNativeTests.\(UUID())"
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let defaults: UserDefaults
-        let options: AutomaticSwitchOptionsStore
-        let log: AutomaticSwitchDiagnostics
-        init() throws {
-            defaults = try #require(UserDefaults(suiteName: name))
-            options = AutomaticSwitchOptionsStore(defaults: defaults)
-            var value = AutomaticSwitchOptions()
-            value.isEnabled = true; value.classifier = .jev; value.firing = .wordPaced
-            value.afterSwitch = .stay; value.wait = .none
-            options.write(value)
-            log = AutomaticSwitchDiagnostics(file: directory.appendingPathComponent("automatic-switch.jsonl"))
-        }
-        func interaction(store: CollectionStore, classifier: any Classifier) -> MacInteraction {
-            // A terminal batch releases an Enter held for Search to settle.
-            // Finishing without one leaves the fixture source loading.
-            MacInteraction(search: Search(source: { AsyncStream {
-                $0.yield(.init(results: [], status: .ready)); $0.finish()
-            } }, typingGap: .zero),
-                collection: Task { store }, confirmationDuration: .zero,
-                automaticSwitchOptions: options, automaticSwitchDiagnostics: log,
-                classifierFactory: { _ in classifier }, jevLaunchMemory: JevLaunchMemory())
-        }
-        func remove() {
-            defaults.removePersistentDomain(forName: name)
-            try? FileManager.default.removeItem(at: directory)
-        }
-    }
 }

@@ -91,6 +91,7 @@ struct AutomaticSwitch {
     private var changedAt: Duration = .zero
     private var candidate: Candidate?
     private var agreementLabel: ClassifierVerdict.Label?
+    private var agreementPrefix: String?
     private var agreements = 0
     private var switchedAt: Duration?
     private var enterGraceEnds: Duration?
@@ -363,9 +364,13 @@ struct AutomaticSwitch {
                 && (value.verdict.probability.map { $0.isFinite && $0 >= options.jevThreshold.rawValue } ?? false)
                 && !(value.verdict.label == .task && TaskItem.isMultiline(text))
             if accepts {
-                if agreementLabel == value.verdict.label { agreements += 1 }
+                let prefixAgrees = value.prefix.map { prefix in
+                    agreementPrefix.map { prefix.utf8.starts(with: $0.utf8) } ?? false
+                } ?? false
+                if agreementLabel == value.verdict.label, prefixAgrees { agreements += 1 }
                 else { agreementLabel = value.verdict.label; agreements = 1 }
-            } else { agreements = 0; agreementLabel = nil }
+                agreementPrefix = value.prefix
+            } else { agreements = 0; agreementLabel = nil; agreementPrefix = nil }
             value.agreementCount = agreements
             candidate = value
         }
@@ -431,6 +436,9 @@ struct AutomaticSwitch {
         if let newGate { gate = newGate }
         text = newText; composing = newComposing; changedAt = time; lateKind = nil
         let current = Self.normalized(text)
+        if let agreementPrefix, !current.utf8.starts(with: agreementPrefix.utf8) {
+            agreements = 0; agreementLabel = nil; self.agreementPrefix = nil
+        }
         vetoes = vetoes.filter { current.utf8.starts(with: $0.value.utf8) }
         if !appending || deletionPause != nil { deletionPause = time + memory.pauseThreshold }
         if deletionPause != nil, let candidate {
@@ -482,6 +490,9 @@ struct AutomaticSwitch {
         guard !(answeredText?.utf8.elementsEqual(value.utf8) ?? false),
               !wordRequests.values.contains(where: { $0.valid && $0.text.utf8.elementsEqual(value.utf8) }) else { return [] }
         if let cached = applyCachedAnswer(for: value) { return cached }
+        // Cancellation does not end a physical request. A previous bar's work
+        // also keeps this identity until its terminal callback releases it.
+        guard !memory.hasRequest(for: value) else { waitingText = value; return [] }
         if let reason = memory.backoffReason(at: now()) {
             waitingText = nil
             return [.record(.verdict(.init(classifier: .jev, label: .none, latencyMilliseconds: nil,
@@ -492,7 +503,7 @@ struct AutomaticSwitch {
         sequence += 1; requestsSent += 1
         let id = UUID()
         wordRequests[id] = WordRequest(started: now(), text: value, sequence: sequence, keyRevision: memory.keyRevision)
-        memory.requestStarted(id)
+        memory.requestStarted(id, text: value)
         return [.classify(id: id, text: value)]
     }
 

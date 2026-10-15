@@ -9,7 +9,7 @@ struct JevWordPacedWithdrawalNativeTests {
 
     @Test func withdrawalKeepsTheCurrentTextAndUTF16SelectionAndRetypingUsesCache() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture { $0.enterBehavior = .saves }; defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
@@ -37,7 +37,7 @@ struct JevWordPacedWithdrawalNativeTests {
 
     @Test func editingInTheMiddleNeverWithdrawsEvenWhenTheResultIsAStrictPrefix() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture { $0.enterBehavior = .saves }; defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
@@ -61,7 +61,7 @@ struct JevWordPacedWithdrawalNativeTests {
 
     @Test func backspaceAtTheStartPreservesTextAndVetoesOnlyTheRejectedMode() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture { $0.enterBehavior = .saves }; defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
@@ -95,7 +95,7 @@ struct JevWordPacedWithdrawalNativeTests {
     @Test(arguments: [AutomaticSwitchOptions.EscapeBehavior.returnsToSearch, .dismisses])
     func escapeFollowsItsConfiguredOption(option: AutomaticSwitchOptions.EscapeBehavior) async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture { $0.enterBehavior = .saves }; defer { fixture.remove() }
         var options = fixture.options.read(); options.escapeBehavior = option; fixture.options.write(options)
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
@@ -122,7 +122,7 @@ struct JevWordPacedWithdrawalNativeTests {
 
     @Test func enterJustAfterDeletingSavesTheShownTaskExactlyOnce() async throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture { $0.enterBehavior = .saves }; defer { fixture.remove() }
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
@@ -148,7 +148,7 @@ struct JevWordPacedWithdrawalNativeTests {
 
     @Test func submenuShowsMigratedReversalChoiceAndSeparateWithdrawnCount() throws {
         _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
+        let fixture = try JevWordPacedNativeFixture { $0.enterBehavior = .saves }; defer { fixture.remove() }
         var options = fixture.options.read(); options.reversalSuspends = true
         var old = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(options)) as? [String: Any])
         old["reversalBehavior"] = nil
@@ -188,31 +188,4 @@ struct JevWordPacedWithdrawalNativeTests {
         return try #require(NSApp.keyWindow?.firstResponder as? NSTextView)
     }
 
-    @MainActor private struct Fixture {
-        let name = "Hana.JevWordPacedWithdrawalNativeTests.\(UUID())"
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        let defaults: UserDefaults
-        let options: AutomaticSwitchOptionsStore
-        let log: AutomaticSwitchDiagnostics
-        init() throws {
-            defaults = try #require(UserDefaults(suiteName: name))
-            options = AutomaticSwitchOptionsStore(defaults: defaults)
-            var value = AutomaticSwitchOptions()
-            value.isEnabled = true; value.classifier = .jev; value.firing = .wordPaced
-            value.afterSwitch = .stay; value.wait = .none; value.enterBehavior = .saves
-            options.write(value)
-            log = AutomaticSwitchDiagnostics(file: directory.appendingPathComponent("automatic-switch.jsonl"))
-        }
-        func interaction(store: CollectionStore, classifier: any Classifier) -> MacInteraction {
-            MacInteraction(search: Search(source: { AsyncStream {
-                $0.yield(.init(results: [], status: .ready)); $0.finish()
-            } }, typingGap: .zero), collection: Task { store }, confirmationDuration: .zero,
-                automaticSwitchOptions: options, automaticSwitchDiagnostics: log,
-                classifierFactory: { _ in classifier }, jevLaunchMemory: JevLaunchMemory())
-        }
-        func remove() {
-            defaults.removePersistentDomain(forName: name)
-            try? FileManager.default.removeItem(at: directory)
-        }
-    }
 }
