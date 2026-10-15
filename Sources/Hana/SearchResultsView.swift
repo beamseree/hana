@@ -100,7 +100,7 @@ struct SearchResultsView: View {
             let height = max(Self.thumbMinHeight, track * scroll.visible / scroll.content)
             let progress = min(max(scroll.offset / (scroll.content - scroll.visible), 0), 1)
             Capsule()
-                .fill(Color.black.opacity(0.16))
+                .fill(Color.black.opacity(BarStyle.scrollThumbOpacity))
                 .frame(width: Self.thumbWidth, height: height)
                 .offset(y: progress * (track - height))
                 .padding(.trailing, Self.thumbTrailing)
@@ -109,7 +109,7 @@ struct SearchResultsView: View {
         }
     }
 
-    private static let thumbWidth: CGFloat = 3
+    private static let thumbWidth = BarStyle.scrollThumbWidth
     private static let thumbMinHeight: CGFloat = 24
     private static let thumbTrailing = (BarStyle.cardPadding - thumbWidth) / 2
 
