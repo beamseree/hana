@@ -316,6 +316,7 @@ struct AutomaticSwitch {
             return [diagnostic(nil, .blocked)]
         }
         let id = UUID(); request = Request(id: id, started: now())
+        requestsSent += 1
         return [.classify(id: id, text: text)]
     }
     private mutating func apply(_ incoming: Candidate, allowingSwitch: Bool = true) -> [Effect] {
