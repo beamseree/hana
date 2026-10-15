@@ -44,7 +44,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             try await CollectionStore.open(.live())
         }
         self.collection = collection
-        let interaction = MacInteraction(diagnostics: diagnostics, search: search, collection: collection)
+        let classifierServices = validating ? nil : ClassifierServices()
+        let factory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)?
+        if let classifierServices { factory = { classifierServices.makeClassifier(options: $0) } }
+        else { factory = nil }
+        let interaction = MacInteraction(diagnostics: diagnostics, search: search, collection: collection,
+            classifierServices: classifierServices,
+            classifierFactory: factory)
         self.interaction = interaction
         interaction.start()
         if CommandLine.arguments.contains("--validate-performance") {

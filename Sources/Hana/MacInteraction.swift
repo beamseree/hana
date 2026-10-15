@@ -131,6 +131,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private var automaticSwitchReset: NSMenuItem?
     /// Nil by default: persisted preferences cannot make tests call real models.
     private let classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)?
+    private let classifierServices: ClassifierServices?
+    private var classifierMenuController: ClassifierMenuController?
     private var classifier: (any Classifier)?
     private var automaticSwitch: AutomaticSwitch?
     private var classificationTasks: [UUID: Task<Void, Never>] = [:]
@@ -165,12 +167,14 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
          collection: Task<CollectionStore, any Error>? = nil, confirmationDuration: Duration = .milliseconds(500),
          automaticSwitchOptions: AutomaticSwitchOptionsStore = AutomaticSwitchOptionsStore(),
          automaticSwitchDiagnostics: AutomaticSwitchDiagnostics = AutomaticSwitchDiagnostics(),
+         classifierServices: ClassifierServices? = nil,
          classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)? = nil,
          frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
         self.diagnostics = diagnostics
         self.automaticSwitchOptions = automaticSwitchOptions
         self.automaticSwitchDiagnostics = automaticSwitchDiagnostics
         self.classifierFactory = classifierFactory
+        self.classifierServices = classifierServices
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -701,6 +705,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         automaticSwitchToggle = toggle
         submenu.addItem(toggle)
         addAutomaticSwitchBehaviorMenus(to: submenu)
+        if let classifierServices {
+            classifierMenuController = ClassifierMenuController(menu: submenu, services: classifierServices, options: automaticSwitchOptions)
+        } else { submenu.item(withTitle: "Classifier")?.submenu?.item(withTitle: "Jev")?.isEnabled = false }
         submenu.addItem(.separator())
         automaticSwitchCountItems = (0..<4).map { _ in
             let item = NSMenuItem(title: "", action: nil, keyEquivalent: "")
@@ -724,6 +731,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     private func refreshAutomaticSwitchMenu() {
+        classifierMenuController?.refresh()
         let options = automaticSwitchOptions.read()
         automaticSwitchToggle?.state = options.isEnabled ? .on : .off
         for (item, matches) in automaticSwitchChoices { item.state = matches(options) ? .on : .off }
@@ -824,6 +832,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         performAutomaticSwitch(automaticSwitch?.handle(.invoked) ?? [])
         guard automaticSwitchSessionOptions.isEnabled else { return }
         classifier = classifierFactory?(automaticSwitchSessionOptions)
+        classifier?.prewarm()
         gateTitles = StrongMatchGate.Titles(status: collection == nil ? .unavailable : .loading)
         let collection = collection
         titleObservation = Task { [weak self] in
