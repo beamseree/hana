@@ -297,7 +297,8 @@ struct MacInteractionTests {
         try await eventually { files.subscriptionCount == 1 }
         try await Task.sleep(for: .milliseconds(180))
         #expect(interaction.statusMessage == nil)
-        #expect(interaction.contentHeight == 68)
+        // Only New note and New task, while no source has matched.
+        #expect(interaction.contentHeight == 188)
         await files.send([])
         try await eventually { interaction.statusMessage?.hasPrefix("No matches") == true }
         #expect(!interaction.isLoading)
@@ -329,7 +330,8 @@ struct MacInteractionTests {
         try await Task.sleep(for: .milliseconds(180))
         #expect(interaction.contentHeight == expanded) // Files still loading.
         await files.send([], status: finishedStatus)
-        let finishedHeight: CGFloat = finishedStatus == .ready ? 132 : 176
+        // One match and the two suggestions, plus any status row.
+        let finishedHeight: CGFloat = finishedStatus == .ready ? 244 : 288
         try await eventually { interaction.contentHeight == finishedHeight }
         interaction.updateQuery("")
         try await eventually { interaction.contentHeight == 68 && interaction.results.isEmpty }
@@ -571,7 +573,8 @@ struct DestinationInteractionTests {
         interaction.updateQuery("Notes")
         await files.send([file])
         try await eventually { interaction.selectedResult?.id == file.id }
-        interaction.moveSelection(by: 1)
+        // Navigates without leaving the top row; the suggestions are below it.
+        interaction.moveSelection(by: -1)
         await apps.send([app("Notes", "/Applications/Notes.app")])
         try await eventually { interaction.results.count == 2 }
         #expect(interaction.selectedResult?.id == file.id)
