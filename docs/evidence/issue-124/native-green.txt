@@ -1,0 +1,29 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests JevWordPacedDeletionNativeTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (3.61s)
+Test Suite 'Selected tests' started at 2026-10-15 22:24:16.298.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:24:16.299.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:24:16.299.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:24:16.299.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite JevWordPacedDeletionNativeTests started.
+􀟈  Test nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) started.
+􀟈  Test case passing 1 argument deletion → .character to nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) started.
+􀟈  Test case passing 1 argument deletion → .word to nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) started.
+􀟈  Test case passing 1 argument deletion → .line to nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) started.
+􁁛  Test nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) with 3 test cases passed after 0.813 seconds.
+􀟈  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() started.
+􁁛  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() passed after 0.303 seconds.
+􀟈  Test replacingASelectionThatLooksLikeAnAppendStillHoldsTheAnswer() started.
+􁁛  Test replacingASelectionThatLooksLikeAnAppendStillHoldsTheAnswer() passed after 0.330 seconds.
+􁁛  Suite JevWordPacedDeletionNativeTests passed after 1.448 seconds.
+􁁛  Test run with 3 tests in 1 suite passed after 1.448 seconds.

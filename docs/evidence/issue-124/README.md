@@ -43,7 +43,7 @@ held answer's one-time confidence count.
 | Held Enter cancels remaining work and discards held answers | `enterHoldingAnOpenDiscardsHeldAnswersAndCancelsRemainingRequests` |
 | Content-free diagnostics; cancelled latency absent | `onlyRemovedRequestsAreCancelledAndCancellationHasNoLatencyOrContent`; existing `sessionRecordsRequestsSentAndCancelledRequestsAddNoLatency` |
 
-## Native evidence pending integration run
+## Native verification
 
 `JevWordPacedDeletionNativeTests` uses the real editor, a disposable fixture
 Store, a controlled Jev fake whose replies can arrive after cancellation, and
@@ -56,7 +56,25 @@ the coordinated `.nativeWindowSlot` trait:
 - `replacingASelectionThatLooksLikeAnAppendStillHoldsTheAnswer` checks native
   replacement-range provenance instead of guessing from the resulting text.
 
-The implementer did **not** run native tests or install an app. The integration
-agent owns Beam's granted testing slot and will append native results there.
-These tests do not establish physical focus, wall-clock Jev latency, or
-classifier quality; those remain the trial.
+The initial implementation compiled these tests without running them. The
+integration run then exposed a fixture error in the Enter case: the empty
+Search source finished without publishing a terminal `.ready` batch. Enter
+correctly remained held waiting for Search to settle. The focused original
+scenario and a one-character minimized correction reproduced that failure
+(`enter-native-red.txt`, `enter-native-min-red.txt`). Changing only the fixture
+to publish an empty `.ready` batch made the minimized case pass
+(`enter-native-min-green.txt`). The original Thai-text scenario was restored,
+with an explicit selected New note precondition.
+
+Under Beam's granted native testing slot, based on integration `11565cf` plus
+the fixture correction:
+
+```sh
+xcrun swift test --no-parallel --filter JevWordPacedDeletionNativeTests
+```
+
+Result: **3 tests in 1 suite passed** (five parameter cases), recorded in
+`native-green.txt`. The slot was released after the run. No app was installed.
+The fix changes test setup only; no product behavior was altered for this
+timeout. These tests do not establish physical focus, wall-clock Jev latency,
+or classifier quality; those remain the trial.
