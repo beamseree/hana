@@ -1,0 +1,79 @@
+issue-90-red.txt
+30 |         await interaction.organizeNote(pinnedRow, action: .setPinned(false))
+   |                           `- error: value of type 'MacInteraction' has no member 'organizeNote'
+31 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [recent.id, older.id] }
+32 |         let unpinned = try #require(try await store.read(.note(older.id), in: g))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MainNoteOrganizationTests.swift:30:60: error: cannot infer contextual base in reference to member 'setPinned'
+28 |         #expect(pinned.contentEditedAt == older.contentEditedAt)
+29 |         let pinnedRow = try #require(interaction.mainWindowPresentation?.rows.first)
+30 |         await interaction.organizeNote(pinnedRow, action: .setPinned(false))
+   |                                                            `- error: cannot infer contextual base in reference to member 'setPinned'
+31 |         try await eventually { interaction.mainWindowPresentation?.rows.map(\.id) == [recent.id, older.id] }
+32 |         let unpinned = try #require(try await store.read(.note(older.id), in: g))
+[236/246] Compiling HanaTests ResultIconsTests.swift
+[237/246] Compiling HanaTests SearchExclusionTests.swift
+[238/246] Compiling HanaTests SearchRankingTests.swift
+[239/246] Compiling HanaTests NoteOrganizationTests.swift
+[240/246] Compiling HanaTests NoteSaveTests.swift
+[241/246] Compiling HanaTests OrganizedCollectionFixture.swift
+[242/246] Compiling HanaTests TaskOrderingTests.swift
+[243/246] Compiling HanaTests TaskSaveTests.swift
+[244/246] Compiling HanaTests TestClock.swift
+error: fatalError
+
+issue-90-archive-red.txt
+[0/1] Planning build
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MainNoteOrganizationTests.swift:51:54: error: type 'MainNoteAction' has no member 'archive'
+49 |         try await eventually { interaction.mainWindowPresentation?.rows.first?.id == note.id }
+50 |         let row = try #require(interaction.mainWindowPresentation?.rows.first)
+51 |         await interaction.organizeNote(row, action: .archive)
+   |                                                      `- error: type 'MainNoteAction' has no member 'archive'
+52 |         try await eventually { interaction.mainWindowPresentation?.rows.isEmpty == true }
+53 |         let archived = try #require(try await store.read(.note(note.id), in: g))
+error: fatalError
+
+issue-90-refusal-red.txt
+[0/1] Planning build
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MainNoteOrganizationTests.swift:77:53: error: value of type 'MainWindowPresentation' has no member 'noteNotice'
+75 |         let edited = try await store.perform(.editNote(note.id, expectedRevision: note.revision, body: "Committed elsewhere"), in: g)
+76 |         await interaction.organizeNote(staleRow, action: action)
+77 |         #expect(interaction.mainWindowPresentation?.noteNotice == .refused(.staleRevision))
+   |                                                     `- error: value of type 'MainWindowPresentation' has no member 'noteNotice'
+78 |         try await eventually { interaction.mainWindowPresentation?.rows.first?.title == "Committed elsewhere" }
+79 |         #expect(try await store.read(.note(note.id), in: g) == edited)
+error: fatalError
+
+issue-90-menu-red.txt
+105 |         interaction.selectMainNote(note.id)
+106 |         #expect(interaction.validateMenuItem(pin))
+    |                             `- error: value of type 'MacInteraction' has no member 'validateMenuItem'
+107 |         #expect(pin.keyEquivalent == "p")
+108 |         #expect(pin.keyEquivalentModifierMask == [.command, .control])
+
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MainNoteOrganizationTests.swift:113:29: error: value of type 'MacInteraction' has no member 'validateMenuItem'
+111 |         menu.performActionForItem(at: menu.index(of: pin))
+112 |         try await eventually { interaction.mainWindowPresentation?.rows.first?.isPinned == true }
+113 |         #expect(interaction.validateMenuItem(pin))
+    |                             `- error: value of type 'MacInteraction' has no member 'validateMenuItem'
+114 |         #expect(pin.title == "Unpin Note")
+115 |         menu.performActionForItem(at: menu.index(of: pin))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/MainNoteOrganizationTests.swift:119:30: error: value of type 'MacInteraction' has no member 'validateMenuItem'
+117 |         menu.performActionForItem(at: menu.index(of: archive))
+118 |         try await eventually { interaction.mainWindowPresentation?.rows.isEmpty == true }
+119 |         #expect(!interaction.validateMenuItem(archive))
+    |                              `- error: value of type 'MacInteraction' has no member 'validateMenuItem'
+120 |         await store.close()
+121 |     }
+error: fatalError

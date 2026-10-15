@@ -22,6 +22,11 @@ enum MainSection: String, CaseIterable, Identifiable {
     }
 }
 
+enum MainNoteAction: Sendable {
+    case setPinned(Bool)
+    case archive
+}
+
 /// Values shared by the native window, SwiftUI and Mac Interaction's callers.
 /// No editor or database handle is exposed by the presentation.
 @MainActor @Observable
@@ -30,11 +35,13 @@ final class MainWindowPresentation {
         let id: UUID
         let title: String
         let isPinned: Bool
+        let revision: Int64
 
         init(_ note: Note) {
             id = note.id
             title = note.title ?? "Untitled"
             isPinned = note.isPinned
+            revision = note.revision
         }
     }
 
@@ -56,19 +63,39 @@ final class MainWindowPresentation {
         case loading, available, unavailable(UnavailableReason)
     }
 
+    enum NoteNotice: Equatable {
+        case refused(CollectionStoreError)
+        case unavailable
+
+        var message: String {
+            switch self {
+            case .refused(.staleRevision): "This note changed. Review its latest version and try again."
+            case .refused(.archivedNote): "This note was archived. Restore it before changing it."
+            case .refused(.noteNotFound): "This note is no longer available."
+            case .refused: "The note couldn’t be changed. Try again."
+            case .unavailable: "The collection is unavailable. The note wasn’t changed."
+            }
+        }
+    }
+
     private(set) var selectedSection: MainSection = .notes
+    var selectedNoteID: UUID?
     private(set) var rows: [Row] = []
     private(set) var availability: Availability = .loading
+    fileprivate(set) var noteNotice: NoteNotice?
+    fileprivate(set) var isOrganizingNote = false
 
     func select(_ section: MainSection) { selectedSection = section }
 
     fileprivate func receive(_ notes: [Note]) {
         rows = notes.map(Row.init)
+        if !rows.contains(where: { $0.id == selectedNoteID }) { selectedNoteID = nil }
         availability = .available
     }
 
     fileprivate func unavailable(_ reason: UnavailableReason) {
         rows = []
+        selectedNoteID = nil
         availability = .unavailable(reason)
     }
 }
@@ -78,9 +105,11 @@ final class WorkingWindowController: NSWindowController {
     let presentation = MainWindowPresentation()
     let taskWorkspace: TaskWorkspacePresentation
     private var observation: Task<Void, Never>?
+    private let collection: Task<CollectionStore, any Error>?
 
     init(collection: Task<CollectionStore, any Error>?) {
         taskWorkspace = TaskWorkspacePresentation(collection: collection)
+        self.collection = collection
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 820, height: 560),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
@@ -92,7 +121,10 @@ final class WorkingWindowController: NSWindowController {
         window.minSize = NSSize(width: 600, height: 360)
         window.appearance = NSAppearance(named: .aqua)
         window.backgroundColor = HanaColor.Surface.window
-        window.contentView = NSHostingView(rootView: MainWindowView(presentation: presentation, tasks: taskWorkspace))
+        window.contentView = NSHostingView(rootView: MainWindowView(
+            presentation: presentation, tasks: taskWorkspace,
+            organizeNote: { [weak self] row, action in await self?.organizeNote(row, action: action) }
+        ))
         window.center()
         guard let collection else {
             presentation.unavailable(.noCollection)
@@ -124,6 +156,29 @@ final class WorkingWindowController: NSWindowController {
         observation = nil
     }
 
+    func organizeNote(_ row: MainWindowPresentation.Row, action: MainNoteAction) async {
+        guard !presentation.isOrganizingNote else { return }
+        presentation.isOrganizingNote = true
+        defer { presentation.isOrganizingNote = false }
+        presentation.noteNotice = nil
+        guard let collection, let store = try? await collection.value else {
+            presentation.noteNotice = .unavailable
+            return
+        }
+        do {
+            switch action {
+            case .setPinned(let pinned):
+                _ = try await store.perform(.setNotePinned(row.id, pinned, expectedRevision: row.revision),
+                                            in: store.generation)
+            case .archive:
+                _ = try await store.perform(.archiveNote(row.id, expectedRevision: row.revision), in: store.generation)
+            }
+        } catch {
+            presentation.noteNotice = (error as? CollectionStoreError).map(MainWindowPresentation.NoteNotice.refused)
+                ?? .unavailable
+        }
+    }
+
     deinit { observation?.cancel() }
     required init?(coder: NSCoder) { fatalError("Use init(collection:)") }
 }
@@ -131,6 +186,7 @@ final class WorkingWindowController: NSWindowController {
 private struct MainWindowView: View {
     let presentation: MainWindowPresentation
     let tasks: TaskWorkspacePresentation
+    let organizeNote: @MainActor (MainWindowPresentation.Row, MainNoteAction) async -> Void
 
     var body: some View {
         NavigationSplitView {
@@ -150,6 +206,11 @@ private struct MainWindowView: View {
                     .font(HanaFont.Heading.window.font)
                     .tracking(HanaFont.Heading.window.kern)
                 content
+                if presentation.selectedSection == .notes, let notice = presentation.noteNotice {
+                    Text(notice.message)
+                        .foregroundStyle(Color(nsColor: HanaColor.Text.secondary))
+                        .accessibilityLabel("Note action: \(notice.message)")
+                }
             }
             .padding(24)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -174,7 +235,9 @@ private struct MainWindowView: View {
             } else if presentation.rows.isEmpty {
                 message("No notes yet", detail: "Capture a note from the search bar to see it here.")
             } else {
-                List(presentation.rows) { row in
+                List(presentation.rows, selection: Binding(
+                    get: { presentation.selectedNoteID }, set: { presentation.selectedNoteID = $0 }
+                )) { row in
                     HStack(spacing: 8) {
                         if row.isPinned {
                             Image(systemName: "pin.fill")
@@ -183,6 +246,16 @@ private struct MainWindowView: View {
                         }
                         Text(row.title).lineLimit(1).help(row.title)
                     }
+                    .tag(row.id)
+                    .contextMenu {
+                        Button(row.isPinned ? "Unpin Note" : "Pin Note") {
+                            Task { await organizeNote(row, .setPinned(!row.isPinned)) }
+                        }
+                        Button("Archive Note") {
+                            Task { await organizeNote(row, .archive) }
+                        }
+                    }
+                    .disabled(presentation.isOrganizingNote)
                     .accessibilityElement(children: .combine)
                     .listRowBackground(Color(nsColor: HanaColor.Surface.group))
                 }
