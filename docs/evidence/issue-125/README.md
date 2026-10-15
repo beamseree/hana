@@ -52,6 +52,11 @@ xcrun swift test --no-parallel --filter 'AutomaticSwitch(Withdrawal|ReversalOpti
 Result: **109 tests in 10 suites passed**. The command compiles native tests
 but does not execute any native suite.
 
+After syncing integration `2cd1e96` (including #127 and the session-count
+review fix), the same selection plus `SessionCount` and `JevHTTPSessionTests`
+passed **112 tests in 12 suites** (`integrated-green.txt`). Native tests were
+again compiled and excluded from execution.
+
 | Acceptance | Test |
 | --- | --- |
 | Withdraw at pause, rearm and reuse cache | `deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache` |
