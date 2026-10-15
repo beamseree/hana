@@ -5,6 +5,18 @@ import Foundation
 struct CaptureSession {
     enum Mode: String { case search, note, task }
 
+    /// A capture suggestion offered below Search's matches. It changes mode
+    /// only when chosen, and never saves.
+    enum Suggestion: CaseIterable, Equatable {
+        case note, task
+        var mode: Mode {
+            switch self {
+            case .note: .note
+            case .task: .task
+            }
+        }
+    }
+
     /// Where an insertion came from, as identified by the native editor. Only
     /// `typed` can select a mode; anything uncertain is reported as `programmatic`.
     enum Provenance: Equatable {
@@ -27,6 +39,8 @@ struct CaptureSession {
         /// Tab and Shift+Enter outside composition, before the editor inserts
         /// anything. Without an effect the editor inserts the tab or line break.
         case tab, newline
+        /// Enter on a capture suggestion selected in Search.
+        case chooseSuggestion(Suggestion)
         /// A click on Task's destination selector.
         case chooseDestination(TaskPlacement)
         /// A new invocation, or a dismissal discarding any unsaved capture.
@@ -101,14 +115,7 @@ struct CaptureSession {
             // the start selects Note or Task; the selection stays put relative to the text.
             if state.mode == .search, state.prefixesArmed, provenance == .typed,
                let mode = Self.prefixes[text], range == NSRange(location: 0, length: 0) {
-                // Multiline text never becomes a task: it would have to be flattened or cut.
-                if mode == .task, TaskItem.isMultiline(state.text) {
-                    state.notice = .multilineTask
-                    return [.consumeInsertion]
-                }
-                state.mode = mode
-                state.notice = nil
-                return [.consumeInsertion, .enterMode(mode)]
+                return [.consumeInsertion] + enterCapture(mode)
             }
             // A task title is never silently flattened or cut: a line break refuses the whole insertion.
             if state.mode == .task, TaskItem.isMultiline(text) {
@@ -130,6 +137,9 @@ struct CaptureSession {
             state.prefixesArmed = state.text.isEmpty
             state.notice = nil
             return [.enterMode(.search)]
+        case .chooseSuggestion(let suggestion):
+            guard state.mode == .search, state.phase == .editing else { return [] }
+            return enterCapture(suggestion.mode)
         case .tab:
             // A typed Tab never enters a title: it toggles the destination.
             guard state.mode == .task else { return [] }
@@ -180,5 +190,18 @@ struct CaptureSession {
             state.notice = notice
             return []
         }
+    }
+
+    /// Search to Note or Task, by a typed prefix or a chosen suggestion, keeping
+    /// the text and selection. Multiline text never becomes a task: it would have
+    /// to be flattened or cut, so Search stays with an explanation.
+    private mutating func enterCapture(_ mode: Mode) -> [Effect] {
+        if mode == .task, TaskItem.isMultiline(state.text) {
+            state.notice = .multilineTask
+            return []
+        }
+        state.mode = mode
+        state.notice = nil
+        return [.enterMode(mode)]
     }
 }
