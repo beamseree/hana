@@ -4,7 +4,7 @@ Hana is a personal native macOS app combining app/file search, quick note and ta
 
 ## Status
 
-Product scope was confirmed on 2026-10-13. The app supports native invocation, mixed application/filename Search, exact-destination opening, and durable Note and Task capture. The main window shows saved notes as they commit. Working-window organization and note editing are tracked in [#88](https://github.com/beamseree/hana/issues/88). See [build/run/test instructions](docs/native-shell.md), the [product specification](docs/product-spec.md), and the per-ticket records under [docs/evidence](docs/evidence). Automatic backups and restore remain deferred; Hana is not yet a safe sole home for important content. The isolated prototype remains on `prototype/window-focus`.
+Product scope was confirmed on 2026-10-13. The app supports native invocation, mixed application/filename Search, exact-destination opening, and durable Note and Task capture. The main window has live Notes, Inbox, Today, Completed and Archive views. Native note windows autosave plain text and Markdown, retain failed saves, and offer a read-only preview. [#88](https://github.com/beamseree/hana/issues/88) implements working windows and organization; its final physical checks are tracked in [#99](https://github.com/beamseree/hana/issues/99). See [build/run/test instructions](docs/native-shell.md), the [product specification](docs/product-spec.md), and the per-ticket records under [docs/evidence](docs/evidence). Automatic backups and restore remain deferred; Hana is not yet a safe sole home for important content. The isolated prototype remains on `prototype/window-focus`.
 
 ## Start here
 
@@ -22,11 +22,11 @@ These project-local documents are the working source of truth from this handoff 
 
 The window/focus prototype supports continuing with a single-process design on the tested Mac. Full-screen invocation, Dock/Command-Tab access, minimized windows and three-display pointer placement have user-observed evidence. The reported minimize anomaly did not recur in three follow-up checks; its original cause remains unknown. Candidate-based IME testing is explicitly deferred for current English/Thai use.
 
-Working windows and organization are tracked in [#88](https://github.com/beamseree/hana/issues/88). Notes/tasks in Search, Settings, automatic backups and restore belong to later work. Ad-hoc signing is local development evidence only. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
+Working-window code and automated/native fixture evidence are recorded under [#88](https://github.com/beamseree/hana/issues/88). Physical acceptance of this build remains pending in [#99](https://github.com/beamseree/hana/issues/99); earlier prototype observations do not replace it. Notes/tasks in Search, Settings, automatic backups and restore belong to later work. Ad-hoc signing is local development evidence only. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
 
 ## Working windows
 
-Open **Hana → Open Hana** from the menu-bar menu, **Window → Open Hana** (Command+1), or the Dock icon to reach the single main window. Working windows retain Dock and Command-Tab membership while open or minimized; closing the last window returns to accessory mode. The mock windows used in the earlier shell milestone were removed in [#89](https://github.com/beamseree/hana/issues/89). See its [evidence](docs/evidence/issue-89/validation.md).
+Open **Hana → Open Hana** from the menu-bar menu, **Window → Open Hana** (Command+1), or the Dock icon to reach the single main window. Working windows retain Dock and Command-Tab membership while open or minimized; closing the last window returns to accessory mode. The mock windows used in the earlier shell milestone were removed in [#89](https://github.com/beamseree/hana/issues/89). See its [evidence](docs/evidence/issue-89/validation.md). Open a note with double-click or Return; each note reuses its existing window. Notes support pin/archive, and archived notes open read-only with Restore. Tasks support complete/reopen, move, inline rename, archive/restore and independent Inbox/Today ordering. Note capture’s Open in window saves once and continues in its editor. Working windows keep the current light appearance per [Beam’s clarification](docs/evidence/issue-88/decisions.md).
 
 ## Tracker
 

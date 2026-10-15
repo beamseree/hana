@@ -10,7 +10,7 @@ A personal native macOS app for quick capture without leaving the current activi
 
 ## Status
 
-Beam confirmed the complete product scope on 2026-10-13. Hana now has a native AppKit/SwiftUI app: mixed application/file Search, Note and Task capture, a durable SQLite Collection Store, and a main window showing live saved notes. Working-window organization and note editing are being delivered under #88; Inbox, Today, Completed and Archive currently have placeholders in the main window. Full collection export and manual validated snapshots exist at the recovery interface and fixture harness. Automatic backups and restore remain deferred, so Hana is not yet a safe sole home for important content. Accepted requirements, automated checks and interactive observations remain distinct; see the evidence records for verified scope.
+Beam confirmed the complete product scope on 2026-10-13. Hana now has a native AppKit/SwiftUI app: mixed application/file Search, Note and Task capture, a durable SQLite Collection Store, and live Notes, Inbox, Today, Completed and Archive views. #88 adds note/task organization, native note windows with autosave and failure recovery, Markdown preview, and Open in window from capture. Its automated and native fixture evidence is separate from the physical checks pending under #99. Working windows keep the current light appearance per Beam’s 2026-10-15 clarification. Full collection export and manual validated snapshots exist at the recovery interface and fixture harness. Automatic backups and restore remain deferred, so Hana is not yet a safe sole home for important content. Accepted requirements, automated checks and interactive observations remain distinct; see the evidence records for verified scope.
 
 ## Confirmed decisions
 
