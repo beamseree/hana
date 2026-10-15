@@ -1,0 +1,25 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Compiling HanaTests TaskWorkspaceTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (1.96s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite TaskWorkspaceTests started.
+◇ Test nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "return" to nativeInlineEditorCommitsOrCancels(command:) started.
+✘ Test nativeInlineEditorCommitsOrCancels(command:) recorded an issue with 1 argument command → "return" at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test nativeInlineEditorCommitsOrCancels(command:) recorded an issue with 1 argument command → "return" at TaskWorkspaceTests.swift:115:26: Expectation failed: taskEditor(in: window.contentView → <_TtGC7SwiftUI13NSHostingViewV4HanaP10$1071a32a414MainWindowView_: 0x100d2b830>) → nil
+◇ Test case passing 1 argument command → "focusLoss" to nativeInlineEditorCommitsOrCancels(command:) started.
+✘ Test nativeInlineEditorCommitsOrCancels(command:) recorded an issue with 1 argument command → "focusLoss" at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test nativeInlineEditorCommitsOrCancels(command:) recorded an issue with 1 argument command → "focusLoss" at TaskWorkspaceTests.swift:115:26: Expectation failed: taskEditor(in: window.contentView → <_TtGC7SwiftUI13NSHostingViewV4HanaP10$1071a32a414MainWindowView_: 0xa599c8800>) → nil
+◇ Test case passing 1 argument command → "escape" to nativeInlineEditorCommitsOrCancels(command:) started.
+✘ Test nativeInlineEditorCommitsOrCancels(command:) recorded an issue with 1 argument command → "escape" at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test nativeInlineEditorCommitsOrCancels(command:) recorded an issue with 1 argument command → "escape" at TaskWorkspaceTests.swift:115:26: Expectation failed: taskEditor(in: window.contentView → <_TtGC7SwiftUI13NSHostingViewV4HanaP10$1071a32a414MainWindowView_: 0xa599c9000>) → nil
+✘ Test nativeInlineEditorCommitsOrCancels(command:) with 3 test cases failed after 9.655 seconds with 6 issues.
+✘ Suite TaskWorkspaceTests failed after 9.655 seconds with 6 issues.
+✘ Test run with 1 test in 1 suite failed after 9.655 seconds with 6 issues.

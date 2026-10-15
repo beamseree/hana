@@ -76,9 +76,11 @@ final class MainWindowPresentation {
 @MainActor
 final class WorkingWindowController: NSWindowController {
     let presentation = MainWindowPresentation()
+    let taskWorkspace: TaskWorkspacePresentation
     private var observation: Task<Void, Never>?
 
     init(collection: Task<CollectionStore, any Error>?) {
+        taskWorkspace = TaskWorkspacePresentation(collection: collection)
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 820, height: 560),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
@@ -90,7 +92,7 @@ final class WorkingWindowController: NSWindowController {
         window.minSize = NSSize(width: 600, height: 360)
         window.appearance = NSAppearance(named: .aqua)
         window.backgroundColor = HanaColor.Surface.window
-        window.contentView = NSHostingView(rootView: MainWindowView(presentation: presentation))
+        window.contentView = NSHostingView(rootView: MainWindowView(presentation: presentation, tasks: taskWorkspace))
         window.center()
         guard let collection else {
             presentation.unavailable(.noCollection)
@@ -117,6 +119,7 @@ final class WorkingWindowController: NSWindowController {
     }
 
     func stopObserving() {
+        taskWorkspace.stopObserving()
         observation?.cancel()
         observation = nil
     }
@@ -127,6 +130,7 @@ final class WorkingWindowController: NSWindowController {
 
 private struct MainWindowView: View {
     let presentation: MainWindowPresentation
+    let tasks: TaskWorkspacePresentation
 
     var body: some View {
         NavigationSplitView {
@@ -163,7 +167,9 @@ private struct MainWindowView: View {
         case .unavailable(let reason):
             message("Collection unavailable", detail: reason.message)
         case .available:
-            if presentation.selectedSection != .notes {
+            if presentation.selectedSection == .inbox || presentation.selectedSection == .today {
+                TaskWorkspaceView(tasks: tasks, section: presentation.selectedSection)
+            } else if presentation.selectedSection != .notes {
                 message(presentation.selectedSection.rawValue, detail: "This section is coming soon.")
             } else if presentation.rows.isEmpty {
                 message("No notes yet", detail: "Capture a note from the search bar to see it here.")
