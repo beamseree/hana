@@ -4,6 +4,8 @@ Date: 2026-10-15. Parent: #110. Target: `feature/automatic-switch`, never `main`
 
 ## Status and evidence boundary
 
+**Jev pipeline follow-up, 2026-10-15:** Beam authorized a new firing mode and installed trial. See [pipeline behavior, 391-test verification, reviews and installation identity](jev-pipeline/README.md). This is the latest candidate; earlier provider reports retain their original build identity. #119 remains draft.
+
 **Follow-up, 2026-10-15:** the candidate was subsequently installed with Beam's authorization, and both real-provider checks completed. See [installed-candidate reports and settings/provenance](interactive/README.md). PR #119 remains draft; normal-use human acceptance remains pending. The rest of this document records the earlier automated verification phase and its then-current installation hold.
 
 The code and automated adapter, Keychain, submenu, and fixture-report checks are implemented. **Interactive acceptance remains pending.** No real Jev API request or Foundation Models inference, installed trial build, or deliberate tricky-input provider run occurred in this work. The user authorized native automated tests only and held installation/trial launch. This record does not satisfy the criterion requiring a report from each available classifier on Beam's Mac; #114 must remain open/draft until that evidence exists.
