@@ -50,13 +50,18 @@ func validateNoteClose(register: (MacInteraction) -> Void) async {
             } catch CollectionStoreError.storageFailure(code: 8) {}
         }
         window.performClose(nil)
-        try await closeCheck("held-sheet") { platform.noteCloseIsHeld(note.id) && window.attachedSheet != nil }
+        if scenario.isPending {
+            try await closeCheck("paused-held-sheet") {
+                arrivals.withLock { $0 } == 1 && platform.noteCloseIsHeld(note.id) && window.attachedSheet != nil
+            }
+            try await closeCheck("saving-status") { platform.noteSaveStatus(note.id) == "Saving…" }
+        } else {
+            try await closeCheck("held-sheet") { platform.noteCloseIsHeld(note.id) && window.attachedSheet != nil }
+        }
         guard platform.noteActions(note.id) == [.retry, .copyText, .discardChanges] else {
             throw NoteCloseCheck.failed("close-actions")
         }
         if scenario.isPending {
-            try await closeCheck("commit-paused") { arrivals.withLock { $0 } == 1 }
-            try await closeCheck("saving-status") { platform.noteSaveStatus(note.id) == "Saving…" }
             guard NSApp.activationPolicy() == .regular else { throw NoteCloseCheck.failed("pending-policy") }
         } else {
             guard platform.window(for: .note(note.id)) === window else { throw NoteCloseCheck.failed("held-window") }
