@@ -1,0 +1,28 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests CalculationTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (4.77s)
+Test Suite 'Selected tests' started at 2026-10-16 17:20:18.863.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 17:20:18.864.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 17:20:18.864.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 17:20:18.864.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationTests started.
+􀟈  Test decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 1", expected → "1e-100" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀢄  Test decimalDivisionPreservesRepresentableSmallValues(text:expected:) recorded an issue with 2 arguments text → "1e-100 / 1", expected → "1e-100" at CalculationTests.swift:15:9: Expectation failed: (answer.state == .value && answer.title == expected → false) && (answer.copyableText == expected → <not evaluated>)
+􀟈  Test case passing 2 arguments text → "1e-100 / 10", expected → "1e-101" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀢄  Test decimalDivisionPreservesRepresentableSmallValues(text:expected:) recorded an issue with 2 arguments text → "1e-100 / 10", expected → "1e-101" at CalculationTests.swift:15:9: Expectation failed: (answer.state == .value && answer.title == expected → false) && (answer.copyableText == expected → <not evaluated>)
+􀟈  Test case passing 2 arguments text → "1e-128 / 1", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀢄  Test decimalDivisionPreservesRepresentableSmallValues(text:expected:) recorded an issue with 2 arguments text → "1e-128 / 1", expected → "1e-128" at CalculationTests.swift:15:9: Expectation failed: (answer.state == .value && answer.title == expected → false) && (answer.copyableText == expected → <not evaluated>)
+􀢄  Test decimalDivisionPreservesRepresentableSmallValues(text:expected:) with 3 test cases failed after 0.001 seconds with 3 issues.
+􀢄  Suite CalculationTests failed after 0.001 seconds with 3 issues.
+􀢄  Test run with 1 test in 1 suite failed after 0.001 seconds with 3 issues.
