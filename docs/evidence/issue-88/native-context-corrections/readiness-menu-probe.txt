@@ -1,0 +1,15 @@
+Build complete! (3.91s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite MainNoteOrganizationTests started.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MainNoteOrganizationTests.swift:109:9: Expectation failed: (interaction → <Hana.MacInteraction: 0x104bb11c0>).validateMenuItem(pin → <NSMenuItem: 0x8f7598c80 Pin Note, ke='Control-Command-P', action: toggleSelectedNotePin>)
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MainNoteOrganizationTests.swift:116:9: Expectation failed: (interaction → <Hana.MacInteraction: 0x104bb11c0>).validateMenuItem(pin → <NSMenuItem: 0x8f7598c80 Pin Note, ke='Control-Command-P', action: toggleSelectedNotePin>)
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MainNoteOrganizationTests.swift:117:9: Expectation failed: (pin.title → "Pin Note") == "Unpin Note"
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() failed after 9.407 seconds with 6 issues.
+✘ Suite MainNoteOrganizationTests failed after 9.407 seconds with 6 issues.
+✘ Test run with 1 test in 1 suite failed after 9.407 seconds with 6 issues.

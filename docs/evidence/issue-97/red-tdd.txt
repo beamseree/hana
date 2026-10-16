@@ -1,0 +1,56 @@
+issue-97-session-red.txt
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:9:44: error: type 'CaptureSession.Effect' has no member 'saveNoteInWindow'
+   |                                            `- error: type 'CaptureSession.Effect' has no member 'saveNoteInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:10:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:12:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:17:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:9:44: error: type 'CaptureSession.Effect' has no member 'saveNoteInWindow'
+   |                                            `- error: type 'CaptureSession.Effect' has no member 'saveNoteInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:10:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:12:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:17:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:9:44: error: type 'CaptureSession.Effect' has no member 'saveNoteInWindow'
+   |                                            `- error: type 'CaptureSession.Effect' has no member 'saveNoteInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:10:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:12:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:17:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:9:44: error: type 'CaptureSession.Effect' has no member 'saveNoteInWindow'
+   |                                            `- error: type 'CaptureSession.Effect' has no member 'saveNoteInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:10:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:12:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:17:33: error: type 'CaptureSession.Event' has no member 'openInWindow'
+   |                                 `- error: type 'CaptureSession.Event' has no member 'openInWindow'
+error: fatalError
+
+issue-97-open-red.txt
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:40:21: error: value of type 'MacInteraction' has no member 'openCaptureInWindow'
+   |                     `- error: value of type 'MacInteraction' has no member 'openCaptureInWindow'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:42:38: error: value of type 'MacInteraction' has no member 'openCaptureInWindow'
+   |                                      `- error: value of type 'MacInteraction' has no member 'openCaptureInWindow'
+error: fatalError
+
+issue-97-control-red.txt
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:70:29: error: value of type 'MacInteraction' has no member 'openInWindowButton'
+   |                             `- error: value of type 'MacInteraction' has no member 'openInWindowButton'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:72:30: error: value of type 'MacInteraction' has no member 'openInWindowButton'
+   |                              `- error: value of type 'MacInteraction' has no member 'openInWindowButton'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:73:21: error: value of type 'MacInteraction' has no member 'openInWindowButton'
+   |                     `- error: value of type 'MacInteraction' has no member 'openInWindowButton'
+/Users/beamsereeyothin/.codex/worktrees/issue-90-notes/hana/Tests/HanaTests/OpenNoteCaptureTests.swift:73:53: error: 'nil' requires a contextual type
+   |                                                     `- error: 'nil' requires a contextual type
+error: fatalError
+
+issue-97-composition-red.txt
+✘ Test compositionKeepsTheOpenControlDisabledAndSavesNothing() recorded an issue at OpenNoteCaptureTests.swift:195:9: Expectation failed: !((interaction.openInWindowButton → <_TtC4HanaP33_701A9ED675EBF38FBBDCBA28000C499017CaptureOpenButton: 0x8853e9400>).isEnabled → true → true)
+✘ Test run with 2 tests in 1 suite failed after 0.325 seconds with 1 issue.

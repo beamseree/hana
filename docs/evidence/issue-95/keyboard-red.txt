@@ -1,0 +1,46 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--1AB21518FC5DEDBE.txt
+[3/6] Emitting module HanaTests
+[4/6] Compiling HanaTests TaskWorkspaceOrderTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:20:54: error: type 'TaskWorkspaceAction' has no member 'moveUp'
+18 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+19 |         interaction.selectTask(inbox[1].id)
+20 |         #expect(await interaction.performTaskAction(.moveUp))
+   |                                                      `- error: type 'TaskWorkspaceAction' has no member 'moveUp'
+21 |         let firstOrder = [inbox[1].id, inbox[0].id, inbox[2].id]
+22 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == firstOrder }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:23:52: error: type 'TaskWorkspaceAction' has no member 'moveUp'
+21 |         let firstOrder = [inbox[1].id, inbox[0].id, inbox[2].id]
+22 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == firstOrder }
+23 |         #expect(!interaction.canPerformTaskAction(.moveUp))
+   |                                                    `- error: type 'TaskWorkspaceAction' has no member 'moveUp'
+24 |         #expect(await interaction.performTaskAction(.moveDown))
+25 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:24:54: error: type 'TaskWorkspaceAction' has no member 'moveDown'
+22 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == firstOrder }
+23 |         #expect(!interaction.canPerformTaskAction(.moveUp))
+24 |         #expect(await interaction.performTaskAction(.moveDown))
+   |                                                      `- error: type 'TaskWorkspaceAction' has no member 'moveDown'
+25 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+26 |         interaction.open(.main, section: .today)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:28:54: error: type 'TaskWorkspaceAction' has no member 'moveDown'
+26 |         interaction.open(.main, section: .today)
+27 |         interaction.selectTask(today[0].id)
+28 |         #expect(await interaction.performTaskAction(.moveDown))
+   |                                                      `- error: type 'TaskWorkspaceAction' has no member 'moveDown'
+29 |         let finalToday = [today[1].id, today[0].id]
+30 |         try await eventually { interaction.taskWorkspacePresentation?.today.map(\.id) == finalToday }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:31:52: error: type 'TaskWorkspaceAction' has no member 'moveDown'
+29 |         let finalToday = [today[1].id, today[0].id]
+30 |         try await eventually { interaction.taskWorkspacePresentation?.today.map(\.id) == finalToday }
+31 |         #expect(!interaction.canPerformTaskAction(.moveDown))
+   |                                                    `- error: type 'TaskWorkspaceAction' has no member 'moveDown'
+32 |         #expect(interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id))
+33 |         interaction.window(for: .main)?.close()
+error: fatalError

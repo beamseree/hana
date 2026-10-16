@@ -1,0 +1,51 @@
+[0/1] Planning build
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite TaskWorkspaceTests started.
+◇ Suite NoteEditingTests started.
+◇ Suite NoteWindowTests started.
+◇ Suite MainWindowTests started.
+◇ Test continuousTypingSavesByOneSecondAndCompositionDefersUntilCommitted() started.
+◇ Test aPausedCommitDrainsNewerTextInOrderWithoutMarkingItSavedEarly() started.
+◇ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() started.
+◇ Test blankCloseKeepsLastCommittedBody() started.
+◇ Test idleSaveWaitsThreeHundredMillisecondsAndKeepsExactBytes() started.
+✔ Test continuousTypingSavesByOneSecondAndCompositionDefersUntilCommitted() passed after 0.093 seconds.
+✔ Test blankCloseKeepsLastCommittedBody() passed after 0.344 seconds.
+✔ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() passed after 0.360 seconds.
+◇ Test aOneMegabyteFixtureCanOpenEditAndFlush() started.
+✔ Test aPausedCommitDrainsNewerTextInOrderWithoutMarkingItSavedEarly() passed after 0.440 seconds.
+✔ Test idleSaveWaitsThreeHundredMillisecondsAndKeepsExactBytes() passed after 0.456 seconds.
+✔ Suite NoteEditingTests passed after 0.464 seconds.
+NOTE_PROFILE bytes=1140000 open=0.106296042 seconds insert=0.072463917 seconds flush=0.146562708 seconds
+✔ Test aOneMegabyteFixtureCanOpenEditAndFlush() passed after 0.501 seconds.
+✔ Suite NoteWindowTests passed after 0.861 seconds.
+◇ Test activeListsObserveStoreOrderAndNewTasksAtTheTop() started.
+✔ Test activeListsObserveStoreOrderAndNewTasksAtTheTop() passed after 0.161 seconds.
+◇ Test taskActionsCommitStoreTransitionsAndObserveBothLists() started.
+✔ Test taskActionsCommitStoreTransitionsAndObserveBothLists() passed after 0.204 seconds.
+◇ Test renameKeepsInvalidDraftAndReloadsStaleCommittedTitle() started.
+✔ Test renameKeepsInvalidDraftAndReloadsStaleCommittedTitle() passed after 0.176 seconds.
+◇ Test nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "return" to nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "focusLoss" to nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "escape" to nativeInlineEditorCommitsOrCancels(command:) started.
+✔ Test nativeInlineEditorCommitsOrCancels(command:) with 3 test cases passed after 0.433 seconds.
+◇ Test nativePasteIsRefusedWholeAndBlankReturnKeepsEditor() started.
+✔ Test nativePasteIsRefusedWholeAndBlankReturnKeepsEditor() passed after 0.150 seconds.
+◇ Test taskMenuCommandsHaveKeyEquivalentsAndRouteSelectedTask() started.
+✔ Test taskMenuCommandsHaveKeyEquivalentsAndRouteSelectedTask() passed after 0.195 seconds.
+✔ Suite TaskWorkspaceTests passed after 2.185 seconds.
+◇ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() started.
+✔ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() passed after 0.137 seconds.
+◇ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → false to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → true to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+✔ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) with 2 test cases passed after 0.136 seconds.
+◇ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() started.
+✔ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() passed after 1.383 seconds.
+◇ Test menusOpenTheSameMainWindowWithoutMockDestinations() started.
+✔ Test menusOpenTheSameMainWindowWithoutMockDestinations() passed after 0.185 seconds.
+✔ Suite MainWindowTests passed after 4.029 seconds.
+✔ Test run with 16 tests in 4 suites passed after 4.029 seconds.

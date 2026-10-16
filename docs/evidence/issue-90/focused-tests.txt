@@ -1,0 +1,31 @@
+Building for debugging...
+[0/4] Write swift-version--1AB21518FC5DEDBE.txt
+Build complete! (0.08s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite MainNoteOrganizationTests started.
+◇ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() started.
+✔ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() passed after 0.250 seconds.
+◇ Test archiveRemovesTheRowAndPreservesWritingAndPin() started.
+✔ Test archiveRemovesTheRowAndPreservesWritingAndPin() passed after 0.139 seconds.
+◇ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .setPinned(true) to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .archive to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+✔ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) with 2 test cases passed after 0.260 seconds.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+✔ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 0.267 seconds.
+✔ Suite MainNoteOrganizationTests passed after 0.918 seconds.
+◇ Suite MainWindowTests started.
+◇ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() started.
+✔ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() passed after 0.157 seconds.
+◇ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → false to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → true to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+✔ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) with 2 test cases passed after 0.148 seconds.
+◇ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() started.
+✔ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() passed after 1.457 seconds.
+◇ Test menusOpenTheSameMainWindowWithoutMockDestinations() started.
+✔ Test menusOpenTheSameMainWindowWithoutMockDestinations() passed after 0.223 seconds.
+✔ Suite MainWindowTests passed after 1.987 seconds.
+✔ Test run with 8 tests in 2 suites passed after 2.905 seconds.

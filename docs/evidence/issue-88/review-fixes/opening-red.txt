@@ -1,0 +1,15 @@
+Build complete! (2.23s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite WorkingWindowReviewTests started.
+◇ Test independentDelayedNoteOpeningSurvivesNewerDestination(raiseMain:) started.
+◇ Test case passing 1 argument raiseMain → false to independentDelayedNoteOpeningSurvivesNewerDestination(raiseMain:) started.
+✘ Test independentDelayedNoteOpeningSurvivesNewerDestination(raiseMain:) recorded an issue with 1 argument raiseMain → false at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test independentDelayedNoteOpeningSurvivesNewerDestination(raiseMain:) recorded an issue with 1 argument raiseMain → false at WorkingWindowReviewTests.swift:72:9: Expectation failed: (interaction.window(for: .note(first.id)) → nil) !== (NSApp.keyWindow → nil)
+◇ Test case passing 1 argument raiseMain → true to independentDelayedNoteOpeningSurvivesNewerDestination(raiseMain:) started.
+✘ Test independentDelayedNoteOpeningSurvivesNewerDestination(raiseMain:) recorded an issue with 1 argument raiseMain → true at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test independentDelayedNoteOpeningSurvivesNewerDestination(raiseMain:) recorded an issue with 1 argument raiseMain → true at WorkingWindowReviewTests.swift:72:9: Expectation failed: (interaction.window(for: .note(first.id)) → nil) !== (NSApp.keyWindow → nil)
+✘ Test independentDelayedNoteOpeningSurvivesNewerDestination(raiseMain:) with 2 test cases failed after 6.361 seconds with 4 issues.
+✘ Suite WorkingWindowReviewTests failed after 6.361 seconds with 4 issues.
+✘ Test run with 1 test in 1 suite failed after 6.361 seconds with 4 issues.

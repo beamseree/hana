@@ -1,0 +1,77 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/7] Compiling Hana TaskWorkspace.swift
+[4/7] Emitting module Hana
+[4/9] Write Objects.LinkFileList
+[5/9] Linking Hana
+[6/9] Applying Hana
+[8/10] Emitting module HanaTests
+[8/10] Write Objects.LinkFileList
+[9/10] Linking HanaPackageTests
+Build complete! (3.35s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite TaskWorkspaceTests started.
+◇ Suite TaskWorkspaceOrderTests started.
+◇ Suite TaskOrderingTests started.
+◇ Test concurrentReordersInsertsAndMovesFromOneViewLoseNothingAndAtMostOneReorderWins() started.
+◇ Test reorderUsesAFreeKeyWhenOneFitsAndOtherwiseRenumbersAtomicallyWithoutLosingAnyTask() started.
+◇ Test completedAndArchiveKeepTheirTimeOrderWhateverTheManualOrderWas() started.
+◇ Test reorderMovesOneTaskWithinItsListAndSurvivesReopen() started.
+◇ Test aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test insertionMoveReopenAndRestoreGoAboveTheManualOrderWhichSurvivesRestart() started.
+◇ Test observersSeeOnlyCommittedOrdersAndOldGenerationsCannotReorder() started.
+◇ Test case passing 1 argument change → .createAtTop to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .moveOut to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .complete to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .archive to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .reopen to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .reorder to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test case passing 1 argument change → .restore to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+◇ Test reorderChecksTheTaskThenTheRequestThenTheListAndAlreadyHeldPositionsAreNoOps() started.
+◇ Test activeListsObserveStoreOrderAndNewTasksAtTheTop() started.
+◇ Test case passing 1 argument change → .moveIn to aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) started.
+✔ Test completedAndArchiveKeepTheirTimeOrderWhateverTheManualOrderWas() passed after 0.337 seconds.
+✔ Test observersSeeOnlyCommittedOrdersAndOldGenerationsCannotReorder() passed after 0.361 seconds.
+✔ Test insertionMoveReopenAndRestoreGoAboveTheManualOrderWhichSurvivesRestart() passed after 0.376 seconds.
+✔ Test aReorderFromAListThatChangedSinceItWasReadFailsWithoutChange(_:) with 8 test cases passed after 0.404 seconds.
+✔ Test reorderMovesOneTaskWithinItsListAndSurvivesReopen() passed after 0.406 seconds.
+✔ Test reorderChecksTheTaskThenTheRequestThenTheListAndAlreadyHeldPositionsAreNoOps() passed after 0.408 seconds.
+✔ Test reorderUsesAFreeKeyWhenOneFitsAndOtherwiseRenumbersAtomicallyWithoutLosingAnyTask() passed after 0.419 seconds.
+✔ Test concurrentReordersInsertsAndMovesFromOneViewLoseNothingAndAtMostOneReorderWins() passed after 0.433 seconds.
+✔ Suite TaskOrderingTests passed after 0.433 seconds.
+✔ Test activeListsObserveStoreOrderAndNewTasksAtTheTop() passed after 0.603 seconds.
+◇ Test taskActionsCommitStoreTransitionsAndObserveBothLists() started.
+✔ Test taskActionsCommitStoreTransitionsAndObserveBothLists() passed after 0.169 seconds.
+◇ Test renameKeepsInvalidDraftAndReloadsStaleCommittedTitle() started.
+✔ Test renameKeepsInvalidDraftAndReloadsStaleCommittedTitle() passed after 0.171 seconds.
+◇ Test nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "return" to nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "focusLoss" to nativeInlineEditorCommitsOrCancels(command:) started.
+◇ Test case passing 1 argument command → "escape" to nativeInlineEditorCommitsOrCancels(command:) started.
+✔ Test nativeInlineEditorCommitsOrCancels(command:) with 3 test cases passed after 0.446 seconds.
+◇ Test nativePasteIsRefusedWholeAndBlankReturnKeepsEditor() started.
+✔ Test nativePasteIsRefusedWholeAndBlankReturnKeepsEditor() passed after 0.192 seconds.
+◇ Test taskMenuCommandsHaveKeyEquivalentsAndRouteSelectedTask() started.
+✔ Test taskMenuCommandsHaveKeyEquivalentsAndRouteSelectedTask() passed after 0.224 seconds.
+✔ Suite TaskWorkspaceTests passed after 1.809 seconds.
+◇ Test keyboardOrderingKeepsListsIndependentAndSurvivesReopen() started.
+✔ Test keyboardOrderingKeepsListsIndependentAndSurvivesReopen() passed after 0.270 seconds.
+◇ Test dragMovesBeforeTargetOrToEndAndRejectsAnotherList() started.
+✔ Test dragMovesBeforeTargetOrToEndAndRejectsAnotherList() passed after 0.185 seconds.
+◇ Test staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .createAtTop, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .createAtTop, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveIn, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveIn, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveOut, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveOut, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .complete, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .complete, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+✔ Test staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) with 8 test cases passed after 1.312 seconds.
+◇ Test moveUpDownMenusRouteOrderingAndYieldToInlineEditing() started.
+✔ Test moveUpDownMenusRouteOrderingAndYieldToInlineEditing() passed after 0.255 seconds.
+✔ Suite TaskWorkspaceOrderTests passed after 3.833 seconds.
+✔ Test run with 18 tests in 3 suites passed after 3.833 seconds.

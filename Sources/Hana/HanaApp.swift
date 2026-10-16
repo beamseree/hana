@@ -8,8 +8,18 @@ struct HanaApp {
             Task.detached { exit(await CollectionFixtureHarness.run(Array(CommandLine.arguments.dropFirst(2)))) }
             dispatchMain()
         }
+        let fixtureOptions: WorkingWindowsOptions?
+        do { fixtureOptions = try WorkingWindowsOptions.parse(Array(CommandLine.arguments.dropFirst())) }
+        catch {
+            fputs("Hana: invalid working-windows fixture arguments. Require one mode, absolute fixture root and report path.\n", stderr)
+            exit(2)
+        }
+        if Bundle.main.bundleIdentifier == "com.beamseree.hana.validation.issue99", fixtureOptions == nil {
+            fputs("Hana: isolated working-windows bundle requires explicit fixture arguments.\n", stderr)
+            exit(2)
+        }
         let app = NSApplication.shared
-        let delegate = AppDelegate()
+        let delegate = AppDelegate(workingWindows: fixtureOptions)
         app.delegate = delegate
         withExtendedLifetime(delegate) { app.run() }
     }
@@ -18,16 +28,38 @@ struct HanaApp {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var interaction: MacInteraction?
-    /// The live collection. Only normal launch opens it, and only through the
-    /// production location; validation runs and the fixture harness never do.
+    /// Normal launch uses the production location; the explicit working-window
+    /// fixture registers its marked Store here for the same orderly quit path.
     private var collection: Task<CollectionStore, any Error>?
+    private var termination: Task<Void, Never>?
+    private let workingWindows: WorkingWindowsOptions?
+    private var fixtureDiagnostics: Diagnostics?
 
-    init(interaction: MacInteraction? = nil) {
+    init(interaction: MacInteraction? = nil, workingWindows: WorkingWindowsOptions? = nil) {
         self.interaction = interaction
+        self.workingWindows = workingWindows
         super.init()
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        if let workingWindows {
+            Task {
+                await validateWorkingWindows(workingWindows) { collection, interaction, diagnostics in
+                    self.collection = collection
+                    self.interaction = interaction
+                    self.fixtureDiagnostics = diagnostics
+                }
+            }
+            return
+        }
+        if CommandLine.arguments.contains("--validate-open-note-capture") {
+            Task { await validateOpenNoteCapture { self.interaction = $0 } }
+            return
+        }
+        if CommandLine.arguments.contains("--validate-note-window") {
+            Task { await validateNoteWindow { self.interaction = $0 } }
+            return
+        }
         if CommandLine.arguments.contains("--validate-main-window") {
             Task { await validateMainWindow { self.interaction = $0 } }
             return
@@ -65,18 +97,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
-    /// Orderly quit closes the Store: checkpointed and its owner lock released.
+    /// Termination is acknowledged only after all note sessions flush and the
+    /// collection closes. A failed flush cancels quit and presents its choices.
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        guard let collection else { return .terminateNow }
-        Task {
-            if let store = try? await collection.value { await store.close() }
-            sender.reply(toApplicationShouldTerminate: true)
+        guard interaction != nil || collection != nil else { return .terminateNow }
+        guard termination == nil else { return .terminateLater }
+        termination = Task {
+            let allowed: Bool
+            if let interaction {
+                allowed = await interaction.prepareForQuit()
+            } else {
+                if let collection, let store = try? await collection.value { await store.close() }
+                allowed = true
+            }
+            fixtureDiagnostics?.record("working-windows.quit-prepared", state: ["allowed": allowed])
+            termination = nil
+            sender.reply(toApplicationShouldTerminate: allowed)
         }
         return .terminateLater
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
-    func applicationWillTerminate(_ notification: Notification) { interaction?.stop() }
+    func applicationWillTerminate(_ notification: Notification) {
+        fixtureDiagnostics?.record("working-windows.will-terminate", state: [:])
+        interaction?.stop()
+    }
 }
 
 /// `--typing-gap-ms N` overrides the typing gap for performance validation.

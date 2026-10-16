@@ -1,0 +1,5 @@
+[DEBUG-96] key=31 characters=Optional("o") ignoring=Optional("O") flags=1179648
+[DEBUG-96] key=0 characters=Optional("a") ignoring=Optional("A") flags=1179648
+[DEBUG-96] key=15 characters=Optional("r") ignoring=Optional("R") flags=1179648
+[DEBUG-96] key=36 characters=Optional("\r") ignoring=Optional("\r") flags=0
+[DEBUG-96] key=15 characters=Optional("r") ignoring=Optional("R") flags=1179648

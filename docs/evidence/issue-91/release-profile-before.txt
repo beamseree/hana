@@ -1,0 +1,38 @@
+Building for production...
+[0/6] Write sources
+[1/6] Write swift-version--1AB21518FC5DEDBE.txt
+[3/7] Compiling Hana ApplicationCatalog.swift
+[3/7] Write Objects.LinkFileList
+[4/7] Linking Hana
+[6/8] Compiling HanaTests CaptureSafetyNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-91-editor/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[7/9] Compiling HanaPackageTests runner.swift
+[7/9] Write Objects.LinkFileList
+[8/9] Linking HanaPackageTests
+Build complete! (58.49s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NoteWindowTests started.
+◇ Test aOneMegabyteFixtureCanOpenEditAndFlush() started.
+NOTE_PROFILE bytes=1140000 open=0.236479084 seconds insert=0.16363375 seconds flush=0.252491209 seconds
+✔ Test aOneMegabyteFixtureCanOpenEditAndFlush() passed after 0.855 seconds.
+✔ Suite NoteWindowTests passed after 0.855 seconds.
+✔ Test run with 1 test in 1 suite passed after 0.855 seconds.

@@ -14,25 +14,39 @@ struct FontRole: Sendable {
     var tracking: CGFloat = 0
     /// Tabular digits, so changing numbers keep their width.
     var tabularDigits = false
+    var isMonospaced = false
 
     /// Tracking in points, for AppKit's `.kern` and SwiftUI's `tracking`.
     var kern: CGFloat { size * tracking }
 
     var nsFont: NSFont {
         let weight: NSFont.Weight = weight == .medium ? .medium : .regular
+        if isMonospaced { return .monospacedSystemFont(ofSize: size, weight: weight) }
         return tabularDigits
             ? .monospacedDigitSystemFont(ofSize: size, weight: weight)
             : .systemFont(ofSize: size, weight: weight)
     }
 
     var font: Font {
-        let font = Font.system(size: size, weight: weight == .medium ? .medium : .regular)
+        let font = Font.system(size: size, weight: weight == .medium ? .medium : .regular, design: isMonospaced ? .monospaced : .default)
         return tabularDigits ? font.monospacedDigit() : font
     }
 
     func attributes(color: NSColor) -> [NSAttributedString.Key: Any] {
         [.font: nsFont, .foregroundColor: color, .kern: kern]
     }
+    /// Opt in only for wrapped note text; fixed bar/list geometry stays intact.
+    var wrappedParagraphStyle: NSMutableParagraphStyle {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.minimumLineHeight = lineHeight
+        paragraph.maximumLineHeight = lineHeight
+        return paragraph
+    }
+
+    func wrappedAttributes(color: NSColor) -> [NSAttributedString.Key: Any] {
+        attributes(color: color).merging([.paragraphStyle: wrappedParagraphStyle]) { _, wrapped in wrapped }
+    }
+
 }
 
 /// Named type roles. The role `bar.input` in docs/design-system.md is
@@ -58,6 +72,8 @@ enum HanaFont {
     enum Note {
         /// Writing in a Note window.
         static let body = FontRole(size: 15, lineHeight: 22, weight: .regular)
+        static let code = FontRole(size: 15, lineHeight: 22, weight: .regular, isMonospaced: true)
+        static let previewHeading = FontRole(size: 17, lineHeight: 24, weight: .medium, tracking: -0.01)
     }
 
     /// List rows, task titles, controls such as segmented controls, and fields.

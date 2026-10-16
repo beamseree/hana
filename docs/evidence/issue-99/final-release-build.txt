@@ -1,0 +1,53 @@
+Building for production...
+[0/43] Write sources
+[0/43] Copying PrivacyInfo.xcprivacy
+[2/43] Write swift-version--1AB21518FC5DEDBE.txt
+[3/43] Compiling cmark-gfm-extensions core-extensions.c
+[4/43] Compiling cmark-gfm syntax_extension.c
+[5/43] Compiling cmark-gfm xml.c
+[6/43] Compiling cmark-gfm-extensions ext_scanners.c
+[7/43] Compiling cmark-gfm-extensions strikethrough.c
+[8/43] Compiling cmark-gfm registry.c
+[9/43] Compiling cmark-gfm-extensions tasklist.c
+[10/43] Compiling cmark-gfm render.c
+[11/43] Compiling cmark-gfm references.c
+[12/43] Compiling cmark-gfm plugin.c
+[13/43] Compiling cmark-gfm map.c
+[14/43] Compiling cmark-gfm man.c
+[15/43] Compiling cmark-gfm plaintext.c
+[15/43] Compiling cmark-gfm linked_list.c
+[17/43] Compiling cmark-gfm iterator.c
+[18/43] Compiling cmark-gfm latex.c
+[19/43] Compiling cmark-gfm node.c
+[20/43] Compiling cmark-gfm houdini_html_e.c
+[21/43] Compiling cmark-gfm html.c
+[22/43] Compiling cmark-gfm houdini_html_u.c
+[23/43] Compiling cmark-gfm houdini_href_e.c
+[24/43] Compiling cmark-gfm-extensions tagfilter.c
+[25/43] Compiling cmark-gfm footnotes.c
+[26/43] Compiling cmark-gfm-extensions autolink.c
+[27/43] Compiling cmark-gfm cmark_ctype.c
+[28/43] Write sources
+[29/43] Copying Info.plist
+[29/43] Write sources
+[31/43] Compiling cmark-gfm cmark.c
+[32/43] Compiling cmark-gfm arena.c
+[33/43] Compiling CAtomic CAtomic.c
+[34/43] Compiling cmark-gfm commonmark.c
+[35/43] Compiling cmark-gfm-extensions table.c
+[36/43] Compiling cmark-gfm buffer.c
+[37/44] Compiling cmark-gfm inlines.c
+[38/44] Compiling cmark-gfm blocks.c
+[39/44] Compiling cmark-gfm scanners.c
+[40/44] Compiling cmark-gfm utf8.c
+[42/45] Compiling Markdown ChildIndexPath.swift
+[43/45] Compiling GRDB Configuration.swift
+[44/46] Compiling Hana ApplicationCatalog.swift
+[44/46] Write Objects.LinkFileList
+[45/46] Linking Hana
+Build complete! (70.79s)
+<integration-worktree>/build/Hana.app/Contents/Info.plist: OK
+<integration-worktree>/build/Hana.app: replacing existing signature
+<integration-worktree>/build/Hana.app: valid on disk
+<integration-worktree>/build/Hana.app: satisfies its Designated Requirement
+<integration-worktree>/build/Hana.app

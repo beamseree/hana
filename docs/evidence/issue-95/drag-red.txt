@@ -1,0 +1,85 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests TaskWorkspaceOrderTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:54:51: error: value of type 'MacInteraction' has no member 'beginTaskDrag'
+52 |         interaction.open(.main, section: .inbox)
+53 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+54 |         let bottomDrag = try #require(interaction.beginTaskDrag(inbox[2].id))
+   |                                                   `- error: value of type 'MacInteraction' has no member 'beginTaskDrag'
+55 |         #expect(await interaction.dropTask(bottomDrag, before: inbox[0].id))
+56 |         let firstOrder = [inbox[2].id, inbox[0].id, inbox[1].id]
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:55:35: error: value of type 'MacInteraction' has no member 'dropTask'
+53 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+54 |         let bottomDrag = try #require(interaction.beginTaskDrag(inbox[2].id))
+55 |         #expect(await interaction.dropTask(bottomDrag, before: inbox[0].id))
+   |                                   `- error: value of type 'MacInteraction' has no member 'dropTask'
+56 |         let firstOrder = [inbox[2].id, inbox[0].id, inbox[1].id]
+57 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == firstOrder }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:58:48: error: value of type 'MacInteraction' has no member 'beginTaskDrag'
+56 |         let firstOrder = [inbox[2].id, inbox[0].id, inbox[1].id]
+57 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == firstOrder }
+58 |         let topDrag = try #require(interaction.beginTaskDrag(inbox[2].id))
+   |                                                `- error: value of type 'MacInteraction' has no member 'beginTaskDrag'
+59 |         #expect(await interaction.dropTask(topDrag, before: nil))
+60 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:59:35: error: value of type 'MacInteraction' has no member 'dropTask'
+57 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == firstOrder }
+58 |         let topDrag = try #require(interaction.beginTaskDrag(inbox[2].id))
+59 |         #expect(await interaction.dropTask(topDrag, before: nil))
+   |                                   `- error: value of type 'MacInteraction' has no member 'dropTask'
+60 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+61 |         let crossing = try #require(interaction.beginTaskDrag(inbox[0].id))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:59:61: error: 'nil' requires a contextual type
+57 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == firstOrder }
+58 |         let topDrag = try #require(interaction.beginTaskDrag(inbox[2].id))
+59 |         #expect(await interaction.dropTask(topDrag, before: nil))
+   |                                                             `- error: 'nil' requires a contextual type
+60 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+61 |         let crossing = try #require(interaction.beginTaskDrag(inbox[0].id))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:61:49: error: value of type 'MacInteraction' has no member 'beginTaskDrag'
+59 |         #expect(await interaction.dropTask(topDrag, before: nil))
+60 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+61 |         let crossing = try #require(interaction.beginTaskDrag(inbox[0].id))
+   |                                                 `- error: value of type 'MacInteraction' has no member 'beginTaskDrag'
+62 |         interaction.open(.main, section: .today)
+63 |         let before = try await store.read(.allRecords, in: store.generation)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:64:35: error: value of type 'MacInteraction' has no member 'dropTask'
+62 |         interaction.open(.main, section: .today)
+63 |         let before = try await store.read(.allRecords, in: store.generation)
+64 |         #expect(await interaction.dropTask(crossing, before: today[0].id) == false)
+   |                                   `- error: value of type 'MacInteraction' has no member 'dropTask'
+65 |         #expect(try await store.read(.allRecords, in: store.generation) == before)
+66 |         await store.close()
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:54:26: warning: no calls to throwing functions occur within 'try' expression
+52 |         interaction.open(.main, section: .inbox)
+53 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+54 |         let bottomDrag = try #require(interaction.beginTaskDrag(inbox[2].id))
+   |                          `- warning: no calls to throwing functions occur within 'try' expression
+55 |         #expect(await interaction.dropTask(bottomDrag, before: inbox[0].id))
+56 |         let firstOrder = [inbox[2].id, inbox[0].id, inbox[1].id]
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:58:23: warning: no calls to throwing functions occur within 'try' expression
+56 |         let firstOrder = [inbox[2].id, inbox[0].id, inbox[1].id]
+57 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == firstOrder }
+58 |         let topDrag = try #require(interaction.beginTaskDrag(inbox[2].id))
+   |                       `- warning: no calls to throwing functions occur within 'try' expression
+59 |         #expect(await interaction.dropTask(topDrag, before: nil))
+60 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Tests/HanaTests/TaskWorkspaceOrderTests.swift:61:24: warning: no calls to throwing functions occur within 'try' expression
+59 |         #expect(await interaction.dropTask(topDrag, before: nil))
+60 |         try await eventually { interaction.taskWorkspacePresentation?.inbox.map(\.id) == inbox.map(\.id) }
+61 |         let crossing = try #require(interaction.beginTaskDrag(inbox[0].id))
+   |                        `- warning: no calls to throwing functions occur within 'try' expression
+62 |         interaction.open(.main, section: .today)
+63 |         let before = try await store.read(.allRecords, in: store.generation)
+error: fatalError

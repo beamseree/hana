@@ -17,9 +17,15 @@ struct Note: Identifiable, Sendable {
 
     /// The first nonempty line, trimmed; nil when the body has no visible text.
     var title: String? {
-        body.split(whereSeparator: \.isNewline).lazy
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .first { !$0.isEmpty }
+        var start = body.startIndex
+        while start < body.endIndex {
+            let end = body[start...].firstIndex(where: \.isNewline) ?? body.endIndex
+            let line = body[start..<end].trimmingCharacters(in: .whitespaces)
+            if !line.isEmpty { return line }
+            guard end < body.endIndex else { return nil }
+            start = body.index(after: end)
+        }
+        return nil
     }
 
     static func isNonblank(_ body: String) -> Bool {
@@ -521,13 +527,23 @@ final class CollectionStore: Sendable {
         try requireCurrent(generation)
         let now = Self.milliseconds(clock())
         let result: Result
+        let cancelled = Mutex(false)
         do {
-            result = try await pool.write { db in
-                // Checked again when the serialized write executes, before any receipt lookup.
-                try self.requireCurrent(generation)
-                let result = try command.apply(db, .init(now: now))
-                try self.faults.beforeCommit?(db)
-                return result
+            result = try await withTaskCancellationHandler {
+                try Task.checkCancellation()
+                return try await pool.write { db in
+                    // Rechecked when the serialized write executes, before any
+                    // receipt lookup, and at the transaction's final boundary.
+                    try self.requireCurrent(generation)
+                    guard !cancelled.withLock({ $0 }) else { throw CancellationError() }
+                    let result = try command.apply(db, .init(now: now))
+                    try self.faults.beforeCommit?(db)
+                    try self.requireCurrent(generation)
+                    guard !cancelled.withLock({ $0 }) else { throw CancellationError() }
+                    return result
+                }
+            } onCancel: {
+                cancelled.withLock { $0 = true }
             }
         } catch {
             throw CollectionStoreError.mapped(error)

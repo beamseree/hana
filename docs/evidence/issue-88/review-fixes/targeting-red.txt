@@ -1,0 +1,15 @@
+Build complete! (2.27s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite WorkingWindowReviewTests started.
+◇ Test taskMenuKeepsTheClickedTargetAcrossSelectionChanges() started.
+✘ Test taskMenuKeepsTheClickedTargetAcrossSelectionChanges() recorded an issue at WorkingWindowReviewTests.swift:93:9: Expectation failed: try await store.read(.task(first.id), in: store.generation)?.completedAt != nil
+✘ Test taskMenuKeepsTheClickedTargetAcrossSelectionChanges() recorded an issue at WorkingWindowReviewTests.swift:94:9: Expectation failed: try await store.read(.task(second.id), in: store.generation)?.completedAt == nil
+✘ Test taskMenuKeepsTheClickedTargetAcrossSelectionChanges() failed after 0.252 seconds with 2 issues.
+◇ Test noteMenuNeverChangesTheBackgroundOrganizerSelection() started.
+✘ Test noteMenuNeverChangesTheBackgroundOrganizerSelection() recorded an issue at WorkingWindowReviewTests.swift:115:9: Expectation failed: !((interaction → <Hana.MacInteraction: 0x9d3d60380>).validateMenuItem(pin → <NSMenuItem: 0x9d528f660 Pin Note, ke='Control-Command-P', action: toggleSelectedNotePin>) → true)
+✘ Test noteMenuNeverChangesTheBackgroundOrganizerSelection() recorded an issue at WorkingWindowReviewTests.swift:118:9: Expectation failed: try await store.read(.note(background.id), in: store.generation)?.isPinned == false
+✘ Test noteMenuNeverChangesTheBackgroundOrganizerSelection() failed after 0.170 seconds with 2 issues.
+✘ Suite WorkingWindowReviewTests failed after 0.423 seconds with 4 issues.
+✘ Test run with 2 tests in 1 suite failed after 0.423 seconds with 4 issues.

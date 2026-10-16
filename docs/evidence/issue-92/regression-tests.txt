@@ -1,0 +1,144 @@
+Building for debugging...
+[0/6] Write sources
+[2/6] Write swift-version--1AB21518FC5DEDBE.txt
+[4/8] Compiling Hana NoteEditing.swift
+[5/8] Emitting module Hana
+[5/10] Write Objects.LinkFileList
+[6/10] Linking Hana
+[7/10] Applying Hana
+[9/12] Compiling HanaTests CollectionStoreTests.swift
+[10/12] Emitting module HanaTests
+[10/12] Write Objects.LinkFileList
+[11/12] Linking HanaPackageTests
+Build complete! (3.34s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NoteSaveSafetyTests started.
+◇ Suite NoteOrganizationTests started.
+◇ Suite NoteSaveSafetyNativeTests started.
+◇ Suite CaptureSafetyTests started.
+◇ Suite CollectionStoreTests started.
+◇ Suite MainNoteOrganizationTests started.
+◇ Test failureKeepsLatestTextAndRetryCommitsItOnce() started.
+◇ Suite NoteEditingTests started.
+◇ Suite NoteWindowTests started.
+◇ Test closingTheStoreInvalidatesAPausedSaveBeforeItCanCommit() started.
+◇ Test aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) started.
+◇ Test editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) started.
+◇ Test dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) started.
+◇ Test explicitDiscardRollsBackAPausedUncommittedSave() started.
+◇ Test aLostAcknowledgmentCanRetryWithoutASecondEditOrStaleRevision() started.
+◇ Test failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) started.
+◇ Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() started.
+◇ Test changingAFailedNotesModeStartsANewOperation() started.
+◇ Test aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) started.
+◇ Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() started.
+◇ Test case passing 1 argument prefix → "-" to aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) started.
+◇ Test changingAFailedTasksDestinationStartsANewOperation() started.
+◇ Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() started.
+◇ Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() started.
+◇ Test contentEditReplacesTheExactBodyAndAdvancesContentEditedTimeAndRevision() started.
+◇ Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() started.
+◇ Test case passing 2 arguments prefix → "-", text → "edited" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test pinsComeFirstThenMostRecentlyContentEditedThenStableIDAndPinningKeepsContentEditedTime() started.
+◇ Test workInFlightOrQueuedBeforeCloseIsRejectedBeforeCommit() started.
+◇ Test failedTransitionsRollBackAndOldGenerationsCannotChangeNotes() started.
+◇ Test case passing 1 argument prefix → "-" to aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) started.
+◇ Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() started.
+◇ Test case passing 1 argument prefix → "[" to aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) started.
+◇ Test case passing 2 arguments prefix → "-", text → "Café" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndContentEditedTimeIntact() started.
+◇ Test observationsFollowCommittedTransitionsAndNeverShowRolledBackOnes() started.
+◇ Test competingCommandsOnOneRevisionLetExactlyOneWinAndNeverOverwriteIt() started.
+◇ Test pinnedNotesAndArchiveEachOrderByTheirTimeThenStableID() started.
+◇ Test alreadySatisfiedCommandsAreNoOpsButStaleOrInvalidOnesFailWithoutChange() started.
+◇ Test case passing 2 arguments prefix → "[", text → "edited" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test continuousTypingSavesByOneSecondAndCompositionDefersUntilCommitted() started.
+◇ Test case passing 2 arguments prefix → "[", text → "Café" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) started.
+◇ Test aPausedCommitDrainsNewerTextInOrderWithoutMarkingItSavedEarly() started.
+◇ Test idleSaveWaitsThreeHundredMillisecondsAndKeepsExactBytes() started.
+◇ Test allRecordsAndTheSearchProjectionCoverArchivedNotesOnlyWhenEligible() started.
+◇ Test case passing 1 argument prefix → "-" to dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) started.
+◇ Test case passing 1 argument prefix → "[" to failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) started.
+◇ Test blankCloseKeepsLastCommittedBody() started.
+◇ Test case passing 1 argument prefix → "[" to aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) started.
+◇ Test case passing 1 argument prefix → "-" to aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) started.
+✔ Test dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix:) with 2 test cases passed after 0.001 seconds.
+✔ Test failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix:) with 2 test cases passed after 0.001 seconds.
+✔ Test editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix:text:) with 4 test cases passed after 0.001 seconds.
+✔ Test changingAFailedNotesModeStartsANewOperation() passed after 0.001 seconds.
+✔ Test changingAFailedTasksDestinationStartsANewOperation() passed after 0.193 seconds.
+✔ Test aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix:) with 2 test cases passed after 0.590 seconds.
+✔ Test aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix:) with 2 test cases passed after 0.590 seconds.
+✔ Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() passed after 0.608 seconds.
+✔ Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() passed after 0.611 seconds.
+✔ Test alreadySatisfiedCommandsAreNoOpsButStaleOrInvalidOnesFailWithoutChange() passed after 0.612 seconds.
+✔ Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() passed after 0.618 seconds.
+✔ Test contentEditReplacesTheExactBodyAndAdvancesContentEditedTimeAndRevision() passed after 0.618 seconds.
+✔ Test pinnedNotesAndArchiveEachOrderByTheirTimeThenStableID() passed after 0.618 seconds.
+✔ Test competingCommandsOnOneRevisionLetExactlyOneWinAndNeverOverwriteIt() passed after 0.618 seconds.
+✔ Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() passed after 0.619 seconds.
+✔ Test observationsFollowCommittedTransitionsAndNeverShowRolledBackOnes() passed after 0.625 seconds.
+✔ Test archiveHidesAndRestoreReturnsTheNoteWithBodyPinAndContentEditedTimeIntact() passed after 0.628 seconds.
+✔ Test failedTransitionsRollBackAndOldGenerationsCannotChangeNotes() passed after 0.628 seconds.
+✔ Test pinsComeFirstThenMostRecentlyContentEditedThenStableIDAndPinningKeepsContentEditedTime() passed after 0.629 seconds.
+✔ Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() passed after 0.629 seconds.
+✔ Test allRecordsAndTheSearchProjectionCoverArchivedNotesOnlyWhenEligible() passed after 0.654 seconds.
+✔ Suite NoteOrganizationTests passed after 0.654 seconds.
+✔ Test aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix:) with 2 test cases passed after 0.807 seconds.
+✔ Test continuousTypingSavesByOneSecondAndCompositionDefersUntilCommitted() passed after 0.807 seconds.
+✔ Suite CaptureSafetyTests passed after 0.807 seconds.
+✔ Test workInFlightOrQueuedBeforeCloseIsRejectedBeforeCommit() passed after 0.828 seconds.
+✔ Suite CollectionStoreTests passed after 0.829 seconds.
+✔ Test blankCloseKeepsLastCommittedBody() passed after 0.836 seconds.
+✔ Test failureKeepsLatestTextAndRetryCommitsItOnce() passed after 0.848 seconds.
+✔ Test explicitDiscardRollsBackAPausedUncommittedSave() passed after 0.853 seconds.
+✔ Test closingTheStoreInvalidatesAPausedSaveBeforeItCanCommit() passed after 0.856 seconds.
+✔ Test aLostAcknowledgmentCanRetryWithoutASecondEditOrStaleRevision() passed after 0.859 seconds.
+✔ Suite NoteSaveSafetyTests passed after 0.859 seconds.
+✔ Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() passed after 0.876 seconds.
+◇ Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+◇ Test case passing 1 argument action → .retry to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+✔ Test idleSaveWaitsThreeHundredMillisecondsAndKeepsExactBytes() passed after 0.894 seconds.
+✔ Test aPausedCommitDrainsNewerTextInOrderWithoutMarkingItSavedEarly() passed after 0.900 seconds.
+✔ Suite NoteEditingTests passed after 0.900 seconds.
+◇ Test case passing 1 argument action → .discardChanges to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+✔ Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) with 2 test cases passed after 1.575 seconds.
+◇ Test quitCancelsOnFailureThenCommitsEveryNoteAndCompositionBeforeClosingTheStore() started.
+✔ Test quitCancelsOnFailureThenCommitsEveryNoteAndCompositionBeforeClosingTheStore() passed after 0.838 seconds.
+◇ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() started.
+✔ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() passed after 0.230 seconds.
+◇ Test pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+◇ Test case passing 1 argument discard → false to pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+◇ Test case passing 1 argument discard → true to pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+✔ Test pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) with 2 test cases passed after 1.507 seconds.
+◇ Test invalidatedDirtyEditorKeepsCopyableTextAndCannotApproveQuit() started.
+✔ Test invalidatedDirtyEditorKeepsCopyableTextAndCannotApproveQuit() passed after 0.751 seconds.
+◇ Test quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+◇ Test case passing 1 argument fails → false to quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+◇ Test case passing 1 argument fails → true to quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+✔ Test quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) with 2 test cases passed after 0.339 seconds.
+◇ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() started.
+✔ Suite NoteSaveSafetyNativeTests passed after 6.120 seconds.
+✔ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() passed after 0.167 seconds.
+◇ Test aOneMegabyteFixtureCanOpenEditAndFlush() started.
+NOTE_PROFILE bytes=1140000 open=0.102692792 seconds insert=0.138349917 seconds flush=0.305390959 seconds
+✔ Test aOneMegabyteFixtureCanOpenEditAndFlush() passed after 0.607 seconds.
+✔ Suite NoteWindowTests passed after 6.895 seconds.
+◇ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() started.
+✔ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() passed after 0.140 seconds.
+◇ Test archiveRemovesTheRowAndPreservesWritingAndPin() started.
+✔ Test archiveRemovesTheRowAndPreservesWritingAndPin() passed after 0.123 seconds.
+◇ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .setPinned(true) to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .archive to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+✔ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) with 2 test cases passed after 0.251 seconds.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+✔ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 0.261 seconds.
+✔ Suite MainNoteOrganizationTests passed after 7.672 seconds.
+✔ Test run with 44 tests in 8 suites passed after 7.673 seconds.

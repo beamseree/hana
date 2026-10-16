@@ -5,7 +5,7 @@ import SwiftUI
 /// Owns the native Search lifetime. Callers carry Invocation into any delayed
 /// completion so an obsolete operation cannot dismiss a newer session.
 @MainActor
-final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
+final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMenuItemValidation {
     struct Invocation: Equatable {
         fileprivate let id = UUID()
     }
@@ -51,6 +51,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// Internal so tests can click it.
     let destinationSelector = NSHostingView(rootView: SegmentedControl(
         labels: TaskPlacement.allCases.map(\.title), accessibilityTitle: "Task destination"))
+    let openInWindowButton: NSButton = CaptureOpenButton(title: "Open in window", target: nil, action: nil)
     /// The live collection, opened in the background at launch. Nil, or a
     /// failed opening, leaves Search working and capture unavailable.
     private let collection: Task<CollectionStore, any Error>?
@@ -59,6 +60,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// runner can't be activated.
     private let frontmostApplication: @MainActor () -> NSRunningApplication?
     private var confirmationTask: Task<Void, Never>?
+    private var captureSave: Task<Void, Never>?
     private let loadingIndicator = NSProgressIndicator()
     private let search: Search
     private let launchApplication: @MainActor (URL) async throws -> ValidatedDestination
@@ -126,9 +128,130 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     private weak var originWindow: NSWindow?
     private weak var originResponder: NSResponder?
     // Membership ends on close, never on minimize or temporary invisibility.
+    private let taskMenuTarget = TaskWorkspaceMenuTarget()
     private var workingWindows: [WorkingWindow: WorkingWindowController] = [:]
+    private var noteWindows: [UUID: NoteWindowController] = [:]
+    private var noteOpeningLifetime = UUID()
+    private var ordinaryNoteOpenings: Set<UUID> = []
+    private var noteOpenings: [UUID: Task<Void, Never>] = [:]
+    private struct NoteFocusRequest {
+        let token: UUID
+        let frontmostProcess: pid_t?
+        let atEnd: Bool
+        let isOrdinary: Bool
+    }
+    private var latestWindowOpen = UUID()
+    private var noteFocusRequests: [UUID: NoteFocusRequest] = [:]
+    private var noteEditing: NoteEditing?
+    private var quitPreparation: Task<Bool, Never>?
+    private var isPreparingForQuit = false
+    private let previewParser: MarkdownPreviewParser
+    private let openPreviewLink: @MainActor (URL) -> Bool
+    func notePreview(_ id: UUID) -> NotePreviewSession? { noteWindows[id]?.preview }
+    func toggleNotePreview(_ id: UUID) {
+        guard let button = noteWindows[id]?.previewToggle, let action = button.action else { return }
+        button.sendAction(action, to: button.target)
+    }
+    func noteSession(_ id: UUID) -> NoteEditingSession? { noteWindows[id]?.session }
+    func canRestoreNote(_ id: UUID) -> Bool { noteWindows[id]?.canRestore ?? false }
+    @discardableResult
+    func restoreNote(_ id: UUID) async -> Bool { await noteWindows[id]?.performOrganization(.restore) ?? false }
+    func noteCloseIsHeld(_ id: UUID) -> Bool { noteWindows[id]?.closeIsHeld ?? false }
+    func noteSaveStatus(_ id: UUID) -> String? { noteWindows[id]?.statusText }
+    func noteActions(_ id: UUID) -> [NoteSaveAction] { noteWindows[id]?.availableActions ?? [] }
+    func performNoteAction(_ action: NoteSaveAction, id: UUID) async { await noteWindows[id]?.perform(action) }
+    var mainCloseIsHeld: Bool { workingWindows[.main]?.closeIsHeld ?? false }
     var mainWindowPresentation: MainWindowPresentation? { workingWindows[.main]?.presentation }
-    func window(for destination: WorkingWindow) -> NSWindow? { workingWindows[destination]?.window }
+    func window(for destination: WorkingWindow) -> NSWindow? {
+        switch destination {
+        case .main: workingWindows[.main]?.window
+        case .note(let id): noteWindows[id]?.window
+        }
+    }
+    func selectArchived(_ id: ArchiveWorkspacePresentation.Row.ID?) { archiveWorkspacePresentation?.selectedID = id }
+    @discardableResult
+    func restoreArchived(_ row: ArchiveWorkspacePresentation.Row) async -> Bool {
+        guard !isPreparingForQuit else { return false }
+        return await archiveWorkspacePresentation?.restore(row) ?? false
+    }
+    @discardableResult
+    func openArchivedNote(_ row: ArchiveWorkspacePresentation.Row) -> Bool {
+        guard case .note(let note) = row else { return false }
+        return open(.note(note.id))
+    }
+    var archiveWorkspacePresentation: ArchiveWorkspacePresentation? { workingWindows[.main]?.archiveWorkspace }
+    var taskWorkspacePresentation: TaskWorkspacePresentation? { workingWindows[.main]?.taskWorkspace }
+    func canPerformTaskAction(_ action: TaskWorkspaceAction) -> Bool {
+        guard !isPreparingForQuit, currentInvocation == nil, let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
+        return tasks.canPerform(action, in: presentation.selectedSection)
+    }
+
+    func selectTask(_ id: UUID?) { taskWorkspacePresentation?.select(id) }
+
+    @discardableResult
+    func performTaskAction(_ action: TaskWorkspaceAction) async -> Bool {
+        guard let presentation = mainWindowPresentation, let tasks = taskWorkspacePresentation else { return false }
+        return await tasks.perform(action, in: presentation.selectedSection)
+    }
+
+    func requestTaskAction(_ action: TaskWorkspaceAction) -> TaskActionRequest? {
+        guard !isPreparingForQuit, let section = mainWindowPresentation?.selectedSection else { return nil }
+        return taskWorkspacePresentation?.requestAction(action, in: section)
+    }
+
+    @discardableResult
+    func performTaskAction(_ request: TaskActionRequest) async -> Bool {
+        guard !isPreparingForQuit, mainWindowPresentation?.selectedSection == request.section else { return false }
+        return await taskWorkspacePresentation?.perform(request) ?? false
+    }
+
+    func requestTaskReorder(_ action: TaskWorkspaceAction) -> TaskReorderRequest? {
+        guard let section = mainWindowPresentation?.selectedSection else { return nil }
+        return taskWorkspacePresentation?.requestReorder(action, in: section)
+    }
+
+    @discardableResult
+    func performTaskReorder(_ request: TaskReorderRequest) async -> Bool {
+        guard mainWindowPresentation?.selectedSection.taskPlacement == request.placement else { return false }
+        return await taskWorkspacePresentation?.reorder(request) ?? false
+    }
+
+    func beginTaskDrag(_ id: UUID) -> TaskOrderDrag? {
+        guard let section = mainWindowPresentation?.selectedSection else { return nil }
+        return taskWorkspacePresentation?.beginDrag(id, in: section)
+    }
+
+    @discardableResult
+    func dropTask(_ drag: TaskOrderDrag, before target: UUID?) async -> Bool {
+        guard let section = mainWindowPresentation?.selectedSection else { return false }
+        return await taskWorkspacePresentation?.drop(drag, before: target, in: section) ?? false
+    }
+
+    func editTaskTitle(_ text: String) { taskWorkspacePresentation?.editTitle(text) }
+    func cancelTaskRename() { taskWorkspacePresentation?.cancelRename() }
+    @discardableResult
+    func commitTaskRename() async -> Bool { await taskWorkspacePresentation?.commitRename() ?? false }
+
+    func organizeNote(_ row: MainWindowPresentation.Row, action: MainNoteAction) async {
+        await workingWindows[.main]?.organizeNote(row, action: action)
+    }
+    private func changeNote(_ row: MainWindowPresentation.Row, action: MainNoteAction) async throws {
+        guard !isPreparingForQuit else { throw NoteOrganizationError.unavailable }
+        if let session = noteEditing?.existingSession(row.id) {
+            try await session.organize(action)
+            return
+        }
+        guard let collection else { throw CollectionStoreError.missingCollection }
+        let store = try await collection.value
+        guard !isPreparingForQuit else { throw NoteOrganizationError.unavailable }
+        if noteEditing == nil { noteEditing = NoteEditing(store: store) }
+        guard let session = try await noteEditing?.open(row.id), !isPreparingForQuit else { throw NoteOrganizationError.unavailable }
+        // Closed rows still act on the revision the user saw. Opening while
+        // organization awaits now shares this session and its editing freeze.
+        guard session.committed.revision == row.revision else { throw CollectionStoreError.staleRevision }
+        try await session.organize(action)
+    }
+    func selectMainNote(_ id: UUID?) { mainWindowPresentation?.selectedNoteID = id }
     private var localMouse: Any?
     private var globalMouse: Any?
     private var menuDepth = 0
@@ -144,8 +267,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
          openFile: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.openFileDestination,
          loadIcon: (@MainActor (URL, CGFloat) async -> ResultIcon?)? = nil,
          collection: Task<CollectionStore, any Error>? = nil, confirmationDuration: Duration = .milliseconds(500),
-         frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication }) {
+         frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication },
+         previewParser: @escaping MarkdownPreviewParser = MarkdownPreview.parse,
+         openPreviewLink: @escaping @MainActor (URL) -> Bool = { NSWorkspace.shared.open($0) }) {
         self.diagnostics = diagnostics
+        self.previewParser = previewParser
+        self.openPreviewLink = openPreviewLink
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -156,6 +283,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         self.loadIcon = loadIcon ?? { await icons.icon(for: $0, scale: $1) }
         super.init()
         configurePanel()
+        NotificationCenter.default.addObserver(self, selector: #selector(flushNotesOnDeactivation),
+                                               name: NSApplication.didResignActiveNotification, object: nil)
     }
 
     /// Called once by the app delegate, never as a side effect of a test's init.
@@ -187,8 +316,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     func stop() {
+        noteOpeningLifetime = UUID()
+        noteOpenings.values.forEach { $0.cancel() }
+        noteOpenings = [:]
+        noteFocusRequests = [:]
+        ordinaryNoteOpenings = []
+        latestWindowOpen = UUID()
         if let invocation = currentInvocation { dismiss(invocation, reason: .environmentChange) }
         for controller in Array(workingWindows.values) { controller.close() }
+        for controller in Array(noteWindows.values) { controller.window?.performClose(nil) }
         hotKey?.unregister()
         if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
         statusItem = nil
@@ -197,10 +333,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     @discardableResult
     func presentBar() -> Invocation {
+        guard !isPreparingForQuit else { return currentInvocation ?? Invocation() }
         let started = ProcessInfo.processInfo.systemUptime
         let existing = currentInvocation != nil
         let invocation = currentInvocation ?? Invocation()
         if !existing {
+            latestWindowOpen = UUID()
             origin = frontmostApplication()
             originWindow = origin?.processIdentifier == ProcessInfo.processInfo.processIdentifier ? NSApp.keyWindow : nil
             originResponder = originWindow?.firstResponder
@@ -236,6 +374,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     private func showBar(existing: Bool, started: TimeInterval) {
+        guard !isPreparingForQuit else { return }
         if existing, localMouse == nil, let invocation = currentInvocation { observeSession(invocation) }
         // Do not activate the process: the nonactivating panel takes key focus
         // while the foreign invocation origin keeps its ordinary activation.
@@ -295,21 +434,31 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     /// An invocation-bound destination must not steal focus from a newer session.
     @discardableResult
-    func open(_ destination: WorkingWindow, section: MainSection? = nil, from invocation: Invocation? = nil) -> Bool {
+    func open(_ destination: WorkingWindow, section: MainSection? = nil, from invocation: Invocation? = nil,
+              focusAtEnd: Bool = false) -> Bool {
+        guard !isPreparingForQuit else { return false }
         if let invocation, currentInvocation != invocation {
             record("destination.stale-ignored")
             return false
         }
+        latestWindowOpen = UUID()
+        let focus = NoteFocusRequest(token: latestWindowOpen,
+                                    frontmostProcess: frontmostApplication()?.processIdentifier, atEnd: focusAtEnd, isOrdinary: invocation == nil)
         if let currentInvocation { dismiss(currentInvocation, reason: .destination) }
+        if case .note(let id) = destination { return openNote(id, focus: focus) }
         if workingWindows[destination] == nil {
-            let controller = WorkingWindowController(collection: collection)
+            let controller = WorkingWindowController(collection: collection, organizeNote: { [weak self] row, action in
+                guard let self else { throw CollectionStoreError.closed }
+                try await self.changeNote(row, action: action)
+            })
             controller.window?.delegate = self
+            controller.openNote = { [weak self] id in self?.open(.note(id)) }
             workingWindows[destination] = controller
         }
         updateActivationPolicy()
         guard let controller = workingWindows[destination], let window = controller.window else { return false }
-        if let section { controller.presentation.select(section) }
-        if window.isMiniaturized { window.deminiaturize(nil) }
+        if let section { controller.selectSection(section) }
+        let wasMiniaturized = window.isMiniaturized
         // Only explicit destination opening activates the process. Ordinary bar
         // invocation never orders unrelated working windows or changes policy.
         // Name the app we are transferring activation from. Plain NSApp.activate()
@@ -321,25 +470,194 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         } else {
             NSApp.activate()
         }
-        window.makeKeyAndOrderFront(nil)
+        if wasMiniaturized { window.deminiaturize(nil) }
+        else { window.makeKeyAndOrderFront(nil) }
         record("working.open", extra: ["destination": "main"])
         return true
     }
 
     private func updateActivationPolicy() {
-        let desired: NSApplication.ActivationPolicy = workingWindows.isEmpty ? .accessory : .regular
+        let desired: NSApplication.ActivationPolicy = workingWindows.isEmpty && noteWindows.isEmpty ? .accessory : .regular
         guard NSApp.activationPolicy() != desired else { return }
         let accepted = NSApp.setActivationPolicy(desired)
         record("policy.changed", extra: ["accepted": accepted])
     }
 
+    private func openNote(_ id: UUID, focus: NoteFocusRequest) -> Bool {
+        if let controller = noteWindows[id] {
+            showNote(controller, atEnd: focus.atEnd)
+            return true
+        }
+        guard let collection else { return false }
+        if focus.isOrdinary { ordinaryNoteOpenings.insert(id) }
+        noteFocusRequests[id] = focus
+        guard noteOpenings[id] == nil else { return true }
+        let lifetime = noteOpeningLifetime
+        noteOpenings[id] = Task { [weak self] in
+            guard let self else { return }
+            defer {
+                if lifetime == noteOpeningLifetime {
+                    noteOpenings[id] = nil; noteFocusRequests[id] = nil; ordinaryNoteOpenings.remove(id)
+                }
+            }
+            do {
+                let store = try await collection.value
+                guard lifetime == noteOpeningLifetime, !Task.isCancelled, !isPreparingForQuit else { return }
+                if noteEditing == nil { noteEditing = NoteEditing(store: store) }
+                guard let session = try await noteEditing?.open(id), !isPreparingForQuit, lifetime == noteOpeningLifetime, !Task.isCancelled else { return }
+                let frontmost = frontmostApplication()?.processIdentifier
+                guard let focus = noteFocusRequests[id] else { return }
+                let ownsFocus = focus.token == latestWindowOpen && currentInvocation == nil &&
+                    (frontmost == focus.frontmostProcess || frontmost == ProcessInfo.processInfo.processIdentifier)
+                if !ownsFocus {
+                    record("note.open-focus-superseded")
+                    guard ordinaryNoteOpenings.contains(id) else { return }
+                }
+                let controller = NoteWindowController(session: session, previewParser: previewParser, openPreviewLink: openPreviewLink)
+                controller.onOrganization = { [weak self] action in
+                    guard let self else { throw CollectionStoreError.closed }
+                    try await self.changeNote(MainWindowPresentation.Row(session.committed), action: action)
+                }
+                controller.window?.delegate = self
+                controller.onTitleChange = { [weak self] in self?.refreshNoteMenu() }
+                noteWindows[id] = controller
+                refreshNoteMenu()
+                if ownsFocus { showNote(controller, atEnd: focus.atEnd) }
+                else { updateActivationPolicy(); controller.window?.orderBack(nil) }
+            } catch {
+                record("note.open-failed")
+            }
+        }
+        return true
+    }
+
+    private func showNote(_ controller: NoteWindowController, atEnd: Bool = false) {
+        updateActivationPolicy()
+        if let window = controller.window {
+            let wasMiniaturized = window.isMiniaturized
+            if let source = NSWorkspace.shared.frontmostApplication {
+                let allowed = NSRunningApplication.current.activate(from: source, options: [])
+                record("working.activation-request", extra: ["allowed": allowed])
+            } else { NSApp.activate() }
+            // AppKit makes a restored window key when its Dock transition
+            // completes. An earlier manual key request acknowledges too soon.
+            if wasMiniaturized { window.deminiaturize(nil) }
+            else { window.makeKeyAndOrderFront(nil) }
+            controller.focus(atEnd: atEnd)
+        }
+    }
+
+    func flushNoteEdits() async throws {
+        for controller in noteWindows.values { controller.commitComposition() }
+        try await noteEditing?.flush()
+    }
+
+    /// The quit transaction drains every editor before releasing Store ownership.
+    /// A refusal leaves windows and their source text available for an explicit
+    /// retry/copy/discard decision; it never acknowledges termination.
+    func prepareForQuit() async -> Bool {
+        if let quitPreparation { return await quitPreparation.value }
+        // Freeze before the first suspension: an already-flushed note cannot
+        // accept another edit while a later note's write is still pending.
+        isPreparingForQuit = true
+        let controllers = Array(noteWindows.values)
+        let organizer = workingWindows[.main]
+        organizer?.taskWorkspace.suspendEditing(true)
+        for controller in controllers { controller.commitComposition() }
+        for controller in controllers { controller.suspendEditing(true) }
+        if editor.hasMarkedText() { editor.unmarkText() }
+        editor.isEditable = false
+        openInWindowButton.isEnabled = false
+        destinationSelector.rootView.isEnabled = false
+        let pendingCapture = captureSave
+        let operation = Task { [self] in
+            await pendingCapture?.value
+            let renameSucceeded: Bool
+            if let tasks = organizer?.taskWorkspace, tasks.editing != nil { renameSucceeded = await tasks.commitRename() }
+            else { renameSucceeded = true }
+            let captureFailed = pendingCapture != nil && (capture.state.notice == .failed || capture.state.notice == .collectionUnavailable)
+            var failures: [NoteWindowController] = []
+            for controller in controllers {
+                do { try await controller.session.flush() }
+                catch { if !controller.session.isClosed { failures.append(controller) } }
+            }
+            if let failure = failures.first(where: { !$0.session.isClosed }) {
+                isPreparingForQuit = false
+                for controller in controllers { controller.suspendEditing(false) }
+                organizer?.taskWorkspace.suspendEditing(false)
+                editor.isEditable = !isPreparingForQuit && capture.state.phase == .editing
+                renderResults()
+                showNote(failure)
+                failure.holdQuitAfterFailure()
+                return false
+            }
+            if !renameSucceeded {
+                isPreparingForQuit = false
+                for controller in controllers { controller.suspendEditing(false) }
+                organizer?.taskWorkspace.suspendEditing(false)
+                editor.isEditable = capture.state.phase == .editing
+                renderResults()
+                organizer?.window?.makeKeyAndOrderFront(nil)
+                organizer?.taskWorkspace.focusRename()
+                return false
+            }
+            if captureFailed {
+                isPreparingForQuit = false
+                for controller in controllers { controller.suspendEditing(false) }
+                organizer?.taskWorkspace.suspendEditing(false)
+                editor.isEditable = !isPreparingForQuit && capture.state.phase == .editing
+                renderResults()
+                if currentInvocation != nil { showBar(existing: true, started: ProcessInfo.processInfo.systemUptime) }
+                return false
+            }
+            for controller in controllers { controller.clearQuitHold() }
+            if capture.state.phase == .saved, let invocation = currentInvocation { dismiss(invocation, reason: .saved) }
+            editor.isEditable = false
+            if let collection, let store = try? await collection.value { await store.close() }
+            // Keep input and opening guards frozen until termination is replied.
+            return true
+        }
+        quitPreparation = operation
+        defer { quitPreparation = nil }
+        return await operation.value
+    }
+
+    @objc private func flushNotesOnDeactivation() {
+        Task { [weak self] in try? await self?.flushNoteEdits() }
+    }
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        if let controller = workingWindows.values.first(where: { $0.window === sender }) { return controller.shouldClose() }
+        return noteWindows.values.first(where: { $0.window === sender })?.shouldClose() ?? true
+    }
+
     func windowWillClose(_ notification: Notification) {
-        guard let window = notification.object as? NSWindow,
-              let destination = workingWindows.first(where: { $0.value.window === window })?.key else { return }
-        workingWindows.removeValue(forKey: destination)?.stopObserving()
+        guard let window = notification.object as? NSWindow else { return }
+        if let id = noteWindows.first(where: { $0.value.window === window })?.key {
+            noteWindows[id] = nil
+            refreshNoteMenu()
+        } else if let destination = workingWindows.first(where: { $0.value.window === window })?.key {
+            workingWindows.removeValue(forKey: destination)?.stopObserving()
+        } else { return }
         if originWindow === window { originWindow = nil; originResponder = nil }
         updateActivationPolicy()
-        record("working.closed", extra: ["destination": "main"])
+        record("working.closed")
+    }
+
+    private func refreshNoteMenu() {
+        guard let menu = statusItem?.menu else { return }
+        for item in menu.items where item.action == #selector(openNoteFromMenu(_:)) { menu.removeItem(item) }
+        let index = menu.items.firstIndex(where: { $0.action == #selector(openMainWindow) }).map { $0 + 1 } ?? 0
+        for (offset, entry) in noteWindows.sorted(by: { ($0.value.window?.title ?? "") < ($1.value.window?.title ?? "") }).enumerated() {
+            let item = NSMenuItem(title: entry.value.window?.title ?? "Untitled", action: #selector(openNoteFromMenu(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = entry.key
+            menu.insertItem(item, at: index + offset)
+        }
+    }
+
+    @objc private func openNoteFromMenu(_ sender: NSMenuItem) {
+        if let id = sender.representedObject as? UUID { _ = open(.note(id)) }
     }
 
     func windowDidBecomeKey(_ notification: Notification) {
@@ -358,6 +676,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     private func configurePanel() {
         panel.delegate = self
+        panel.openCapture = { [weak self] in
+            guard let self, !self.isPreparingForQuit, self.mode == .note, !self.editor.hasMarkedText() else { return false }
+            self.openCaptureInWindow()
+            return true
+        }
         panel.openDestination = { [weak self] destination in
             guard let self, let invocation = self.currentInvocation else { return }
             self.open(destination, from: invocation)
@@ -426,6 +749,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         destinationSelector.isHidden = true
         card.addSubview(destinationSelector)
 
+        openInWindowButton.target = self
+        openInWindowButton.action = #selector(openCapturedNote)
+        openInWindowButton.bezelStyle = .rounded
+        openInWindowButton.controlSize = .small
+        openInWindowButton.font = HanaFont.detail.nsFont
+        openInWindowButton.sizeToFit()
+        openInWindowButton.autoresizingMask = [.minXMargin, .minYMargin]
+        openInWindowButton.setAccessibilityLabel("Open in window")
+        openInWindowButton.toolTip = "Save this note and continue writing in its window (⌘Return)"
+        openInWindowButton.isHidden = true
+        card.addSubview(openInWindowButton)
+
         captureNotice.font = HanaFont.label.nsFont
         captureNotice.textColor = HanaColor.Text.secondary
         captureNotice.maximumNumberOfLines = 1
@@ -475,7 +810,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
             guard let self, let invocation = self.currentInvocation else { return }
             self.dismiss(invocation, reason: .escape)
         }
-        editor.compositionChanged = { [weak self] in self?.updateModeIcon() }
+        editor.compositionChanged = { [weak self] in
+            guard let self else { return }
+            self.updateModeIcon()
+            self.openInWindowButton.isEnabled = self.capture.state.phase == .editing && !self.editor.hasMarkedText()
+        }
         editor.shouldInsert = { [weak self] text, range, provenance in
             self?.shouldInsert(text, replacing: range, provenance: provenance) ?? true
         }
@@ -632,11 +971,63 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         for (title, action, key) in [
             ("Undo", "undo:", "z"), ("Redo", "redo:", "Z"),
             ("Cut", "cut:", "x"), ("Copy", "copy:", "c"),
-            ("Paste", "paste:", "v"), ("Select All", "selectAll:", "a")
+            ("Paste", "paste:", "v"), ("Select All", "selectAll:", "a"),
+            ("Find", "performFindPanelAction:", "f")
         ] {
-            edit.submenu?.addItem(NSMenuItem(title: title, action: Selector(action), keyEquivalent: key))
+            let item = NSMenuItem(title: title, action: Selector(action), keyEquivalent: key)
+            if title == "Find" { item.tag = Int(NSFindPanelAction.showFindPanel.rawValue) }
+            edit.submenu?.addItem(item)
         }
         main.addItem(edit)
+        taskMenuTarget.interaction = self
+        let tasks = NSMenuItem(title: "Tasks", action: nil, keyEquivalent: "")
+        tasks.submenu = taskMenuTarget.makeMenu()
+        main.addItem(tasks)
+        let noteMenu = NSMenu(title: "Note")
+        let openNote = NSMenuItem(title: "Open Note", action: #selector(openSelectedNote), keyEquivalent: "o")
+        openNote.target = self
+        noteMenu.addItem(openNote)
+        for (title, action, key) in [
+            ("Pin Note", #selector(toggleSelectedNotePin), "p"),
+            ("Archive Note", #selector(archiveSelectedNote), "a"),
+            ("Restore Note", #selector(restoreSelectedNote), "r")
+        ] {
+            let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+            item.keyEquivalentModifierMask = [.command, .control]
+            item.target = self
+            noteMenu.addItem(item)
+        }
+        let noteItem = NSMenuItem(title: "Note", action: nil, keyEquivalent: "")
+        noteItem.submenu = noteMenu
+        main.addItem(noteItem)
+        let viewMenu = NSMenu(title: "View")
+        for (index, section) in MainSection.allCases.enumerated() {
+            let item = NSMenuItem(title: "Show " + section.rawValue, action: #selector(showSection(_:)), keyEquivalent: String(index + 2))
+            item.tag = index
+            item.target = self
+            viewMenu.addItem(item)
+        }
+        viewMenu.addItem(.separator())
+        let preview = NSMenuItem(title: "Markdown Preview", action: #selector(toggleSelectedPreview), keyEquivalent: "p")
+        preview.keyEquivalentModifierMask = [.command, .option]
+        preview.target = self
+        viewMenu.addItem(preview)
+        let viewItem = NSMenuItem(title: "View", action: nil, keyEquivalent: "")
+        viewItem.submenu = viewMenu
+        main.addItem(viewItem)
+
+        let archiveMenu = NSMenu(title: "Archive")
+        let restore = NSMenuItem(title: "Restore Selected Item", action: #selector(restoreSelectedArchiveItem), keyEquivalent: "r")
+        restore.keyEquivalentModifierMask = [.command, .shift]
+        restore.target = self
+        archiveMenu.addItem(restore)
+        let openArchived = NSMenuItem(title: "Open Archived Note", action: #selector(openSelectedArchiveNote), keyEquivalent: "\r")
+        openArchived.keyEquivalentModifierMask = []
+        openArchived.target = self
+        archiveMenu.addItem(openArchived)
+        let archiveItem = NSMenuItem(title: "Archive", action: nil, keyEquivalent: "")
+        archiveItem.submenu = archiveMenu
+        main.addItem(archiveItem)
         let windows = NSMenu(title: "Window")
         addOpenMainWindow(to: windows, shortcut: true)
         windows.addItem(.separator())
@@ -656,9 +1047,95 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         menu.addItem(item)
     }
 
+    private var selectedOrganizerNote: MainWindowPresentation.Row? {
+        guard !isPreparingForQuit, currentInvocation == nil, NSApp.keyWindow === window(for: .main), let presentation = mainWindowPresentation,
+              presentation.selectedSection == .notes, presentation.availability == .available,
+              !presentation.isOrganizingNote else { return nil }
+        return presentation.rows.first { $0.id == presentation.selectedNoteID }
+    }
+
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(openSelectedNote) { return selectedOrganizerNote != nil }
+        if menuItem.action == #selector(showSection(_:)) { return !isPreparingForQuit && currentInvocation == nil }
+        if menuItem.action == #selector(toggleSelectedPreview) {
+            menuItem.state = selectedPreviewNote.flatMap { noteWindows[$0]?.preview.isVisible } == true ? .on : .off
+            return selectedPreviewNote != nil
+        }
+
+        if menuItem.action == #selector(restoreSelectedArchiveItem) { return selectedArchiveRow != nil }
+        if menuItem.action == #selector(openSelectedArchiveNote) {
+            if case .note = selectedArchiveRow { return true }
+            return false
+        }
+        if menuItem.action == #selector(toggleSelectedNotePin) {
+            menuItem.title = selectedOrganizerNote?.isPinned == true ? "Unpin Note" : "Pin Note"
+            return selectedOrganizerNote != nil
+        }
+        if menuItem.action == #selector(archiveSelectedNote) { return selectedOrganizerNote != nil }
+        if menuItem.action == #selector(restoreSelectedNote) { return selectedArchivedNote != nil }
+        return true
+    }
+
+    @objc private func openSelectedNote() {
+        guard let row = selectedOrganizerNote else { return }
+        _ = open(.note(row.id))
+    }
+
+    @objc private func showSection(_ item: NSMenuItem) {
+        guard !isPreparingForQuit, currentInvocation == nil, MainSection.allCases.indices.contains(item.tag) else { return }
+        _ = open(.main, section: MainSection.allCases[item.tag])
+    }
+
+    private var selectedPreviewNote: UUID? {
+        guard !isPreparingForQuit, currentInvocation == nil else { return nil }
+        return noteWindows.first(where: { $0.value.window === NSApp.keyWindow })?.key
+    }
+
+    @objc private func toggleSelectedPreview() {
+        guard let id = selectedPreviewNote else { return }
+        toggleNotePreview(id)
+    }
+
+    @objc private func toggleSelectedNotePin() {
+        guard let row = selectedOrganizerNote else { return }
+        Task { await organizeNote(row, action: .setPinned(!row.isPinned)) }
+    }
+
+    @objc private func archiveSelectedNote() {
+        guard let row = selectedOrganizerNote else { return }
+        Task { await organizeNote(row, action: .archive) }
+    }
+
+    private var selectedArchiveRow: ArchiveWorkspacePresentation.Row? {
+        guard !isPreparingForQuit, currentInvocation == nil, NSApp.keyWindow === window(for: .main),
+              mainWindowPresentation?.selectedSection == .archive,
+              let archive = archiveWorkspacePresentation, let row = archive.selectedRow, archive.canRestore(row) else { return nil }
+        return row
+    }
+
+    @objc private func restoreSelectedArchiveItem() {
+        guard let row = selectedArchiveRow else { return }
+        Task { await restoreArchived(row) }
+    }
+
+    @objc private func openSelectedArchiveNote() {
+        guard let row = selectedArchiveRow else { return }
+        _ = openArchivedNote(row)
+    }
+
+    private var selectedArchivedNote: UUID? {
+        guard currentInvocation == nil else { return nil }
+        return noteWindows.first { $0.value.window === NSApp.keyWindow && $0.value.canRestore }?.key
+    }
+
+    @objc private func restoreSelectedNote() {
+        guard let id = selectedArchivedNote else { return }
+        Task { await restoreNote(id) }
+    }
+
     /// A click on Task's selector. The session decides; the selector then shows its choice.
     private func destinationChosen(_ index: Int) {
-        guard currentInvocation != nil, TaskPlacement.allCases.indices.contains(index) else { return }
+        guard !isPreparingForQuit, currentInvocation != nil, TaskPlacement.allCases.indices.contains(index) else { return }
         _ = capture.handle(.chooseDestination(TaskPlacement.allCases[index]))
         record("capture.destination", extra: ["destination": capture.state.destination.rawValue])
         renderResults()
@@ -666,6 +1143,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     }
 
     func textDidChange(_ notification: Notification) {
+        guard !isPreparingForQuit else { editor.string = capture.state.text; return }
         record("editor.changed")
         _ = capture.handle(.edited(text: editor.string, selection: editor.selectedRange()))
         if mode == .search { updateQuery(editor.string) } else { renderResults() }
@@ -678,6 +1156,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// The editor asks before applying each native insertion. Returns false when
     /// the session consumed it, so it never becomes text or an undoable edit.
     private func shouldInsert(_ text: String, replacing range: NSRange, provenance: CaptureSession.Provenance) -> Bool {
+        guard !isPreparingForQuit else { return false }
         guard currentInvocation != nil else { return true }
         let notice = capture.state.notice
         var applies = true
@@ -698,11 +1177,23 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
     /// Enter in Note or Task. Repeated Enter while saving, and Enter during the
     /// confirmation, do nothing: the session has already frozen the text.
     private func submitCapture() {
+        guard !isPreparingForQuit else { return }
         let effects = capture.handle(.submit)
         if effects.isEmpty, capture.state.notice == .blank { record("capture.refused-blank") }
         effects.forEach(perform)
         renderResults()
     }
+
+    /// Explicitly continue this Note capture after its one committed save.
+    func openCaptureInWindow() {
+        guard !isPreparingForQuit, currentInvocation != nil, !editor.hasMarkedText() else { return }
+        let effects = capture.handle(.openInWindow)
+        if effects.isEmpty, capture.state.notice == .blank { record("capture.refused-blank") }
+        effects.forEach(perform)
+        renderResults()
+    }
+
+    @objc private func openCapturedNote() { openCaptureInWindow() }
 
     private func perform(_ effect: CaptureSession.Effect) {
         guard let invocation = currentInvocation else { return }
@@ -710,6 +1201,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         case .enterMode(let mode): show(mode)
         case .saveNote(let operation, let body):
             save(.createNote(operation: operation, body: body), operation: operation, from: invocation)
+        case .saveNoteInWindow(let operation, let body):
+            save(.createNote(operation: operation, body: body), operation: operation, from: invocation,
+                 noteWindow: { $0.id })
         case .saveTask(let operation, let title, let placement):
             save(.createTask(operation: operation, title: title, placement: placement), operation: operation, from: invocation)
         case .confirmSaved:
@@ -731,10 +1225,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 
     /// Issues the session's one save. Its outcome reaches only the invocation
     /// and operation that requested it.
-    private func save<Saved: Sendable>(_ command: CollectionCommand<Saved>, operation: UUID, from invocation: Invocation) {
+    private func save<Saved: Sendable>(_ command: CollectionCommand<Saved>, operation: UUID, from invocation: Invocation,
+                                      noteWindow: (@Sendable (Saved) -> UUID)? = nil) {
         record("capture.save-request", extra: ["mode": mode.rawValue])
         let collection = collection
-        Task { [weak self] in
+        captureSave = Task { [weak self] in
+            defer { self?.captureSave = nil }
             let store: CollectionStore
             do {
                 guard let collection else { throw CollectionStoreError.missingCollection }
@@ -744,15 +1240,17 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 return
             }
             do {
-                _ = try await store.perform(command, in: store.generation)
-                self?.finishSave(.saved, operation: operation, invocation: invocation, error: nil)
+                let saved = try await store.perform(command, in: store.generation)
+                self?.finishSave(.saved, operation: operation, invocation: invocation, error: nil,
+                                 noteWindow: noteWindow?(saved))
             } catch {
                 self?.finishSave(.saveFailed(.failed), operation: operation, invocation: invocation, error: error)
             }
         }
     }
 
-    private func finishSave(_ outcome: CaptureSession.Event, operation: UUID, invocation: Invocation, error: (any Error)?) {
+    private func finishSave(_ outcome: CaptureSession.Event, operation: UUID, invocation: Invocation, error: (any Error)?,
+                            noteWindow: UUID? = nil) {
         guard currentInvocation == invocation, capture.operation == operation else {
             record("capture.stale-outcome")
             return
@@ -766,11 +1264,18 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         } else {
             record("capture.saved")
         }
-        capture.handle(outcome).forEach(perform)
+        let wasDismissed = capture.state.dismissalRequested
+        let effects = capture.handle(outcome)
+        if outcome == .saved, let noteWindow, !wasDismissed {
+            open(.note(noteWindow), from: invocation, focusAtEnd: true)
+        } else {
+            effects.forEach(perform)
+        }
         renderResults()
     }
 
     func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+        guard !isPreparingForQuit else { return true }
         guard !textView.hasMarkedText() else { return false }
         // The session may take these before the editor acts: Backspace at the
         // start of a capture returns to Search, and in Task, Tab chooses the
@@ -1176,8 +1681,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         resultSurface?.isHidden = true
         retainedContentHeight = 0
         // Submitted text and destination are frozen until a failure returns them for editing.
-        editor.isEditable = capture.state.phase == .editing
-        destinationSelector.rootView.isEnabled = capture.state.phase == .editing
+        editor.isEditable = !isPreparingForQuit && capture.state.phase == .editing
+        openInWindowButton.isEnabled = !isPreparingForQuit && capture.state.phase == .editing && !editor.hasMarkedText()
+        destinationSelector.rootView.isEnabled = !isPreparingForQuit && capture.state.phase == .editing
         switch capture.state.phase {
         case .saving: setModeLabel("Saving…")
         case .editing: setModeLabel(mode == .task ? "Task" : "Note")
@@ -1243,8 +1749,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
         destinationSelector.isHidden = mode != .task || capture.state.phase == .saved
         destinationSelector.frame.origin = NSPoint(x: modeLabel.frame.minX - 8 - destinationSelector.frame.width,
                                                    y: midY - destinationSelector.frame.height / 2)
+        openInWindowButton.isHidden = mode != .note || capture.state.phase == .saved
+        openInWindowButton.frame.origin = NSPoint(x: modeLabel.frame.minX - 8 - openInWindowButton.frame.width,
+                                                  y: midY - openInWindowButton.frame.height / 2)
         let trailing = mode == .search ? card.bounds.width - 44
-            : (destinationSelector.isHidden ? modeLabel.frame.minX : destinationSelector.frame.minX) - 8
+            : (!openInWindowButton.isHidden ? openInWindowButton.frame.minX
+               : destinationSelector.isHidden ? modeLabel.frame.minX : destinationSelector.frame.minX) - 8
         editorScroll.frame = NSRect(x: BarStyle.textInset, y: editorScroll.frame.minY,
                                     width: trailing - BarStyle.textInset, height: editorScroll.frame.height)
     }
@@ -1284,6 +1794,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
                 return ["id": "main", "minimized": window.isMiniaturized,
                         "visible": window.isVisible, "key": window.isKeyWindow,
                         "onActiveSpace": window.isOnActiveSpace]
+            } + noteWindows.map { id, controller -> [String: Any] in
+                let window = controller.window
+                return ["id": "note-\(id.uuidString)", "minimized": window?.isMiniaturized ?? false,
+                        "visible": window?.isVisible ?? false, "key": window?.isKeyWindow ?? false,
+                        "onActiveSpace": window?.isOnActiveSpace ?? false]
             },
             "session": currentInvocation?.id.uuidString ?? "none",
             "policy": NSApp.activationPolicy() == .accessory ? "accessory" : NSApp.activationPolicy() == .regular ? "regular" : "prohibited",
@@ -1303,8 +1818,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate {
 @MainActor
 private final class SearchPanel: NSPanel {
     var openDestination: ((WorkingWindow) -> Void)?
+    var openCapture: (() -> Bool)?
 
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+           event.keyCode == 36, openCapture?() == true { return true }
         if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
            event.charactersIgnoringModifiers == "1" {
             openDestination?(.main)
@@ -1315,6 +1833,11 @@ private final class SearchPanel: NSPanel {
 
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
+}
+
+@MainActor
+private final class CaptureOpenButton: NSButton {
+    override var acceptsFirstResponder: Bool { false }
 }
 
 @MainActor

@@ -5,7 +5,7 @@ import ApplicationServices
 /// Programmatic presentation/editing is not physical shortcut-to-typing latency.
 @MainActor
 func validatePerformance(_ interaction: MacInteraction, diagnostics: Diagnostics) async {
-    guard diagnostics.isEnabled else { NSApp.terminate(nil); return }
+    guard diagnostics.isEnabled else { RunLoop.main.perform(inModes: [.common]) { MainActor.assumeIsolated { NSApp.terminate(nil) } }; return }
     let run = UUID().uuidString
     func record(_ event: String, _ state: [String: Any]) {
         diagnostics.record("performance.\(event)", state: state.merging(["run": run]) { _, new in new })
@@ -136,7 +136,7 @@ func validatePerformance(_ interaction: MacInteraction, diagnostics: Diagnostics
     record("scheduling", ["samples": lateness.count, "excessMilliseconds": lateness,
                           "typingExcessMilliseconds": typingLateness])
     record("complete", [:])
-    NSApp.terminate(nil)
+    RunLoop.main.perform(inModes: [.common]) { MainActor.assumeIsolated { NSApp.terminate(nil) } }
 }
 
 /// Search keeps the previous request's matching results across dismissals, so

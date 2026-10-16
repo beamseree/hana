@@ -1,0 +1,192 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/8] Compiling Hana NoteWindowController.swift
+[4/8] Emitting module Hana
+[5/8] Compiling Hana NoteEditing.swift
+[6/10] Compiling Hana MacInteraction.swift
+[7/10] Compiling Hana NotePreviewSession.swift
+[7/11] Write Objects.LinkFileList
+[8/11] Linking Hana
+[9/11] Applying Hana
+[11/17] Compiling HanaTests NotePreviewTests.swift
+[12/17] Compiling HanaTests NoteSaveSafetyTests.swift
+[13/17] Compiling HanaTests NoteWindowTests.swift
+[14/17] Compiling HanaTests NoteSaveSafetyNativeTests.swift
+[15/17] Compiling HanaTests NoteEditingTests.swift
+[16/17] Emitting module HanaTests
+[16/18] Write Objects.LinkFileList
+[17/18] Linking HanaPackageTests
+Build complete! (5.11s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NoteSaveSafetyNativeTests started.
+◇ Suite MainWindowTests started.
+◇ Suite NoteSaveSafetyTests started.
+◇ Suite NotePreviewTests started.
+◇ Suite OpenNoteCaptureTests started.
+◇ Suite CollectionStoreTests started.
+◇ Suite MarkdownPreviewTests started.
+◇ Suite NoteEditingTests started.
+◇ Suite TaskWorkspaceOrderTests started.
+◇ Suite MainNoteOrganizationTests started.
+◇ Suite NoteWindowTests started.
+◇ Suite OpenNoteCaptureSessionTests started.
+◇ Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() started.
+◇ Test workInFlightOrQueuedBeforeCloseIsRejectedBeforeCommit() started.
+◇ Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() started.
+◇ Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() started.
+◇ Test aPausedCommitDrainsNewerTextInOrderWithoutMarkingItSavedEarly() started.
+◇ Test closingTheStoreInvalidatesAPausedSaveBeforeItCanCommit() started.
+◇ Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() started.
+◇ Test blankCloseKeepsLastCommittedBody() started.
+◇ Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() started.
+◇ Test failureKeepsLatestTextAndRetryCommitsItOnce() started.
+◇ Test aReferenceDefinitionBeforeAnUnsupportedImageIsNotDropped() started.
+◇ Test idleSaveWaitsThreeHundredMillisecondsAndKeepsExactBytes() started.
+◇ Test continuousTypingSavesByOneSecondAndCompositionDefersUntilCommitted() started.
+◇ Test searchAndTaskNeverSubmitAnOpenNote() started.
+◇ Test unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test closingFreezesEditsBeforeSuspendingAndRestoresOnlyItsOwnFreeze(fails:) started.
+◇ Test openInWindowSubmitsTheExactNoteOnceAndRetriesTheSameReceipt() started.
+◇ Test aLostAcknowledgmentCanRetryWithoutASecondEditOrStaleRevision() started.
+◇ Test supportedConstructsBecomeReadOnlyPresentationValues() started.
+◇ Test explicitOpeningRetryAfterADismissedFailureOwnsTheNewAttempt() started.
+◇ Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() started.
+◇ Test explicitDiscardRollsBackAPausedUncommittedSave() started.
+◇ Test blankNotesAreRefusedWithoutASaveEffect(text:) started.
+◇ Test case passing 1 argument fails → false to closingFreezesEditsBeforeSuspendingAndRestoresOnlyItsOwnFreeze(fails:) started.
+◇ Test case passing 1 argument fails → true to closingFreezesEditsBeforeSuspendingAndRestoresOnlyItsOwnFreeze(fails:) started.
+◇ Test case passing 1 argument fixture → table to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → strike after Unicode to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → task list to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → remote image to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → reference image to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → block HTML to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → inline HTML to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → unused definition to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → footnote-like text to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → CRLF to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → CR to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → thematic break to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → tabbed code to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument fixture → nested list to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+◇ Test case passing 1 argument text → "" to blankNotesAreRefusedWithoutASaveEffect(text:) started.
+◇ Test case passing 1 argument text → "
+
+" to blankNotesAreRefusedWithoutASaveEffect(text:) started.
+◇ Test case passing 1 argument fixture → nested quote to unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) started.
+✔ Test openInWindowSubmitsTheExactNoteOnceAndRetriesTheSameReceipt() passed after 0.001 seconds.
+✔ Test searchAndTaskNeverSubmitAnOpenNote() passed after 0.001 seconds.
+✔ Test aReferenceDefinitionBeforeAnUnsupportedImageIsNotDropped() passed after 0.001 seconds.
+✔ Test explicitOpeningRetryAfterADismissedFailureOwnsTheNewAttempt() passed after 0.001 seconds.
+✔ Test supportedConstructsBecomeReadOnlyPresentationValues() passed after 0.001 seconds.
+✔ Test blankNotesAreRefusedWithoutASaveEffect(text:) with 2 test cases passed after 0.001 seconds.
+✔ Suite OpenNoteCaptureSessionTests passed after 0.001 seconds.
+✔ Test unsupportedSyntaxStaysLiteralWithoutImageOrHTMLLoading(fixture:) with 15 test cases passed after 0.001 seconds.
+✔ Suite MarkdownPreviewTests passed after 0.001 seconds.
+✔ Test savedNoteSurvivesReopenWithExactBodyAndDerivedTitle() passed after 0.280 seconds.
+✔ Test blankCloseKeepsLastCommittedBody() passed after 0.301 seconds.
+✔ Test identicalCreationRetriesReturnOneNoteAndMismatchedReuseFails() passed after 0.301 seconds.
+✔ Test failureKeepsLatestTextAndRetryCommitsItOnce() passed after 0.331 seconds.
+✔ Test continuousTypingSavesByOneSecondAndCompositionDefersUntilCommitted() passed after 0.333 seconds.
+✔ Test lostAcknowledgementRetryAfterRestartReturnsTheCommittedNote() passed after 0.333 seconds.
+✔ Test observationsStartCoherentlyConvergeOnCommitsAndNeverShowRolledBackWork() passed after 0.340 seconds.
+✔ Test failedWritesRollBackCompletelyAndTheOperationCanBeRetried() passed after 0.342 seconds.
+✔ Test workInFlightOrQueuedBeforeCloseIsRejectedBeforeCommit() passed after 0.415 seconds.
+✔ Suite CollectionStoreTests passed after 0.416 seconds.
+✔ Test closingTheStoreInvalidatesAPausedSaveBeforeItCanCommit() passed after 0.674 seconds.
+✔ Test aLostAcknowledgmentCanRetryWithoutASecondEditOrStaleRevision() passed after 0.685 seconds.
+✔ Test closingFreezesEditsBeforeSuspendingAndRestoresOnlyItsOwnFreeze(fails:) with 2 test cases passed after 0.686 seconds.
+✔ Test idleSaveWaitsThreeHundredMillisecondsAndKeepsExactBytes() passed after 0.697 seconds.
+✔ Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() passed after 0.702 seconds.
+◇ Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+◇ Test case passing 1 argument action → .retry to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+✔ Test explicitDiscardRollsBackAPausedUncommittedSave() passed after 0.708 seconds.
+✔ Suite NoteSaveSafetyTests passed after 0.708 seconds.
+✔ Test aPausedCommitDrainsNewerTextInOrderWithoutMarkingItSavedEarly() passed after 0.713 seconds.
+✔ Suite NoteEditingTests passed after 0.713 seconds.
+◇ Test case passing 1 argument action → .discardChanges to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+✔ Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) with 2 test cases passed after 1.533 seconds.
+◇ Test quitCancelsOnFailureThenCommitsEveryNoteAndCompositionBeforeClosingTheStore() started.
+✔ Test quitCancelsOnFailureThenCommitsEveryNoteAndCompositionBeforeClosingTheStore() passed after 0.857 seconds.
+◇ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() started.
+✔ Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() passed after 0.239 seconds.
+◇ Test pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+◇ Test case passing 1 argument discard → false to pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+◇ Test case passing 1 argument discard → true to pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+✔ Test pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) with 2 test cases passed after 1.511 seconds.
+◇ Test invalidatedDirtyEditorKeepsCopyableTextAndCannotApproveQuit() started.
+✔ Test invalidatedDirtyEditorKeepsCopyableTextAndCannotApproveQuit() passed after 0.779 seconds.
+◇ Test quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+◇ Test case passing 1 argument fails → false to quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+◇ Test case passing 1 argument fails → true to quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+✔ Test quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) with 2 test cases passed after 0.417 seconds.
+✔ Suite NoteSaveSafetyNativeTests passed after 6.042 seconds.
+◇ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() started.
+✔ Test notesShowCommittedStoreOrderAndUpdateWhileOpen() passed after 0.156 seconds.
+◇ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → false to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+◇ Test case passing 1 argument openingFails → true to collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) started.
+✔ Test collectionUnavailableIsDistinctFromAnEmptyCollection(openingFails:) with 2 test cases passed after 0.176 seconds.
+◇ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() started.
+✔ Test reopeningReusesMainWindowAndMinimizedMembershipKeepsRegularPolicy() passed after 1.402 seconds.
+◇ Test menusOpenTheSameMainWindowWithoutMockDestinations() started.
+✔ Test menusOpenTheSameMainWindowWithoutMockDestinations() passed after 0.215 seconds.
+✔ Suite MainWindowTests passed after 7.994 seconds.
+◇ Test pausedRepeatedOpeningCommitsOnceAndFocusesTheSavedNotesEnd() started.
+✔ Test pausedRepeatedOpeningCommitsOnceAndFocusesTheSavedNotesEnd() passed after 0.181 seconds.
+◇ Test noteControlAndCommandReturnSubmitThroughTheSameIntent() started.
+✔ Test noteControlAndCommandReturnSubmitThroughTheSameIntent() passed after 0.169 seconds.
+◇ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) started.
+◇ Test case passing 1 argument lostAcknowledgement → false to failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) started.
+◇ Test case passing 1 argument lostAcknowledgement → true to failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) started.
+✔ Test failureKeepsTheCaptureAndRetryOpensExactlyOneNote(lostAcknowledgement:) with 2 test cases passed after 0.335 seconds.
+◇ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() started.
+✔ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() passed after 0.147 seconds.
+◇ Test compositionKeepsTheOpenControlDisabledAndSavesNothing() started.
+✔ Test compositionKeepsTheOpenControlDisabledAndSavesNothing() passed after 0.065 seconds.
+◇ Test dismissalDuringACommittedOpeningKeepsTheUsersNewDestination() started.
+✔ Test dismissalDuringACommittedOpeningKeepsTheUsersNewDestination() passed after 0.101 seconds.
+✔ Suite OpenNoteCaptureTests passed after 8.995 seconds.
+◇ Test keyboardOrderingKeepsListsIndependentAndSurvivesReopen() started.
+✔ Test keyboardOrderingKeepsListsIndependentAndSurvivesReopen() passed after 0.268 seconds.
+◇ Test dragMovesBeforeTargetOrToEndAndRejectsAnotherList() started.
+✔ Test dragMovesBeforeTargetOrToEndAndRejectsAnotherList() passed after 0.186 seconds.
+◇ Test staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .createAtTop, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .createAtTop, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveIn, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveIn, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveOut, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveOut, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .complete, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .complete, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+✔ Test staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) with 8 test cases passed after 1.393 seconds.
+◇ Test moveUpDownMenusRouteOrderingAndYieldToInlineEditing() started.
+✔ Test moveUpDownMenusRouteOrderingAndYieldToInlineEditing() passed after 0.262 seconds.
+✔ Suite TaskWorkspaceOrderTests passed after 11.106 seconds.
+◇ Test staleParsesCannotReplaceNewTextOrAReopenedPreview() started.
+✔ Test staleParsesCannotReplaceNewTextOrAReopenedPreview() passed after 0.255 seconds.
+◇ Test nativeToggleKeepsSavedBytesAndLinksOpenOnlyOnExplicitClick() started.
+✔ Test nativeToggleKeepsSavedBytesAndLinksOpenOnlyOnExplicitClick() passed after 0.227 seconds.
+✔ Suite NotePreviewTests passed after 11.591 seconds.
+◇ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() started.
+✔ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() passed after 0.203 seconds.
+◇ Test aOneMegabyteFixtureCanOpenEditAndFlush() started.
+NOTE_PROFILE bytes=1140000 open=0.09956475 seconds insert=0.14109775 seconds flush=0.316699584 seconds
+✔ Test aOneMegabyteFixtureCanOpenEditAndFlush() passed after 0.636 seconds.
+✔ Suite NoteWindowTests passed after 12.431 seconds.
+◇ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() started.
+✔ Test pinAndUnpinFollowCommittedOrderWithoutChangingContentEditedTime() passed after 0.161 seconds.
+◇ Test archiveRemovesTheRowAndPreservesWritingAndPin() started.
+✔ Test archiveRemovesTheRowAndPreservesWritingAndPin() passed after 0.153 seconds.
+◇ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .setPinned(true) to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+◇ Test case passing 1 argument action → .archive to staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) started.
+✔ Test staleActionsKeepTheCommittedNoteAndExplainTheRefusal(action:) with 2 test cases passed after 0.301 seconds.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+✔ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 0.315 seconds.
+✔ Suite MainNoteOrganizationTests passed after 13.363 seconds.
+✔ Test run with 51 tests in 12 suites passed after 13.363 seconds.

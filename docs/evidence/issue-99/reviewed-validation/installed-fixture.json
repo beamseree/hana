@@ -1,0 +1,14 @@
+{
+  "installedUTC": "2026-10-16T01:17:33.383599+00:00",
+  "sourceCommit": "11331fca2206f01ea10b61fd9d5f840b6eac7d97",
+  "bundleIdentifier": "com.beamseree.hana.validation.issue99",
+  "installedBundle": "/Users/beamsereeyothin/Applications/Hana Working Windows Fixture.app",
+  "launcher": "/Users/beamsereeyothin/Applications/Launch Hana Working Windows Fixture.command",
+  "signedExecutableSHA256": "9a091488317d4ee86b8a85be4825390f22156f02ec3b37f744a8263d2f4c838e",
+  "strictSignatureExit": 0,
+  "ownedPID": 63775,
+  "interactiveReady": true,
+  "shortcutStatus": 0,
+  "persistentFixtureRoot": "/tmp/hana-spec-88/physical-fixture",
+  "physicalObservations": "pending; startup readiness is not physical acceptance"
+}

@@ -1,0 +1,7 @@
+Build complete! (2.28s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite MainNoteOrganizationTests started.
+◇ Suite OpenNoteCaptureTests started.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.

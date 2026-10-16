@@ -1,0 +1,12 @@
+{
+  "final-reviewed-full-tests.txt": "19b3a43b43674f4edf341432d97bc03d1829ec701cac9b03b8e730afa93ada5a",
+  "final-reviewed-release-build.log": "1018fa1c71ac10ad01845a3ff9b6591e8803e8cea008d7cfd7a83420a9ffa2b0",
+  "reviewed-main-window.jsonl": "e460d8100d075e80e95e0c4d5d48205ab4359cb625447c288c3b9957f58bc65e",
+  "reviewed-main-window.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "reviewed-note-window.jsonl": "bcddf5142ee36dea107fd904e0dc0c49bd76420ba4e9f4f24bef048e837e2322",
+  "reviewed-note-window.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "reviewed-open-note-capture.jsonl": "7b75b0ee0a2384b0cd81beb0ef21332dd78f02f424a2b27295cbdabdb8b73282",
+  "reviewed-open-note-capture.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "reviewed-release-smoke.jsonl": "0db158da350864065fe035eb5cda403541db5831f6b46baae8229f51d38f98f2",
+  "reviewed-release-smoke.txt": "fdce819726eb05cd9f3361bd59535e9caaccd6a90e2e22e65bab81694ad652b8"
+}

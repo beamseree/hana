@@ -1,0 +1,492 @@
+Building for debugging...
+[0/50] <ticket-worktree>/.build/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[1/50] Write swift-version--1AB21518FC5DEDBE.txt
+[2/50] Compiling cmark-gfm utf8.c
+[3/50] Compiling cmark-gfm-extensions tagfilter.c
+[4/50] Compiling cmark-gfm syntax_extension.c
+[5/50] Compiling cmark-gfm render.c
+[6/50] Compiling cmark-gfm xml.c
+[7/50] Compiling cmark-gfm-extensions strikethrough.c
+[8/50] Compiling cmark-gfm-extensions tasklist.c
+[9/50] Compiling cmark-gfm registry.c
+[10/50] Compiling cmark-gfm plugin.c
+[11/50] Compiling cmark-gfm references.c
+[12/50] Compiling cmark-gfm plaintext.c
+[13/50] Compiling cmark-gfm-extensions ext_scanners.c
+[14/50] Compiling cmark-gfm-extensions core-extensions.c
+[15/50] Compiling cmark-gfm map.c
+[16/50] Compiling cmark-gfm linked_list.c
+[17/50] Compiling cmark-gfm man.c
+[18/50] Compiling cmark-gfm latex.c
+[19/50] Compiling cmark-gfm node.c
+[20/50] Compiling cmark-gfm iterator.c
+[21/50] Compiling cmark-gfm houdini_html_e.c
+[22/50] Compiling cmark-gfm scanners.c
+[23/50] Compiling cmark-gfm html.c
+[24/50] Compiling cmark-gfm houdini_href_e.c
+[25/50] Compiling cmark-gfm inlines.c
+[26/50] Compiling cmark-gfm footnotes.c
+[27/50] Write sources
+[28/50] Write Hana-entitlement.plist
+[32/50] Copying PrivacyInfo.xcprivacy
+[32/50] Copying Info.plist
+[32/50] Write sources
+[35/50] Compiling cmark-gfm houdini_html_u.c
+[36/50] Compiling cmark-gfm commonmark.c
+[37/50] Compiling cmark-gfm cmark.c
+[38/50] Compiling cmark-gfm buffer.c
+[38/50] Compiling cmark-gfm cmark_ctype.c
+[40/50] Compiling CAtomic CAtomic.c
+[41/50] Compiling cmark-gfm arena.c
+[42/50] Compiling cmark-gfm blocks.c
+[43/50] Compiling cmark-gfm-extensions table.c
+[44/50] Compiling cmark-gfm-extensions autolink.c
+[46/267] Compiling Markdown CodeBlock.swift
+[47/267] Compiling Markdown HTMLBlock.swift
+[48/267] Compiling Markdown Heading.swift
+[49/267] Compiling Markdown ThematicBreak.swift
+[50/267] Compiling Markdown Table.swift
+[51/267] Compiling Markdown TableBody.swift
+[52/267] Compiling Markdown TableCell.swift
+[53/274] Emitting module Markdown
+[54/274] Compiling Markdown BlockContainer.swift
+[55/274] Compiling Markdown BlockMarkup.swift
+[56/274] Compiling Markdown InlineContainer.swift
+[57/274] Compiling Markdown InlineMarkup.swift
+[58/274] Compiling Markdown ListItemContainer.swift
+[59/274] Compiling Markdown AtomicCounter.swift
+[60/274] Compiling Markdown CharacterExtensions.swift
+[61/274] Compiling Markdown TableCellContainer.swift
+[62/274] Compiling Markdown TableHead.swift
+[63/274] Compiling Markdown TableRow.swift
+[64/274] Compiling Markdown Replacement.swift
+[65/274] Compiling Markdown SourceLocation.swift
+[66/274] Compiling Markdown Emphasis.swift
+[67/274] Compiling Markdown Image.swift
+[68/274] Compiling Markdown LazySplitLines.swift
+[69/274] Compiling Markdown ParseOptions.swift
+[70/274] Compiling Markdown RangeAdjuster.swift
+[71/274] Compiling Markdown RangerTracker.swift
+[72/274] Compiling Markdown MarkupRewriter.swift
+[73/274] Compiling Markdown BasicBlockContainer.swift
+[74/274] Compiling Markdown BasicInlineContainer.swift
+[75/274] Compiling Markdown DoxygenNote.swift
+[76/274] Compiling Markdown DoxygenParameter.swift
+[77/274] Compiling Markdown DoxygenReturns.swift
+[78/274] Compiling Markdown ListItem.swift
+[79/274] Compiling Markdown OrderedList.swift
+[80/274] Compiling Markdown UnorderedList.swift
+[81/274] Compiling Markdown Paragraph.swift
+[82/274] Compiling Markdown PlainTextConvertibleMarkup.swift
+[83/274] Compiling Markdown RawMarkup.swift
+[84/274] Compiling Markdown BlockDirective.swift
+[85/274] Compiling Markdown BlockQuote.swift
+[86/274] Compiling Markdown CustomBlock.swift
+[87/274] Compiling Markdown DoxygenAbstract.swift
+[88/274] Compiling Markdown DoxygenDiscussion.swift
+[89/274] Compiling Markdown ChildIndexPath.swift
+[90/274] Compiling Markdown DirectiveArgument.swift
+[91/274] Compiling Markdown Document.swift
+[92/274] Compiling Markdown LiteralMarkup.swift
+[93/274] Compiling Markdown Markup.swift
+[94/274] Compiling Markdown MarkupChildren.swift
+[95/274] Compiling Markdown MarkupData.swift
+[96/274] Compiling Markdown InlineAttributes.swift
+[97/274] Compiling Markdown Link.swift
+[98/274] Compiling Markdown Strikethrough.swift
+[99/274] Compiling Markdown Strong.swift
+[100/274] Compiling Markdown CustomInline.swift
+[101/274] Compiling Markdown InlineCode.swift
+[102/274] Compiling Markdown InlineHTML.swift
+[103/274] Compiling Markdown LineBreak.swift
+[104/274] Compiling Markdown SoftBreak.swift
+[105/274] Compiling Markdown SymbolLink.swift
+[106/274] Compiling Markdown Text.swift
+[107/274] Compiling Markdown Aside.swift
+[108/274] Compiling Markdown BlockDirectiveParser.swift
+[109/274] Compiling Markdown CommonMarkConverter.swift
+[110/274] Compiling Markdown CollectionExtensions.swift
+[111/274] Compiling Markdown StringExtensions.swift
+[112/274] Compiling Markdown MarkupVisitor.swift
+[113/274] Compiling Markdown MarkupWalker.swift
+[114/274] Compiling Markdown HTMLFormatter.swift
+[115/274] Compiling Markdown MarkupFormatter.swift
+[116/274] Compiling Markdown MarkupTreeDumper.swift
+[184/290] Compiling GRDB ReadWriteLock.swift
+[185/290] Compiling GRDB ReceiveValuesOn.swift
+[186/290] Compiling GRDB Refinable.swift
+[187/290] Compiling GRDB Utils.swift
+[188/290] Compiling GRDB DatabaseCancellable.swift
+[189/290] Compiling GRDB ValueConcurrentObserver.swift
+[190/290] Compiling GRDB ValueWriteOnlyObserver.swift
+[191/290] Compiling GRDB Fetch.swift
+[192/290] Compiling GRDB Map.swift
+[193/290] Compiling GRDB RemoveDuplicates.swift
+[194/290] Compiling GRDB Trace.swift
+[195/290] Compiling GRDB ValueReducer.swift
+[196/290] Compiling GRDB SharedValueObservation.swift
+[197/290] Compiling GRDB ValueObservation.swift
+[198/290] Compiling GRDB ValueObservationScheduler.swift
+[199/290] Compiling GRDB resource_bundle_accessor.swift
+[203/290] Compiling GRDB Data.swift
+[204/290] Compiling GRDB DatabaseDateComponents.swift
+[205/290] Compiling GRDB DatabaseValueConvertible+ReferenceConvertible.swift
+[206/290] Compiling GRDB Date.swift
+[207/290] Compiling GRDB Decimal.swift
+[208/290] Compiling GRDB NSData.swift
+[209/290] Compiling GRDB NSNull.swift
+[210/290] Compiling GRDB NSNumber.swift
+[211/290] Compiling GRDB NSString.swift
+[212/290] Compiling GRDB SQLiteDateParser.swift
+[213/290] Compiling GRDB URL.swift
+[214/290] Compiling GRDB UUID.swift
+[215/290] Compiling GRDB DatabaseValueConvertible+Decodable.swift
+[216/290] Compiling GRDB DatabaseValueConvertible+Encodable.swift
+[217/290] Compiling GRDB SQLForeignKeyRequest.swift
+[218/290] Compiling GRDB SQLFunctions.swift
+[219/290] Compiling GRDB SQLOperators.swift
+[220/290] Compiling GRDB SQLOrdering.swift
+[221/290] Compiling GRDB SQLRelation.swift
+[222/290] Compiling GRDB SQLSelection.swift
+[223/290] Compiling GRDB SQLSubquery.swift
+[224/290] Compiling GRDB Table.swift
+[225/290] Compiling GRDB SQLColumnGenerator.swift
+[226/290] Compiling GRDB SQLGenerationContext.swift
+[227/290] Compiling GRDB SQLIndexGenerator.swift
+[228/290] Compiling GRDB SQLQueryGenerator.swift
+[229/290] Compiling GRDB SQLTableAlterationGenerator.swift
+[230/290] Compiling GRDB SQLTableGenerator.swift
+[231/290] Compiling GRDB TableAlias.swift
+[232/290] Compiling GRDB SQLInterpolation+QueryInterface.swift
+[233/290] Compiling GRDB ColumnDefinition.swift
+[234/290] Compiling GRDB DatabaseValueConvertible+RawRepresentable.swift
+[235/290] Compiling GRDB JSONRequiredEncoder.swift
+[236/290] Compiling GRDB Optional.swift
+[237/290] Compiling GRDB StandardLibrary.swift
+[238/290] Compiling GRDB TransactionClock.swift
+[239/290] Compiling GRDB TransactionObserver.swift
+[240/290] Compiling GRDB WALSnapshot.swift
+[241/290] Compiling GRDB WALSnapshotTransaction.swift
+[242/290] Compiling GRDB Database+Dump.swift
+[243/290] Compiling GRDB DatabaseReader+dump.swift
+[244/290] Compiling GRDB DumpFormat.swift
+[245/290] Compiling GRDB DebugDumpFormat.swift
+[246/290] Compiling GRDB JSONDumpFormat.swift
+[247/290] Compiling GRDB LineDumpFormat.swift
+[248/290] Compiling GRDB ListDumpFormat.swift
+[249/290] Compiling GRDB QuoteDumpFormat.swift
+[250/290] Compiling GRDB FTS3.swift
+[251/290] Emitting module GRDB
+[252/290] Compiling GRDB FTS3Pattern.swift
+[253/290] Compiling GRDB FTS3TokenizerDescriptor.swift
+[254/290] Compiling GRDB FTS4.swift
+[255/290] Compiling GRDB FTS5.swift
+[256/290] Compiling GRDB FTS5CustomTokenizer.swift
+[257/290] Compiling GRDB FTS5Pattern.swift
+[258/290] Compiling GRDB FTS5Tokenizer.swift
+[259/290] Compiling GRDB FTS5TokenizerDescriptor.swift
+[260/290] Compiling GRDB FTS5WrapperTokenizer.swift
+[261/290] Compiling GRDB Fixits.swift
+[262/290] Compiling GRDB JSONColumn.swift
+[263/290] Compiling GRDB SQLJSONExpressible.swift
+[264/290] Compiling GRDB SQLJSONFunctions.swift
+[265/290] Compiling GRDB DatabaseMigrator.swift
+[266/290] Compiling GRDB Migration.swift
+[267/290] Compiling GRDB FTS3+QueryInterface.swift
+[268/290] Compiling GRDB FTS5+QueryInterface.swift
+[269/290] Compiling GRDB Configuration.swift
+[270/290] Compiling GRDB Cursor.swift
+[271/290] Compiling GRDB Database+SQLCipher.swift
+[272/290] Compiling GRDB Database+Schema.swift
+[273/290] Compiling GRDB Database+Statements.swift
+[274/290] Compiling GRDB Database.swift
+[275/290] Compiling GRDB DatabaseBackupProgress.swift
+[276/290] Compiling GRDB DatabaseCollation.swift
+[277/290] Compiling GRDB DatabaseError.swift
+[278/290] Compiling GRDB DatabaseFunction.swift
+[279/290] Compiling GRDB DatabasePool.swift
+[280/290] Compiling GRDB DatabasePublishers.swift
+[281/290] Compiling GRDB DatabaseQueue.swift
+[282/290] Compiling GRDB DatabaseReader.swift
+[283/290] Compiling GRDB DatabaseRegion.swift
+[284/290] Compiling GRDB DatabaseRegionObservation.swift
+[285/290] Compiling GRDB DatabaseSchemaCache.swift
+[286/332] Compiling Hana MarkdownPreviewRenderer.swift
+[287/332] Compiling Hana MixedSearchValidation.swift
+[288/332] Compiling Hana ModeIcon.swift
+[289/332] Compiling Hana NoteEditing.swift
+[290/336] Compiling Hana CollectionExportFixture.swift
+[291/336] Compiling Hana CollectionFixtureHarness.swift
+[292/336] Compiling Hana CollectionLocation.swift
+[293/336] Compiling Hana CollectionRecovery.swift
+[294/336] Compiling Hana CollectionSchema.swift
+[295/336] Compiling Hana CollectionSnapshotFixture.swift
+[296/336] Compiling Hana CollectionSnapshots.swift
+[297/336] Compiling Hana CollectionStore.swift
+[298/336] Compiling Hana CoverageValidation.swift
+[299/336] Compiling Hana Diagnostics.swift
+[300/336] Compiling Hana ApplicationCatalog.swift
+[301/336] Compiling Hana ArchiveWorkspace.swift
+[302/336] Compiling Hana BarStyle.swift
+[303/336] Compiling Hana CaptureSession.swift
+[304/336] Compiling Hana CollectionExport.swift
+[305/336] Compiling Hana Search.swift
+[306/336] Compiling Hana SearchCorrectnessValidation.swift
+[307/336] Compiling Hana SearchName.swift
+[308/336] Compiling Hana SearchResultsView.swift
+[309/336] Compiling Hana NotePreview.swift
+[310/336] Compiling Hana NotePreviewSession.swift
+[311/336] Compiling Hana NoteScroller.swift
+[312/336] Compiling Hana NoteWindowController.swift
+[313/336] Compiling Hana NoteWindowValidation.swift
+[314/336] Compiling Hana OpenNoteCaptureValidation.swift
+[315/336] Compiling Hana PerformanceValidation.swift
+[316/336] Compiling Hana ResultIcons.swift
+[317/336] Emitting module Hana
+[318/336] Compiling Hana DisplayPlacement.swift
+[319/336] Compiling Hana FocusedWindowGeometry.swift
+[320/336] Compiling Hana GlobalShortcut.swift
+[321/336] Compiling Hana HanaApp.swift
+[322/336] Compiling Hana HanaColor.swift
+[323/336] Compiling Hana HanaFont.swift
+[324/336] Compiling Hana HanaRadius.swift
+[325/336] Compiling Hana HanaShadow.swift
+[326/336] Compiling Hana MacInteraction.swift
+[327/336] Compiling Hana MainWindowValidation.swift
+[328/336] Compiling Hana SegmentedControl.swift
+[329/336] Compiling Hana SpotlightSource.swift
+[330/336] Compiling Hana TaskWorkspace.swift
+[331/336] Compiling Hana WorkingWindowController.swift
+[331/336] Write Objects.LinkFileList
+[332/336] Linking Hana
+[333/336] Applying Hana
+[335/379] Compiling HanaTests MainWindowTests.swift
+[336/379] Compiling HanaTests MarkdownPreviewTests.swift
+[337/379] Compiling HanaTests ModeIconTests.swift
+[338/379] Compiling HanaTests NativeEditingTests.swift
+[339/379] Compiling HanaTests NativeWindowSlot.swift
+[340/383] Compiling HanaTests OrganizedCollectionFixture.swift
+[341/383] Compiling HanaTests ResultIconsTests.swift
+[342/383] Compiling HanaTests SearchExclusionTests.swift
+[343/383] Compiling HanaTests SearchRankingTests.swift
+[344/383] Compiling HanaTests NoteSaveSafetyTests.swift
+[345/383] Compiling HanaTests NoteSaveTests.swift
+[346/383] Compiling HanaTests NoteWindowTests.swift
+[347/383] Compiling HanaTests OpenNoteCaptureTests.swift
+[348/383] Compiling HanaTests OpenNoteOrganizationTests.swift
+[349/383] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[350/383] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[351/383] Compiling HanaTests CollectionSnapshotTests.swift
+[352/383] Compiling HanaTests CollectionStoreOpeningTests.swift
+[353/383] Compiling HanaTests CollectionStoreTests.swift
+[354/383] Compiling HanaTests TaskWorkspaceOrderTests.swift
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:7:21: error: cannot find 'WorkingWindowsOptions' in scope
+ 5 | struct WorkingWindowsValidationTests {
+ 6 |     @Test func fixtureArgumentsNeverFallThroughToLiveLaunch() throws {
+ 7 |         #expect(try WorkingWindowsOptions.parse(["--diagnostics"]) == nil)
+   |                     `- error: cannot find 'WorkingWindowsOptions' in scope
+ 8 |         let valid = ["--validate-working-windows", "--working-windows-interactive", "--working-windows-fixture-root", "/tmp/fixture", "--working-windows-report", "/tmp/report.jsonl"]
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:9:21: error: cannot find 'WorkingWindowsOptions' in scope
+ 7 |         #expect(try WorkingWindowsOptions.parse(["--diagnostics"]) == nil)
+ 8 |         let valid = ["--validate-working-windows", "--working-windows-interactive", "--working-windows-fixture-root", "/tmp/fixture", "--working-windows-report", "/tmp/report.jsonl"]
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+   |                     `- error: cannot find 'WorkingWindowsOptions' in scope
+10 |         for invalid in [Array(valid.dropFirst()), Array(valid.dropLast()), ["--validate-working-windows"], valid + ["--working-windows-smoke-write"], valid + ["--working-windows-report", "/tmp/other"], valid + ["--working-windows-unknown"], valid + ["--validate-main-window"], valid.map { $0 == "/tmp/fixture" ? "relative" : $0 }] {
+11 |             #expect(throws: (any Error).self) { try WorkingWindowsOptions.parse(invalid) }
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:11:53: error: cannot find 'WorkingWindowsOptions' in scope
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+10 |         for invalid in [Array(valid.dropFirst()), Array(valid.dropLast()), ["--validate-working-windows"], valid + ["--working-windows-smoke-write"], valid + ["--working-windows-report", "/tmp/other"], valid + ["--working-windows-unknown"], valid + ["--validate-main-window"], valid.map { $0 == "/tmp/fixture" ? "relative" : $0 }] {
+11 |             #expect(throws: (any Error).self) { try WorkingWindowsOptions.parse(invalid) }
+   |                                                     `- error: cannot find 'WorkingWindowsOptions' in scope
+12 |         }
+13 |     }
+[355/383] Compiling HanaTests TaskWorkspaceTests.swift
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:7:21: error: cannot find 'WorkingWindowsOptions' in scope
+ 5 | struct WorkingWindowsValidationTests {
+ 6 |     @Test func fixtureArgumentsNeverFallThroughToLiveLaunch() throws {
+ 7 |         #expect(try WorkingWindowsOptions.parse(["--diagnostics"]) == nil)
+   |                     `- error: cannot find 'WorkingWindowsOptions' in scope
+ 8 |         let valid = ["--validate-working-windows", "--working-windows-interactive", "--working-windows-fixture-root", "/tmp/fixture", "--working-windows-report", "/tmp/report.jsonl"]
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:9:21: error: cannot find 'WorkingWindowsOptions' in scope
+ 7 |         #expect(try WorkingWindowsOptions.parse(["--diagnostics"]) == nil)
+ 8 |         let valid = ["--validate-working-windows", "--working-windows-interactive", "--working-windows-fixture-root", "/tmp/fixture", "--working-windows-report", "/tmp/report.jsonl"]
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+   |                     `- error: cannot find 'WorkingWindowsOptions' in scope
+10 |         for invalid in [Array(valid.dropFirst()), Array(valid.dropLast()), ["--validate-working-windows"], valid + ["--working-windows-smoke-write"], valid + ["--working-windows-report", "/tmp/other"], valid + ["--working-windows-unknown"], valid + ["--validate-main-window"], valid.map { $0 == "/tmp/fixture" ? "relative" : $0 }] {
+11 |             #expect(throws: (any Error).self) { try WorkingWindowsOptions.parse(invalid) }
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:11:53: error: cannot find 'WorkingWindowsOptions' in scope
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+10 |         for invalid in [Array(valid.dropFirst()), Array(valid.dropLast()), ["--validate-working-windows"], valid + ["--working-windows-smoke-write"], valid + ["--working-windows-report", "/tmp/other"], valid + ["--working-windows-unknown"], valid + ["--validate-main-window"], valid.map { $0 == "/tmp/fixture" ? "relative" : $0 }] {
+11 |             #expect(throws: (any Error).self) { try WorkingWindowsOptions.parse(invalid) }
+   |                                                     `- error: cannot find 'WorkingWindowsOptions' in scope
+12 |         }
+13 |     }
+[356/383] Compiling HanaTests TestClock.swift
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:7:21: error: cannot find 'WorkingWindowsOptions' in scope
+ 5 | struct WorkingWindowsValidationTests {
+ 6 |     @Test func fixtureArgumentsNeverFallThroughToLiveLaunch() throws {
+ 7 |         #expect(try WorkingWindowsOptions.parse(["--diagnostics"]) == nil)
+   |                     `- error: cannot find 'WorkingWindowsOptions' in scope
+ 8 |         let valid = ["--validate-working-windows", "--working-windows-interactive", "--working-windows-fixture-root", "/tmp/fixture", "--working-windows-report", "/tmp/report.jsonl"]
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:9:21: error: cannot find 'WorkingWindowsOptions' in scope
+ 7 |         #expect(try WorkingWindowsOptions.parse(["--diagnostics"]) == nil)
+ 8 |         let valid = ["--validate-working-windows", "--working-windows-interactive", "--working-windows-fixture-root", "/tmp/fixture", "--working-windows-report", "/tmp/report.jsonl"]
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+   |                     `- error: cannot find 'WorkingWindowsOptions' in scope
+10 |         for invalid in [Array(valid.dropFirst()), Array(valid.dropLast()), ["--validate-working-windows"], valid + ["--working-windows-smoke-write"], valid + ["--working-windows-report", "/tmp/other"], valid + ["--working-windows-unknown"], valid + ["--validate-main-window"], valid.map { $0 == "/tmp/fixture" ? "relative" : $0 }] {
+11 |             #expect(throws: (any Error).self) { try WorkingWindowsOptions.parse(invalid) }
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:11:53: error: cannot find 'WorkingWindowsOptions' in scope
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+10 |         for invalid in [Array(valid.dropFirst()), Array(valid.dropLast()), ["--validate-working-windows"], valid + ["--working-windows-smoke-write"], valid + ["--working-windows-report", "/tmp/other"], valid + ["--working-windows-unknown"], valid + ["--validate-main-window"], valid.map { $0 == "/tmp/fixture" ? "relative" : $0 }] {
+11 |             #expect(throws: (any Error).self) { try WorkingWindowsOptions.parse(invalid) }
+   |                                                     `- error: cannot find 'WorkingWindowsOptions' in scope
+12 |         }
+13 |     }
+[357/383] Compiling HanaTests WorkingWindowsValidationTests.swift
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:7:21: error: cannot find 'WorkingWindowsOptions' in scope
+ 5 | struct WorkingWindowsValidationTests {
+ 6 |     @Test func fixtureArgumentsNeverFallThroughToLiveLaunch() throws {
+ 7 |         #expect(try WorkingWindowsOptions.parse(["--diagnostics"]) == nil)
+   |                     `- error: cannot find 'WorkingWindowsOptions' in scope
+ 8 |         let valid = ["--validate-working-windows", "--working-windows-interactive", "--working-windows-fixture-root", "/tmp/fixture", "--working-windows-report", "/tmp/report.jsonl"]
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:9:21: error: cannot find 'WorkingWindowsOptions' in scope
+ 7 |         #expect(try WorkingWindowsOptions.parse(["--diagnostics"]) == nil)
+ 8 |         let valid = ["--validate-working-windows", "--working-windows-interactive", "--working-windows-fixture-root", "/tmp/fixture", "--working-windows-report", "/tmp/report.jsonl"]
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+   |                     `- error: cannot find 'WorkingWindowsOptions' in scope
+10 |         for invalid in [Array(valid.dropFirst()), Array(valid.dropLast()), ["--validate-working-windows"], valid + ["--working-windows-smoke-write"], valid + ["--working-windows-report", "/tmp/other"], valid + ["--working-windows-unknown"], valid + ["--validate-main-window"], valid.map { $0 == "/tmp/fixture" ? "relative" : $0 }] {
+11 |             #expect(throws: (any Error).self) { try WorkingWindowsOptions.parse(invalid) }
+
+<ticket-worktree>/Tests/HanaTests/WorkingWindowsValidationTests.swift:11:53: error: cannot find 'WorkingWindowsOptions' in scope
+ 9 |         #expect(try WorkingWindowsOptions.parse(valid)?.mode == .interactive)
+10 |         for invalid in [Array(valid.dropFirst()), Array(valid.dropLast()), ["--validate-working-windows"], valid + ["--working-windows-smoke-write"], valid + ["--working-windows-report", "/tmp/other"], valid + ["--working-windows-unknown"], valid + ["--validate-main-window"], valid.map { $0 == "/tmp/fixture" ? "relative" : $0 }] {
+11 |             #expect(throws: (any Error).self) { try WorkingWindowsOptions.parse(invalid) }
+   |                                                     `- error: cannot find 'WorkingWindowsOptions' in scope
+12 |         }
+13 |     }
+[358/383] Compiling HanaTests NoteEditingTests.swift
+[359/383] Compiling HanaTests NoteModeTests.swift
+[360/383] Compiling HanaTests NoteOrganizationTests.swift
+[361/383] Compiling HanaTests NotePreviewTests.swift
+[362/383] Compiling HanaTests NoteSaveSafetyNativeTests.swift
+[363/383] Compiling HanaTests CaptureSafetyNativeTests.swift
+[364/383] Compiling HanaTests CaptureSafetyTests.swift
+[365/383] Compiling HanaTests CaptureSessionTests.swift
+[366/383] Compiling HanaTests CollectionExportHarnessTests.swift
+[367/383] Compiling HanaTests CollectionExportTests.swift
+[368/383] Compiling HanaTests SearchResponsivenessTests.swift
+[369/383] Compiling HanaTests SearchTests.swift
+[370/383] Compiling HanaTests SearchTypingGapTests.swift
+[371/383] Compiling HanaTests SpotlightStageTests.swift
+[372/383] Compiling HanaTests CompletedArchiveTests.swift
+<ticket-worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[373/383] Compiling HanaTests DisplayPlacementTests.swift
+<ticket-worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[374/383] Compiling HanaTests IndependentExportDecoder.swift
+<ticket-worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[375/383] Compiling HanaTests MacInteractionTests.swift
+<ticket-worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[376/383] Compiling HanaTests MainNoteOrganizationTests.swift
+<ticket-worktree>/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[377/383] Compiling HanaTests SuggestionInteractionTests.swift
+[378/383] Compiling HanaTests TaskLifecycleTests.swift
+[379/383] Compiling HanaTests TaskOrderingTests.swift
+[380/383] Compiling HanaTests TaskSaveTests.swift
+[381/383] Emitting module HanaTests
+error: fatalError

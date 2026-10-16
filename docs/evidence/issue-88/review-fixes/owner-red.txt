@@ -1,0 +1,17 @@
+Build complete! (2.14s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite OpenNoteCaptureTests started.
+◇ Suite NoteEditingLifetimeReviewTests started.
+◇ Test ownerFlushKeepsAnUnclosedDraftAfterCallerRelease() started.
+◇ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() started.
+✘ Test ownerFlushKeepsAnUnclosedDraftAfterCallerRelease() recorded an issue at NoteEditingLifetimeReviewTests.swift:42:9: Expectation failed: (retained → nil) != nil
+✘ Test ownerFlushKeepsAnUnclosedDraftAfterCallerRelease() recorded an issue at NoteEditingLifetimeReviewTests.swift:44:9: Expectation failed: try await store.read(.note(note.id), in: store.generation)?.body == "Owned draft after caller release"
+✘ Test ownerFlushKeepsAnUnclosedDraftAfterCallerRelease() failed after 0.037 seconds with 2 issues.
+✘ Suite NoteEditingLifetimeReviewTests failed after 0.037 seconds with 2 issues.
+✘ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+✘ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() recorded an issue at OpenNoteCaptureTests.swift:236:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+✘ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() failed after 3.222 seconds with 2 issues.
+✘ Suite OpenNoteCaptureTests failed after 3.223 seconds with 2 issues.
+✘ Test run with 2 tests in 2 suites failed after 3.223 seconds with 4 issues.

@@ -1,0 +1,271 @@
+[0/1] Planning build
+Building for debugging...
+[0/5] Write swift-version--1AB21518FC5DEDBE.txt
+[2/222] Compiling GRDB TransactionClock.swift
+[3/222] Compiling GRDB TransactionObserver.swift
+[4/222] Compiling GRDB WALSnapshot.swift
+[5/222] Compiling GRDB WALSnapshotTransaction.swift
+[6/222] Compiling GRDB Database+Dump.swift
+[7/222] Compiling GRDB DatabaseReader+dump.swift
+[8/222] Compiling GRDB DumpFormat.swift
+[9/222] Compiling GRDB DatabaseRegion.swift
+[10/222] Compiling GRDB DatabaseRegionObservation.swift
+[11/222] Compiling GRDB DatabaseSchemaCache.swift
+[12/222] Compiling GRDB DatabaseValueConvertible+RawRepresentable.swift
+[13/222] Compiling GRDB JSONRequiredEncoder.swift
+[14/222] Compiling GRDB Optional.swift
+[15/222] Compiling GRDB StandardLibrary.swift
+[16/222] Compiling GRDB DatabaseCollation.swift
+[17/222] Compiling GRDB DatabaseError.swift
+[18/222] Compiling GRDB DatabaseFunction.swift
+[19/222] Compiling GRDB DatabasePool.swift
+[20/222] Compiling GRDB DatabasePublishers.swift
+[21/222] Compiling GRDB DatabaseQueue.swift
+[22/222] Compiling GRDB DatabaseReader.swift
+[23/229] Compiling GRDB FTS3TokenizerDescriptor.swift
+[24/229] Compiling GRDB FTS4.swift
+[25/229] Compiling GRDB FTS5.swift
+[26/229] Compiling GRDB FTS5CustomTokenizer.swift
+[27/229] Compiling GRDB FTS5Pattern.swift
+[28/229] Compiling GRDB FTS5Tokenizer.swift
+[29/229] Compiling GRDB FTS5TokenizerDescriptor.swift
+[30/229] Compiling GRDB FTS3+QueryInterface.swift
+[31/229] Compiling GRDB FTS5+QueryInterface.swift
+[32/229] Compiling GRDB ForeignKey.swift
+[33/229] Compiling GRDB Association.swift
+[34/229] Compiling GRDB AssociationAggregate.swift
+[35/229] Compiling GRDB BelongsToAssociation.swift
+[36/229] Compiling GRDB HasManyAssociation.swift
+[37/229] Compiling GRDB Configuration.swift
+[38/229] Compiling GRDB Cursor.swift
+[39/229] Compiling GRDB Database+SQLCipher.swift
+[40/229] Compiling GRDB Database+Schema.swift
+[41/229] Compiling GRDB Database+Statements.swift
+[42/229] Compiling GRDB Database.swift
+[43/229] Compiling GRDB DatabaseBackupProgress.swift
+[44/229] Compiling GRDB DebugDumpFormat.swift
+[45/229] Compiling GRDB JSONDumpFormat.swift
+[46/229] Compiling GRDB LineDumpFormat.swift
+[47/229] Compiling GRDB ListDumpFormat.swift
+[48/229] Compiling GRDB QuoteDumpFormat.swift
+[49/229] Compiling GRDB FTS3.swift
+[50/229] Compiling GRDB FTS3Pattern.swift
+[51/229] Compiling GRDB FTS5WrapperTokenizer.swift
+[52/229] Compiling GRDB Fixits.swift
+[53/229] Compiling GRDB JSONColumn.swift
+[54/229] Compiling GRDB SQLJSONExpressible.swift
+[55/229] Compiling GRDB SQLJSONFunctions.swift
+[56/229] Compiling GRDB DatabaseMigrator.swift
+[57/229] Compiling GRDB Migration.swift
+[58/229] Emitting module Markdown
+[59/229] Compiling GRDB MutablePersistableRecord+Update.swift
+[60/229] Compiling GRDB MutablePersistableRecord+Upsert.swift
+[61/229] Compiling GRDB MutablePersistableRecord.swift
+[62/229] Compiling GRDB PersistableRecord+Insert.swift
+[63/229] Compiling GRDB PersistableRecord+Save.swift
+[64/229] Compiling GRDB PersistableRecord+Upsert.swift
+[65/229] Compiling GRDB PersistableRecord.swift
+[66/229] Compiling GRDB Record.swift
+[67/229] Compiling GRDB TableRecord.swift
+[68/229] Compiling GRDB CaseInsensitiveIdentifier.swift
+[69/229] Compiling GRDB Inflections+English.swift
+[70/229] Compiling GRDB Inflections.swift
+[71/229] Compiling GRDB Mutex.swift
+[72/229] Compiling GRDB OnDemandFuture.swift
+[73/229] Compiling GRDB OrderedDictionary.swift
+[74/229] Compiling GRDB Pool.swift
+[75/245] Compiling Markdown CollectionExtensions.swift
+[76/245] Compiling Markdown StringExtensions.swift
+[77/245] Compiling Markdown MarkupVisitor.swift
+[78/245] Compiling Markdown MarkupWalker.swift
+[79/245] Compiling Markdown HTMLFormatter.swift
+[80/245] Compiling Markdown MarkupFormatter.swift
+[81/245] Compiling Markdown MarkupTreeDumper.swift
+[82/245] Compiling GRDB HasManyThroughAssociation.swift
+[83/245] Compiling GRDB HasOneAssociation.swift
+[84/245] Compiling GRDB HasOneThroughAssociation.swift
+[85/245] Compiling GRDB JoinAssociation.swift
+[86/245] Compiling GRDB CommonTableExpression.swift
+[87/245] Compiling GRDB QueryInterfaceRequest.swift
+[88/245] Compiling GRDB RequestProtocols.swift
+[106/245] Compiling GRDB StatementAuthorizer.swift
+[107/245] Compiling GRDB StatementColumnConvertible.swift
+[108/245] Compiling GRDB CGFloat.swift
+[109/245] Compiling GRDB Data.swift
+[110/245] Compiling GRDB DatabaseDateComponents.swift
+[111/245] Compiling GRDB DatabaseValueConvertible+ReferenceConvertible.swift
+[112/245] Compiling GRDB Date.swift
+[113/245] Compiling GRDB Decimal.swift
+[114/245] Compiling GRDB NSData.swift
+[115/245] Compiling GRDB NSNull.swift
+[116/245] Compiling GRDB NSNumber.swift
+[117/245] Compiling GRDB NSString.swift
+[118/245] Compiling GRDB SQLiteDateParser.swift
+[119/245] Compiling GRDB URL.swift
+[120/245] Compiling GRDB UUID.swift
+[121/245] Compiling GRDB DatabaseValueConvertible+Decodable.swift
+[122/245] Compiling GRDB DatabaseValueConvertible+Encodable.swift
+[142/245] Compiling GRDB SQLOperators.swift
+[143/245] Compiling GRDB SQLOrdering.swift
+[144/245] Compiling GRDB SQLRelation.swift
+[145/245] Compiling GRDB SQLSelection.swift
+[146/245] Compiling GRDB SQLSubquery.swift
+[147/245] Compiling GRDB Table.swift
+[148/245] Compiling GRDB SQLColumnGenerator.swift
+[149/245] Compiling GRDB SQLGenerationContext.swift
+[150/245] Compiling GRDB SQLIndexGenerator.swift
+[151/245] Compiling GRDB SQLQueryGenerator.swift
+[152/245] Compiling GRDB SQLTableAlterationGenerator.swift
+[153/245] Compiling GRDB SQLTableGenerator.swift
+[154/245] Compiling GRDB TableAlias.swift
+[155/245] Compiling GRDB SQLInterpolation+QueryInterface.swift
+[156/245] Compiling GRDB ColumnDefinition.swift
+[157/245] Compiling GRDB ReadWriteLock.swift
+[158/245] Compiling GRDB ReceiveValuesOn.swift
+[159/245] Compiling GRDB Refinable.swift
+[160/245] Compiling GRDB Utils.swift
+[161/245] Compiling GRDB DatabaseCancellable.swift
+[162/245] Compiling GRDB ValueConcurrentObserver.swift
+[163/245] Compiling GRDB ValueWriteOnlyObserver.swift
+[164/245] Compiling GRDB Fetch.swift
+[165/245] Compiling GRDB Map.swift
+[166/245] Compiling GRDB RemoveDuplicates.swift
+[167/245] Compiling GRDB Trace.swift
+[168/245] Compiling GRDB ValueReducer.swift
+[169/245] Compiling GRDB SharedValueObservation.swift
+[170/245] Compiling GRDB ValueObservation.swift
+[171/245] Compiling GRDB ValueObservationScheduler.swift
+[172/245] Compiling GRDB resource_bundle_accessor.swift
+[173/245] Compiling GRDB Database+SchemaDefinition.swift
+[174/245] Compiling GRDB ForeignKeyDefinition.swift
+[175/245] Compiling GRDB IndexDefinition.swift
+[176/245] Compiling GRDB TableAlteration.swift
+[177/245] Compiling GRDB TableDefinition.swift
+[178/245] Compiling GRDB VirtualTableModule.swift
+[179/245] Compiling GRDB TableRecord+Association.swift
+[180/245] Compiling GRDB TableRecord+QueryInterfaceRequest.swift
+[181/245] Compiling GRDB EncodableRecord+Encodable.swift
+[182/245] Compiling GRDB EncodableRecord.swift
+[183/245] Compiling GRDB FetchableRecord+Decodable.swift
+[184/245] Compiling GRDB FetchableRecord+TableRecord.swift
+[185/245] Compiling GRDB FetchableRecord.swift
+[186/245] Compiling GRDB MutablePersistableRecord+DAO.swift
+[187/245] Compiling GRDB MutablePersistableRecord+Delete.swift
+[188/245] Compiling GRDB MutablePersistableRecord+Insert.swift
+[189/245] Compiling GRDB MutablePersistableRecord+Save.swift
+[190/245] Compiling GRDB DatabaseSchemaSource.swift
+[191/245] Compiling GRDB DatabaseSnapshot.swift
+[192/245] Compiling GRDB DatabaseSnapshotPool.swift
+[193/245] Compiling GRDB DatabaseValue.swift
+[194/245] Compiling GRDB DatabaseValueConvertible.swift
+[195/245] Compiling GRDB DatabaseWriter.swift
+[196/245] Compiling GRDB DispatchQueueActor.swift
+[197/245] Compiling GRDB FetchRequest.swift
+[198/245] Compiling GRDB Row.swift
+[199/245] Compiling GRDB RowAdapter.swift
+[200/245] Compiling GRDB RowDecodingError.swift
+[201/245] Compiling GRDB SQL.swift
+[202/245] Compiling GRDB SQLInterpolation.swift
+[203/245] Compiling GRDB SQLRequest.swift
+[204/245] Compiling GRDB SchedulingWatchdog.swift
+[205/245] Compiling GRDB SerializedDatabase.swift
+[206/245] Compiling GRDB Statement.swift
+[207/245] Emitting module GRDB
+[242/290] Compiling Hana PerformanceValidation.swift
+[243/290] Compiling Hana ResultIcons.swift
+[244/290] Compiling Hana Search.swift
+[245/290] Compiling Hana SearchCorrectnessValidation.swift
+[246/290] Compiling Hana SearchName.swift
+[247/294] Compiling Hana MarkdownPreviewRenderer.swift
+[248/294] Compiling Hana MixedSearchValidation.swift
+[249/294] Compiling Hana ModeIcon.swift
+[250/294] Compiling Hana NoteEditing.swift
+[251/294] Compiling Hana NotePreview.swift
+[252/294] Compiling Hana NotePreviewSession.swift
+[253/294] Compiling Hana NoteScroller.swift
+[254/294] Compiling Hana NoteWindowController.swift
+[255/294] Compiling Hana NoteWindowValidation.swift
+[256/294] Compiling Hana OpenNoteCaptureValidation.swift
+[257/294] Compiling Hana CollectionExportFixture.swift
+[258/294] Compiling Hana CollectionFixtureHarness.swift
+[259/294] Compiling Hana CollectionLocation.swift
+[260/294] Compiling Hana CollectionRecovery.swift
+[261/294] Compiling Hana CollectionSchema.swift
+[262/294] Emitting module Hana
+[263/294] Compiling Hana DisplayPlacement.swift
+[264/294] Compiling Hana FocusedWindowGeometry.swift
+[265/294] Compiling Hana GlobalShortcut.swift
+[266/294] Compiling Hana HanaApp.swift
+[267/294] Compiling Hana HanaColor.swift
+[268/294] Compiling Hana SearchResultsView.swift
+[269/294] Compiling Hana SegmentedControl.swift
+[270/294] Compiling Hana SpotlightSource.swift
+[271/294] Compiling Hana TaskWorkspace.swift
+[272/294] Compiling Hana ApplicationCatalog.swift
+[273/294] Compiling Hana ArchiveWorkspace.swift
+[274/294] Compiling Hana BarStyle.swift
+[275/294] Compiling Hana CaptureSession.swift
+[276/294] Compiling Hana CollectionExport.swift
+[277/294] Compiling Hana CollectionSnapshotFixture.swift
+[278/294] Compiling Hana CollectionSnapshots.swift
+[279/294] Compiling Hana CollectionStore.swift
+[280/294] Compiling Hana CoverageValidation.swift
+[281/294] Compiling Hana Diagnostics.swift
+[282/294] Compiling Hana WorkingWindowController.swift
+[283/294] Compiling Hana WorkingWindowsFixture.swift
+[284/294] Compiling Hana WorkingWindowsOptions.swift
+[285/294] Compiling Hana WorkingWindowsValidation.swift
+[286/294] Compiling Hana HanaFont.swift
+[287/294] Compiling Hana HanaRadius.swift
+[288/294] Compiling Hana HanaShadow.swift
+[289/294] Compiling Hana MacInteraction.swift
+[290/294] Compiling Hana MainWindowValidation.swift
+[290/294] Linking Hana
+[291/294] Applying Hana
+[293/295] Emitting module HanaTests
+[293/295] Write Objects.LinkFileList
+[294/295] Linking HanaPackageTests
+Build complete! (8.82s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite NotePreviewTests started.
+◇ Suite NoteWindowTests started.
+◇ Suite TaskWorkspaceOrderTests started.
+◇ Suite WorkingWindowsValidationTests started.
+◇ Test fixtureRefusesUnmarkedAndAliasedRoots() started.
+◇ Test persistentFixtureKeepsIDsEditsAndOrganizationWithoutReseeding() started.
+◇ Test fixtureArgumentsNeverFallThroughToLiveLaunch() started.
+◇ Test staleParsesCannotReplaceNewTextOrAReopenedPreview() started.
+✔ Test fixtureArgumentsNeverFallThroughToLiveLaunch() passed after 0.001 seconds.
+✔ Test fixtureRefusesUnmarkedAndAliasedRoots() passed after 0.002 seconds.
+✔ Test persistentFixtureKeepsIDsEditsAndOrganizationWithoutReseeding() passed after 0.136 seconds.
+✔ Suite WorkingWindowsValidationTests passed after 0.136 seconds.
+✔ Test staleParsesCannotReplaceNewTextOrAReopenedPreview() passed after 0.446 seconds.
+◇ Test nativeToggleKeepsSavedBytesAndLinksOpenOnlyOnExplicitClick() started.
+✔ Test nativeToggleKeepsSavedBytesAndLinksOpenOnlyOnExplicitClick() passed after 0.200 seconds.
+✔ Suite NotePreviewTests passed after 0.647 seconds.
+◇ Test keyboardOrderingKeepsListsIndependentAndSurvivesReopen() started.
+✔ Test keyboardOrderingKeepsListsIndependentAndSurvivesReopen() passed after 0.300 seconds.
+◇ Test dragMovesBeforeTargetOrToEndAndRejectsAnotherList() started.
+✔ Test dragMovesBeforeTargetOrToEndAndRejectsAnotherList() passed after 0.241 seconds.
+◇ Test staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .createAtTop, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .createAtTop, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveIn, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveIn, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveOut, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .moveOut, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .complete, isDrag → false to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+◇ Test case passing 2 arguments change → .complete, isDrag → true to staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) started.
+✔ Test staleReorderRefreshesWithoutRetryOrLostTasks(change:isDrag:) with 8 test cases passed after 1.349 seconds.
+◇ Test moveUpDownMenusRouteOrderingAndYieldToInlineEditing() started.
+✔ Test moveUpDownMenusRouteOrderingAndYieldToInlineEditing() passed after 0.225 seconds.
+✔ Suite TaskWorkspaceOrderTests passed after 2.763 seconds.
+◇ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() started.
+✔ Test oneNativeWindowKeepsTextKitTwoUndoCompositionAndNewlines() passed after 0.180 seconds.
+◇ Test aOneMegabyteFixtureCanOpenEditAndFlush() started.
+NOTE_PROFILE bytes=1140000 open=0.112667084 seconds insert=0.14758625 seconds flush=0.327558291 seconds
+✔ Test aOneMegabyteFixtureCanOpenEditAndFlush() passed after 0.659 seconds.
+✔ Suite NoteWindowTests passed after 3.604 seconds.
+✔ Test run with 11 tests in 4 suites passed after 3.604 seconds.

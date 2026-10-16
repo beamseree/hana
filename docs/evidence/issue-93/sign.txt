@@ -1,0 +1,3 @@
+/tmp/hana-spec-88/Hana93.app: replacing existing signature
+/tmp/hana-spec-88/Hana93.app: valid on disk
+/tmp/hana-spec-88/Hana93.app: satisfies its Designated Requirement
