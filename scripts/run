@@ -7,7 +7,20 @@ if pgrep -x Hana >/dev/null; then
     exit 1
 fi
 ./scripts/build
+if [[ -d "$app" ]]; then
+    installed_requirement="$(/usr/bin/codesign -d -r- "$app" 2>/dev/null || true)"
+    new_requirement="$(/usr/bin/codesign -d -r- build/Hana.app 2>/dev/null)"
+    if [[ "$installed_requirement" == *'designated => cdhash '* ]]; then
+        echo 'Migrating Hana to a persistent signing identity; existing privacy grants need one final approval.'
+    elif [[ "$installed_requirement" != "$new_requirement" && "${HANA_ALLOW_SIGNING_CHANGE:-0}" != 1 ]]; then
+        echo 'Hana signing identity changed. Installation stopped to preserve existing permissions.' >&2
+        echo 'Keep the existing signer, or use HANA_ALLOW_SIGNING_CHANGE=1 for an intentional migration.' >&2
+        exit 1
+    fi
+fi
 mkdir -p "$HOME/Applications"
-/usr/bin/ditto build/Hana.app "$app"
+# Mirror the verified bundle: ditto over an old install retains removed assets,
+# which invalidates the new signature's sealed resources.
+/usr/bin/rsync -a --delete build/Hana.app/ "$app/"
 /usr/bin/codesign --verify --deep --strict --verbose=2 "$app"
 /usr/bin/open "$app" --args "$@"

@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+"""Check identity continuity across different Hana bundles without launching them."""
+from pathlib import Path
+import os
+import plistlib
+import re
+import shutil
+import subprocess
+import tempfile
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def run(*args):
+    result = subprocess.run(args, check=True, text=True, capture_output=True)
+    return result.stdout + result.stderr
+
+
+with tempfile.TemporaryDirectory(prefix="hana-signing-validation-") as temporary:
+    apps = []
+    requirements = []
+    hashes = []
+    for version in ("signing-check-1", "signing-check-2"):
+        app = Path(temporary) / version / "Hana.app"
+        shutil.copytree(ROOT / "build/Hana.app", app, symlinks=True)
+        info = app / "Contents/Info.plist"
+        values = plistlib.loads(info.read_bytes())
+        values["CFBundleVersion"] = version
+        info.write_bytes(plistlib.dumps(values))
+        run(str(ROOT / "scripts/sign-app"), str(app))
+        requirement = re.search(r"designated => (.+)", run("/usr/bin/codesign", "-d", "-r-", str(app)))
+        code_hash = re.search(r"^CDHash=(.+)$", run("/usr/bin/codesign", "-d", "-vvvv", str(app)), re.MULTILINE)
+        if requirement is None or code_hash is None:
+            raise SystemExit("FAIL: missing signature identity or code hash")
+        apps.append(app)
+        requirements.append(requirement.group(1))
+        hashes.append(code_hash.group(1))
+    if hashes[0] == hashes[1]:
+        raise SystemExit("FAIL: fixture bundles must have different code hashes")
+    if requirements[0] != requirements[1] or "cdhash" in requirements[0]:
+        raise SystemExit("FAIL: update changed Hana's designated requirement")
+    for app in apps:
+        for requirement in requirements:
+            run("/usr/bin/codesign", "--verify", "--strict", "-R=" + requirement, str(app))
+    for identity in ("-", "0" * 40):
+        environment = dict(os.environ, HANA_SIGNING_IDENTITY=identity)
+        rejected = subprocess.run([str(ROOT / "scripts/sign-app"), str(apps[0])],
+                                  env=environment, text=True, capture_output=True)
+        if rejected.returncode == 0:
+            raise SystemExit("FAIL: invalid or unavailable signer was accepted")
+        unchanged = re.search(r"^CDHash=(.+)$", run("/usr/bin/codesign", "-d", "-vvvv", str(apps[0])), re.MULTILINE)
+        if unchanged is None or unchanged.group(1) != hashes[0]:
+            raise SystemExit("FAIL: rejected signing request modified the bundle")
+    print("PASS: two different bundle hashes share one certificate-based designated requirement")
+    print("PASS: both bundles satisfy each other's identity requirement")
+    print("PASS: invalid and unavailable signers fail without modifying the bundle")
+    print(requirements[0])
+    print("Privacy permission retention still requires a user-authorized install/update trial.")
