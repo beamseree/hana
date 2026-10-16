@@ -116,8 +116,11 @@ func validateOpenNoteCapture(register: (MacInteraction) -> Void) async {
         delayed.open(.main)
         try await openCaptureCheck("delayed-main-key") { NSApp.keyWindow === delayed.window(for: .main) }
         let original = delayed.presentBar()
-        _ = try await openCaptureEditor()
+        let originalEditor = try await openCaptureEditor()
         delayed.open(.note(note.id), from: original, focusAtEnd: true)
+        try await openCaptureCheck("superseded-original-panel-hidden") {
+            originalEditor.window?.isVisible == false
+        }
         try await openCaptureCheck("delayed-collection") { completion != nil }
         let current = delayed.presentBar()
         let newerEditor = try await openCaptureEditor()

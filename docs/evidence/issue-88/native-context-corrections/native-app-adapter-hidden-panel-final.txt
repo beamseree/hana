@@ -1,0 +1,27 @@
+Building for debugging...
+[0/6] Write sources
+[2/6] Write swift-version--1AB21518FC5DEDBE.txt
+[4/8] Emitting module Hana
+[5/8] Compiling Hana OpenNoteCaptureValidation.swift
+[5/10] Write Objects.LinkFileList
+[6/10] Linking Hana
+[7/10] Applying Hana
+[9/12] Emitting module HanaTests
+[10/12] Compiling HanaTests NativeAppFixture.swift
+[10/12] Write Objects.LinkFileList
+[11/12] Linking HanaPackageTests
+Build complete! (3.78s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite OpenNoteCaptureTests started.
+◇ Suite MainNoteOrganizationTests started.
+◇ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() started.
+✘ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() recorded an issue at OpenNoteCaptureTests.swift:155:6: Caught error: .childExit(1)
+✘ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() failed after 6.966 seconds with 1 issue.
+✘ Suite OpenNoteCaptureTests failed after 6.966 seconds with 1 issue.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+NATIVE_APP_FIXTURE mode=main-window status=0 marker=main-window.note-menu-assertions-passed sha256=02685bac527a1fdba35b8f4f6a5ab0254421ba15d4b2f57ba44bb3074fd68868
+✔ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 3.573 seconds.
+✔ Suite MainNoteOrganizationTests passed after 10.540 seconds.
+✘ Test run with 2 tests in 2 suites failed after 10.540 seconds with 1 issue.
