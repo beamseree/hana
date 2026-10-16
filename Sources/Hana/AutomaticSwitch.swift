@@ -37,6 +37,12 @@ struct AutomaticSwitch {
         case record(AutomaticSwitchDiagnostics.Event)
     }
     private struct Request { let id: UUID; let started: Duration }
+    private struct DebugRequest {
+        let id: UUID
+        let number: Int
+        let text: String
+        let started: Duration
+    }
     private struct Candidate {
         let verdict: ClassifierVerdict
         let latency: Double?
@@ -44,7 +50,21 @@ struct AutomaticSwitch {
         var cached = false
         /// Set once when a Word-paced answer is handled, even if Search's sources still need to settle.
         var agreementCount: Int? = nil
+        var debugRequest: DebugRequest? = nil
     }
+    private struct DebugDecision {
+        let value: Candidate
+        let outcome: AutomaticSwitchDiagnostics.Outcome
+        let reason: String
+        let agreement: Int
+        let requiredAgreement: Int
+        let relevance: AutomaticSwitchDebugSnapshot.Relevance
+    }
+    private var debugRequests: [UUID: DebugRequest] = [:]
+    private var debugDecision: DebugDecision?
+    private var debugCacheHits = 0
+    private var debugSuspension = "suspended"
+    private var debugReturnReason: String?
     private struct WordRequest {
         let started: Duration
         /// Normalized text, as sent.
@@ -157,6 +177,13 @@ struct AutomaticSwitch {
     }
 
     mutating func handle(_ event: Event) -> [Effect] {
+        // Keep the request's correlation available throughout its terminal
+        // policy event, including stale/cancelled completions.
+        let completedID: UUID? = switch event {
+        case .verdict(let id, _, _), .failed(let id, _, _, _): id
+        default: nil
+        }
+        defer { if let completedID { debugRequests[completedID] = nil } }
         // The intent belongs to this exact editor revision, not a prefix or a
         // subsequent edit. Navigation cancels it even when navigationSuspends is off.
         switch event {
@@ -199,6 +226,7 @@ struct AutomaticSwitch {
             vetoes = [:]
             switchedAt = nil; enterGraceEnds = nil; hadSwitch = false; actedOnText = nil; ended = false
             lastVerdict = .none; lateKind = nil
+            debugDecision = nil; debugCacheHits = 0; debugReturnReason = nil
             return effects
         case .dismissed(let end):
             let wasActive = active
@@ -258,7 +286,7 @@ struct AutomaticSwitch {
             return []
         case .verdict(let id, let verdict, let latency):
             if isWordPaced { return wordPacedCompleted(id: id, verdict: verdict, error: nil, latency: latency) }
-            let value = Candidate(verdict: verdict, latency: latency)
+            let value = Candidate(verdict: verdict, latency: latency, debugRequest: debugRequests[id])
             guard request?.id == id else { return [staleDiagnostic(id: id, value: value)] }
             if let timeout = timeoutIfDue() { return timeout }
             request = nil
@@ -268,13 +296,16 @@ struct AutomaticSwitch {
         case .failed(let id, let kind, let latency, let retryAfter):
             if isWordPaced { return wordPacedCompleted(id: id, verdict: .init(label: .unsure), error: kind, latency: latency, retryAfter: retryAfter) }
             guard request?.id == id else {
-                return [staleDiagnostic(id: id, value: Candidate(verdict: .init(label: .unsure), latency: latency))]
+                return [staleDiagnostic(id: id, value: Candidate(verdict: .init(label: .unsure), latency: latency,
+                    debugRequest: debugRequests[id]))]
             }
             if let timeout = timeoutIfDue() { return timeout }
             request = nil; candidate = nil; agreements = 0; agreementLabel = nil
-            return [diagnostic(Candidate(verdict: .init(label: .unsure), latency: latency), .error, error: kind)]
+            return [diagnostic(Candidate(verdict: .init(label: .unsure), latency: latency,
+                debugRequest: debugRequests[id]), .error, error: kind)]
         case .navigated:
             guard options.navigationSuspends else { return [] }
+            debugSuspension = "suspended after navigation"
             suspended = true; candidate = nil; due = nil
             return cancel()
         case .enter:
@@ -310,6 +341,7 @@ struct AutomaticSwitch {
             return [.swallowEnter] + fireIfDue()
         case .reversed(let method):
             guard eligible, !composing, let switchedAt, mode != .search else { return [] }
+            debugSuspension = "suspended after reversal"
             if isWordPaced, options.reversalBehavior == .blockModeForText, !text.isEmpty {
                 vetoes[mode == .note ? .note : .task] = Self.normalized(text)
             }
@@ -362,6 +394,7 @@ struct AutomaticSwitch {
     /// Both reversal routes reset the same session state and end a switch once.
     private mutating func returnToSearch(recording event: AutomaticSwitchDiagnostics.Event? = nil,
                                          end: AutomaticSwitchDiagnostics.End = .reversed) -> [Effect] {
+        debugReturnReason = end == .withdrawn ? "returned to Search: switch text removed" : "reversed: returned to Search"
         var effects = cancel()
         switchedAt = nil; enterGraceEnds = nil; mode = .search; candidate = nil; due = nil
         switchPoint = nil
@@ -381,7 +414,7 @@ struct AutomaticSwitch {
                 wordRequests[id]?.valid = false
                 unsampledRequests.insert(id)
                 effects += [.cancel(id), diagnostic(Candidate(verdict: .init(label: .unsure),
-                    latency: milliseconds(now() - request.started)), .timeout)]
+                    latency: milliseconds(now() - request.started), debugRequest: debugRequests[id]), .timeout)]
             }
             return effects.isEmpty ? nil : effects
         }
@@ -389,7 +422,7 @@ struct AutomaticSwitch {
         self.request = nil; candidate = nil
         unsampledRequests.insert(request.id)
         return [.cancel(request.id), diagnostic(Candidate(verdict: .init(label: .unsure),
-            latency: milliseconds(now() - request.started)), .timeout)]
+            latency: milliseconds(now() - request.started), debugRequest: debugRequests[request.id]), .timeout)]
     }
 
     private var firingDelay: Duration {
@@ -428,6 +461,7 @@ struct AutomaticSwitch {
         }
         let id = UUID(); request = Request(id: id, started: now())
         requestsSent += 1
+        debugRequests[id] = DebugRequest(id: id, number: requestsSent, text: text, started: now())
         return [.classify(id: id, text: text)]
     }
     private mutating func apply(_ incoming: Candidate, allowingSwitch: Bool = true) -> [Effect] {
@@ -482,9 +516,8 @@ struct AutomaticSwitch {
             if agreementLabel == value.verdict.label { agreements += 1 }
             else { agreementLabel = value.verdict.label; agreements = 1 }
         }
-        let requiredAgreements = isWordPaced && (value.verdict.probability ?? 0) < 0.90
-            ? max(2, options.agreeingVerdicts.rawValue) : options.agreeingVerdicts.rawValue
-        if (value.agreementCount ?? agreements) < requiredAgreements || !allowingSwitch {
+        let required = requiredAgreements(for: value)
+        if (value.agreementCount ?? agreements) < required || !allowingSwitch {
             // Word-paced never resends the same text for a second opinion; the next answer may agree.
             if !isWordPaced { due = now() + max(firingDelay, .milliseconds(150)) }
             return decisionEffects(value, .awaitingAgreement)
@@ -494,6 +527,7 @@ struct AutomaticSwitch {
         mode = target; switchedAt = switched; hadSwitch = true; actedOnText = text; ended = false
         switchPoint = isWordPaced ? value.prefix ?? Self.normalized(text) : nil
         enterGraceEnds = options.enterBehavior == .ignoreFor300Milliseconds ? switched + .milliseconds(300) : nil
+        value.agreementCount = value.agreementCount ?? agreements
         agreements = 0; agreementLabel = nil
         var effects = [diagnostic(value, .switched), .enterMode(target),
                 .record(.switched(mode: AutomaticSwitchDiagnostics.Mode(rawValue: target.rawValue)!))]
@@ -598,6 +632,7 @@ struct AutomaticSwitch {
         waitingText = nil
         sequence += 1; requestsSent += 1
         let id = UUID()
+        debugRequests[id] = DebugRequest(id: id, number: requestsSent, text: value, started: now())
         wordRequests[id] = WordRequest(started: now(), text: value, sequence: sequence, keyRevision: memory.keyRevision)
         memory.requestStarted(id, text: value)
         return [.classify(id: id, text: value)]
@@ -619,6 +654,7 @@ struct AutomaticSwitch {
         let existingAgreement = preservingAgreement && answeredText == text ? agreements : nil
         due = nil; waitingText = nil; answeredText = text
         sequence += 1; newestHandledSequence = sequence
+        debugCacheHits += 1
         lastVerdict = diagnosticLabel(verdict.label)
         let value = Candidate(verdict: verdict, latency: nil, prefix: text, cached: true,
                               agreementCount: existingAgreement)
@@ -636,7 +672,7 @@ struct AutomaticSwitch {
     private mutating func wordPacedCompleted(id: UUID, verdict: ClassifierVerdict,
                                              error: AutomaticSwitchDiagnostics.ErrorKind?, latency: Double, retryAfter: Duration? = nil) -> [Effect] {
         memory.requestFinished(id)
-        let value = Candidate(verdict: verdict, latency: latency)
+        let value = Candidate(verdict: verdict, latency: latency, debugRequest: debugRequests[id])
         guard let request = wordRequests.removeValue(forKey: id) else { return sendWaiting() }
         // HTTP failures belong to the launch even when a newer answer already won.
         if request.valid, let error, error != .authentication || request.keyRevision == memory.keyRevision {
@@ -648,7 +684,7 @@ struct AutomaticSwitch {
         if now() - request.started >= requestDeadline {
             unsampledRequests.insert(id)
             return [diagnostic(Candidate(verdict: .init(label: .unsure),
-                latency: milliseconds(now() - request.started)), .timeout)] + sendWaiting()
+                latency: milliseconds(now() - request.started), debugRequest: debugRequests[id]), .timeout)] + sendWaiting()
         }
         if let error {
             // A failed earlier prefix must not erase a full-text decision
@@ -669,7 +705,7 @@ struct AutomaticSwitch {
         newestHandledSequence = request.sequence
         lastVerdict = diagnosticLabel(verdict.label)
         answeredText = request.text
-        let prefixed = Candidate(verdict: verdict, latency: latency, prefix: request.text)
+        let prefixed = Candidate(verdict: verdict, latency: latency, prefix: request.text, debugRequest: debugRequests[id])
         if deletionPause != nil {
             heldWordAnswers.append(prefixed)
             return sendWaiting()
@@ -710,12 +746,12 @@ struct AutomaticSwitch {
         (character.isWhitespace || character.isPunctuation) && !"'’-‐".contains(character)
     }
 
-    private func staleDiagnostic(id: UUID, value: Candidate) -> Effect {
+    private mutating func staleDiagnostic(id: UUID, value: Candidate) -> Effect {
         diagnostic(Candidate(verdict: value.verdict,
-            latency: unsampledRequests.contains(id) ? nil : value.latency), .stale)
+            latency: unsampledRequests.contains(id) ? nil : value.latency, debugRequest: debugRequests[id]), .stale)
     }
 
-    private func diagnostic(_ value: Candidate?, _ outcome: AutomaticSwitchDiagnostics.Outcome,
+    private mutating func diagnostic(_ value: Candidate?, _ outcome: AutomaticSwitchDiagnostics.Outcome,
                             error: AutomaticSwitchDiagnostics.ErrorKind? = nil) -> Effect {
         var row = AutomaticSwitchDiagnostics.Verdict(classifier: options.classifier,
             label: value.map { diagnosticLabel($0.verdict.label) } ?? .none,
@@ -732,8 +768,125 @@ struct AutomaticSwitch {
             case .strongMatch(let kind): row.gateReason = .strongMatch; row.matchedKind = diagnosticKind(kind)
             }
         }
+        // Late replies cannot replace the answer responsible for the visible
+        // capture, or a newer answer/timeout already shown in Search.
+        if let value, outcome != .stale || debugDecision == nil,
+           mode == .search || outcome == .switched {
+            if outcome != .stale { debugReturnReason = nil }
+            debugDecision = DebugDecision(value: value, outcome: outcome,
+                reason: debugReason(value, outcome: outcome, error: error),
+                agreement: value.agreementCount ?? agreements, requiredAgreement: requiredAgreements(for: value),
+                relevance: debugRelevance(value))
+        }
         return .record(.verdict(row))
     }
+    /// Observing this snapshot neither advances the policy nor touches its cache.
+    var debugSnapshot: AutomaticSwitchDebugSnapshot {
+        let time = now()
+        let latest = debugRequests.values.filter { value in
+            if isWordPaced { return wordRequests[value.id]?.valid == true }
+            return request?.id == value.id
+        }.max { $0.number < $1.number }
+        let presentationRequest = latest.map {
+            AutomaticSwitchDebugSnapshot.Request(id: $0.id, number: $0.number,
+                characters: $0.text.count, elapsedMilliseconds: milliseconds(time - $0.started),
+                relevance: debugRelevance(for: $0.text))
+        }
+        var remaining: Double?
+        let state: String
+        if !options.isEnabled { state = "automatic switch off" }
+        else if !active { state = "idle" }
+        else if mode != .search { state = "\(switchedAt == nil ? "manual" : "automatic") \(mode.rawValue.capitalized)" }
+        else if composing { state = "waiting for composition" }
+        else if suspended { state = debugSuspension }
+        else if !eligible { state = "paused for current action" }
+        else if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { state = "idle" }
+        else if case .blocked(let reason) = gate.decision {
+            state = switch reason {
+            case .oneWord: "not sent: one word"
+            case .collectionUnavailable: "blocked: collection unavailable"
+            case .strongMatch(let kind): "blocked: strong \(diagnosticKind(kind).rawValue) match"
+            }
+        } else if isWordPaced, let reason = memory.backoffReason(at: time) {
+            state = reason == .keyRejected ? "key rejected: replace API key" : "backoff: \(reason.rawValue)"
+            remaining = memory.backoffRemaining(at: time).map(milliseconds)
+        } else if let deletionPause {
+            state = "holding correction"
+            remaining = max(0, milliseconds(deletionPause - time))
+        } else if waitingText != nil { state = "queued: waiting for request capacity" }
+        else if presentationRequest != nil { state = "requesting" }
+        else if candidate != nil { state = "waiting for Search results" }
+        else if let due {
+            state = "waiting for typing pause"
+            remaining = max(0, milliseconds(due - time))
+        } else if let submission { state = "Enter: waiting for full-text decision"; remaining = max(0, milliseconds(submission.deadline - time)) }
+        else { state = debugReturnReason ?? "idle" }
+
+        let decision: DebugDecision?
+        if let candidate {
+            decision = DebugDecision(value: candidate, outcome: .blocked,
+                reason: deletionPause == nil ? "waiting for Search results" : "holding correction",
+                agreement: candidate.agreementCount ?? agreements, requiredAgreement: requiredAgreements(for: candidate),
+                relevance: debugRelevance(candidate))
+        } else { decision = debugDecision }
+        let answer = decision.map { decision in
+            let value = decision.value
+            return AutomaticSwitchDebugSnapshot.Answer(number: value.debugRequest?.number,
+                characters: (value.debugRequest?.text ?? value.prefix)?.count ?? 0,
+                label: diagnosticLabel(value.verdict.label), probability: value.verdict.probability,
+                latencyMilliseconds: value.latency, cached: value.cached,
+                relevance: mode == .search ? debugRelevance(value) : decision.relevance,
+                outcome: decision.outcome, reason: decision.reason,
+                agreement: decision.agreement, requiredAgreement: decision.requiredAgreement)
+        }
+        return AutomaticSwitchDebugSnapshot(options: options, state: state, remainingMilliseconds: remaining,
+            request: mode == .search && !composing && !suspended && eligible && gate.decision == .allowed && deletionPause == nil ? presentationRequest : nil,
+            queued: waitingText != nil, answer: answer, cacheHits: debugCacheHits)
+    }
+
+    private func debugRelevance(_ value: Candidate) -> AutomaticSwitchDebugSnapshot.Relevance {
+        guard let sent = value.debugRequest?.text ?? value.prefix else { return .stale }
+        return debugRelevance(for: sent)
+    }
+
+    private func debugRelevance(for sent: String) -> AutomaticSwitchDebugSnapshot.Relevance {
+        let current = isWordPaced ? Self.normalized(text) : text
+        if current.utf8.elementsEqual(sent.utf8) { return .current }
+        return current.utf8.starts(with: sent.utf8) ? .prefix : .stale
+    }
+
+    private func requiredAgreements(for value: Candidate) -> Int {
+        isWordPaced && (value.verdict.probability ?? 0) < 0.90
+            ? max(2, options.agreeingVerdicts.rawValue) : options.agreeingVerdicts.rawValue
+    }
+
+    private func debugReason(_ value: Candidate, outcome: AutomaticSwitchDiagnostics.Outcome,
+                             error: AutomaticSwitchDiagnostics.ErrorKind?) -> String {
+        switch outcome {
+        case .switched: "switched · agreement \(value.agreementCount ?? agreements)/\(requiredAgreements(for: value))"
+        case .awaitingAgreement: "agreement \(value.agreementCount ?? agreements)/\(requiredAgreements(for: value))"
+        case .belowThreshold: "below threshold"
+        case .unsure: "unsure: staying in Search"
+        case .stale: "ignored: stale"
+        case .multiline: "blocked: multiline Task"
+        case .suspended: debugSuspension
+        case .timeout: "timed out"
+        case .error: "error: \(error?.rawValue ?? "other")"
+        case .backoff: "backoff"
+        case .blocked:
+            if case .blocked(let reason) = gate.decision {
+                switch reason {
+                case .oneWord: "blocked: one word"
+                case .collectionUnavailable: "blocked: collection unavailable"
+                case .strongMatch(let kind): "blocked: strong \(diagnosticKind(kind).rawValue) match"
+                }
+            } else if isWordPaced, let veto = vetoes[value.verdict.label], Self.normalized(text).utf8.starts(with: veto.utf8) {
+                "blocked: reversal veto"
+            } else if value.verdict.label == .search { "staying in Search" }
+            else { "blocked by current action" }
+        }
+    }
+
     private func diagnosticLabel(_ label: ClassifierVerdict.Label) -> AutomaticSwitchDiagnostics.Label {
         switch label { case .search: .search; case .note: .note; case .task: .task; case .unsure: .unsure }
     }

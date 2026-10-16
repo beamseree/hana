@@ -21,7 +21,9 @@ struct JevClassifier: Classifier {
         self.now = now
     }
     static func liveTransport(_ request: URLRequest) async throws -> Response {
-        try await JevHTTPSession.live.perform(request)
+        try await JevRequestActivity.live.perform {
+            try await JevHTTPSession.live.perform(request)
+        }
     }
     func classify(_ text: String) async throws -> ClassifierVerdict {
         try Task.checkCancellation()

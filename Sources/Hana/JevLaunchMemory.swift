@@ -29,6 +29,10 @@ final class JevLaunchMemory {
         guard let pausedUntil, time < pausedUntil else { return nil }
         return pauseReason
     }
+    func backoffRemaining(at time: Duration) -> Duration? {
+        guard !keyRejected, let pausedUntil, time < pausedUntil else { return nil }
+        return pausedUntil - time
+    }
     func recordFailure(kind: AutomaticSwitchDiagnostics.ErrorKind, retryAfter: Duration? = nil, at time: Duration) {
         if kind == .network {
             consecutiveNetworkErrors += 1

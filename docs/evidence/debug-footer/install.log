@@ -1,0 +1,31 @@
+Quitting the existing installed Hana normally.
+Previous app bundle retained at /var/folders/4n/ydpyp2b97mb8zn_7v0xpyd4r0000gn/T/hana-debug-footer-previous-yvt15ue1/Hana.app
+[0/1] Planning build
+Building for production...
+[0/2] Write swift-version--112E4EF74740DA65.txt
+Build complete! (2.07s)
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app/Contents/Info.plist: OK
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app: replacing existing signature
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app: valid on disk
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app: satisfies its Designated Requirement
+Hana signing identity: 5C1F81113ECCDB4AE9B6D5C89AA22B045A29417B
+designated => identifier "com.beamseree.hana" and certificate leaf = H"5c1f81113eccdb4ae9b6d5c89aa22b045a29417b"
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app
+/Users/beamsereeyothin/Applications/Hana.app: valid on disk
+/Users/beamsereeyothin/Applications/Hana.app: satisfies its Designated Requirement
+/Users/beamsereeyothin/Applications/Hana.app: valid on disk
+/Users/beamsereeyothin/Applications/Hana.app: satisfies its Designated Requirement
+{
+  "installed_app": "/Users/beamsereeyothin/Applications/Hana.app",
+  "pids": [
+    "48682"
+  ],
+  "commands": [
+    "/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana"
+  ],
+  "executable_sha256": "5e274f6378f1642df81a8a3829a41875c08e087f0a208d72267f232ce40a14b6",
+  "built_matches_installed": true,
+  "previous_app_backup": "/var/folders/4n/ydpyp2b97mb8zn_7v0xpyd4r0000gn/T/hana-debug-footer-previous-yvt15ue1/Hana.app",
+  "native_tests_run": false
+}
+Native installation slot released.

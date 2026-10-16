@@ -86,4 +86,10 @@ final class AutomaticSwitchOptionsStore {
         guard let data = try? JSONEncoder().encode(options) else { return }
         defaults.set(data, forKey: key)
     }
+
+    /// Display preference, applied immediately; never changes the policy snapshot.
+    var debugMode: Bool {
+        get { defaults.bool(forKey: "automaticSwitch.debugMode.v1") }
+        set { defaults.set(newValue, forKey: "automaticSwitch.debugMode.v1") }
+    }
 }
