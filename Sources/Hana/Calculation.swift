@@ -194,6 +194,9 @@ enum Calculation {
             if case .failure = right { return right }
             if operation == "/", right.double == 0 { return .failure(.divisionByZero) }
             if case .decimal(var left) = self, case .decimal(var right) = right {
+                if operation == "+" || operation == "-", Self.sumExceedsUpperBound(left, right, operation: operation) {
+                    return .failure(.tooLarge)
+                }
                 var result = Decimal.zero
                 let error: Decimal.CalculationError
                 switch operation {
@@ -220,18 +223,102 @@ enum Calculation {
             return .checked(result)
         }
 
+        private static func sumExceedsUpperBound(_ left: Decimal, _ right: Decimal, operation: Character) -> Bool {
+            let addingMagnitudes = operation == "+" ? left.sign == right.sign : left.sign != right.sign
+            guard addingMagnitudes else { return false }
+            let upper = left.exponent == 127 ? left : right
+            let other = left.exponent == 127 ? right : left
+            // Two operands below exponent 127 cannot sum beyond Decimal's maximum.
+            guard upper.exponent == 127 else { return false }
+            guard let a = UInt128(NSDecimalNumber(decimal: upper.significand).stringValue),
+                  let b = UInt128(NSDecimalNumber(decimal: other.significand).stringValue)
+            else { return true }
+            let remaining = UInt128.max - a
+            if remaining == 0 { return b != 0 }
+            let shift = 127 - other.exponent
+            guard shift <= 38 else { return false }
+            let power = (0..<shift).reduce(UInt128(1)) { value, _ in value * 10 }
+            let gap = remaining.multipliedFullWidth(by: power)
+            return gap.high == 0 && b > gap.low
+        }
+
         private static func productOrQuotient(_ left: Decimal, _ right: Decimal, operation: Character) -> Number {
+            guard !outsideRange(left, right, operation: operation) else { return .failure(.tooLarge) }
             // Foundation can wrap product exponents and underflow valid quotients.
             // Operate on significands, then apply their decimal scales separately.
             var leftSignificand = left.sign == .minus ? -left.significand : left.significand
             var rightSignificand = right.sign == .minus ? -right.significand : right.significand
             var result = Decimal.zero
-            let error = operation == "*"
-                ? NSDecimalMultiply(&result, &leftSignificand, &rightSignificand, .plain)
-                : NSDecimalDivide(&result, &leftSignificand, &rightSignificand, .plain)
+            var exponent = operation == "*" ? left.exponent + right.exponent : left.exponent - right.exponent
+            let error: Decimal.CalculationError
+            if operation == "*" {
+                error = NSDecimalMultiply(&result, &leftSignificand, &rightSignificand, .plain)
+            } else {
+                let leftDigits = NSDecimalNumber(decimal: left.significand).stringValue.count
+                let rightDigits = NSDecimalNumber(decimal: right.significand).stringValue.count
+                var normalizedLeft = Decimal.zero
+                var normalizedRight = Decimal.zero
+                guard NSDecimalMultiplyByPowerOf10(&normalizedLeft, &leftSignificand, Int16(1 - leftDigits), .plain) == .noError,
+                      NSDecimalMultiplyByPowerOf10(&normalizedRight, &rightSignificand, Int16(1 - rightDigits), .plain) == .noError
+                else { return .failure(.tooLarge) }
+                // Similar magnitudes prevent a valid quotient truncating to zero.
+                exponent += leftDigits - rightDigits
+                error = NSDecimalDivide(&result, &normalizedLeft, &normalizedRight, .plain)
+            }
             guard error == .noError || error == .lossOfPrecision else { return .failure(.tooLarge) }
-            let exponent = operation == "*" ? left.exponent + right.exponent : left.exponent - right.exponent
             return scaled(result, by: exponent)
+        }
+
+        private static func outsideRange(_ left: Decimal, _ right: Decimal, operation: Character) -> Bool {
+            let scale = operation == "*" ? left.exponent + right.exponent : left.exponent - right.exponent
+            guard let a = UInt128(NSDecimalNumber(decimal: left.significand).stringValue),
+                  let b = UInt128(NSDecimalNumber(decimal: right.significand).stringValue)
+            else { return true }
+            if a == 0 || b == 0 { return false }
+            let magnitude: (high: UInt128, low: UInt128)
+            let maximum: (high: UInt128, low: UInt128)
+            if operation == "*" {
+                magnitude = a.multipliedFullWidth(by: b)
+                if scale < -128 {
+                    let reduced = dividingByPowerOfTen(magnitude, exponent: -128 - scale)
+                    return reduced.high == 0 && reduced.low == 0
+                }
+                if 127 - scale > 38 { return false }
+                if scale >= 127 {
+                    maximum = dividingByPowerOfTen((0, UInt128.max), exponent: scale - 127)
+                } else {
+                    let power = (0..<(127 - scale)).reduce(UInt128(1)) { value, _ in value * 10 }
+                    maximum = UInt128.max.multipliedFullWidth(by: power)
+                }
+            } else {
+                let shift = scale + 128
+                if shift <= 38 {
+                    if shift < -38 { return true }
+                    let power = (0..<abs(shift)).reduce(UInt128(1)) { value, _ in value * 10 }
+                    let numerator: (high: UInt128, low: UInt128) = shift < 0 ? (0, a) : a.multipliedFullWidth(by: power)
+                    let denominator: (high: UInt128, low: UInt128) = shift < 0 ? b.multipliedFullWidth(by: power) : (0, b)
+                    return numerator.high < denominator.high || (numerator.high == denominator.high && numerator.low < denominator.low)
+                }
+                if scale <= 127 { return false }
+                magnitude = (0, a)
+                maximum = dividingByPowerOfTen(UInt128.max.multipliedFullWidth(by: b), exponent: scale - 127)
+            }
+            // Compare before Foundation truncates any significant digits into range.
+            return magnitude.high > maximum.high || (magnitude.high == maximum.high && magnitude.low > maximum.low)
+        }
+
+        private static func dividingByPowerOfTen(
+            _ coefficient: (high: UInt128, low: UInt128), exponent: Int
+        ) -> (high: UInt128, low: UInt128) {
+            var value = coefficient
+            for _ in 0..<exponent {
+                let remainder = value.high % 10
+                value.high /= 10
+                // The high limb is below the divisor, so the low quotient fits.
+                value.low = UInt128(10).dividingFullWidth((high: remainder, low: value.low)).quotient
+                if value.high == 0 && value.low == 0 { break }
+            }
+            return value
         }
 
         private static func scaled(_ value: Decimal, by power: Int) -> Number {
