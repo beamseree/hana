@@ -47,6 +47,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private let modeLabel = NSTextField(labelWithString: "Note")
     /// Explains why a capture wasn't saved, below the writing surface.
     private let captureNotice = NSTextField(wrappingLabelWithString: "")
+    private let debugFooter = AutomaticSwitchDebugFooter(frame: .zero)
+    private var debugRefresh: Task<Void, Never>?
+    private var debugActivityObserver: UUID?
+    private var debugHTTPSession = JevRequestActivity.Session()
+    private let jevRequestActivity: JevRequestActivity
+    var debugFooterText: String? { debugFooter.isHidden ? nil : debugFooter.text }
+    private var debugFooterHeight: CGFloat {
+        currentInvocation != nil && automaticSwitchOptions.debugMode ? AutomaticSwitchDebugFooter.height : 0
+    }
     /// Task's Inbox/Today choice, before its mode label. Tab toggles it too.
     /// Internal so tests can click it.
     let destinationSelector = NSHostingView(rootView: SegmentedControl(
@@ -300,6 +309,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
          classifierServices: ClassifierServices? = nil,
          classifierFactory: (@MainActor (AutomaticSwitchOptions) -> (any Classifier)?)? = nil,
          jevLaunchMemory: JevLaunchMemory? = nil,
+         jevRequestActivity: JevRequestActivity = .live,
          frontmostApplication: @escaping @MainActor () -> NSRunningApplication? = { NSWorkspace.shared.frontmostApplication },
          previewParser: @escaping MarkdownPreviewParser = MarkdownPreview.parse,
          openPreviewLink: @escaping @MainActor (URL) -> Bool = { NSWorkspace.shared.open($0) }) {
@@ -311,6 +321,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         self.classifierFactory = classifierFactory
         self.classifierServices = classifierServices
         self.jevLaunchMemory = jevLaunchMemory ?? classifierServices?.jevLaunchMemory ?? JevLaunchMemory()
+        self.jevRequestActivity = jevRequestActivity
         self.search = search
         self.collection = collection
         self.confirmationDuration = confirmationDuration
@@ -824,6 +835,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         captureNotice.autoresizingMask = [.width, .minYMargin]
         captureNotice.isHidden = true
         card.addSubview(captureNotice)
+        card.addSubview(debugFooter)
 
         let scroll = editorScroll
         scroll.frame = NSRect(x: BarStyle.textInset, y: BarStyle.editorTopInset,
@@ -1121,6 +1133,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         toggle.target = self
         automaticSwitchToggle = toggle
         submenu.addItem(toggle)
+        let debug = NSMenuItem(title: "Debug mode", action: #selector(toggleDebugMode), keyEquivalent: "")
+        debug.target = self
+        submenu.addItem(debug)
         addAutomaticSwitchBehaviorMenus(to: submenu)
         if let classifierServices {
             classifierMenuController = ClassifierMenuController(menu: submenu, services: classifierServices, options: automaticSwitchOptions)
@@ -1151,6 +1166,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         classifierMenuController?.refresh()
         let options = automaticSwitchOptions.read()
         automaticSwitchToggle?.state = options.isEnabled ? .on : .off
+        automaticSwitchMenu?.item(withTitle: "Debug mode")?.state = automaticSwitchOptions.debugMode ? .on : .off
         for (item, matches) in automaticSwitchChoices { item.state = matches(options) ? .on : .off }
         automaticSwitchMenu?.item(withTitle: "Fires")?.submenu?
             .item(withTitle: "Word-paced")?.isEnabled = options.classifier == .jev
@@ -1228,6 +1244,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         options.isEnabled.toggle()
         automaticSwitchOptions.write(options)
         refreshAutomaticSwitchMenu()
+    }
+
+    @objc private func toggleDebugMode() {
+        automaticSwitchOptions.debugMode.toggle()
+        refreshAutomaticSwitchMenu()
+        if currentInvocation != nil { renderResults() }
     }
 
     @objc private func resetAutomaticSwitchCounts() {
@@ -1338,6 +1360,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     private func beginAutomaticSwitch(_ invocation: Invocation) {
+        debugHTTPSession = JevRequestActivity.Session()
+        if let debugActivityObserver { jevRequestActivity.removeObserver(debugActivityObserver) }
+        debugActivityObserver = jevRequestActivity.observe { [weak self] in self?.refreshDebugFooter() }
         // Shared launch backoff uses the same clock across every bar session.
         let epoch = automaticSwitchEpoch
         automaticSwitch = AutomaticSwitch(options: automaticSwitchSessionOptions, memory: jevLaunchMemory,
@@ -1383,6 +1408,9 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         titleObservation?.cancel(); titleObservation = nil; titleSource = nil
         classificationTasks.values.forEach { $0.cancel() }; classificationTasks = [:]
         classifier = nil; automaticSwitch = nil; gateResults = []
+        debugRefresh?.cancel(); debugRefresh = nil
+        if let debugActivityObserver { jevRequestActivity.removeObserver(debugActivityObserver) }
+        debugActivityObserver = nil
     }
 
     private func automaticSwitchGate() -> StrongMatchGate.Evaluation {
@@ -1418,12 +1446,16 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             case .classify(let id, let text):
                 guard let invocation = currentInvocation else { jevLaunchMemory.requestFinished(id); continue }
                 let classifier = classifier
+                let debugContext = JevRequestActivity.Context(session: debugHTTPSession, requestID: id)
                 classificationTasks[id] = Task { [weak self] in
+                    defer { debugContext.session.finishedProcessing(id) }
                     let started = ContinuousClock.now
                     let event: AutomaticSwitch.Event
                     do {
                         guard let classifier else { throw ClassifierFailure(kind: .unavailable) }
-                        let verdict = try await classifier.classify(text)
+                        let verdict = try await JevRequestActivity.$context.withValue(debugContext) {
+                            try await classifier.classify(text)
+                        }
                         let duration = started.duration(to: ContinuousClock.now)
                         let latency = Double(duration.components.seconds) * 1000 + Double(duration.components.attoseconds) / 1e15
                         event = .verdict(id: id, verdict, latencyMilliseconds: latency)
@@ -1463,6 +1495,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             }
         }
         scheduleAutomaticSwitchWake()
+        refreshDebugFooter()
         if currentInvocation != nil,
            automaticSwitch?.isAwaitingSubmission == true || automaticSwitch?.submissionOutcome != nil {
             renderResults()
@@ -1711,7 +1744,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         // Interrupt a preceding finished batch's shrink at the actual current
         // height; holding its smaller target would keep shrinking during typing.
         let editorGrowth = editorScroll.frame.height - BarStyle.editorHeight
-        retainedContentHeight = max(retainedContentHeight, contentHeight - BarStyle.collapsedHeight - editorGrowth - BarStyle.cardPadding)
+        retainedContentHeight = max(retainedContentHeight, contentHeight - BarStyle.collapsedHeight - editorGrowth - BarStyle.cardPadding - debugFooterHeight)
         renderResults()
         let started = ProcessInfo.processInfo.systemUptime
         searchTask = Task { [weak self] in
@@ -2000,7 +2033,39 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         panel.invalidateShadow()
     }
 
+    /// Clock refresh is display-only, opt-in, and stops whenever the snapshot
+    /// has no elapsed time or countdown. It never sends a policy tick.
+    private func refreshDebugFooter() {
+        debugFooter.isHidden = debugFooterHeight == 0
+        guard !debugFooter.isHidden, let snapshot = automaticSwitch?.debugSnapshot else {
+            debugRefresh?.cancel(); debugRefresh = nil
+            return
+        }
+        let lines = snapshot.lines(sent: debugHTTPSession.sent, activeHTTP: jevRequestActivity.activeCount,
+            startedIDs: debugHTTPSession.startedIDs)
+        debugFooter.show(summary: lines.summary, detail: lines.detail)
+        guard snapshot.needsClockUpdates else {
+            debugRefresh?.cancel(); debugRefresh = nil
+            return
+        }
+        guard debugRefresh == nil else { return }
+        debugRefresh = Task { [weak self] in
+            while !Task.isCancelled {
+                do { try await Task.sleep(for: .milliseconds(100)) } catch { return }
+                guard let self else { return }
+                self.refreshDebugFooter()
+            }
+        }
+    }
+
+    private func layoutDebugFooter() {
+        guard let card = debugFooter.superview else { return }
+        debugFooter.frame = NSRect(x: 0, y: 0, width: card.bounds.width, height: debugFooterHeight)
+        debugFooter.needsLayout = true
+    }
+
     private func renderResults() {
+        refreshDebugFooter()
         guard mode == .search else { return layoutCapture() }
         // A capture's notices show below its text. Search shows only a refused
         // switch to Task, as its status; returning leaves the others behind.
@@ -2042,15 +2107,16 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let editorHeight = self.editorHeight
         let editorGrowth = editorHeight - BarStyle.editorHeight
         let frame = currentPlacement?.frame(
-            height: BarStyle.collapsedHeight + editorGrowth + (content > 0 ? BarStyle.cardPadding + content : 0)) ?? panel.frame
+            height: BarStyle.collapsedHeight + editorGrowth + (content > 0 ? BarStyle.cardPadding + content : 0) + debugFooterHeight) ?? panel.frame
         setPanelFrame(frame, animated: true)
         pinEditor(height: editorHeight)
+        layoutDebugFooter()
         // Results are laid out at their final size, pinned under the input, so
         // the card's clip reveals them as it grows instead of moving them. The
         // surface runs to the card's trailing edge so the scroll thumb can sit in
         // the padding beside the rows.
         if let resultSurface, let card = resultSurface.superview {
-            let height = max(0, frame.height - BarStyle.collapsedHeight - editorGrowth - BarStyle.cardPadding)
+            let height = max(0, frame.height - BarStyle.collapsedHeight - editorGrowth - BarStyle.cardPadding - debugFooterHeight)
             resultSurface.frame = NSRect(x: BarStyle.cardPadding,
                                          y: card.bounds.height - BarStyle.inputHeight - editorGrowth - height,
                                          width: max(0, frame.width - 2 * BarStyle.inset - BarStyle.cardPadding),
@@ -2098,9 +2164,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let noticeHeight = notice == nil ? 0 : BarStyle.noticeHeight
         let height = editorHeight
         let frame = currentPlacement?.frame(
-            height: BarStyle.collapsedHeight + height - BarStyle.editorHeight + noticeHeight) ?? panel.frame
+            height: BarStyle.collapsedHeight + height - BarStyle.editorHeight + noticeHeight + debugFooterHeight) ?? panel.frame
         setPanelFrame(frame, animated: true)
         pinEditor(height: height)
+        layoutDebugFooter()
         guard let card = editorScroll.superview else { return }
         captureNotice.frame = NSRect(x: BarStyle.textInset, y: editorScroll.frame.minY - noticeHeight,
                                      width: card.bounds.width - BarStyle.textInset - BarStyle.cardPadding - BarStyle.resultIconInset,

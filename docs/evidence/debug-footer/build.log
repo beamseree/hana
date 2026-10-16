@@ -1,0 +1,4 @@
+Another instance of SwiftPM (PID: 47210) is already running using '/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/.build', waiting until that process has finished execution...[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.37s)

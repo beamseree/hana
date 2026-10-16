@@ -1,0 +1,13 @@
+{
+  "installed_app": "/Users/beamsereeyothin/Applications/Hana.app",
+  "pids": [
+    "48682"
+  ],
+  "commands": [
+    "/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana"
+  ],
+  "executable_sha256": "5e274f6378f1642df81a8a3829a41875c08e087f0a208d72267f232ce40a14b6",
+  "built_matches_installed": true,
+  "previous_app_backup": "/var/folders/4n/ydpyp2b97mb8zn_7v0xpyd4r0000gn/T/hana-debug-footer-previous-yvt15ue1/Hana.app",
+  "native_tests_run": false
+}
