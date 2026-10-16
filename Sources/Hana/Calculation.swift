@@ -157,36 +157,39 @@ enum Calculation {
 
         static func literal(_ text: String) -> Number {
             let parts = text.split(separator: "e", maxSplits: 1, omittingEmptySubsequences: false)
+            var digits = parts[0].filter(\.isNumber).drop(while: { $0 == "0" })
+            if digits.isEmpty { return .decimal(.zero) }
             let exponent: Int
             if parts.count == 2 {
-                guard let parsed = Int(parts[1]), literalMagnitudeFits(parts[0], exponent: parsed)
-                else { return .failure(.tooLarge) }
+                guard let parsed = Int(parts[1]) else { return .failure(.tooLarge) }
                 exponent = parsed
             } else { exponent = 0 }
-            guard let coefficient = Decimal(string: String(parts[0]), locale: Locale(identifier: "en_US_POSIX"))
-            else { return .failure(.tooLarge) }
-            guard parts.count == 2 else { return .decimal(coefficient) }
-            return scaled(coefficient, by: exponent)
-        }
-
-        private static func literalMagnitudeFits(_ coefficient: Substring, exponent: Int) -> Bool {
-            let digits = coefficient.filter(\.isNumber).drop(while: { $0 == "0" })
-            if digits.isEmpty { return true }
-            let fractionalDigits = coefficient.firstIndex(of: ".").map {
-                coefficient.distance(from: $0, to: coefficient.endIndex) - 1
+            let fractionalDigits = parts[0].firstIndex(of: ".").map {
+                parts[0].distance(from: $0, to: parts[0].endIndex) - 1
             } ?? 0
             let scale = exponent.subtractingReportingOverflow(fractionalDigits)
-            guard !scale.overflow else { return false }
+            guard !scale.overflow else { return .failure(.tooLarge) }
             let integerDigits = digits.count.addingReportingOverflow(scale.partialValue)
             // A nonzero Decimal spans 1e-128 through (2^128 - 1) * 1e127.
-            guard !integerDigits.overflow, (-127...166).contains(integerDigits.partialValue) else { return false }
-            guard integerDigits.partialValue == 166 else { return true }
-            // Check the unrounded spelling: Foundation may truncate max + 1 to max - 5.
-            let maximum = String(UInt128.max)
-            let leading = String(digits.prefix(maximum.count))
-                + String(repeating: "0", count: max(0, maximum.count - digits.count))
-            return leading < maximum
-                || (leading == maximum && digits.dropFirst(maximum.count).allSatisfy { $0 == "0" })
+            guard !integerDigits.overflow, (-127...166).contains(integerDigits.partialValue)
+            else { return .failure(.tooLarge) }
+            if integerDigits.partialValue == 166 {
+                // Check before Foundation truncates max + 1 into range.
+                let maximum = String(UInt128.max)
+                let leading = String(digits.prefix(maximum.count))
+                    + String(repeating: "0", count: max(0, maximum.count - digits.count))
+                guard leading < maximum
+                    || (leading == maximum && digits.dropFirst(maximum.count).allSatisfy { $0 == "0" })
+                else { return .failure(.tooLarge) }
+            }
+            // Normalize before parsing so compensating exponents never require
+            // Foundation to represent an out-of-range standalone coefficient.
+            while digits.last == "0" { digits = digits.dropLast() }
+            let normalized = digits.count == 1 ? String(digits)
+                : String(digits.prefix(1)) + "." + String(digits.dropFirst())
+            guard let coefficient = Decimal(string: normalized, locale: Locale(identifier: "en_US_POSIX"))
+            else { return .failure(.tooLarge) }
+            return scaled(coefficient, by: integerDigits.partialValue - 1)
         }
 
         func applying(_ operation: Character, to right: Number) -> Number {

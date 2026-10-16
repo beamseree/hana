@@ -25,7 +25,8 @@ struct CalculationTests {
         "340282366920938463463374607431768211455e127 - -1",
         "-340282366920938463463374607431768211455e127 + -1",
         "-340282366920938463463374607431768211455e127 - 1",
-        "340282366920938463463374607431768211450e127 + 6e127"
+        "340282366920938463463374607431768211450e127 + 6e127",
+        "340282366920938463463374607431768211455" + String(repeating: "0", count: 126) + "1 + 0"
     ])
     func exactArithmeticRejectsOutOfRangeScales(text: String) throws {
         let answer = try #require(Calculation.answer(for: text, locale: locale))
@@ -98,7 +99,11 @@ struct CalculationTests {
         ("-1e128 + 0", "-1e128"), ("1E+128 / 10", "1e127"),
         ("1e165 + 0", "1e165"), ("3.4e165 + 0", "3.4e165"),
         ("3.40282366920938463463374607431768211455e165 * 1", "3.4028237e165"),
-        ("10e-129 + 0", "1e-128"), ("100e-130 + 0", "1e-128")
+        ("10e-129 + 0", "1e-128"), ("100e-130 + 0", "1e-128"),
+        ("1" + String(repeating: "0", count: 200) + "e-200 + 0", "1"),
+        ("0." + String(repeating: "0", count: 199) + "1e200 + 0", "1"),
+        ("340282366920938463463374607431768211455" + String(repeating: "0", count: 127) + " + 0", "3.4028237e165"),
+        ("0e99999999999999999999999", "0"), ("0e-99999999999999999999999", "0")
     ])
     func equivalentScientificLiteralsShareTheRepresentableRange(text: String, expected: String) throws {
         let answer = try #require(Calculation.answer(for: text, locale: locale))
