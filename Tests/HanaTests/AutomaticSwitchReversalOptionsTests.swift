@@ -8,12 +8,14 @@ struct AutomaticSwitchReversalOptionsTests {
         var old = AutomaticSwitchOptions()
         old.isEnabled = true; old.classifier = .jev; old.firing = .wordPaced
         old.jevThreshold = .p95; old.foundationModelsUnsure = false; old.agreeingVerdicts = .two
-        old.afterSwitch = .keepClassifying; old.navigationSuspends = false; old.enterBehavior = .saves
-        old.escapeBehavior = .dismisses; old.reversalSuspends = suspends; old.wait = .allSources
+        old.navigationSuspends = false; old.enterBehavior = .saves
+        old.reversalSuspends = suspends; old.wait = .allSources
         old.lateStrongMatch = .returnToSearch
         var json = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(old)) as? [String: Any])
         json["reversalBehavior"] = nil
         json["firing"] = "pipelinedJev"
+        // Retired options in an older snapshot are ignored, not a reason to reset it.
+        json["afterSwitch"] = "keepClassifying"; json["escapeBehavior"] = "dismisses"
         let name = "Hana.ReversalMigration.\(UUID())"
         let defaults = try #require(UserDefaults(suiteName: name))
         defer { defaults.removePersistentDomain(forName: name) }

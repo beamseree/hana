@@ -92,11 +92,9 @@ struct JevWordPacedWithdrawalNativeTests {
         await store.close()
     }
 
-    @Test(arguments: [AutomaticSwitchOptions.EscapeBehavior.returnsToSearch, .dismisses])
-    func escapeFollowsItsConfiguredOption(option: AutomaticSwitchOptions.EscapeBehavior) async throws {
+    @Test func escapeReturnsToSearchKeepingTextAndSelection() async throws {
         _ = NSApplication.shared
         let fixture = try JevWordPacedNativeFixture { $0.enterBehavior = .saves }; defer { fixture.remove() }
-        var options = fixture.options.read(); options.escapeBehavior = option; fixture.options.write(options)
         let storage = try TemporaryFixture()
         let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier()
@@ -110,13 +108,9 @@ struct JevWordPacedWithdrawalNativeTests {
         try await eventually { interaction.mode == .task }
         editor.setSelectedRange(NSRange(location: 2, length: 3))
         editor.keyDown(with: try escapeKey())
-        if option == .returnsToSearch {
-            #expect(interaction.mode == .search && interaction.currentInvocation == invocation)
-            #expect(editor.string == "call mom " && editor.selectedRange() == NSRange(location: 2, length: 3))
-            #expect(fixture.log.counts().reversals == 1)
-        } else {
-            #expect(interaction.currentInvocation == nil && fixture.log.counts().reversals == 0)
-        }
+        #expect(interaction.mode == .search && interaction.currentInvocation == invocation)
+        #expect(editor.string == "call mom " && editor.selectedRange() == NSRange(location: 2, length: 3))
+        #expect(fixture.log.counts().reversals == 1)
         await store.close()
     }
 

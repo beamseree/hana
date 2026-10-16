@@ -90,7 +90,6 @@ struct AutomaticSwitch {
     /// Arrival order is already constrained by newestHandledSequence. Keep
     /// earlier answers for confidence, while only the newest may switch.
     private var heldWordAnswers: [Candidate] = []
-    private var failureReturnPending = false
     private var changedAt: Duration = .zero
     private var candidate: Candidate?
     private var agreementLabel: ClassifierVerdict.Label?
@@ -195,7 +194,7 @@ struct AutomaticSwitch {
             active = true; text = ""; composing = false; eligible = true; suspended = false
             mode = .search; candidate = nil; due = nil; agreements = 0; agreementLabel = nil
             waitingText = nil; answeredText = nil; lastInsertAt = nil; requestsSent = 0
-            deletionPause = nil; heldWordAnswers = []; failureReturnPending = false
+            deletionPause = nil; heldWordAnswers = []
             deletionWasAtEnd = false; switchPoint = nil
             vetoes = [:]
             switchedAt = nil; enterGraceEnds = nil; hadSwitch = false; actedOnText = nil; ended = false
@@ -239,10 +238,7 @@ struct AutomaticSwitch {
             if isWordPaced, deletionPause != nil {
                 guard gate.decision != .allowed else { return [] }
                 due = nil; candidate = nil
-                let failurePending = failureReturnPending
-                let effects = cancel()
-                failureReturnPending = failurePending
-                return effects
+                return cancel()
             }
             if let late = lateStrongMatchIfNeeded() { return late }
             if isWordPaced, gate.decision != .allowed {
@@ -313,8 +309,7 @@ struct AutomaticSwitch {
             due = now()
             return [.swallowEnter] + fireIfDue()
         case .reversed(let method):
-            guard eligible, !composing, let switchedAt, mode != .search,
-                  method == .backspace || options.escapeBehavior == .returnsToSearch else { return [] }
+            guard eligible, !composing, let switchedAt, mode != .search else { return [] }
             if isWordPaced, options.reversalBehavior == .blockModeForText, !text.isEmpty {
                 vetoes[mode == .note ? .note : .task] = Self.normalized(text)
             }
@@ -408,10 +403,11 @@ struct AutomaticSwitch {
     }
     /// An answer this much later than its send is dropped as a timeout.
     private var requestDeadline: Duration { isWordPaced ? .milliseconds(1200) : .milliseconds(1500) }
-    private var canClassify: Bool { eligible && !suspended && (mode == .search || options.afterSwitch == .keepClassifying && switchedAt != nil) }
+    /// An automatic switch stays in its mode: nothing is classified outside Search.
+    private var canClassify: Bool { eligible && !suspended && mode == .search }
     private mutating func cancel() -> [Effect] {
         if isWordPaced {
-            waitingText = nil; heldWordAnswers = []; failureReturnPending = false
+            waitingText = nil; heldWordAnswers = []
             return cancelWordRequests { _ in true }
         }
         guard let request else { return [] }
@@ -493,14 +489,15 @@ struct AutomaticSwitch {
             if !isWordPaced { due = now() + max(firingDelay, .milliseconds(150)) }
             return decisionEffects(value, .awaitingAgreement)
         }
-        mode = target; switchedAt = target == .search ? nil : now(); hadSwitch = true; actedOnText = text; ended = false
-        switchPoint = isWordPaced && target != .search ? value.prefix ?? Self.normalized(text) : nil
-        enterGraceEnds = options.enterBehavior == .ignoreFor300Milliseconds ? switchedAt.map { $0 + .milliseconds(300) } : nil
+        // canClassify held above, so the bar is in Search and the target is Note or Task.
+        let switched = now()
+        mode = target; switchedAt = switched; hadSwitch = true; actedOnText = text; ended = false
+        switchPoint = isWordPaced ? value.prefix ?? Self.normalized(text) : nil
+        enterGraceEnds = options.enterBehavior == .ignoreFor300Milliseconds ? switched + .milliseconds(300) : nil
         agreements = 0; agreementLabel = nil
-        let transition: Effect = target == .search ? .returnToSearch : .enterMode(target)
-        var effects = [diagnostic(value, .switched), transition,
+        var effects = [diagnostic(value, .switched), .enterMode(target),
                 .record(.switched(mode: AutomaticSwitchDiagnostics.Mode(rawValue: target.rawValue)!))]
-        if isWordPaced, target != .search, options.afterSwitch == .stay {
+        if isWordPaced {
             due = nil
             effects += cancel()
         }
@@ -661,12 +658,7 @@ struct AutomaticSwitch {
             }
             newestHandledSequence = max(newestHandledSequence, request.sequence)
             candidate = nil; heldWordAnswers = []; agreements = 0; agreementLabel = nil
-            var effects = [diagnostic(value, .error, error: error)]
-            if mode != .search {
-                if deletionPause != nil { failureReturnPending = true }
-                else { effects += returnToSearch(); suspended = false }
-            }
-            return effects + sendWaiting()
+            return [diagnostic(value, .error, error: error)] + sendWaiting()
         }
         memory.recordSuccess()
         memory.remember(verdict, for: request.text, identity: cacheIdentity)
@@ -692,11 +684,6 @@ struct AutomaticSwitch {
     private mutating func finishDeletionBurstIfDue() -> [Effect] {
         guard let deletionPause, now() >= deletionPause, !composing, eligible else { return [] }
         self.deletionPause = nil
-        if failureReturnPending {
-            let effects = returnToSearch()
-            suspended = false
-            return effects
-        }
         let current = Self.normalized(text)
         if deletionWasAtEnd, let switchPoint, current.utf8.count < switchPoint.utf8.count,
            switchPoint.utf8.starts(with: current.utf8), switchedAt != nil, mode != .search {

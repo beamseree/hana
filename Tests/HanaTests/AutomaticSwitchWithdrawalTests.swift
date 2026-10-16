@@ -145,7 +145,7 @@ struct AutomaticSwitchWithdrawalTests {
         init(_ configure: (inout AutomaticSwitchOptions) -> Void = { _ in }) {
             var options = AutomaticSwitchOptions()
             options.isEnabled = true; options.classifier = .jev; options.firing = .wordPaced
-            options.afterSwitch = .stay; options.wait = .none; options.enterBehavior = .saves
+            options.wait = .none; options.enterBehavior = .saves
             configure(&options)
             let clock = clock
             policy = AutomaticSwitch(options: options, now: { clock.now.offset })

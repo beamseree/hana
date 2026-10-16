@@ -250,7 +250,7 @@ struct AutomaticSwitchInteractionTests {
         defer { interaction.stop(); NSApp.mainMenu = previousMenu; NSApp.windowsMenu = previousWindows }
         let menu = try #require(interaction.automaticSwitchMenu)
         let groups = menu.items.filter { !$0.isHidden }.compactMap(\.submenu)
-        #expect(groups.count == 12)
+        #expect(groups.count == 10)
         #expect(groups.allSatisfy { $0.items.filter { $0.state == .on }.count == 1 })
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
@@ -263,8 +263,8 @@ struct AutomaticSwitchInteractionTests {
         #expect(interaction.automaticSwitchSessionOptions == snapshot)
         let stored = fixture.options.read()
         #expect(stored.classifier == .jev && stored.firing == .wordPaced && stored.jevThreshold == .p95)
-        #expect(!stored.foundationModelsUnsure && stored.agreeingVerdicts == .two && stored.afterSwitch == .keepClassifying)
-        #expect(!stored.navigationSuspends && stored.enterBehavior == .ignoreFor300Milliseconds && stored.escapeBehavior == .dismisses)
+        #expect(!stored.foundationModelsUnsure && stored.agreeingVerdicts == .two)
+        #expect(!stored.navigationSuspends && stored.enterBehavior == .ignoreFor300Milliseconds)
         #expect(!stored.reversalSuspends && stored.wait == .none && stored.lateStrongMatch == .stay)
         #expect(NSApp.activationPolicy() == policy && interaction.window(for: .main) === working)
         interaction.dismiss(invocation, reason: .outsideClick)
@@ -300,43 +300,12 @@ struct AutomaticSwitchInteractionTests {
         await store.close()
     }
 
-    @Test func keepClassifyingMovesCaptureModesAndBackToSearchWithoutEditingTextOrSelection() async throws {
+    @Test func escapeAfterAnAutomaticSwitchReversesOnceThenDismisses() async throws {
         _ = NSApplication.shared
         let fixture = try Fixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier(), apps = CatalogFeed()
-        var options = fixture.options.read(); options.isEnabled = true; options.afterSwitch = .keepClassifying
-        fixture.options.write(options)
-        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
-            collection: Task { store }, automaticSwitchOptions: fixture.options,
-            automaticSwitchDiagnostics: fixture.log, classifierFactory: { _ in fake })
-        let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
-        let editor = try await editor()
-        editor.insertText("call mom", replacementRange: NSRange(location: NSNotFound, length: 0))
-        await apps.send([]); try await eventually { fake.pendingCount == 1 }; fake.reply(.note)
-        try await eventually { interaction.mode == .note }
-        for (suffix, label, expected) in [(" tomorrow", ClassifierVerdict.Label.task, CaptureSession.Mode.task),
-                                          (" details", .search, .search)] {
-            let subscriptions = apps.subscriptionCount
-            editor.insertText(suffix, replacementRange: NSRange(location: NSNotFound, length: 0))
-            let text = editor.string, selection = editor.selectedRange()
-            try await eventually { apps.subscriptionCount > subscriptions }
-            await apps.send([]); try await eventually { fake.pendingCount == 1 }
-            #expect(interaction.rows.isEmpty && !interaction.resultsVisible)
-            fake.reply(label); try await eventually { interaction.mode == expected }
-            #expect(editor.string == text && editor.selectedRange() == selection)
-        }
-        #expect(fixture.log.counts().switches == 3)
-        await store.close()
-    }
-
-    @Test(arguments: AutomaticSwitchOptions.EscapeBehavior.allCases)
-    func escapeAfterAnAutomaticSwitchReversesOnceOrDismissesAsConfigured(option: AutomaticSwitchOptions.EscapeBehavior) async throws {
-        _ = NSApplication.shared
-        let fixture = try Fixture(); defer { fixture.remove() }
-        let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
-        let fake = ScriptedClassifier(), apps = CatalogFeed()
-        var options = fixture.options.read(); options.isEnabled = true; options.escapeBehavior = option
+        var options = fixture.options.read(); options.isEnabled = true
         fixture.options.write(options)
         let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
             collection: Task { store }, automaticSwitchOptions: fixture.options,
@@ -347,11 +316,9 @@ struct AutomaticSwitchInteractionTests {
         await apps.send([]); try await eventually { fake.pendingCount == 1 }; fake.reply(.note)
         try await eventually { interaction.mode == .note }
         editor.keyDown(with: try escapeKey())
-        if option == .returnsToSearch {
-            #expect(interaction.mode == .search && interaction.currentInvocation == invocation && editor.string == "call mom")
-            editor.keyDown(with: try escapeKey())
-            #expect(fixture.log.counts().wrongSwitches == 1 && fixture.log.counts().ambiguous == 0)
-        } else { #expect(fixture.log.counts().wrongSwitches == 0 && fixture.log.counts().ambiguous == 1) }
+        #expect(interaction.mode == .search && interaction.currentInvocation == invocation && editor.string == "call mom")
+        editor.keyDown(with: try escapeKey())
+        #expect(fixture.log.counts().wrongSwitches == 1 && fixture.log.counts().ambiguous == 0)
         #expect(interaction.currentInvocation == nil)
         await store.close()
     }

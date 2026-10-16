@@ -776,14 +776,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         addOptionMenu("Foundation Models unsure", to: menu, keyPath: \.foundationModelsUnsure,
             choices: [(true, "On"), (false, "Off")])
         addOptionMenu("Agreeing verdicts needed", to: menu, keyPath: \.agreeingVerdicts, choices: [(.one, "1"), (.two, "2")])
-        addOptionMenu("After a switch", to: menu, keyPath: \.afterSwitch,
-            choices: [(.stay, "Stay in that mode"), (.keepClassifying, "Keep classifying")])
         addOptionMenu("Navigating results stops switching", to: menu, keyPath: \.navigationSuspends,
             choices: [(true, "On"), (false, "Off")])
         addOptionMenu("Enter just after a switch", to: menu, keyPath: \.enterBehavior,
             choices: [(.saves, "Saves"), (.ignoreFor300Milliseconds, "Ignored for 300 ms")])
-        addOptionMenu("Escape right after a switch", to: menu, keyPath: \.escapeBehavior,
-            choices: [(.returnsToSearch, "Returns to Search"), (.dismisses, "Dismisses")])
         addOptionMenu("Reversing stops switching", to: menu, keyPath: \.reversalSuspends,
             choices: [(true, "On"), (false, "Off")])
         addOptionMenu("After reversing a switch", to: menu, keyPath: \.reversalBehavior,

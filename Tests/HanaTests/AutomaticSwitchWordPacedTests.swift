@@ -86,7 +86,7 @@ struct AutomaticSwitchWordPacedTests {
     }
 
     @Test func noSendAfterASwitchThatStays() throws {
-        var h = Harness { $0.afterSwitch = .stay }
+        var h = Harness()
         let first = try #require(requests(h.edit("call mom ")).first?.id)
         let second = try #require(requests(h.edit("call mom tomorrow ")).first?.id)
         let switched = h.policy.handle(.verdict(id: first, task, latencyMilliseconds: 40))

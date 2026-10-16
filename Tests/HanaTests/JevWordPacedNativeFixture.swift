@@ -16,7 +16,7 @@ struct JevWordPacedNativeFixture {
         options = AutomaticSwitchOptionsStore(defaults: defaults)
         var value = AutomaticSwitchOptions()
         value.isEnabled = true; value.classifier = .jev; value.firing = .wordPaced
-        value.afterSwitch = .stay; value.wait = .none
+        value.wait = .none
         configure(&value)
         options.write(value)
         log = AutomaticSwitchDiagnostics(file: directory.appendingPathComponent("automatic-switch.jsonl"))

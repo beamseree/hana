@@ -4,25 +4,6 @@ import Testing
 
 /// Fake-clock requests and diagnostic effects only; no adapter or live Jev.
 struct JevBackoffTests {
-    @Test func failureDuringDeletionReturnsToSearchOnlyAfterThePause() throws {
-        let clock = TestClock()
-        var options = AutomaticSwitchOptions()
-        options.isEnabled = true; options.classifier = .jev; options.firing = .wordPaced; options.afterSwitch = .keepClassifying
-        var session = AutomaticSwitch(options: options, memory: JevLaunchMemory(), now: { clock.now.offset })
-        _ = session.handle(.invoked)
-        _ = session.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
-        let first = try #require(requests(session.handle(.bufferChanged(text: "call mom ", composing: false))).first)
-        _ = session.handle(.verdict(id: first, .init(label: .task, probabilities: [.task: 0.95]), latencyMilliseconds: 10))
-        let next = try #require(requests(session.handle(.bufferChanged(text: "call mom tomorrow ", composing: false))).first)
-        _ = session.handle(.bufferChanged(text: "call mom tomorrow morning", composing: false))
-        _ = session.handle(.bufferChanged(text: "call mom tomorrow mornin", composing: false))
-        let failed = session.handle(.failed(id: next, .network, latencyMilliseconds: 10))
-        #expect(!failed.contains { if case .returnToSearch = $0 { true } else { false } })
-        clock.advance(by: .milliseconds(179))
-        #expect(!session.handle(.tick).contains { if case .returnToSearch = $0 { true } else { false } })
-        clock.advance(by: .milliseconds(1))
-        #expect(session.handle(.tick).contains { if case .returnToSearch = $0 { true } else { false } })
-    }
     @Test func aReplyForTheOldKeyCannotRejectANewlySavedKey() throws {
         let clock = TestClock(), memory = JevLaunchMemory()
         var session = policy(memory: memory, clock: clock)
@@ -49,24 +30,6 @@ struct JevBackoffTests {
         clock.advance(by: .seconds(29))
         #expect(requests(session.handle(.bufferChanged(text: "call mom tomorrow morning please ", composing: false))).count == 1)
     }
-    @Test(arguments: [AutomaticSwitchDiagnostics.ErrorKind.authentication, .rateLimited, .network, .malformedResponse])
-    func aFailureReturnsAnAutomaticallyEnteredModeToPlainSearch(_ kind: AutomaticSwitchDiagnostics.ErrorKind) throws {
-        let clock = TestClock()
-        var options = AutomaticSwitchOptions()
-        options.isEnabled = true; options.classifier = .jev; options.firing = .wordPaced; options.afterSwitch = .keepClassifying
-        var session = AutomaticSwitch(options: options, memory: JevLaunchMemory(), now: { clock.now.offset })
-        _ = session.handle(.invoked)
-        _ = session.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
-        let first = try #require(requests(session.handle(.bufferChanged(text: "call mom ", composing: false))).first)
-        let switched = session.handle(.verdict(id: first, .init(label: .task, probabilities: [.task: 0.95]), latencyMilliseconds: 10))
-        #expect(switched.contains { if case .enterMode(.task) = $0 { true } else { false } })
-        let next = try #require(requests(session.handle(.bufferChanged(text: "call mom tomorrow ", composing: false))).first)
-        let failed = session.handle(.failed(id: next, kind, latencyMilliseconds: 10))
-        #expect(failed.contains { if case .returnToSearch = $0 { true } else { false } })
-        #expect(!session.lastModeChangeWasAutomatic)
-        #expect(rows(failed).first?.outcome == .error)
-    }
-
     @MainActor @Test func backoffRowsContainOnlyAReasonAndNoInputOrLatency() throws {
         let clock = TestClock()
         var session = policy(memory: JevLaunchMemory(), clock: clock)

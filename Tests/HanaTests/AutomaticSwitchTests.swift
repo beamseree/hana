@@ -111,17 +111,11 @@ struct AutomaticSwitchTests {
         #expect(outcomes(missing.policy.handle(.verdict(id: id, .init(label: .task), latencyMilliseconds: 10))) == [.belowThreshold])
     }
 
-    @Test(arguments: AutomaticSwitchOptions.AfterSwitch.allCases)
-    func afterSwitchStaysOrKeepsClassifying(option: AutomaticSwitchOptions.AfterSwitch) throws {
-        var h = Harness { $0.afterSwitch = option }
+    @Test func anAutomaticSwitchStaysInItsModeWithoutFurtherRequests() throws {
+        var h = Harness()
         let first = try #require(requests(h.policy.handle(.bufferChanged(text: "call mom", composing: false))).first?.id)
         _ = h.policy.handle(.verdict(id: first, .init(label: .task), latencyMilliseconds: 10))
-        let effects = h.policy.handle(.bufferChanged(text: "a long thought", composing: false))
-        if option == .stay { #expect(requests(effects).isEmpty); return }
-        let second = try #require(requests(effects).first?.id)
-        #expect(modes(h.policy.handle(.verdict(id: second, .init(label: .note), latencyMilliseconds: 10))) == [.note])
-        let third = try #require(requests(h.policy.handle(.bufferChanged(text: "find existing thing", composing: false))).first?.id)
-        #expect(returns(h.policy.handle(.verdict(id: third, .init(label: .search), latencyMilliseconds: 10))))
+        #expect(requests(h.policy.handle(.bufferChanged(text: "a long thought", composing: false))).isEmpty)
     }
 
     @Test(arguments: [true, false])
@@ -220,12 +214,11 @@ struct AutomaticSwitchTests {
         #expect(outcomes(h.policy.handle(.verdict(id: id, .init(label: .note), latencyMilliseconds: 10))) == [.stale])
     }
 
-    @Test func escapeDismissOptionDoesNotReverseAndReinvocationClearsSuspension() throws {
-        var h = Harness { $0.escapeBehavior = .dismisses }
+    @Test func reinvocationClearsReversalSuspension() throws {
+        var h = Harness()
         let id = try #require(requests(h.policy.handle(.bufferChanged(text: "buy milk", composing: false))).first?.id)
         _ = h.policy.handle(.verdict(id: id, .init(label: .task), latencyMilliseconds: 10))
-        #expect(h.policy.handle(.reversed(.escape)).isEmpty)
-        _ = h.policy.handle(.reversed(.backspace))
+        _ = h.policy.handle(.reversed(.escape))
         #expect(outcomes(h.policy.handle(.bufferChanged(text: "buy milk later", composing: false))) == [.suspended])
         _ = h.policy.handle(.dismissed(.dismissed)); _ = h.policy.handle(.invoked)
         #expect(requests(h.policy.handle(.bufferChanged(text: "buy milk", composing: false))).count == 1)

@@ -95,8 +95,8 @@ struct AutomaticSwitchWakeUpTests {
         #expect(h.policy.nextWakeUp == nil)
     }
 
-    @Test func earliestOfSeveralPendingDeadlinesIsReported() throws {
-        var h = Harness { $0.firing = .debounced; $0.afterSwitch = .keepClassifying }
+    @Test func enterGraceEndIsReportedAndTypingAfterAStayingSwitchAddsNoDeadline() throws {
+        var h = Harness { $0.firing = .debounced }
         _ = h.policy.handle(.bufferChanged(text: "call mom", composing: false))
         h.advance(to: .milliseconds(150))
         let first = try #require(requests(h.policy.handle(.tick)).first?.id)
@@ -104,16 +104,12 @@ struct AutomaticSwitchWakeUpTests {
         #expect(modes(h.policy.handle(.verdict(id: first, .init(label: .note), latencyMilliseconds: 50))) == [.note])
         #expect(h.policy.nextWakeUp == .milliseconds(500))
         h.advance(to: .milliseconds(210))
-        _ = h.policy.handle(.bufferChanged(text: "call mom today", composing: false))
-        // Debounce at 360 ms precedes the Enter grace end at 500 ms.
-        #expect(h.policy.nextWakeUp == .milliseconds(360))
-        h.advance(to: .milliseconds(360))
-        #expect(requests(h.policy.handle(.tick)).map(\.text) == ["call mom today"])
-        // Grace end at 500 ms precedes the new request's timeout at 1860 ms.
+        // The switch stays in Note, so typing schedules no debounce.
+        #expect(requests(h.policy.handle(.bufferChanged(text: "call mom today", composing: false))).isEmpty)
         #expect(h.policy.nextWakeUp == .milliseconds(500))
         h.advance(to: .milliseconds(500))
         _ = h.policy.handle(.tick)
-        #expect(h.policy.nextWakeUp == .milliseconds(1860))
+        #expect(h.policy.nextWakeUp == nil)
     }
 
     @Test func nothingPendingReportsNone() throws {

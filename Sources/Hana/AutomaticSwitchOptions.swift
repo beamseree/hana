@@ -16,9 +16,7 @@ struct AutomaticSwitchOptions: Codable, Equatable, Sendable {
             self = value
         }
     }
-    enum AfterSwitch: String, Codable, CaseIterable, Sendable { case stay, keepClassifying }
     enum EnterBehavior: String, Codable, CaseIterable, Sendable { case saves, ignoreFor300Milliseconds }
-    enum EscapeBehavior: String, Codable, CaseIterable, Sendable { case returnsToSearch, dismisses }
     enum Wait: String, Codable, CaseIterable, Sendable { case allSources, appsAndCollection, none }
     enum LateStrongMatch: String, Codable, CaseIterable, Sendable { case returnToSearch, stay }
     enum Threshold: Double, Codable, CaseIterable, Sendable {
@@ -33,10 +31,8 @@ struct AutomaticSwitchOptions: Codable, Equatable, Sendable {
     var jevThreshold = Threshold.p70
     var foundationModelsUnsure = true
     var agreeingVerdicts = Agreement.one
-    var afterSwitch = AfterSwitch.stay
     var navigationSuspends = true
     var enterBehavior = EnterBehavior.ignoreFor300Milliseconds
-    var escapeBehavior = EscapeBehavior.returnsToSearch
     var reversalSuspends = true
     /// Word-paced only. The legacy flag still governs the other strategies.
     var reversalBehavior = ReversalBehavior.blockModeForText
@@ -47,12 +43,14 @@ struct AutomaticSwitchOptions: Codable, Equatable, Sendable {
 
     private enum CodingKeys: String, CodingKey {
         case isEnabled, classifier, firing, jevThreshold, foundationModelsUnsure, agreeingVerdicts
-        case afterSwitch, navigationSuspends, enterBehavior, escapeBehavior, reversalSuspends, reversalBehavior
+        case navigationSuspends, enterBehavior, reversalSuspends, reversalBehavior
         case wait, lateStrongMatch
     }
 
     /// Decode historical settings and JSONL options without losing the rest
     /// of the snapshot when Word-paced's reversal choice is introduced.
+    /// Retired keys (`afterSwitch`, `escapeBehavior`) are ignored: an automatic
+    /// switch always stays in its mode, and Escape right after it returns to Search.
     init(from decoder: any Decoder) throws {
         self.init()
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -62,10 +60,8 @@ struct AutomaticSwitchOptions: Codable, Equatable, Sendable {
         jevThreshold = try values.decodeIfPresent(Threshold.self, forKey: .jevThreshold) ?? jevThreshold
         foundationModelsUnsure = try values.decodeIfPresent(Bool.self, forKey: .foundationModelsUnsure) ?? foundationModelsUnsure
         agreeingVerdicts = try values.decodeIfPresent(Agreement.self, forKey: .agreeingVerdicts) ?? agreeingVerdicts
-        afterSwitch = try values.decodeIfPresent(AfterSwitch.self, forKey: .afterSwitch) ?? afterSwitch
         navigationSuspends = try values.decodeIfPresent(Bool.self, forKey: .navigationSuspends) ?? navigationSuspends
         enterBehavior = try values.decodeIfPresent(EnterBehavior.self, forKey: .enterBehavior) ?? enterBehavior
-        escapeBehavior = try values.decodeIfPresent(EscapeBehavior.self, forKey: .escapeBehavior) ?? escapeBehavior
         reversalSuspends = try values.decodeIfPresent(Bool.self, forKey: .reversalSuspends) ?? reversalSuspends
         reversalBehavior = try values.decodeIfPresent(ReversalBehavior.self, forKey: .reversalBehavior)
             ?? (reversalSuspends ? .stopUntilCleared : .blockModeForText)
