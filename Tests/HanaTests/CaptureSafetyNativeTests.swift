@@ -11,7 +11,7 @@ struct CaptureSafetyNativeTests {
 
     @Test(arguments: ["-", "["], Outcome.allCases)
     func dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix: String, outcome: Outcome) async throws {
-        for reason in [MacInteraction.DismissalReason.escape, .outsideClick] {
+        for reason in [MacInteraction.DismissalReason.escape, .shortcut, .outsideClick] {
             let fixture = try TemporaryFixture()
             let gate = CommitGate()
             defer { gate.open() }
@@ -39,6 +39,7 @@ struct CaptureSafetyNativeTests {
             try await eventually { gate.arrivals == 1 }
             #expect(interaction.modeLabelText == "Saving…" && !editor.isEditable)
             if reason == .escape { editor.keyDown(with: try escapeKey()) }
+            else if reason == .shortcut { interaction.toggleBar() }
             else { interaction.dismiss(invocation, reason: reason) }
             #expect(interaction.currentInvocation == invocation && editor.string == "keep this")
             #expect(editor.window?.isVisible == true)

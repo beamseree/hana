@@ -150,7 +150,7 @@ struct MacInteractionTests {
         #expect(opened == [safari.url])
     }
 
-    @Test(arguments: [MacInteraction.DismissalReason.escape, .outsideClick])
+    @Test(arguments: [MacInteraction.DismissalReason.escape, .shortcut, .outsideClick])
     func dismissalCancelsAHeldEnter(reason: MacInteraction.DismissalReason) async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed()
@@ -344,6 +344,35 @@ struct MacInteractionTests {
         defer { interaction.dismiss(first, reason: .outsideClick) }
         #expect(interaction.presentBar() == first)
         #expect(interaction.currentInvocation == first)
+    }
+
+    @Test(arguments: ["", "search text", "-", "["])
+    func searchShortcutClosesTheBarAndReopensEmptySearch(text: String) async throws {
+        _ = NSApplication.shared
+        let interaction = MacInteraction(frontmostApplication: { nil })
+        defer { interaction.stop() }
+        interaction.toggleBar()
+        let first = try #require(interaction.currentInvocation)
+        try await eventually { NSApp.keyWindow?.title == "Hana Search" }
+        let panel = try #require(NSApp.keyWindow)
+        let editor = try #require(panel.firstResponder as? NSTextView)
+        editor.insertText(text, replacementRange: NSRange(location: NSNotFound, length: 0))
+        if text == "-" || text == "[" {
+            #expect(interaction.mode == (text == "-" ? .note : .task))
+            editor.insertText("unsaved capture", replacementRange: NSRange(location: NSNotFound, length: 0))
+        }
+
+        interaction.toggleBar()
+        #expect(interaction.currentInvocation == nil)
+        #expect(!panel.isVisible)
+        #expect(interaction.query.isEmpty)
+
+        interaction.toggleBar()
+        let fresh = try #require(interaction.currentInvocation)
+        #expect(fresh != first)
+        #expect(interaction.mode == .search && interaction.query.isEmpty)
+        interaction.dismiss(first, reason: .shortcut)
+        #expect(interaction.currentInvocation == fresh)
     }
     @Test func oldDismissalCannotCloseAReopenedBar() {
         _ = NSApplication.shared

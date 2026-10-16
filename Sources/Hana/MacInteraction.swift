@@ -27,7 +27,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     }
 
     enum DismissalReason: String {
-        case escape, outsideClick, appSwitch, environmentChange, destination
+        case escape, shortcut, outsideClick, appSwitch, environmentChange, destination
         /// A capture was saved and its confirmation ended.
         case saved
     }
@@ -330,7 +330,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         NSApp.setActivationPolicy(.accessory)
         let shortcut = GlobalShortcut { [weak self] in
             self?.record("hotkey.received")
-            self?.presentBar()
+            self?.toggleBar()
         }
         hotKey = shortcut
         let shortcutMenu = ShortcutMenuController(register: { shortcut.register($0) }) { [weak self] selection, result in
@@ -373,6 +373,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
         statusItem = nil
         record("shutdown")
+    }
+
+    /// The global Search shortcut opens a fresh bar or dismisses its current session.
+    func toggleBar() {
+        if let invocation = currentInvocation {
+            dismiss(invocation, reason: .shortcut)
+        } else {
+            presentBar()
+        }
     }
 
     @discardableResult
@@ -440,13 +449,13 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         if capture.state.phase == .saving {
             _ = capture.handle(.dismissed)
             record("capture.dismiss-deferred", extra: ["reason": reason.rawValue])
-            // Release keyboard control on Escape, but retain the visible save
+            // Release keyboard control on Escape or the shortcut, but retain the visible save
             // and its text. No callback may later restore the old destination.
             removeSessionObservers()
             origin = nil
             originWindow = nil
             originResponder = nil
-            if reason == .escape { panel.resignKey() }
+            if reason == .escape || reason == .shortcut { panel.resignKey() }
             return
         }
         record("dismiss.\(reason.rawValue)")
@@ -467,7 +476,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         // The foreign origin normally never lost activation. Ordering out the
         // nonactivating panel releases its key focus. Never activate an old app
         // over a subsequent user choice, even for Escape. Restoration is best effort.
-        if reason == .escape || reason == .saved,
+        if reason == .escape || reason == .shortcut || reason == .saved,
            origin?.processIdentifier == ProcessInfo.processInfo.processIdentifier,
            frontmostApplication()?.processIdentifier == origin?.processIdentifier,
            let originWindow, originWindow.isVisible, !originWindow.isMiniaturized {

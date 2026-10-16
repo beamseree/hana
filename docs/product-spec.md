@@ -46,6 +46,7 @@ Per Beam's answers on 2026-10-13:
 - Export individual Markdown files for notes and JSON for tasks, including task text, status, and timestamps.
 - Search prioritizes strong name/title matches, then uses recency/frequency for similar matches. Creation suggestions sit below actual matches (accepted Q31 recommendation).
 - Configurable global shortcut, starting with Option+Space, plus menu-bar access while working windows are closed. Invocation opens the bar on the working display with immediate typing focus (accepted Q32 recommendation).
+- Pressing the global Search shortcut while the bar is open dismisses it like Escape, including in Note and Task modes. The next press opens a fresh empty Search session (Beam, 2026-10-16). An in-progress capture save retains the existing outcome protection.
 - Native macOS appearance: an opaque white content card (input, with results below it) inside a translucent, system-blurred rounded bezel, with the native window shadow and system typography. Beam chose this on 2026-10-13 from his Figma design (Port 2025, node 470:2289), superseding the earlier solid-white, non-translucent decision; text and controls stay on opaque white. Smooth shapeshifting preserves the input position, expanding around it, while typing remains responsive (accepted Q33 with correction).
 - Maintain recoverable automatic local backups in addition to export. Backups do not retain discarded unsaved captures.
 - Prefix recognition applies only to typing at the start of Search, never to pasted text; pasting retains the current mode.

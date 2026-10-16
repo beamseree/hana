@@ -99,6 +99,7 @@ Each close has a reason and a destination:
 | Event | Text and focus outcome |
 | --- | --- |
 | Escape with no active composition | Discard unsaved capture; hide; return keyboard control to the invocation origin when it is still appropriate |
+| Global Search shortcut while the bar is open | Dismiss like Escape in any mode; an unresolved capture save retains its text and waits for its outcome |
 | Outside click or user switches apps | Discard unsaved capture; let the clicked/new app receive focus; never activate the old app over the user's new choice |
 | Successful ordinary capture | Commit, brief confirmation, close; return to prior app unless the user has already moved elsewhere |
 | Open in window | Commit first, then open/activate the saved note's working window; do not return to prior app |
@@ -110,7 +111,7 @@ Use the invocation token to prevent an old save/animation callback from dismissi
 
 Detect outside clicks both in this app and other apps, and observe key loss/Space and app transitions. A nonactivating panel cannot rely solely on the owning app's resign-active notification. Remove temporary observers when hidden. Treat editor context menus, input-method candidate UI, filter menus, and owned popovers as part of the session; their temporary key changes must not discard text. Escape first dismisses composition/candidate UI, then the capture on a subsequent Escape. Prototype these distinctions with actual native input methods.
 
-Repeated invocation while visible should bring focus back to the existing session, without resetting or discarding text; this is a proposed safe default for a configurable shortcut, not a second capture mode. A new session starts only after dismissal. On screen lock, discard unsaved capture and hide. On a Space change, dismiss rather than leave the bar following the user indefinitely; verify transitions triggered by opening a destination are not misclassified as user cancellation.
+Per Beam, 2026-10-16, the global Search shortcut toggles the bar: open a new Search session when closed, or dismiss the current session when open, including Note and Task modes. This supersedes the proposed refocus behavior for repeated shortcut presses. Menu commands and internal presentation requests can still refocus the existing session without discarding text. A new session starts only after dismissal. On screen lock, discard unsaved capture and hide. On a Space change, dismiss rather than leave the bar following the user indefinitely; verify transitions triggered by opening a destination are not misclassified as user cancellation.
 
 ### Display selection and permission
 
