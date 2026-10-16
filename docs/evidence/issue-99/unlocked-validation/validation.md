@@ -8,4 +8,4 @@ Beam confirmed unlocked/ready. Root queried `IOConsoleUsers`: `consoleScreenLock
 - Release two-process orderly quit/relaunch: both phases exit0, exact UTF-8/stable IDs/task orders pass. Uses new marked final-release-smoke-fixture root, preserves physical fixture separately.
 - Unchanged full suite: **394 tests /57 suites,7issues,80.228s**, complete summary and exit1. Five issues in key-scoped MainNoteOrganization menu test; two in OpenNoteCapture newer-invocation global key/responder test. All other tests pass. Isolated menu probe also failed with five issues. Signed actual-app passes do not erase these unit-runner failures.
 
-Original logs are SHA256-identified here and retained unchanged outside the repository. Repository copies replace personal worktree prefixes and visualize trailing literal whitespace. Physical acceptance and native drag/drop commit remain pending.
+Original logs are SHA256-identified here and retained unchanged outside the repository. Repository copies replace personal worktree prefixes and visualize trailing literal whitespace, including carriage returns as `␍`. Physical acceptance and native drag/drop commit remain pending.
