@@ -6,7 +6,12 @@ struct CalculationTests {
     @Test(arguments: [
         "1e-65 * 1e-64", "-1e-65 * 1e-64", "1e-65 * -1e-64", "-1e-65 * -1e-64",
         "9e-128 * 0.1", "1e-128 / 10", "-1e-128 / 10", "1e-128 / -10",
-        "10^-129", "0.5^500", "1e127 * 10", "-1e127 * 10", "1e127 / 0.1"
+        "10^-129", "0.5^500", "4e127 * 1e38", "-4e127 * 1e38", "1e127 / 1e-39",
+        "1e166", "10e9223372036854775807", "0.1e-9223372036854775808", "1e99999999999999999999999",
+        "340282366920938463463374607431768211456e127",
+        "3.40282366920938463463374607431768211456e165",
+        "3402823669209384634633746074317682114551e126",
+        "9.99999999999999999999999999999999999999e-129"
     ])
     func exactArithmeticRejectsOutOfRangeScales(text: String) throws {
         let answer = try #require(Calculation.answer(for: text, locale: locale))
@@ -40,6 +45,32 @@ struct CalculationTests {
         let answer = try #require(Calculation.answer(for: text, locale: locale))
         #expect(answer.state == .value && answer.title == expected && answer.copyableText == expected)
         #expect(answer.subtitle == text)
+    }
+
+    @Test(arguments: [
+        ("5e127 * 2", "1e128"), ("1e127 * 10", "1e128"), ("1e127 / 0.1", "1e128"),
+        ("-5e127 * 2", "-1e128"), ("5e127 * -2", "-1e128"), ("-5e127 * -2", "1e128"),
+        ("-1e127 / 0.1", "-1e128"), ("1e127 / -0.1", "-1e128"), ("-1e127 / -0.1", "1e128"),
+        ("9e127 + 1e127", "1e128"), ("10e127 + 0", "1e128"), ("1e127 * 11", "1.1e128"),
+        ("1e127 * 1e38", "1e165"), ("3e127 * 1e38", "3e165"), ("10^128", "1e128"),
+        ("2^500", "3.2733906e150"),
+        ("340282366920938463463374607431768211455e127 * 1", "3.4028237e165")
+    ])
+    func exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text: String, expected: String) throws {
+        let answer = try #require(Calculation.answer(for: text, locale: locale))
+        #expect(answer.state == .value && answer.title == expected && answer.copyableText == expected)
+    }
+
+    @Test(arguments: [
+        ("1e128 + 0", "1e128"), ("10e127 + 0", "1e128"), ("0.1e129 + 0", "1e128"),
+        ("-1e128 + 0", "-1e128"), ("1E+128 / 10", "1e127"),
+        ("1e165 + 0", "1e165"), ("3.4e165 + 0", "3.4e165"),
+        ("3.40282366920938463463374607431768211455e165 * 1", "3.4028237e165"),
+        ("10e-129 + 0", "1e-128"), ("100e-130 + 0", "1e-128")
+    ])
+    func equivalentScientificLiteralsShareTheRepresentableRange(text: String, expected: String) throws {
+        let answer = try #require(Calculation.answer(for: text, locale: locale))
+        #expect(answer.state == .value && answer.title == expected && answer.copyableText == expected)
     }
 
     @Test func longFlatPastedCalculationsHaveNoTokenCountLimit() throws {
@@ -134,7 +165,7 @@ struct CalculationTests {
         ("9^9^9", .tooLarge, "Uh oh", "Too large"),
         ("10^1000.5", .tooLarge, "Uh oh", "Too large"),
         ("1e9999", .tooLarge, "Uh oh", "Too large"),
-        ("1e127 * 10", .tooLarge, "Uh oh", "Too large"),
+        ("4e127 * 1e38", .tooLarge, "Uh oh", "Too large"),
         ("1e-128 / 10", .tooLarge, "Uh oh", "Too large"),
         ("2^9223372036854775808", .tooLarge, "Uh oh", "Too large"),
         ("2^-9223372036854775808", .tooLarge, "Uh oh", "Too large"),
