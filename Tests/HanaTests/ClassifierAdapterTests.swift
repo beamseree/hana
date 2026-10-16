@@ -33,7 +33,7 @@ struct ClassifierAdapterTests {
     @Test func jevSerializesRequestAndChoiceKeysInStableAlphabeticalOrder() async throws {
         let adapter = JevClassifier(key: "test-secret", transport: { request in
             let body = String(decoding: try #require(request.httpBody), as: UTF8.self)
-            #expect(body.hasPrefix(#"{"model":"jev-1.13.0","questions":{"classify_input":{"criteria":{"Note":"#))
+            #expect(body.hasPrefix(#"{"model":"jev-1.13.0","questions":{"classify_input":{"criteria":{"Other":"#))
             let other = try #require(body.range(of: #""Other":"#))
             let search = try #require(body.range(of: #""Search":"#))
             let task = try #require(body.range(of: #""Task":"#))
@@ -57,13 +57,17 @@ struct ClassifierAdapterTests {
             #expect(questions["classify_input"]?["type"] as? String == "choice")
             let criteria = try #require(questions["classify_input"]?["criteria"] as? [String: String])
             #expect(criteria["Search"] == "Find an app, file, or an existing note or task on this Mac")
+            #expect(Set(criteria.keys) == ["Search", "Task", "Other"])
+            #expect(criteria["Note"] == nil)
+            #expect(criteria["Other"] == "Information, observations, ideas, incomplete or ambiguous text, or anything that is not clearly a search or a new task")
             return .init(data: Data(Self.taskResponse.utf8), status: 200)
         })
         let verdict = try await adapter.classify("call mom tomorrow")
         #expect(verdict.label == .task)
         #expect(verdict.probability == 0.9)
         #expect(verdict.probabilities?[.search] == 0.03)
-        #expect(verdict.wordingVersion == .v1)
+        #expect(verdict.wordingVersion == .jevTaskFocusedV1)
+        #expect(verdict.probabilities?[.note] == nil)
     }
 
     @Test func foundationUnavailableNeverRunsModel() async throws {
@@ -84,7 +88,7 @@ struct ClassifierAdapterTests {
     }
     @Test func jevOtherMapsToUnsure() async throws {
         let json = Self.taskResponse.replacingOccurrences(of: #""choice":"Task""#, with: #""choice":"Other""#)
-            .replacingOccurrences(of: #""Task":0.9,"Other":0.03"#, with: #""Task":0.03,"Other":0.9"#)
+            .replacingOccurrences(of: #""Task":0.9,"Other":0.07"#, with: #""Task":0.07,"Other":0.9"#)
         let adapter = JevClassifier(key: "secret", transport: { _ in .init(data: Data(json.utf8), status: 200) })
         let verdict = try await adapter.classify("unclear input")
         #expect(verdict.label == .unsure && verdict.probability == 0.9)
@@ -93,7 +97,7 @@ struct ClassifierAdapterTests {
         taskResponse.replacingOccurrences(of: #""Task":0.9"#, with: #""Task":0.8"#),
         taskResponse.replacingOccurrences(of: #""choice":"Task""#, with: #""choice":"Search""#),
         taskResponse.replacingOccurrences(of: "jev-1.13.0", with: "jev-latest"),
-        taskResponse.replacingOccurrences(of: #""Other":0.03"#, with: #""Unknown":0.03"#)])
+        taskResponse.replacingOccurrences(of: #""Other":0.07"#, with: #""Unknown":0.07"#)])
     func jevMalformedResponsesFail(_ body: String) async {
         let adapter = JevClassifier(key: "secret", transport: { _ in .init(data: Data(body.utf8), status: 200) })
         do { _ = try await adapter.classify("private input"); Issue.record("Expected malformed failure") }
@@ -146,5 +150,54 @@ struct ClassifierAdapterTests {
         #expect(availability.menuText == text)
     }
 
-    nonisolated static let taskResponse = #"{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Note":0.04,"Task":0.9,"Other":0.03},"confidence":0.86}}}"#
+    @Test func jevRejectsTheOldFourChoiceResponse() async {
+        let old = Self.taskResponse.replacingOccurrences(of: #""Other":0.07"#, with: #""Note":0.04,"Other":0.03"#)
+        let adapter = JevClassifier(key: "fixture", transport: { _ in .init(data: Data(old.utf8), status: 200) })
+        do { _ = try await adapter.classify("new thought"); Issue.record("Expected old choice set to be rejected") }
+        catch { #expect((error as? ClassifierFailure)?.kind == .malformedResponse) }
+    }
+
+    @Test func jevTaskFocusedWordingKeepsFoundationOptionsAndInvalidatesEarlierCaches() {
+        #expect(ClassifierWording.foundationInstructions(unsure: true).contains("Note: Capture a thought or information as a new note"))
+        #expect(ClassifierWording.version == .v1)
+        #expect(ClassifierWording.foundationInstructions(unsure: true).contains("unsure: Unclear, incomplete, or none of the other options fits"))
+        #expect(JevLaunchMemory.CacheIdentity.current.wordingVersion == "jev-task-focused-v1")
+        let memory = JevLaunchMemory()
+        memory.remember(.init(label: .note, probabilities: [.note: 0.95]), for: "new thought",
+            identity: .init(wordingVersion: ClassifierWording.version.rawValue, model: JevClassifier.model))
+        memory.remember(.init(label: .task, probabilities: [.task: 0.95], wordingVersion: .jevWithoutNoteV1), for: "new thought",
+            identity: .init(wordingVersion: AutomaticSwitchDiagnostics.WordingVersion.jevWithoutNoteV1.rawValue, model: JevClassifier.model))
+        var options = AutomaticSwitchOptions()
+        options.isEnabled = true; options.classifier = .jev; options.firing = .wordPaced
+        var policy = AutomaticSwitch(options: options, memory: memory, now: { .zero })
+        _ = policy.handle(.invoked)
+        let effects = policy.handle(.bufferChanged(text: "new thought ", composing: false,
+            gate: .init(decision: .allowed, settled: true, allSourcesSettled: true)))
+        #expect(effects.contains { if case .classify = $0 { true } else { false } })
+        #expect(!effects.contains { if case .enterMode = $0 { true } else { false } })
+        #expect(policy.debugSnapshot.cacheHits == 0)
+    }
+
+    @Test(arguments: ["error", "timeout", "backoff"])
+    func jevTrialDiagnosticsIdentifyTheWordingEvenWithoutAnAnswer(outcome: String) throws {
+        let clock = TestClock(), memory = JevLaunchMemory()
+        var options = AutomaticSwitchOptions()
+        options.isEnabled = true; options.classifier = .jev; options.firing = .wordPaced
+        var policy = AutomaticSwitch(options: options, memory: memory, now: { clock.now.offset })
+        _ = policy.handle(.invoked)
+        if outcome == "backoff" { memory.recordFailure(kind: .rateLimited, at: .zero) }
+        let sent = policy.handle(.bufferChanged(text: "new thought ", composing: false,
+            gate: .init(decision: .allowed, settled: true, allSourcesSettled: true)))
+        let effects: [AutomaticSwitch.Effect]
+        if outcome == "backoff" { effects = sent }
+        else {
+            let id = try #require(sent.compactMap { if case .classify(let id, _) = $0 { id } else { nil } }.first)
+            if outcome == "error" { effects = policy.handle(.failed(id: id, .network, latencyMilliseconds: 20)) }
+            else { clock.advance(by: .milliseconds(1200)); effects = policy.handle(.tick) }
+        }
+        let row = try #require(effects.compactMap { if case .record(.verdict(let row)) = $0 { row } else { nil } }.first)
+        #expect(row.outcome.rawValue == outcome && row.wordingVersion == .jevTaskFocusedV1)
+    }
+
+    nonisolated static let taskResponse = #"{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Task":0.9,"Other":0.07},"confidence":0.86}}}"#
 }

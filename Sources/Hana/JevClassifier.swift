@@ -36,7 +36,7 @@ struct JevClassifier: Classifier {
         request.httpBody = try JSONSerialization.data(withJSONObject: [
             "state": text, "model": Self.model,
             "questions": ["classify_input": ["type": "choice", "instructions": ClassifierWording.instructions,
-                                                "criteria": ClassifierWording.criteria]]
+                                                "criteria": ClassifierWording.jevCriteria]]
         ], options: [.sortedKeys])
         let response: Response
         do { response = try await transport(request) }
@@ -58,17 +58,17 @@ struct JevClassifier: Classifier {
         }
         guard let response = try? JSONDecoder().decode(AnswerResponse.self, from: response.data), response.model == Self.model,
               let answer = response.answers["classify_input"], answer.type == "choice",
-              Set(answer.probabilities.keys) == Set(ClassifierWording.criteria.keys),
+              Set(answer.probabilities.keys) == Set(ClassifierWording.jevCriteria.keys),
               answer.probabilities.values.allSatisfy({ $0.isFinite && (0...1).contains($0) }),
               abs(answer.probabilities.values.reduce(0, +) - 1) < 0.001,
               let winning = answer.probabilities[answer.choice], winning == answer.probabilities.values.max() else {
             throw ClassifierFailure(kind: .malformedResponse)
         }
-        let labels: [String: ClassifierVerdict.Label] = ["Search": .search, "Note": .note, "Task": .task, "Other": .unsure]
+        let labels: [String: ClassifierVerdict.Label] = ["Search": .search, "Task": .task, "Other": .unsure]
         guard let label = labels[answer.choice] else { throw ClassifierFailure(kind: .malformedResponse) }
         let probabilities = Dictionary(uniqueKeysWithValues: answer.probabilities.map { (labels[$0.key]!, $0.value) })
         try Task.checkCancellation()
-        return ClassifierVerdict(label: label, probabilities: probabilities, wordingVersion: ClassifierWording.version)
+        return ClassifierVerdict(label: label, probabilities: probabilities, wordingVersion: ClassifierWording.jevVersion)
     }
 
     private func retryAfter(_ header: String?) -> Duration? {
