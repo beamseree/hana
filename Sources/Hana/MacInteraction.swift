@@ -523,6 +523,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         editor.compositionChanged = { [weak self] in
             self?.updateModeIcon()
             self?.updateAutomaticSwitchBuffer()
+            self?.renderResults()
         }
         editor.shouldInsert = { [weak self] text, range, provenance in
             self?.shouldInsert(text, replacing: range, provenance: provenance) ?? true
@@ -964,9 +965,20 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                       capture.state.phase == .editing else { continue }
                 capture.handle(.automaticMode(.search)).forEach(perform)
             case .swallowEnter: break
+            case .submitCapture(let text, let mode):
+                // The full-text decision is only authority for the revision
+                // Enter committed. Capture Session still validates and saves once.
+                guard currentInvocation != nil, capture.state.phase == .editing,
+                      self.mode == mode, editor.string.utf8.elementsEqual(text.utf8),
+                      !editor.hasMarkedText(), heldEnter == nil, pendingLaunch == nil else { continue }
+                submitCapture()
             }
         }
         scheduleAutomaticSwitchWake()
+        if currentInvocation != nil,
+           automaticSwitch?.isAwaitingSubmission == true || automaticSwitch?.submissionOutcome != nil {
+            renderResults()
+        }
     }
 
     /// A click on Task's selector. The session decides; the selector then shows its choice.
@@ -1227,13 +1239,20 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         record("search.selection", extra: ["index": next])
     }
 
-    /// Enter in Search: opens the selected result or chooses the selected
-    /// suggestion; unmatched text is never saved from Search. Returns nil when
-    /// nothing was opened now, including when Enter is held because the
+    /// Enter in Search preserves explicit selection and strong matches. With
+    /// Jev enabled, otherwise wait for a full-buffer decision before capture.
+    /// Returns nil when nothing was opened now, including when Enter is held because the
     /// selected row does not match the current request.
     @discardableResult
     func requestSelectedOpen() -> Task<Void, Never>? {
         guard currentInvocation != nil, pendingLaunch == nil else { return nil }
+        if mode == .search, !userMovedSelection, heldEnter == nil, !editor.hasMarkedText() {
+            // Re-evaluate synchronously so a newly arrived strong match keeps
+            // the normal Search path even if the policy hasn't seen it yet.
+            let effects = automaticSwitch?.requestSubmission(gate: automaticSwitchGate()) ?? []
+            performAutomaticSwitch(effects)
+            if effects.contains(where: { if case .swallowEnter = $0 { true } else { false } }) { return nil }
+        }
         if case .suggestion(let suggestion) = selectedRow {
             // Unnavigated, it is the top row only for now: a strong late match must not be skipped.
             if !userMovedSelection, sourceStatus == .loading || fileStatus == .loading {
@@ -1470,13 +1489,23 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         // switch to Task, as its status; returning leaves the others behind.
         captureNotice.isHidden = true
         let notice = capture.state.notice.map { Self.noticeMessage($0, mode: mode) }
-        let loading = hasQuery && (sourceStatus == .loading || fileStatus == .loading)
+        let deciding = automaticSwitch?.isAwaitingSubmission == true
+        let loading = hasQuery && (sourceStatus == .loading || fileStatus == .loading || deciding)
         loadingIndicator.isHidden = !loading
         if loading { loadingIndicator.startAnimation(nil) } else { loadingIndicator.stopAnimation(nil) }
         let status: String?
         if !hasQuery { status = notice }
         else if let openFailure { status = openFailure }
         else if pendingLaunch != nil || heldEnter != nil { status = "Opening selected destination…" }
+        else if deciding { status = "Deciding how to save…" }
+        else if let outcome = automaticSwitch?.submissionOutcome {
+            status = switch outcome {
+            case .undecided: "Not saved. Choose New note or New task to continue."
+            case .failed: "Couldn’t decide. Your text is kept. Press Enter to retry or choose a capture mode."
+            case .timedOut: "Decision timed out. Your text is kept. Press Enter to retry or choose a capture mode."
+            case .blocked: "Not saved. Choose a search result or a capture mode to continue."
+            }
+        }
         else if let notice { status = notice }
         else if sourceStatus == .failed || fileStatus == .failed {
             status = !results.isEmpty && displayedResultsGeneration == request?.generation
@@ -1519,6 +1548,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                 guard let self, self.rows.contains(where: { $0.id == id }) else { return }
                 self.selectedRow = id
                 self.userMovedSelection = true
+                self.performAutomaticSwitch(self.automaticSwitch?.handle(.navigated) ?? [])
                 self.renderResults()
                 self.panel.makeFirstResponder(self.editor)
             }, rowAppeared: { [weak self] id in self?.requestIcon(id) })
