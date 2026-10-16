@@ -256,7 +256,7 @@ enum Calculation {
         init(tokens: [Token]) { self.tokens = tokens }
 
         private mutating func nested(_ parse: (inout Parser) throws -> Operand) throws -> Operand {
-            guard nesting < 128 else { throw Failure.tooLarge }
+            guard nesting < 32 else { throw Failure.tooLarge }
             nesting += 1
             defer { nesting -= 1 }
             return try parse(&self)
