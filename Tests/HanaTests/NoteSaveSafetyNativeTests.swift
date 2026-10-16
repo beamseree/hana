@@ -264,7 +264,7 @@ struct NoteSaveSafetyNativeTests {
         let bar = try #require(NSApp.windows.first { $0.title == "Hana Search" && $0.isVisible })
         let editor = try #require(bar.firstResponder as? NSTextView)
         let none = NSRange(location: NSNotFound, length: 0)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("Submitted capture ไทย", replacementRange: none)
         editor.doCommand(by: #selector(NSResponder.insertNewline(_:)))
         try await eventually { gate.arrivals == 1 }

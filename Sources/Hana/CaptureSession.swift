@@ -101,7 +101,7 @@ struct CaptureSession {
     }
 
     /// The typed prefixes that select a capture mode from Search.
-    private static let prefixes: [String: Mode] = ["-": .note, "[": .task]
+    private static let prefixes: [String: Mode] = ["[": .task]
 
     private(set) var state = State()
     /// Identifies one submitted payload to the Store. Unchanged retries keep
@@ -127,8 +127,8 @@ struct CaptureSession {
         case .insert(let text, let range, let provenance):
             // Once submitted, nothing reaches the frozen text.
             guard state.phase == .editing else { return [.consumeInsertion] }
-            // Only a deliberately typed `-` or `[` replacing an empty selection at
-            // the start selects Note or Task; the selection stays put relative to the text.
+            // Only a deliberately typed `[` replacing an empty selection at
+            // the start selects Task; the selection stays put relative to the text.
             if state.mode == .search, state.prefixesArmed, provenance == .typed,
                let mode = Self.prefixes[text], range == NSRange(location: 0, length: 0) {
                 return [.consumeInsertion] + enterCapture(mode)
@@ -147,7 +147,7 @@ struct CaptureSession {
         case .deleteBackward:
             // Backspace with nothing before the cursor leaves a capture for
             // Search, keeping every character. Prefixes stay off while kept
-            // text remains, so a `-` typed before it stays literal.
+            // text remains, so a `[` typed before it stays literal.
             // Once submitted, the capture stays put until the save settles.
             guard state.mode != .search, state.phase == .editing,
                   state.selection == NSRange(location: 0, length: 0) else { return [] }

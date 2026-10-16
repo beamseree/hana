@@ -4,7 +4,7 @@ import Testing
 
 struct OpenNoteCaptureSessionTests {
     @Test func openInWindowSubmitsTheExactNoteOnceAndRetriesTheSameReceipt() {
-        var session = captureFixture("-", text: "# ไทย 🌸\n**Markdown**  \n")
+        var session = captureFixture(.note, text: "# ไทย 🌸\n**Markdown**  \n")
         let operation = session.operation
         let effect = CaptureSession.Effect.saveNoteInWindow(operation: operation, body: "# ไทย 🌸\n**Markdown**  \n")
         #expect(session.handle(.openInWindow) == [effect])
@@ -20,7 +20,7 @@ struct OpenNoteCaptureSessionTests {
 
     @Test(arguments: ["", " \n\t\u{2028}"])
     func blankNotesAreRefusedWithoutASaveEffect(text: String) {
-        var session = captureFixture("-", text: text)
+        var session = captureFixture(.note, text: text)
         #expect(session.handle(.openInWindow).isEmpty)
         #expect(session.state.notice == .blank && session.state.phase == .editing)
         #expect(session.state.text == text && session.state.mode == .note)
@@ -30,13 +30,13 @@ struct OpenNoteCaptureSessionTests {
         var search = CaptureSession()
         _ = search.handle(.edited(text: "query", selection: NSRange(location: 5, length: 0)))
         #expect(search.handle(.openInWindow).isEmpty)
-        var task = captureFixture("[", text: "Title")
+        var task = captureFixture(.task, text: "Title")
         #expect(task.handle(.openInWindow).isEmpty)
         #expect(task.state.phase == .editing && task.state.mode == .task)
     }
 
     @Test func explicitOpeningRetryAfterADismissedFailureOwnsTheNewAttempt() {
-        var session = captureFixture("-")
+        var session = captureFixture(.note)
         let first = session.handle(.openInWindow)
         _ = session.handle(.dismissed)
         #expect(session.state.dismissalRequested)
@@ -64,7 +64,7 @@ struct OpenNoteCaptureTests {
         defer { interaction.stop() }
         let invocation = interaction.presentBar()
         let editor = try await captureEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("ไทย 🌸\n**text**", replacementRange: none)
         interaction.openCaptureInWindow()
         try await eventually { gate.arrivals == 1 }
@@ -98,7 +98,7 @@ struct OpenNoteCaptureTests {
         let invocation = interaction.presentBar()
         let editor = try await captureEditor()
         #expect(interaction.openInWindowButton.isHidden)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         #expect(!interaction.openInWindowButton.isHidden)
         NSApp.sendAction(try #require(interaction.openInWindowButton.action), to: interaction.openInWindowButton.target, from: interaction.openInWindowButton)
         #expect(interaction.captureMessage == "Write something to save this note.")
@@ -133,7 +133,7 @@ struct OpenNoteCaptureTests {
         defer { interaction.stop() }
         let invocation = interaction.presentBar()
         let editor = try await captureEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("Keep the note ไทย", replacementRange: none)
         interaction.openCaptureInWindow()
         try await eventually { interaction.captureMessage != nil }
@@ -166,7 +166,7 @@ struct OpenNoteCaptureTests {
         defer { interaction.stop() }
         _ = interaction.presentBar()
         let editor = try await captureEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.setMarkedText("ไท", selectedRange: NSRange(location: 2, length: 0), replacementRange: none)
         #expect(!interaction.openInWindowButton.isEnabled)
         interaction.openCaptureInWindow()
@@ -189,7 +189,7 @@ struct OpenNoteCaptureTests {
         defer { interaction.stop() }
         let invocation = interaction.presentBar()
         let editor = try await captureEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("Saved quietly", replacementRange: none)
         interaction.openCaptureInWindow()
         try await eventually { gate.arrivals == 1 }

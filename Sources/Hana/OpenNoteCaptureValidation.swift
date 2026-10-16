@@ -35,7 +35,7 @@ func validateOpenNoteCapture(register: (MacInteraction) -> Void) async {
         let invocation = platform.presentBar()
         let editor = try await openCaptureEditor()
         let none = NSRange(location: NSNotFound, length: 0)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(platform, editor: editor)
         platform.openInWindowButton.performClick(nil)
         guard platform.captureMessage != nil, platform.currentInvocation == invocation,
               editor.window?.firstResponder === editor else { throw OpenNoteCaptureCheck.failed("blank-control") }
@@ -66,7 +66,7 @@ func validateOpenNoteCapture(register: (MacInteraction) -> Void) async {
             _ = platform.presentBar()
             let captureEditor = try await openCaptureEditor()
             let body = lostAcknowledgement ? "Lost acknowledgement" : "Retry before commit"
-            captureEditor.insertText("-", replacementRange: none)
+            try enterNoteCaptureForValidation(platform, editor: captureEditor)
             captureEditor.insertText(body, replacementRange: none)
             platform.openInWindowButton.performClick(nil)
             try await openCaptureCheck("failure-kept") { platform.captureMessage != nil }
@@ -85,7 +85,7 @@ func validateOpenNoteCapture(register: (MacInteraction) -> Void) async {
         let before = faults.withLock { $0.arrivals }
         let dismissed = platform.presentBar()
         let captureEditor = try await openCaptureEditor()
-        captureEditor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(platform, editor: captureEditor)
         captureEditor.insertText("Quiet completion", replacementRange: none)
         platform.openCaptureInWindow()
         try await openCaptureCheck("dismiss-paused") { faults.withLock { $0.arrivals } == before + 1 }
@@ -165,4 +165,30 @@ private func openCaptureEditor() async throws -> NSTextView {
     try await openCaptureCheck("capture-editor") { NSApp.keyWindow?.title == "Hana Search" && NSApp.keyWindow?.firstResponder is NSTextView }
     guard let editor = NSApp.keyWindow?.firstResponder as? NSTextView else { throw OpenNoteCaptureCheck.failed("capture-editor") }
     return editor
+}
+
+/// Native fixtures enter Note through Search's real New note action. An empty
+/// fixture briefly supplies text so the suggestion exists, then removes that
+/// setup text and its undo history before the original scenario starts.
+@MainActor
+func enterNoteCaptureForValidation(_ interaction: MacInteraction, editor: NSTextView) throws {
+    let text = editor.string
+    let selection = editor.selectedRange()
+    let needsText = !Note.isNonblank(text)
+    if needsText {
+        editor.insertText("Note fixture", replacementRange: NSRange(location: 0, length: (text as NSString).length))
+    }
+    guard let index = interaction.rows.firstIndex(where: { $0.id == .suggestion(.note) }) else {
+        throw CocoaError(.coderInvalidValue)
+    }
+    interaction.moveSelection(by: -interaction.rows.count)
+    interaction.moveSelection(by: index)
+    interaction.requestSelectedOpen()
+    guard interaction.mode == .note else { throw CocoaError(.coderInvalidValue) }
+    if needsText {
+        editor.string = text
+        editor.didChangeText()
+        editor.undoManager?.removeAllActions()
+    }
+    editor.setSelectedRange(selection)
 }

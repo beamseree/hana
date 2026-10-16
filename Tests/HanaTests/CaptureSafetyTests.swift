@@ -3,9 +3,9 @@ import Testing
 @testable import Hana
 
 struct CaptureSafetyTests {
-    @Test(arguments: ["-", "["])
-    func dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(prefix: String) throws {
-        var session = captureFixture(prefix)
+    @Test(arguments: [CaptureSession.Mode.note, .task])
+    func dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(mode: CaptureSession.Mode) throws {
+        var session = captureFixture(mode)
         let operation = session.operation
         _ = session.handle(.submit)
         #expect(session.handle(.dismissed).isEmpty)
@@ -18,9 +18,9 @@ struct CaptureSafetyTests {
         #expect(session.handle(.saved).isEmpty)
     }
 
-    @Test(arguments: ["-", "["])
-    func failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(prefix: String) {
-        var session = captureFixture(prefix)
+    @Test(arguments: [CaptureSession.Mode.note, .task])
+    func failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(mode: CaptureSession.Mode) {
+        var session = captureFixture(mode)
         let operation = session.operation
         let first = session.handle(.submit)
         _ = session.handle(.dismissed)
@@ -36,22 +36,22 @@ struct CaptureSafetyTests {
         #expect(session.handle(.submit).isEmpty)
     }
 
-    @Test(arguments: ["-", "["], ["edited", "Café"])
-    func editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(prefix: String, text: String) {
-        var session = captureFixture(prefix, text: "Cafe\u{301}")
+    @Test(arguments: [CaptureSession.Mode.note, .task], ["edited", "Café"])
+    func editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(mode: CaptureSession.Mode, text: String) {
+        var session = captureFixture(mode, text: "Cafe\u{301}")
         let operation = session.operation
         _ = session.handle(.submit)
         _ = session.handle(.saveFailed(.failed))
         _ = session.handle(.edited(text: text, selection: NSRange(location: 0, length: 0)))
         #expect(session.operation != operation)
         #expect(session.state.notice == nil)
-        #expect(session.handle(.submit) == (prefix == "-"
+        #expect(session.handle(.submit) == (mode == .note
             ? [.saveNote(operation: session.operation, body: text)]
             : [.saveTask(operation: session.operation, title: text, placement: .inbox)]))
     }
 
     @Test func changingAFailedTasksDestinationStartsANewOperation() {
-        var session = captureFixture("[")
+        var session = captureFixture(.task)
         let operation = session.operation
         _ = session.handle(.submit)
         _ = session.handle(.saveFailed(.failed))
@@ -64,7 +64,7 @@ struct CaptureSafetyTests {
     }
 
     @Test func changingAFailedNotesModeStartsANewOperation() {
-        var session = captureFixture("-")
+        var session = captureFixture(.note)
         let operation = session.operation
         _ = session.handle(.submit)
         _ = session.handle(.saveFailed(.failed))
@@ -78,14 +78,14 @@ struct CaptureSafetyTests {
         #expect(session.handle(.submit) == [.saveTask(operation: session.operation, title: "original", placement: .inbox)])
     }
 
-    @Test(arguments: ["-", "["])
-    func aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(prefix: String) async throws {
+    @Test(arguments: [CaptureSession.Mode.note, .task])
+    func aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(mode: CaptureSession.Mode) async throws {
         let fixture = try TemporaryFixture()
         let fail = FailOnce()
         let store = try await CollectionStore.open(fixture.location, faults: .init(afterCommit: {
             if fail.take() { throw InjectedFailure() }
         }))
-        var session = captureFixture(prefix)
+        var session = captureFixture(mode)
         let first = try #require(session.handle(.submit).first)
         await #expect(throws: InjectedFailure.self) { try await saveCapture(first, to: store) }
         _ = session.handle(.saveFailed(.failed))
@@ -100,14 +100,14 @@ struct CaptureSafetyTests {
         await store.close()
     }
 
-    @Test(arguments: ["-", "["])
-    func aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(prefix: String) async throws {
+    @Test(arguments: [CaptureSession.Mode.note, .task])
+    func aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(mode: CaptureSession.Mode) async throws {
         let fixture = try TemporaryFixture()
         let fail = FailOnce()
         let store = try await CollectionStore.open(fixture.location, faults: .init(beforeCommit: { _ in
             if fail.take() { throw InjectedFailure() }
         }))
-        var session = captureFixture(prefix)
+        var session = captureFixture(mode)
         let operation = session.operation
         let first = try #require(session.handle(.submit).first)
         await #expect(throws: InjectedFailure.self) { try await saveCapture(first, to: store) }
@@ -123,14 +123,14 @@ struct CaptureSafetyTests {
 }
 
 extension CaptureSafetyTests {
-    @Test(arguments: ["-", "["])
+    @Test(arguments: [CaptureSession.Mode.note, .task])
     @MainActor
-    func aPausedRealStoreKeepsSavingAndSerializesDismissal(prefix: String) async throws {
+    func aPausedRealStoreKeepsSavingAndSerializesDismissal(mode: CaptureSession.Mode) async throws {
         let fixture = try TemporaryFixture()
         let gate = CommitGate()
         defer { gate.open() }
         let store = try await CollectionStore.open(fixture.location, faults: .init(beforeCommit: { _ in gate.pass() }))
-        var session = captureFixture(prefix)
+        var session = captureFixture(mode)
         let effect = try #require(session.handle(.submit).first)
         let saving = Task { try await saveCapture(effect, to: store) }
         try await eventually { gate.arrivals == 1 }
@@ -147,9 +147,9 @@ extension CaptureSafetyTests {
     }
 }
 
-func captureFixture(_ prefix: String, text: String = "original") -> CaptureSession {
+func captureFixture(_ mode: CaptureSession.Mode, text: String = "original") -> CaptureSession {
     var session = CaptureSession()
-    _ = session.handle(.insert(prefix, replacing: NSRange(location: 0, length: 0), provenance: .typed))
+    _ = session.handle(.automaticMode(mode))
     _ = session.handle(.edited(text: text, selection: NSRange(location: (text as NSString).length, length: 0)))
     return session
 }

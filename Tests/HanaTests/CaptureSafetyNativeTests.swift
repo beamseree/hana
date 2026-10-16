@@ -9,8 +9,8 @@ struct CaptureSafetyNativeTests {
     enum Outcome: CaseIterable { case committed, rolledBack, lostAcknowledgement }
     private let none = NSRange(location: NSNotFound, length: 0)
 
-    @Test(arguments: ["-", "["], Outcome.allCases)
-    func dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(prefix: String, outcome: Outcome) async throws {
+    @Test(arguments: [CaptureSession.Mode.note, .task], Outcome.allCases)
+    func dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode: CaptureSession.Mode, outcome: Outcome) async throws {
         for reason in [MacInteraction.DismissalReason.escape, .shortcut, .outsideClick] {
             let fixture = try TemporaryFixture()
             let gate = CommitGate()
@@ -32,9 +32,10 @@ struct CaptureSafetyNativeTests {
                                              frontmostApplication: { .current })
             let invocation = interaction.presentBar()
             let editor = try await captureEditor()
-            editor.insertText(prefix, replacementRange: none)
+            if mode == .note { try enterNoteCaptureForValidation(interaction, editor: editor) }
+            else { editor.insertText("[", replacementRange: none) }
             editor.insertText("keep this", replacementRange: none)
-            if prefix == "[" { editor.keyDown(with: try tabKey()) }
+            if mode == .task { editor.keyDown(with: try tabKey()) }
             editor.keyDown(with: try returnKey())
             try await eventually { gate.arrivals == 1 }
             #expect(interaction.modeLabelText == "Saving…" && !editor.isEditable)
@@ -76,13 +77,13 @@ struct CaptureSafetyNativeTests {
             let records = try await store.read(.allRecords, in: store.generation)
             #expect(records.notes.count + records.tasks.count == 1)
             #expect(records.notes.first?.body == "keep this" || records.tasks.first?.title == "keep this")
-            if prefix == "[" { #expect(records.tasks.first?.placement == .today) }
+            if mode == .task { #expect(records.tasks.first?.placement == .today) }
             await store.close()
         }
     }
 
-    @Test(arguments: ["-", "["])
-    func editingAfterARolledBackNativeSaveCreatesTheEditedItem(prefix: String) async throws {
+    @Test(arguments: [CaptureSession.Mode.note, .task])
+    func editingAfterARolledBackNativeSaveCreatesTheEditedItem(mode: CaptureSession.Mode) async throws {
         let fixture = try TemporaryFixture()
         let fail = FailOnce()
         let store = try await CollectionStore.open(fixture.location, faults: .init(beforeCommit: { _ in
@@ -93,7 +94,8 @@ struct CaptureSafetyNativeTests {
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let editor = try await captureEditor()
-        editor.insertText(prefix, replacementRange: none)
+        if mode == .note { try enterNoteCaptureForValidation(interaction, editor: editor) }
+        else { editor.insertText("[", replacementRange: none) }
         editor.insertText("original", replacementRange: none)
         editor.keyDown(with: try returnKey())
         try await eventually { interaction.captureMessage != nil }
@@ -106,22 +108,24 @@ struct CaptureSafetyNativeTests {
         await store.close()
     }
 
-    @Test(arguments: ["-", "["])
-    func anOldConfirmationCannotDismissOrAlterANewerInvocation(prefix: String) async throws {
+    @Test(arguments: [CaptureSession.Mode.note, .task])
+    func anOldConfirmationCannotDismissOrAlterANewerInvocation(mode: CaptureSession.Mode) async throws {
         let fixture = try TemporaryFixture()
         let store = try await CollectionStore.open(fixture.location)
         let interaction = MacInteraction(search: Search(source: { CatalogFeed().stream() }, typingGap: .zero),
                                          collection: Task { store }, confirmationDuration: .milliseconds(80))
         let old = interaction.presentBar()
         let editor = try await captureEditor()
-        editor.insertText(prefix, replacementRange: none)
+        if mode == .note { try enterNoteCaptureForValidation(interaction, editor: editor) }
+        else { editor.insertText("[", replacementRange: none) }
         editor.insertText("saved", replacementRange: none)
         editor.keyDown(with: try returnKey())
         try await eventually { interaction.modeLabelText?.hasPrefix("Saved") == true }
         interaction.dismiss(old, reason: .outsideClick)
         let next = interaction.presentBar()
         defer { interaction.dismiss(next, reason: .outsideClick) }
-        editor.insertText(prefix, replacementRange: none)
+        if mode == .note { try enterNoteCaptureForValidation(interaction, editor: editor) }
+        else { editor.insertText("[", replacementRange: none) }
         editor.insertText("new capture", replacementRange: none)
         interaction.dismiss(old, reason: .saved)
         try await Task.sleep(for: .milliseconds(120))

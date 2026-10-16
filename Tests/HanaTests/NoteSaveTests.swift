@@ -18,7 +18,7 @@ struct NoteSaveTests {
         let invocation = interaction.presentBar()
         let editor = try await firstResponderEditor()
         let body = "  # Groceries บันทึก  \n\n- [ ] milk *2*\r\n\t"
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText(body, replacementRange: none)
         editor.keyDown(with: try returnKey())
 
@@ -51,7 +51,7 @@ struct NoteSaveTests {
                                          collection: Task { store }, confirmationDuration: .zero)
         _ = interaction.presentBar()
         let editor = try await firstResponderEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("once", replacementRange: none)
         editor.keyDown(with: try returnKey())
         try await eventually { gate.arrivals == 1 }
@@ -74,7 +74,7 @@ struct NoteSaveTests {
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let editor = try await firstResponderEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("note ", replacementRange: none)
         editor.setMarkedText("ไท", selectedRange: NSRange(location: 2, length: 0), replacementRange: none)
         editor.doCommand(by: #selector(NSResponder.insertNewline(_:)))
@@ -96,7 +96,7 @@ struct NoteSaveTests {
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let editor = try await firstResponderEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         if !text.isEmpty { editor.insertText(text, replacementRange: none) }
         editor.keyDown(with: try returnKey())
         try await eventually { interaction.captureMessage != nil }
@@ -121,7 +121,7 @@ struct NoteSaveTests {
                                          collection: Task { store })
         let invocation = interaction.presentBar()
         let editor = try await firstResponderEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("unsaved thought", replacementRange: none)
         if reason == .escape { editor.keyDown(with: try escapeKey()) } else { interaction.dismiss(invocation, reason: reason) }
         #expect(interaction.currentInvocation == nil)
@@ -131,7 +131,7 @@ struct NoteSaveTests {
         let next = interaction.presentBar()
         defer { interaction.dismiss(next, reason: .outsideClick) }
         #expect(interaction.mode == .search && interaction.query == "")
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         #expect(interaction.mode == .note && editor.string == "")
         await store.close()
     }
@@ -145,7 +145,7 @@ struct NoteSaveTests {
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let editor = try await firstResponderEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("keep\nme", replacementRange: none)
         editor.keyDown(with: try returnKey())
         try await eventually { interaction.captureMessage != nil }
@@ -176,7 +176,7 @@ struct NoteSaveTests {
         try await eventually { interaction.results.map(\.name) == ["Milk"] }
 
         editor.setSelectedRange(NSRange(location: 0, length: 0))
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.keyDown(with: try returnKey())
         try await eventually { interaction.captureMessage != nil }
         #expect(interaction.captureMessage == "The collection couldn’t be opened, so notes can’t be saved right now. Your text is kept.")
@@ -191,7 +191,7 @@ struct NoteSaveTests {
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let editor = try await firstResponderEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("note", replacementRange: none)
         editor.keyDown(with: try returnKey())
         try await eventually { interaction.captureMessage != nil }
@@ -204,7 +204,7 @@ struct NoteSaveTests {
         let invocation = interaction.presentBar()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let editor = try await firstResponderEditor()
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("note", replacementRange: none)
         editor.keyDown(with: try returnKey())
         try await eventually { interaction.captureMessage != nil }
@@ -224,7 +224,7 @@ struct NoteSaveTests {
         _ = interaction.presentBar()
         let editor = try await firstResponderEditor()
         let secret = "zq-private-capture-7731"
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("   ", replacementRange: none)
         editor.keyDown(with: try returnKey())
         editor.insertText(secret, replacementRange: none)
@@ -260,7 +260,7 @@ struct NoteSaveTests {
         try await eventually { NSApp.keyWindow !== origin.panel && NSApp.keyWindow?.firstResponder is NSTextView }
         let editor = try await firstResponderEditor()
         #expect(!origin.panel.isKeyWindow)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("from an owned window", replacementRange: none)
         editor.keyDown(with: try reason == .saved ? returnKey() : escapeKey())
         try await eventually { interaction.currentInvocation == nil }

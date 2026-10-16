@@ -346,8 +346,8 @@ struct MacInteractionTests {
         #expect(interaction.currentInvocation == first)
     }
 
-    @Test(arguments: ["", "search text", "-", "["])
-    func searchShortcutClosesTheBarAndReopensEmptySearch(text: String) async throws {
+    @Test(arguments: ["", "search text", "-"], [CaptureSession.Mode.search, .note, .task])
+    func searchShortcutClosesTheBarAndReopensEmptySearch(text: String, mode: CaptureSession.Mode) async throws {
         _ = NSApplication.shared
         let interaction = MacInteraction(frontmostApplication: { nil })
         defer { interaction.stop() }
@@ -357,8 +357,13 @@ struct MacInteractionTests {
         let panel = try #require(NSApp.keyWindow)
         let editor = try #require(panel.firstResponder as? NSTextView)
         editor.insertText(text, replacementRange: NSRange(location: NSNotFound, length: 0))
-        if text == "-" || text == "[" {
-            #expect(interaction.mode == (text == "-" ? .note : .task))
+        if mode != .search {
+            if mode == .note { try enterNoteCaptureForValidation(interaction, editor: editor) }
+            else {
+                editor.setSelectedRange(NSRange(location: 0, length: 0))
+                editor.insertText("[", replacementRange: NSRange(location: NSNotFound, length: 0))
+            }
+            #expect(interaction.mode == mode)
             editor.insertText("unsaved capture", replacementRange: NSRange(location: NSNotFound, length: 0))
         }
 

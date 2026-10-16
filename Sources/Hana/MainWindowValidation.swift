@@ -98,7 +98,7 @@ func validateMainWindow(register: (MacInteraction) -> Void) async {
         try await check("capture-editor") { NSApp.keyWindow?.firstResponder is NSTextView }
         guard let editor = NSApp.keyWindow?.firstResponder as? NSTextView else { throw MainWindowCheck.failed("capture-editor") }
         let none = NSRange(location: NSNotFound, length: 0)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(platform, editor: editor)
         editor.insertText("Captured while the main window is open", replacementRange: none)
         editor.doCommand(by: #selector(NSResponder.insertNewline(_:)))
         try await check("capture-committed") { platform.currentInvocation == nil && platform.mainWindowPresentation?.rows.count == 2 }

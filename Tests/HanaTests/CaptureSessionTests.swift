@@ -5,21 +5,22 @@ import Testing
 /// Prefix provenance and mode rules through Capture Session's interface. Native
 /// editing tests separately prove the editor reports each insertion's provenance.
 struct CaptureSessionTests {
-    @Test func typedDashOnAnEmptyBufferEntersNoteWithoutBecomingText() {
+    @Test(arguments: ["-", "-5 + 3"])
+    func typingALeadingDashStaysLiteralInSearch(text: String) {
         var session = CaptureSession()
-        let effects = session.handle(.insert("-", replacing: NSRange(location: 0, length: 0), provenance: .typed))
-        #expect(effects == [.consumeInsertion, .enterMode(.note)])
-        #expect(session.state.mode == .note)
-        #expect(session.state.text == "")
-        #expect(session.state.selection == NSRange(location: 0, length: 0))
+        for character in text {
+            #expect(session.handle(.insert(String(character), replacing: session.state.selection, provenance: .typed)).isEmpty)
+            #expect(session.state.mode == .search)
+        }
+        #expect(session.state == .init(mode: .search, text: text, selection: NSRange(location: (text as NSString).length, length: 0)))
     }
 
-    @Test func typedDashBeforeExistingSearchTextKeepsTheTextAndSelection() {
+    @Test func typedDashBeforeExistingSearchTextIsLiteral() {
         var session = CaptureSession()
         _ = session.handle(.edited(text: "milk บันทึก", selection: NSRange(location: 0, length: 0)))
         let effects = session.handle(.insert("-", replacing: NSRange(location: 0, length: 0), provenance: .typed))
-        #expect(effects == [.consumeInsertion, .enterMode(.note)])
-        #expect(session.state == .init(mode: .note, text: "milk บันทึก", selection: NSRange(location: 0, length: 0)))
+        #expect(effects.isEmpty)
+        #expect(session.state == .init(mode: .search, text: "-milk บันทึก", selection: NSRange(location: 1, length: 0)))
     }
 
     @Test func typedDashAfterTheStartIsLiteralText() {
@@ -48,7 +49,7 @@ struct CaptureSessionTests {
 
     @Test func typedDashInNoteIsLiteralText() {
         var session = CaptureSession()
-        _ = session.handle(.insert("-", replacing: NSRange(location: 0, length: 0), provenance: .typed))
+        _ = session.handle(.chooseSuggestion(.note))
         let effects = session.handle(.insert("-", replacing: NSRange(location: 0, length: 0), provenance: .typed))
         #expect(effects.isEmpty)
         #expect(session.state == .init(mode: .note, text: "-", selection: NSRange(location: 1, length: 0)))
@@ -57,12 +58,12 @@ struct CaptureSessionTests {
     @Test(arguments: [CaptureSession.Event.invoked, .dismissed])
     func invocationAndDismissalDiscardTheCaptureAndArmPrefixes(event: CaptureSession.Event) {
         var session = CaptureSession()
-        _ = session.handle(.insert("-", replacing: NSRange(location: 0, length: 0), provenance: .typed))
+        _ = session.handle(.chooseSuggestion(.note))
         _ = session.handle(.edited(text: "unsaved", selection: NSRange(location: 7, length: 0)))
         #expect(session.handle(event).isEmpty)
         #expect(session.state == .init(mode: .search, text: "", selection: NSRange(location: 0, length: 0), prefixesArmed: true))
-        let effects = session.handle(.insert("-", replacing: NSRange(location: 0, length: 0), provenance: .typed))
-        #expect(effects == [.consumeInsertion, .enterMode(.note)])
+        let effects = session.handle(.insert("[", replacing: NSRange(location: 0, length: 0), provenance: .typed))
+        #expect(effects == [.consumeInsertion, .enterMode(.task)])
     }
 }
 
@@ -72,7 +73,7 @@ struct CaptureSessionReturnTests {
 
     private func noteSession(text: String, selection: NSRange) -> CaptureSession {
         var session = CaptureSession()
-        _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+        _ = session.handle(.chooseSuggestion(.note))
         _ = session.handle(.edited(text: text, selection: selection))
         return session
     }
@@ -109,12 +110,12 @@ struct CaptureSessionReturnTests {
         #expect(session.state == .init(mode: .search, text: "-milk", selection: NSRange(location: 1, length: 0), prefixesArmed: false))
     }
 
-    @Test func returningFromAnEmptyNoteArmsPrefixesSoATypedDashEntersNoteAgain() {
+    @Test func returningFromAnEmptyNoteArmsPrefixesSoATypedBracketEntersTask() {
         var session = noteSession(text: "", selection: start)
         #expect(session.handle(.deleteBackward) == [.enterMode(.search)])
         #expect(session.state == .init(mode: .search, text: "", selection: start, prefixesArmed: true))
-        #expect(session.handle(.insert("-", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.note)])
-        #expect(session.state == .init(mode: .note, text: "", selection: start))
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+        #expect(session.state == .init(mode: .task, text: "", selection: start))
     }
 
     @Test func clearingTheKeptTextAfterReturningArmsPrefixesAgain() {
@@ -122,8 +123,8 @@ struct CaptureSessionReturnTests {
         _ = session.handle(.deleteBackward)
         _ = session.handle(.edited(text: "", selection: start))
         #expect(session.state == .init(mode: .search, text: "", selection: start, prefixesArmed: true))
-        #expect(session.handle(.insert("-", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.note)])
-        #expect(session.state == .init(mode: .note, text: "", selection: start))
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
+        #expect(session.state == .init(mode: .task, text: "", selection: start))
     }
 
     @Test func deletingTheKeptTextAfterReturningArmsPrefixesAgain() {
@@ -149,7 +150,7 @@ struct CaptureSessionReturnTests {
         _ = session.handle(.deleteBackward)
         _ = session.handle(event)
         #expect(session.state.prefixesArmed)
-        #expect(session.handle(.insert("-", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.note)])
+        #expect(session.handle(.insert("[", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.task)])
     }
 
     @Test func backspaceAtTheStartWhileSavingKeepsTheCaptureInNote() {
@@ -173,7 +174,7 @@ struct CaptureSessionReturnTests {
 struct CaptureSubmissionTests {
     private func note(_ text: String) -> CaptureSession {
         var session = CaptureSession()
-        _ = session.handle(.insert("-", replacing: NSRange(location: 0, length: 0), provenance: .typed))
+        _ = session.handle(.chooseSuggestion(.note))
         _ = session.handle(.edited(text: text, selection: NSRange(location: (text as NSString).length, length: 0)))
         return session
     }
@@ -299,7 +300,7 @@ struct CaptureTaskTests {
     }
 
     @Test(arguments: ["-", "["])
-    func typedPrefixesInTaskAreLiteralText(prefix: String) {
+    func typedSymbolsInTaskAreLiteralText(prefix: String) {
         var session = task("")
         #expect(session.handle(.insert(prefix, replacing: start, provenance: .typed)).isEmpty)
         #expect(session.state == .init(mode: .task, text: prefix, selection: NSRange(location: 1, length: 0)))
@@ -341,7 +342,7 @@ struct CaptureTaskTests {
 
     @Test func aMultilineInsertionInNoteIsText() {
         var session = CaptureSession()
-        _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+        _ = session.handle(.chooseSuggestion(.note))
         #expect(session.handle(.insert("a\r\nb", replacing: start, provenance: .paste)).isEmpty)
         #expect(session.state.text == "a\r\nb")
     }
@@ -369,7 +370,7 @@ struct CaptureTaskTests {
         var session = CaptureSession()
         #expect(session.handle(.tab).isEmpty)
         _ = session.handle(.chooseDestination(.today))
-        _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+        _ = session.handle(.chooseSuggestion(.note))
         #expect(session.handle(.tab).isEmpty)
         #expect(session.state.destination == .inbox)
     }
@@ -401,7 +402,7 @@ struct CaptureTaskTests {
 
     @Test func shiftEnterInNoteIsAnOrdinaryLineBreak() {
         var session = CaptureSession()
-        _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+        _ = session.handle(.chooseSuggestion(.note))
         #expect(session.handle(.newline).isEmpty)
     }
 
@@ -440,7 +441,7 @@ struct CaptureTaskTests {
         _ = session.handle(.edited(text: "one\ntwo", selection: start))
         _ = session.handle(.insert("[", replacing: start, provenance: .typed))
         #expect(session.state.notice == .multilineTask)
-        #expect(session.handle(.insert("-", replacing: start, provenance: .typed)) == [.consumeInsertion, .enterMode(.note)])
+        #expect(session.handle(.chooseSuggestion(.note)) == [.enterMode(.note)])
         #expect(session.state == .init(mode: .note, text: "one\ntwo", selection: start))
     }
 
@@ -509,7 +510,7 @@ struct CaptureSuggestionTests {
         var session = CaptureSession()
         _ = session.handle(.edited(text: "milk", selection: start))
         if !armed {
-            _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+            _ = session.handle(.chooseSuggestion(.note))
             _ = session.handle(.deleteBackward)
         }
         #expect(session.state.prefixesArmed == armed)
@@ -519,7 +520,7 @@ struct CaptureSuggestionTests {
 
     @Test func aSuggestionOutsideSearchChangesNothing() {
         var session = CaptureSession()
-        _ = session.handle(.insert("-", replacing: start, provenance: .typed))
+        _ = session.handle(.chooseSuggestion(.note))
         _ = session.handle(.edited(text: "note", selection: start))
         #expect(session.handle(.chooseSuggestion(.task)).isEmpty)
         #expect(session.state == .init(mode: .note, text: "note", selection: start))
