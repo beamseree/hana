@@ -49,7 +49,7 @@ An open main, note, or Settings window, including one that is minimized. The sea
 The app and editing context from which the search bar was opened; the intended typing destination when the bar is dismissed with Escape or closes after a successful save.
 
 **Mode prefix**:
-A leading typed symbol that selects a capture mode from Search: `-` for Note and `[` for Task. Pasted symbols do not select modes; a typed mode prefix is not part of the captured content.
+A leading typed symbol that selects Task from Search: `[`. Note has no mode prefix; `-` is ordinary Search text (removed as the Note prefix on 2026-10-16). Pasted symbols do not select modes; a typed mode prefix is not part of the captured content.
 
 **Suggestion**:
 A selectable action offered alongside search results. A capture suggestion changes mode only when selected.

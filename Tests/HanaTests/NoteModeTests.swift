@@ -2,13 +2,13 @@ import AppKit
 import Testing
 @testable import Hana
 
-/// Note mode's presentation in the real panel, entered through the real editor.
+/// Note mode's presentation in the real panel, entered through the New note suggestion.
 @Suite(.serialized, .nativeWindowSlot)
 @MainActor
 struct NoteModeTests {
     private let none = NSRange(location: NSNotFound, length: 0)
 
-    @Test func typedPrefixShowsTheNoteLabelAndIconAndHidesSearchResults() async throws {
+    @Test func newNoteShowsTheNoteLabelAndIconAndHidesSearchResults() async throws {
         _ = NSApplication.shared
         let feed = CatalogFeed()
         let interaction = MacInteraction(search: Search(source: { feed.stream() }, typingGap: .zero))
@@ -21,7 +21,7 @@ struct NoteModeTests {
         #expect(interaction.modeLabelText == nil && !interaction.modeIconShowsNote)
 
         editor.setSelectedRange(NSRange(location: 0, length: 0))
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         #expect(interaction.modeLabelText == "Note")
         #expect(interaction.modeIconShowsNote)
         #expect(!interaction.resultsVisible && interaction.results.isEmpty)
@@ -42,7 +42,7 @@ struct NoteModeTests {
         let window = try #require(editor.window)
         let collapsed = interaction.contentHeight
         let inputTop = window.frame.maxY
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("one", replacementRange: none)
         #expect(interaction.contentHeight == collapsed)
 
@@ -72,7 +72,7 @@ struct NoteModeTests {
         let invocation = interaction.presentBar()
         let editor = try await firstResponderEditor()
         let collapsed = interaction.contentHeight
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("unsaved\nthought", replacementRange: none)
         try await eventually { interaction.contentHeight > collapsed }
         if reason == .escape {
@@ -93,9 +93,9 @@ struct NoteModeTests {
         #expect(interaction.modeLabelText == nil && !interaction.modeIconShowsNote && !interaction.modeIconShowsQuery)
         #expect(interaction.contentHeight == collapsed)
         #expect(editor.undoManager?.canUndo == false)
-        // Prefixes are armed again.
-        editor.insertText("-", replacementRange: none)
-        #expect(interaction.mode == .note && editor.string == "")
+        // The Task prefix is armed again.
+        editor.insertText("[", replacementRange: none)
+        #expect(interaction.mode == .task && editor.string == "")
     }
 
     @Test func returningFromAMultilineNoteKeepsTheTextAndSearchesItsNormalisedQuery() async throws {
@@ -112,7 +112,10 @@ struct NoteModeTests {
         let window = try #require(editor.window)
         let inputTop = window.frame.maxY
         let text = "  milk\n\tand  eggs\n\nบันทึก \n"
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
+        // Let the setup Search request reach its source before observing Note.
+        try await eventually { queries.count == 1 }
+        queries.removeAll()
         editor.insertText(text, replacementRange: none)
         editor.setSelectedRange(NSRange(location: 0, length: 0))
         try await eventually { interaction.contentHeight > BarStyle.collapsedHeight }

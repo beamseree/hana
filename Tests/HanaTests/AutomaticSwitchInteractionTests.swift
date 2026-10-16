@@ -54,7 +54,8 @@ struct AutomaticSwitchInteractionTests {
         let editor = try await editor()
         editor.insertText("private search บ้าน", replacementRange: NSRange(location: NSNotFound, length: 0))
         editor.setSelectedRange(NSRange(location: 0, length: 0))
-        editor.insertText(suggestion == .note ? "-" : "[", replacementRange: NSRange(location: NSNotFound, length: 0))
+        if suggestion == .note { try enterNoteCaptureForValidation(interaction, editor: editor) }
+        else { editor.insertText("[", replacementRange: NSRange(location: NSNotFound, length: 0)) }
         #expect(interaction.mode == suggestion.mode && editor.string == "private search บ้าน")
         #expect(fixture.log.counts().missed == (enabled ? 1 : 0))
         interaction.dismiss(invocation, reason: .outsideClick)
@@ -147,7 +148,7 @@ struct AutomaticSwitchInteractionTests {
         editor.setSelectedRange(NSRange(location: 0, length: 0))
         editor.keyDown(with: try backspaceKey())
         try await eventually { apps.subscriptionCount >= 3 }
-        // Return-to-Search disarms prefixes: a changed buffer receives a literal dash.
+        // A changed buffer receives a literal dash in Search.
         editor.insertText("-", replacementRange: NSRange(location: NSNotFound, length: 0))
         #expect(interaction.mode == .search && editor.string == "-call mom tomorrow")
         try await eventually { apps.subscriptionCount >= 4 }

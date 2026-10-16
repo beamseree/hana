@@ -66,7 +66,7 @@ struct JevWordPacedDeletionNativeTests {
         await store.close()
     }
 
-    @Test func enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() async throws {
+    @Test func explicitSuggestionAfterDeletingUsesSearchAndALateAnswerCannotStealIt() async throws {
         _ = NSApplication.shared
         let fixture = try JevWordPacedNativeFixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture()
@@ -85,6 +85,9 @@ struct JevWordPacedDeletionNativeTests {
         let selection = NSRange(location: (expected as NSString).length, length: 0)
         #expect(interaction.mode == .search && editor.string == expected)
         try #require(interaction.selectedRow == .suggestion(.note))
+        // Explicit selection keeps this on Search's suggestion path; an
+        // unnavigated Enter now requests a full-text Jev decision (#131).
+        interaction.moveSelection(by: 0)
         editor.keyDown(with: try returnKey())
         fake.reply(.task)
         try await eventually { interaction.mode == .note }

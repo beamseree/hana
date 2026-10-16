@@ -69,7 +69,7 @@ struct NativeEditingTests {
         #expect(interaction.placeholderText == "Search")
 
         // An empty Note has no placeholder; returning to Search restores it.
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         #expect(interaction.mode == .note && editor.string.isEmpty)
         #expect(interaction.placeholderText == nil)
         editor.keyDown(with: try backspaceKey())
@@ -77,15 +77,16 @@ struct NativeEditingTests {
         #expect(interaction.placeholderText == "Search")
     }
 
-    @Test func typedDashAtTheStartSwitchesToNoteAndKeepsTheText() async throws {
+    @Test func typedDashAtTheStartStaysInSearchAndInsertsBeforeTheText() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         editor.insertText("milk", replacementRange: NSRange(location: NSNotFound, length: 0))
         editor.setSelectedRange(NSRange(location: 0, length: 0))
         editor.insertText("-", replacementRange: NSRange(location: NSNotFound, length: 0))
-        #expect(interaction.mode == .note)
-        #expect(editor.string == "milk")
-        #expect(editor.selectedRange() == NSRange(location: 0, length: 0))
+        #expect(interaction.mode == .search && interaction.modeIconShowsQuery)
+        #expect(editor.string == "-milk")
+        #expect(interaction.query == "-milk")
+        #expect(editor.selectedRange() == NSRange(location: 1, length: 0))
         #expect(editor.window?.firstResponder === editor)
     }
 
@@ -98,15 +99,15 @@ struct NativeEditingTests {
         #expect(interaction.query == "-hello")
     }
 
-    @Test func undoAndRedoAfterAConsumedPrefixChangeOnlyTheText() async throws {
+    @Test func undoAndRedoAfterChoosingNoteChangeOnlyTheText() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         editor.insertText("milk", replacementRange: NSRange(location: NSNotFound, length: 0))
         editor.breakUndoCoalescing()
         editor.setSelectedRange(NSRange(location: 0, length: 0))
-        editor.insertText("-", replacementRange: NSRange(location: NSNotFound, length: 0))
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         #expect(interaction.mode == .note)
-        // The consumed prefix left no undo step: the first undo removes the text.
+        // Choosing New note left no undo step: the first undo removes the text.
         editor.undoManager?.undo()
         #expect(editor.string == "")
         #expect(interaction.mode == .note)
@@ -138,7 +139,7 @@ struct NativeEditingTests {
         let none = NSRange(location: NSNotFound, length: 0)
         editor.insertText("บันทึก", replacementRange: none)
         editor.setSelectedRange(NSRange(location: 0, length: 0))
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         #expect(interaction.mode == .note)
         #expect(editor.string == "บันทึก")
         editor.setSelectedRange(NSRange(location: ("บันทึก" as NSString).length, length: 0))
@@ -150,7 +151,7 @@ struct NativeEditingTests {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let none = NSRange(location: NSNotFound, length: 0)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("one", replacementRange: none)
         editor.keyDown(with: try returnKey(shift: true))
         editor.insertText("two", replacementRange: none)
@@ -167,7 +168,7 @@ struct NativeEditingTests {
     @Test func noteKeepsMarkdownPunctuationAsTyped() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
-        editor.insertText("-", replacementRange: NSRange(location: NSNotFound, length: 0))
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         let markdown = "\"quote\" -- 'it's' ... (c) 1/2 -> *a*"
         for character in markdown {
             editor.insertText(String(character), replacementRange: NSRange(location: NSNotFound, length: 0))
@@ -179,7 +180,7 @@ struct NativeEditingTests {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let none = NSRange(location: NSNotFound, length: 0)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("milk", replacementRange: none)
         editor.setSelectedRange(NSRange(location: 0, length: 0))
         editor.keyDown(with: try backspaceKey())
@@ -195,25 +196,25 @@ struct NativeEditingTests {
         #expect(interaction.query == "-milk")
     }
 
-    @Test func dashBackspaceDashEntersNoteAgainWithAnEmptyBuffer() async throws {
+    @Test func bracketBackspaceBracketEntersTaskAgainWithAnEmptyBuffer() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let none = NSRange(location: NSNotFound, length: 0)
-        editor.insertText("-", replacementRange: none)
-        #expect(interaction.mode == .note)
+        editor.insertText("[", replacementRange: none)
+        #expect(interaction.mode == .task)
         editor.keyDown(with: try backspaceKey())
         #expect(interaction.mode == .search)
-        editor.insertText("-", replacementRange: none)
-        #expect(interaction.mode == .note)
+        editor.insertText("[", replacementRange: none)
+        #expect(interaction.mode == .task)
         #expect(editor.string.isEmpty)
-        #expect(interaction.modeLabelText == "Note")
+        #expect(interaction.modeLabelText == "Task")
     }
 
     @Test func backspaceAfterTheStartOfNoteDeletesNormally() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let none = NSRange(location: NSNotFound, length: 0)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("milk", replacementRange: none)
         editor.keyDown(with: try backspaceKey())
         #expect(interaction.mode == .note)
@@ -228,7 +229,7 @@ struct NativeEditingTests {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let none = NSRange(location: NSNotFound, length: 0)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("milk", replacementRange: none)
         editor.breakUndoCoalescing()
         editor.setSelectedRange(NSRange(location: 0, length: 0))
@@ -244,19 +245,19 @@ struct NativeEditingTests {
         #expect(interaction.query == "milk")
     }
 
-    @Test func undoThatEmptiesReturnedTextLetsATypedDashEnterNote() async throws {
+    @Test func undoThatEmptiesReturnedTextLetsATypedBracketEnterTask() async throws {
         let (interaction, invocation, editor) = try await presentEditor()
         defer { interaction.dismiss(invocation, reason: .outsideClick) }
         let none = NSRange(location: NSNotFound, length: 0)
-        editor.insertText("-", replacementRange: none)
+        try enterNoteCaptureForValidation(interaction, editor: editor)
         editor.insertText("milk", replacementRange: none)
         editor.breakUndoCoalescing()
         editor.setSelectedRange(NSRange(location: 0, length: 0))
         editor.keyDown(with: try backspaceKey())
         editor.undoManager?.undo()
         #expect(interaction.mode == .search && editor.string.isEmpty)
-        editor.insertText("-", replacementRange: none)
-        #expect(interaction.mode == .note)
+        editor.insertText("[", replacementRange: none)
+        #expect(interaction.mode == .task)
         #expect(editor.string.isEmpty)
     }
 
