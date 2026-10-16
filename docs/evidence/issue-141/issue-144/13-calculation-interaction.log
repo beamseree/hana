@@ -1,0 +1,47 @@
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.13s)
+Test Suite 'Selected tests' started at 2026-10-16 16:50:55.839.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:50:55.840.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:50:55.840.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:50:55.840.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationInteractionTests started.
+􀟈  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "12 *", title → "…", subtitle → "Keep typing" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "5 / 0", title → "Uh oh", subtitle → "Can't divide by zero" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "3 + * 4", title → "Not a valid calculation", subtitle → "3 + * 4" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "sqrt(-1)", title → "Uh oh", subtitle → "Undefined" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "9^9^9", title → "Uh oh", subtitle → "Too large" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􁁛  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) with 5 test cases passed after 0.582 seconds.
+􀟈  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􀟈  Test case passing 1 argument userNavigated → false to completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􀟈  Test case passing 1 argument userNavigated → true to completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􁁛  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) with 2 test cases passed after 0.319 seconds.
+􀟈  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "12 *" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "5 / 0" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "3 + * 4" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "sqrt(-1)" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "9^9^9" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􁁛  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) with 5 test cases passed after 0.351 seconds.
+􀟈  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1200 / 3", expected → "400" to enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrt(16)", expected → "4" to enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) started.
+􁁛  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) with 2 test cases passed after 0.130 seconds.
+􀟈  Test answerStaysAboveLateBatchesAndPreservesAnExplicitResultSelection() started.
+􁁛  Test answerStaysAboveLateBatchesAndPreservesAnExplicitResultSelection() passed after 0.112 seconds.
+􀟈  Test suggestionsReturnAsSoonAsTheTextGainsAWord() started.
+􁁛  Test suggestionsReturnAsSoonAsTheTextGainsAWord() passed after 0.019 seconds.
+􀟈  Test calculationsStayPlainTextInCapture(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to calculationsStayPlainTextInCapture(mode:) started.
+􀟈  Test case passing 1 argument mode → .task to calculationsStayPlainTextInCapture(mode:) started.
+􁁛  Test calculationsStayPlainTextInCapture(mode:) with 2 test cases passed after 0.177 seconds.
+􀟈  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() started.
+􁁛  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() passed after 0.057 seconds.
+􁁛  Suite CalculationInteractionTests passed after 1.752 seconds.
+􁁛  Test run with 8 tests in 1 suite passed after 1.753 seconds.

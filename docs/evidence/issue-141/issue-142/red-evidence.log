@@ -1,0 +1,36 @@
+01-evaluator-red.log
+/Users/beamsereeyothin/.codex/worktrees/issue-142-calculator-basic/hana/Tests/HanaTests/CalculationTests.swift:9:35: error: cannot find 'Calculation' in scope
+   |                                   `- error: cannot find 'Calculation' in scope
+/Users/beamsereeyothin/.codex/worktrees/issue-142-calculator-basic/hana/Tests/HanaTests/CalculationTests.swift:9:35: error: cannot find 'Calculation' in scope
+   |                                   `- error: cannot find 'Calculation' in scope
+
+03-recognition-red.log
+/Users/beamsereeyothin/.codex/worktrees/issue-142-calculator-basic/hana/Tests/HanaTests/CalculationTests.swift:25:29: error: type 'Calculation' has no member 'recognizes'
+   |                             `- error: type 'Calculation' has no member 'recognizes'
+error: fatalError
+
+05-arithmetic-red.log
+􀢄  Test evaluatesArithmeticWithExactDecimals(text:expected:) recorded an issue with 2 arguments text → "(2 + 3) * 4", expected → "20" at CalculationTests.swift:37:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → nil) == (expected → "20")
+􀢄  Test evaluatesArithmeticWithExactDecimals(text:expected:) recorded an issue with 2 arguments text → "10 / (2 + 3)", expected → "2" at CalculationTests.swift:37:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "13") == (expected → "2")
+􀢄  Test evaluatesArithmeticWithExactDecimals(text:expected:) recorded an issue with 2 arguments text → "-(2 + 3)", expected → "-5" at CalculationTests.swift:37:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "3") == (expected → "-5")
+􀢄  Test evaluatesArithmeticWithExactDecimals(text:expected:) recorded an issue with 2 arguments text → "2024-10-16", expected → "1998" at CalculationTests.swift:37:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "2024") == (expected → "1998")
+
+07-formatting-red.log
+􀢄  Test formatsAnswersAndCopyableText(text:title:copy:) recorded an issue with 3 arguments text → "123456789012345 + 0", title → "123,456,789,012,345", copy → "123456789012345" at CalculationTests.swift:54:9: Expectation failed: (answer.title → "123456789012345") == (title → "123,456,789,012,345")
+􀢄  Test formatsAnswersAndCopyableText(text:title:copy:) recorded an issue with 3 arguments text → "1234567890123456 + 0", title → "1.2345679e15", copy → "1.2345679e15" at CalculationTests.swift:54:9: Expectation failed: (answer.title → "1234567890123456") == (title → "1.2345679e15")
+􀢄  Test formatsAnswersAndCopyableText(text:title:copy:) recorded an issue with 3 arguments text → "1234567890123456 + 0", title → "1.2345679e15", copy → "1.2345679e15" at CalculationTests.swift:55:9: Expectation failed: (answer.copyableText → "1234567890123456") == (copy → "1.2345679e15")
+􀢄  Test formatsAnswersAndCopyableText(text:title:copy:) recorded an issue with 3 arguments text → "1 / 3", title → "0.33333333", copy → "0.33333333" at CalculationTests.swift:54:9: Expectation failed: (answer.title → "0.33333333333333333333333333333333333333") == (title → "0.33333333")
+
+10-interaction-red.log
+/Users/beamsereeyothin/.codex/worktrees/issue-142-calculator-basic/hana/Tests/HanaTests/CalculationInteractionTests.swift:13:54: error: extra argument 'copyAnswer' in call
+   |                                                      `- error: extra argument 'copyAnswer' in call
+/Users/beamsereeyothin/.codex/worktrees/issue-142-calculator-basic/hana/Tests/HanaTests/CalculationInteractionTests.swift:24:110: error: cannot infer contextual base in reference to member 'outsideClick'
+   |                                                                                                              `- error: cannot infer contextual base in reference to member 'outsideClick'
+
+14-decimal-x-red.log
+􀢄  Test recognizesOnlyTheCalculationLanguage(text:expected:) recorded an issue with 2 arguments text → ".3 x .4", expected → true at CalculationTests.swift:25:9: Expectation failed: (Calculation.recognizes(text, locale: locale) → false) == (expected → true)
+
+16-rounding-carry-red.log
+􀢄  Test formatsAnswersAndCopyableText(text:title:copy:) recorded an issue with 3 arguments text → "999999999999999.9 + 0", title → "1e15", copy → "1e15" at CalculationTests.swift:55:9: Expectation failed: (answer.title → "1,000,000,000,000,000") == (title → "1e15")
+􀢄  Test formatsAnswersAndCopyableText(text:title:copy:) recorded an issue with 3 arguments text → "999999999999999.9 + 0", title → "1e15", copy → "1e15" at CalculationTests.swift:56:9: Expectation failed: (answer.copyableText → "1000000000000000") == (copy → "1e15")
+

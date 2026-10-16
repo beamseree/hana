@@ -168,13 +168,14 @@ private func openCaptureEditor() async throws -> NSTextView {
 }
 
 /// Native fixtures enter Note through Search's real New note action. An empty
-/// fixture briefly supplies text so the suggestion exists, then removes that
-/// setup text and its undo history before the original scenario starts.
+/// fixture, or one with a calculation suppressing suggestions, briefly supplies
+/// ordinary text so the suggestion exists, then restores the original text and
+/// selection and removes the setup undo history before the scenario starts.
 @MainActor
 func enterNoteCaptureForValidation(_ interaction: MacInteraction, editor: NSTextView) throws {
     let text = editor.string
     let selection = editor.selectedRange()
-    let needsText = !Note.isNonblank(text)
+    let needsText = !interaction.rows.contains { $0.id == .suggestion(.note) }
     if needsText {
         editor.insertText("Note fixture", replacementRange: NSRange(location: 0, length: (text as NSString).length))
     }

@@ -61,6 +61,20 @@ Per Beam's answers on 2026-10-13:
 - Position the bar horizontally centered in the upper portion of the focused window's display. If that display cannot be determined, use the display containing the mouse pointer. Beam accepted Q43 and asked for clarification of this fallback; explanation supplied in chat. Preserve the input position during expansion, adjusting only to stay onscreen.
 - Technical-design clarification, 2026-10-13: working windows must appear in the Dock and Command-Tab. Beam's final correction replaces his earlier menu-bar-only answer; menu-bar access and global invocation remain available when working windows are closed. The process/activation-policy implementation remains subject to native validation.
 
+## Calculator answers in Search
+
+Accepted with Beam on 2026-10-16, tracked by #141. A calculation shows an answer as the first Search row in the same update as the edit, independently of source batches. It uses the ordinary 56-point row with the answer as title, the expression as subtitle, type label "Calculator", SF Symbol `plus.forwardslash.minus`, and accessibility text containing title, type and subtitle. The mode icon remains Search's magnifying glass. Pasted expressions work too; Note and Task text never produces an answer row.
+
+Recognition permits numbers, locale decimal/grouping separators, whitespace, parentheses, `+ - − * × ÷ / ^ %`, known functions (`sqrt`, `sin`, `cos`, `tan`, `log`, `ln`) and constants (`pi`, `e`), with at least an operator, function or implicit multiplication. Names are case-insensitive; `x` means multiplication only between numbers. A bare number or lone constant is ordinary Search, as is text with any other word. Thus `2024-10-16` is a calculation and `rent 1200 / 3` is ordinary Search. Scientific number literals such as `3e5` are accepted as calculations by the trial checklist (#146).
+
+Basic `+ - * /`, unary minus, parentheses and decimal arithmetic use exact decimals: `0.1 + 0.2` gives `0.3`. Whole numbers through 15 digits display exactly with locale grouping. Fractional answers round to 8 significant digits and remove trailing zeros; beyond 15 integer digits or below `1e-8` in magnitude they use scientific notation. Copyable text equals the displayed answer without grouping, retaining the locale decimal separator.
+
+A value answer is the default selection and remains selected through late batches unless the user navigates. No New note / New task suggestions show while an answer shows; they return when the text gains an ordinary word. Enter on an answer immediately copies a plain string and dismisses toward the invocation origin, with no confirmation or wait for sources. Cmd+C retains ordinary editor behavior; navigating to a result and pressing Enter opens that result as usual.
+
+The remaining #141 tickets add powers (right-associative), postfix percentages (relative to the left operand directly after binary `+`/`-`), implicit multiplication, scientific notation, constants and the listed parenthesised functions; trig uses radians, `log` is base 10 and `ln` is natural log. Integer powers and percentages retain decimal arithmetic; constants, functions and non-integer powers use double precision. They also add answers without values (incomplete, division by zero, undefined, too large and invalid) and a Calculation reason blocking Automatic switch in every recognized state. An answer without a value defaults to the first other row, or itself if alone; Enter dismisses like Escape without copying. #142 supplies basic value answers; #143–#145 and the separate human trial #146 complete the milestone. Automated fixture checks do not establish physical focus return or pasting into another app.
+
+Deferred: special answer styling and calculator mode-icon morphing; unit/currency conversion; date/time calculations; variables; answer history; modulo; degree-mode trig; additional functions; automatic paste into the invocation origin; opening Calculator.app; calculations in capture modes; copy confirmation.
+
 ## First-version acceptance
 
 Accepted Q44, 2026-10-13. Verify the complete loop on Beam's Mac:

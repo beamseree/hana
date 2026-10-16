@@ -1,0 +1,18 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.50s)
+Test Suite 'Selected tests' started at 2026-10-16 19:13:41.427.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 19:13:41.428.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 19:13:41.428.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 19:13:41.428.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite NoteSaveSafetyNativeTests started.
+􀟈  Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() started.
+􁁛  Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() passed after 0.517 seconds.
+􀟈  Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+􀟈  Test case passing 1 argument action → .retry to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.

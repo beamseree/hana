@@ -1,0 +1,146 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Compiling HanaTests CalculationInteractionTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (4.49s)
+Test Suite 'Selected tests' started at 2026-10-16 16:15:34.991.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:15:34.992.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:15:34.992.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:15:34.992.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationInteractionTests started.
+􀟈  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "12 *", title → "…", subtitle → "Keep typing" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "5 / 0", title → "Uh oh", subtitle → "Can't divide by zero" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "3 + * 4", title → "Not a valid calculation", subtitle → "3 + * 4" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􁁛  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) with 3 test cases passed after 0.346 seconds.
+􀟈  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􀟈  Test case passing 1 argument userNavigated → false to completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􀟈  Test case passing 1 argument userNavigated → true to completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􁁛  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) with 2 test cases passed after 0.183 seconds.
+􀟈  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "12 *" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "5 / 0" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "3 + * 4" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􁁛  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) with 3 test cases passed after 0.229 seconds.
+􀟈  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin() started.
+􁁛  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin() passed after 0.053 seconds.
+􀟈  Test answerStaysAboveLateBatchesAndPreservesAnExplicitResultSelection() started.
+􁁛  Test answerStaysAboveLateBatchesAndPreservesAnExplicitResultSelection() passed after 0.133 seconds.
+􀟈  Test suggestionsReturnAsSoonAsTheTextGainsAWord() started.
+􁁛  Test suggestionsReturnAsSoonAsTheTextGainsAWord() passed after 0.019 seconds.
+􀟈  Test calculationsStayPlainTextInCapture(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to calculationsStayPlainTextInCapture(mode:) started.
+􀟈  Test case passing 1 argument mode → .task to calculationsStayPlainTextInCapture(mode:) started.
+􁁛  Test calculationsStayPlainTextInCapture(mode:) with 2 test cases passed after 0.171 seconds.
+􀟈  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() started.
+􁁛  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() passed after 0.058 seconds.
+􁁛  Suite CalculationInteractionTests passed after 1.196 seconds.
+􀟈  Suite CalculationTests started.
+􀟈  Test basicArithmeticAppearsAsAnAnswer() started.
+􁁛  Test basicArithmeticAppearsAsAnAnswer() passed after 0.001 seconds.
+􀟈  Test trailingOperatorKeepsAnAnswerWhileTyping() started.
+􁁛  Test trailingOperatorKeepsAnAnswerWhileTyping() passed after 0.001 seconds.
+􀟈  Test divisionByZeroExplainsWhyThereIsNoValue() started.
+􁁛  Test divisionByZeroExplainsWhyThereIsNoValue() passed after 0.001 seconds.
+􀟈  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 *", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * -", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / (3 - 3)", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + *", state → .invalid, title → "Not a valid calculation", subtitle → "3 + *" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1..2", state → .invalid, title → "Not a valid calculation", subtitle → "1..2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1 2 + 3", state → .invalid, title → "Not a valid calculation", subtitle → "1 2 + 3" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + 4)", state → .invalid, title → "Not a valid calculation", subtitle → "3 + 4)" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "(3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + ()", state → .invalid, title → "Not a valid calculation", subtitle → "3 + ()" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * )", state → .invalid, title → "Not a valid calculation", subtitle → "12 * )" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 + * 2", state → .invalid, title → "Not a valid calculation", subtitle → "5 / 0 + * 2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → " 3 + * 4 ", state → .invalid, title → "Not a valid calculation", subtitle → " 3 + * 4 " to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􁁛  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) with 18 test cases passed after 0.001 seconds.
+􀟈  Test recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "e", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "rent 1200 / 3", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "tax 3x4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "extra", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrtish(4)", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "https://3/4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "12 *", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5 / 0", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 + * 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1..2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrt", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "SIN(pi)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2pi", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2(3 + 4)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3x4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → ".3 x .4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3×4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^10", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "50%", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-3 + 2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􁁛  Test recognizesOnlyTheCalculationLanguage(text:expected:) with 26 test cases passed after 0.001 seconds.
+􀟈  Test evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 + 3 * 4", expected → "14" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(2 + 3) * 4", expected → "20" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / (2 + 3)", expected → "2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5 + 3", expected → "-2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 * -3", expected → "-6" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-(2 + 3)", expected → "-5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → "1,998" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.1 + 0.2", expected → "0.3" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / 4", expected → "2.5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􁁛  Test evaluatesArithmeticWithExactDecimals(text:expected:) with 9 test cases passed after 0.001 seconds.
+􀟈  Test formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345 + 0", title → "123,456,789,012,345", copy → "123456789012345" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "999999999999999.9 + 0", title → "1e15", copy → "1e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1234567890123456 + 0", title → "1.2345679e15", copy → "1.2345679e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 3", title → "0.33333333", copy → "0.33333333" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789 / 100", title → "1,234,567.9", copy → "1234567.9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 100000000", title → "0.00000001", copy → "0.00000001" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 1000000000", title → "1e-9", copy → "1e-9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345678901 + 0", title → "1.2345679e20", copy → "1.2345679e20" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "-1234.5 + 0", title → "-1,234.5", copy → "-1234.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "0.0000000001 - 0.0000000001", title → "0", copy → "0" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "10 / 4", title → "2.5", copy → "2.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􁁛  Test formatsAnswersAndCopyableText(text:title:copy:) with 11 test cases passed after 0.001 seconds.
+􀟈  Test typingAndDisplayFollowTheExplicitLocale() started.
+􁁛  Test typingAndDisplayFollowTheExplicitLocale() passed after 0.001 seconds.
+􁁛  Suite CalculationTests passed after 0.004 seconds.
+􀟈  Suite SuggestionInteractionTests started.
+􀟈  Test suggestionsFollowEveryMatchIncludingLateFileBatchesAndAreAbsentForEmptyText() started.
+􁁛  Test suggestionsFollowEveryMatchIncludingLateFileBatchesAndAreAbsentForEmptyText() passed after 0.082 seconds.
+􀟈  Test withNoMatchesTheFirstSuggestionIsSelected() started.
+􁁛  Test withNoMatchesTheFirstSuggestionIsSelected() passed after 0.089 seconds.
+􀟈  Test enterOnASuggestionSwitchesModeWithTheExactTextAndSelectionAndSavesOnlyOnTheNextEnter(suggestion:) started.
+􀟈  Test case passing 1 argument suggestion → .note to enterOnASuggestionSwitchesModeWithTheExactTextAndSelectionAndSavesOnlyOnTheNextEnter(suggestion:) started.
+􀟈  Test case passing 1 argument suggestion → .task to enterOnASuggestionSwitchesModeWithTheExactTextAndSelectionAndSavesOnlyOnTheNextEnter(suggestion:) started.
+􁁛  Test enterOnASuggestionSwitchesModeWithTheExactTextAndSelectionAndSavesOnlyOnTheNextEnter(suggestion:) with 2 test cases passed after 0.353 seconds.
+􀟈  Test anUnnavigatedEnterOnASuggestionWhileLoadingWaitsSoALateMatchIsNotSkipped(lateMatch:) started.
+􀟈  Test case passing 1 argument lateMatch → true to anUnnavigatedEnterOnASuggestionWhileLoadingWaitsSoALateMatchIsNotSkipped(lateMatch:) started.
+􀟈  Test case passing 1 argument lateMatch → false to anUnnavigatedEnterOnASuggestionWhileLoadingWaitsSoALateMatchIsNotSkipped(lateMatch:) started.
+􁁛  Test anUnnavigatedEnterOnASuggestionWhileLoadingWaitsSoALateMatchIsNotSkipped(lateMatch:) with 2 test cases passed after 0.154 seconds.
+􀟈  Test enterOnANavigatedSuggestionChoosesItAtOnceWhileLoading() started.
+􁁛  Test enterOnANavigatedSuggestionChoosesItAtOnceWhileLoading() passed after 0.074 seconds.
+􀟈  Test newTaskWithMultilineTextExplainsTheRuleAndKeepsSearchAndTheText() started.
+􁁛  Test newTaskWithMultilineTextExplainsTheRuleAndKeepsSearchAndTheText() passed after 0.083 seconds.
+􁁛  Suite SuggestionInteractionTests passed after 0.837 seconds.
+􁁛  Test run with 22 tests in 3 suites passed after 2.039 seconds.

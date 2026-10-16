@@ -1,0 +1,13 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/7] Emitting module Hana
+[4/7] Compiling Hana Calculation.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Sources/Hana/Calculation.swift:197:58: error: static member 'sumExceedsUpperBound' cannot be used on instance of type 'Calculation.Number'
+195 |             if operation == "/", right.double == 0 { return .failure(.divisionByZero) }
+196 |             if case .decimal(var left) = self, case .decimal(var right) = right {
+197 |                 if operation == "+" || operation == "-", sumExceedsUpperBound(left, right, operation: operation) {
+    |                                                          `- error: static member 'sumExceedsUpperBound' cannot be used on instance of type 'Calculation.Number'
+198 |                     return .failure(.tooLarge)
+199 |                 }
+error: fatalError

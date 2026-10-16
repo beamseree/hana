@@ -1,0 +1,39 @@
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.16s)
+Test Suite 'Selected tests' started at 2026-10-16 16:32:13.094.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:32:13.095.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:32:13.095.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:32:13.095.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationAutomaticSwitchInteractionTests started.
+􀟈  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀟈  Test case passing 1 argument firing → .debounced to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀟈  Test case passing 1 argument firing → .onPause to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀟈  Test case passing 1 argument firing → .wordPaced to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􁁛  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) with 4 test cases passed after 2.849 seconds.
+􀟈  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "12 *" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "(3 + 4" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "sqrt" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "1 / 0" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "sqrt(-1)" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "9^9^9" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "3 + * 4" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "1..2" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􁁛  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) with 8 test cases passed after 2.586 seconds.
+􀟈  Test addingAWordRestoresSuggestionsAndTheClassifier() started.
+􀢄  Test addingAWordRestoresSuggestionsAndTheClassifier() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test addingAWordRestoresSuggestionsAndTheClassifier() recorded an issue at CalculationAutomaticSwitchInteractionTests.swift:69:9: Expectation failed: (fake.inputs → []) == ["1200 / 3 rent"]
+􀅺  removed ["1200 / 3 rent"]
+􀢄  Test addingAWordRestoresSuggestionsAndTheClassifier() failed after 3.061 seconds with 2 issues.
+􀟈  Test replacingAQueuedSubmissionWithACalculationCopiesWithoutALateSave() started.
+􁁛  Test replacingAQueuedSubmissionWithACalculationCopiesWithoutALateSave() passed after 0.192 seconds.
+􀢄  Suite CalculationAutomaticSwitchInteractionTests failed after 8.690 seconds with 2 issues.
+􀄵  /// Native command delivery with disposable defaults, storage and a scripted classifier.
+􀢄  Test run with 4 tests in 1 suite failed after 8.691 seconds with 2 issues.

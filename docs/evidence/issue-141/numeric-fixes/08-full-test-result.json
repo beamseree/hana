@@ -1,0 +1,13 @@
+{
+  "command": [
+    "xcrun",
+    "swift",
+    "test",
+    "--no-parallel"
+  ],
+  "source": "a0ce847979ddee6f3a1c72943d4602b613e27d60",
+  "started_at_utc": "2026-10-16T10:27:57.387168+00:00",
+  "finished_at_utc": "2026-10-16T10:30:00.915453+00:00",
+  "wall_seconds": 123.486,
+  "exit_code": 0
+}

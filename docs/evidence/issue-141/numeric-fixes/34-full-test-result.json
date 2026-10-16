@@ -1,0 +1,15 @@
+{
+  "command": [
+    "xcrun",
+    "swift",
+    "test",
+    "--no-parallel"
+  ],
+  "source": "924766b4c3881d84e9223790212d1e4615330224",
+  "started_at_utc": "2026-10-16T12:10:32.778098+00:00",
+  "finished_at_utc": "2026-10-16T12:11:54.648277+00:00",
+  "wall_seconds": 81.869,
+  "exit_code": 0,
+  "suite_summary_found": false,
+  "validation_status": "incomplete; process exited without final suite summary"
+}

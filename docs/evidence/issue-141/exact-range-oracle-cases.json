@@ -1,0 +1,1602 @@
+[
+  {
+    "expression": "(100000000000000000000000000000000000000e100) - (-340282366920938463463374607431768211455e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e38) * (340282366920938463463374607431768211450e126)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e-127) / (-100000000000000000000000000000000000001e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e-127) - (-9e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-3e37) - (-340282366920938463463374607431768211454e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e-39) / (-340282366920938463463374607431768211454e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e-38) - (-100000000000000000000000000000000000000e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e100) / (5e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-100) + (170141183460469231731687303715884105727e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e-38) / (-9e100)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e100) / (10000000000000000001e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e38) + (-10000000000000000001e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e-127) + (-1e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-65) * (340282366920938463463374607431768211455e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-1) + (10e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e37) + (-170141183460469231731687303715884105727e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(99999999999999999999999999999999999999e-39) - (-100000000000000000000000000000000000001e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-128) - (-340282366920938463463374607431768211450e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e127) * (-340282366920938463463374607431768211455e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e-39) - (-10000000000000000001e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e38) + (10e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e37) / (10e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e-38) - (340282366920938463463374607431768211454e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e126) + (99999999999999999999999999999999999999e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e-38) * (10000000000000000001e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-100) * (-1e-128)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-39) + (-99999999999999999999999999999999999999e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e38) / (99999999999999999999999999999999999999e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-100) * (3e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e-64) * (-3e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e0) * (-10e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-100) / (340282366920938463463374607431768211454e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-65) - (-10000000000000000001e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-2e-127) + (10e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e0) - (100000000000000000000000000000000000000e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(170141183460469231731687303715884105727e126) * (340282366920938463463374607431768211454e100)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e-64) + (100000000000000000000000000000000000001e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e-100) * (340282366920938463463374607431768211455e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-128) / (100000000000000000000000000000000000000e126)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(99999999999999999999999999999999999999e-128) + (-3e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e-38) + (-10000000000000000001e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e100) - (-2e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e-127) / (99999999999999999999999999999999999999e38)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e37) / (5e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e-100) + (-99999999999999999999999999999999999999e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-128) + (-100000000000000000000000000000000000001e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e37) + (-340282366920938463463374607431768211450e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000000e-1) - (-10000000000000000001e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e127) / (5e-128)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e127) * (10000000000000000001e37)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e1) - (2e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e-100) * (-340282366920938463463374607431768211450e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e-100) * (10e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-3e-100) - (-340282366920938463463374607431768211454e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10000000000000000001e37) + (340282366920938463463374607431768211450e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e-39) - (100000000000000000000000000000000000000e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-64) * (5e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e100) - (-3e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e37) / (100000000000000000000000000000000000000e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-127) / (5e126)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e126) * (9e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e-100) / (-99999999999999999999999999999999999999e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e38) * (100000000000000000000000000000000000001e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e126) - (-170141183460469231731687303715884105727e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e-38) / (-99999999999999999999999999999999999999e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e0) + (100000000000000000000000000000000000001e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e100) - (-10e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-3e127) * (10e126)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211454e-127) / (2e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e-38) * (100000000000000000000000000000000000000e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e127) * (9e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-1) - (99999999999999999999999999999999999999e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e-65) - (-10000000000000000001e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e-1) / (1e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e37) + (100000000000000000000000000000000000001e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e1) - (-1e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e100) * (-5e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e127) + (340282366920938463463374607431768211454e-64)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211454e-127) - (10000000000000000001e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e-64) + (-3e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e38) / (-9e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-39) + (340282366920938463463374607431768211450e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e126) / (340282366920938463463374607431768211454e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e1) / (-340282366920938463463374607431768211455e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e-100) - (5e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e-65) * (-9e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e-38) + (340282366920938463463374607431768211454e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e100) / (340282366920938463463374607431768211454e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e127) - (-10e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e100) - (100000000000000000000000000000000000001e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e0) / (340282366920938463463374607431768211455e126)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(99999999999999999999999999999999999999e100) + (-2e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e100) - (-340282366920938463463374607431768211455e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e-100) + (-10e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e-100) + (10000000000000000001e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e-128) - (-170141183460469231731687303715884105727e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e0) - (-99999999999999999999999999999999999999e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-128) / (-10e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(170141183460469231731687303715884105727e38) / (-99999999999999999999999999999999999999e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e-39) * (-9e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-2e38) / (-9e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e-64) / (-10000000000000000001e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-100) + (-2e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(99999999999999999999999999999999999999e0) - (10e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e-65) / (10e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(170141183460469231731687303715884105727e126) + (-3e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-100) / (340282366920938463463374607431768211450e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e0) + (-2e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e38) - (-340282366920938463463374607431768211454e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e-38) + (-10000000000000000001e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e37) - (3e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e-128) + (-340282366920938463463374607431768211450e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e-100) / (-3e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-38) + (100000000000000000000000000000000000001e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e1) / (3e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e100) / (-3e-38)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-38) * (-5e-127)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e38) / (-10e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e127) / (-340282366920938463463374607431768211450e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-100) - (2e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e126) - (5e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e-127) + (-340282366920938463463374607431768211450e-127)",
+    "state": "value",
+    "nonzero": false
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-38) / (340282366920938463463374607431768211455e127)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e100) + (340282366920938463463374607431768211455e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e38) - (100000000000000000000000000000000000000e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(99999999999999999999999999999999999999e-38) + (-100000000000000000000000000000000000001e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(99999999999999999999999999999999999999e-1) + (-170141183460469231731687303715884105727e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e38) + (-99999999999999999999999999999999999999e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e-1) * (-3e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e-38) + (2e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000000e100) * (100000000000000000000000000000000000001e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e0) * (-5e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e100) - (-340282366920938463463374607431768211450e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e-64) / (99999999999999999999999999999999999999e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e126) + (-2e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10000000000000000001e-65) / (-340282366920938463463374607431768211455e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e127) - (170141183460469231731687303715884105727e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e-38) - (100000000000000000000000000000000000000e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-100) + (-5e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e100) / (10000000000000000001e-100)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e100) * (10000000000000000001e126)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e127) + (3e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-3e37) * (340282366920938463463374607431768211450e100)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-1) * (-2e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e-1) * (100000000000000000000000000000000000000e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-39) / (-1e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e127) / (10000000000000000001e-128)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e-38) * (-3e-100)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e-38) * (-9e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e100) * (-340282366920938463463374607431768211454e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e38) - (-2e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e-65) - (10e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e100) * (99999999999999999999999999999999999999e0)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e100) / (100000000000000000000000000000000000001e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e37) / (-100000000000000000000000000000000000001e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-100) / (99999999999999999999999999999999999999e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-127) + (-5e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e37) - (2e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e-128) * (2e-127)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-100) * (-1e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e100) / (170141183460469231731687303715884105727e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-65) / (-5e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e126) + (99999999999999999999999999999999999999e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e-64) / (99999999999999999999999999999999999999e127)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e37) * (100000000000000000000000000000000000001e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e126) / (99999999999999999999999999999999999999e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10000000000000000001e38) / (100000000000000000000000000000000000001e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e-38) + (10000000000000000001e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e-100) / (5e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-128) / (-99999999999999999999999999999999999999e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e37) + (-340282366920938463463374607431768211455e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e126) * (-340282366920938463463374607431768211454e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e37) + (-100000000000000000000000000000000000001e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-2e-1) * (340282366920938463463374607431768211455e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e-100) + (340282366920938463463374607431768211455e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e-100) - (5e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-39) - (-5e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e-100) * (99999999999999999999999999999999999999e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e0) - (99999999999999999999999999999999999999e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e-1) / (3e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e-128) * (-5e-128)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e126) / (10e-128)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e126) + (5e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e-65) + (-5e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211454e-65) + (100000000000000000000000000000000000001e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-64) * (-1e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e-100) - (-10e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e37) - (340282366920938463463374607431768211455e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e37) + (2e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-3e-100) + (5e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e126) / (-340282366920938463463374607431768211450e-100)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-100) + (99999999999999999999999999999999999999e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-128) * (-99999999999999999999999999999999999999e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e1) / (-100000000000000000000000000000000000000e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e127) / (-10e-100)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e-64) + (-340282366920938463463374607431768211450e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e126) - (-100000000000000000000000000000000000001e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e100) - (5e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e38) / (-100000000000000000000000000000000000000e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e37) / (99999999999999999999999999999999999999e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e-127) * (100000000000000000000000000000000000001e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-1) + (-1e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e-1) - (9e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e0) / (5e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e100) - (-340282366920938463463374607431768211455e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-1) / (-340282366920938463463374607431768211450e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e-39) + (-10e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e-38) * (-340282366920938463463374607431768211454e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e-128) + (-9e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000000e-1) - (10000000000000000001e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e37) - (-9e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e38) * (9e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e38) - (9e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e127) * (170141183460469231731687303715884105727e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e-100) - (-340282366920938463463374607431768211454e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e-100) / (10000000000000000001e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(170141183460469231731687303715884105727e127) - (340282366920938463463374607431768211454e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211454e37) - (100000000000000000000000000000000000001e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e127) * (-5e100)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e126) - (-340282366920938463463374607431768211454e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e-127) * (170141183460469231731687303715884105727e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e126) / (100000000000000000000000000000000000001e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-127) - (-99999999999999999999999999999999999999e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10000000000000000001e-1) * (10e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e-64) / (-99999999999999999999999999999999999999e126)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e127) / (-1e-64)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-2e-38) + (340282366920938463463374607431768211455e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e37) - (-2e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e38) + (10000000000000000001e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-39) / (-170141183460469231731687303715884105727e126)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e126) + (100000000000000000000000000000000000000e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e37) + (99999999999999999999999999999999999999e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10000000000000000001e126) / (-340282366920938463463374607431768211454e-64)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-3e1) - (340282366920938463463374607431768211450e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e37) + (-99999999999999999999999999999999999999e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-127) / (10e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e0) + (-340282366920938463463374607431768211450e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e-39) - (2e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e100) + (-9e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-128) / (340282366920938463463374607431768211454e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(99999999999999999999999999999999999999e-100) - (-1e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e126) / (-100000000000000000000000000000000000000e-127)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e38) / (170141183460469231731687303715884105727e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000000e126) * (-340282366920938463463374607431768211455e126)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e126) - (3e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e0) + (-100000000000000000000000000000000000001e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211454e-1) / (-10000000000000000001e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e100) / (-1e-127)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e1) - (1e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e38) - (-170141183460469231731687303715884105727e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10e-1) - (100000000000000000000000000000000000000e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e-65) - (-340282366920938463463374607431768211455e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e-128) * (3e-65)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-64) * (99999999999999999999999999999999999999e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e-127) - (99999999999999999999999999999999999999e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e-39) + (-2e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e0) * (-1e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e0) - (-9e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-39) * (340282366920938463463374607431768211455e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(99999999999999999999999999999999999999e100) / (-10000000000000000001e-64)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e-128) * (-100000000000000000000000000000000000000e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e-127) + (-2e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e38) * (170141183460469231731687303715884105727e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e-39) + (-340282366920938463463374607431768211455e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e-1) + (-340282366920938463463374607431768211454e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e-38) * (340282366920938463463374607431768211450e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e126) * (5e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211454e-64) + (-340282366920938463463374607431768211455e-65)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e100) * (340282366920938463463374607431768211454e-1)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e100) - (99999999999999999999999999999999999999e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e-127) * (-10e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-3e-39) / (-100000000000000000000000000000000000001e1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10000000000000000001e-65) + (-100000000000000000000000000000000000001e127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e38) / (-100000000000000000000000000000000000001e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(170141183460469231731687303715884105727e-127) - (-100000000000000000000000000000000000001e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-100) - (-340282366920938463463374607431768211454e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e1) - (-340282366920938463463374607431768211450e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e-38) / (-340282366920938463463374607431768211450e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e-38) / (9e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-38) / (340282366920938463463374607431768211455e127)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-64) / (-1e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-2e-64) + (-1e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-128) * (9e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-1e-64) / (-340282366920938463463374607431768211454e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e0) * (-1e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e127) - (5e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211454e127) / (-99999999999999999999999999999999999999e-38)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000000e-1) / (10000000000000000001e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(100000000000000000000000000000000000001e-100) + (-10000000000000000001e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e-1) / (340282366920938463463374607431768211455e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211455e-65) + (-3e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e-65) + (-5e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-3e-38) + (-5e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e126) + (-2e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211454e-100) * (-340282366920938463463374607431768211455e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e-127) - (1e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-5e126) * (9e127)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e-65) + (170141183460469231731687303715884105727e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(1e37) * (-5e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(5e38) / (100000000000000000000000000000000000000e-100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000000e-127) - (1e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-170141183460469231731687303715884105727e0) + (-1e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-99999999999999999999999999999999999999e0) / (-5e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(3e37) * (-10000000000000000001e38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211454e0) - (-170141183460469231731687303715884105727e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-2e-38) - (340282366920938463463374607431768211450e-128)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-10000000000000000001e-100) + (170141183460469231731687303715884105727e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e-100) + (9e0)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-100000000000000000000000000000000000001e38) + (100000000000000000000000000000000000001e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211455e1) - (2e37)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(340282366920938463463374607431768211450e0) / (-5e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-340282366920938463463374607431768211450e-38) * (-340282366920938463463374607431768211455e100)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-3e100) * (170141183460469231731687303715884105727e-64)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(2e-128) - (-340282366920938463463374607431768211454e-38)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(99999999999999999999999999999999999999e-100) * (-10000000000000000001e-1)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(9e-128) / (10e37)",
+    "state": "tooLarge",
+    "nonzero": true
+  },
+  {
+    "expression": "(170141183460469231731687303715884105727e0) / (-100000000000000000000000000000000000000e-39)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(10e127) - (-100000000000000000000000000000000000001e126)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(170141183460469231731687303715884105727e1) * (100000000000000000000000000000000000000e-127)",
+    "state": "value",
+    "nonzero": true
+  },
+  {
+    "expression": "(-9e-1) - (100000000000000000000000000000000000000e127)",
+    "state": "value",
+    "nonzero": true
+  }
+]

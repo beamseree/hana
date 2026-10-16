@@ -1,0 +1,22 @@
+{
+  "command": [
+    "xcrun",
+    "swift",
+    "test",
+    "--no-parallel",
+    "--filter",
+    "CollectionSnapshotTests/captureBarrierIncludesCommittedWALAndExcludesAConcurrentLaterCommand"
+  ],
+  "source": "048abd67c271ef395e3645a52d4311b3cc74c0cf",
+  "runnable_source": "d54049ebef3f4674a27840fbfae0c12d3fed7e78",
+  "started_at_utc": "2026-10-16T12:48:59.383630+00:00",
+  "finished_at_utc": "2026-10-16T12:49:00.509219+00:00",
+  "wall_seconds": 1.125,
+  "exit_code": 0,
+  "suite_summary_found": true,
+  "validation_status": "passed",
+  "tests": 1,
+  "suites": 1,
+  "test_seconds": 0.11,
+  "summary_parser_note": "Initial result collector only matched plural tests/suites; corrected against complete original singular 1 test/1 suite summary. No rerun or test-source change."
+}

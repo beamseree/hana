@@ -1,0 +1,5 @@
+Cases 320 failures 4
+(1e126) / (340282366920938463463374607431768211454e0) => value 0; expected value, nonzero true
+(-1e100) / (170141183460469231731687303715884105727e127) => value 0; expected value, nonzero true
+(-1e-64) / (-340282366920938463463374607431768211454e-64) => value 0; expected value, nonzero true
+(3e-1) / (340282366920938463463374607431768211455e-64) => value 0; expected value, nonzero true
