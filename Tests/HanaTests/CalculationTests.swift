@@ -13,22 +13,6 @@ struct CalculationTests {
         #expect(answer.copyableText == "51")
     }
 
-    @Test func trailingOperatorKeepsAnAnswerWhileTyping() throws {
-        let answer = try #require(Calculation.answer(for: "12 *", locale: locale))
-        #expect(answer.state == .incomplete)
-        #expect(answer.title == "…")
-        #expect(answer.subtitle == "Keep typing")
-        #expect(answer.copyableText == nil)
-    }
-
-    @Test func divisionByZeroExplainsWhyThereIsNoValue() throws {
-        let answer = try #require(Calculation.answer(for: "5 / 0", locale: locale))
-        #expect(answer.state == .divisionByZero)
-        #expect(answer.title == "Uh oh")
-        #expect(answer.subtitle == "Can't divide by zero")
-        #expect(answer.copyableText == nil)
-    }
-
     @Test(arguments: [
         ("12 *", Answer.State.incomplete, "…", "Keep typing"),
         ("(3 + 4", .incomplete, "…", "Keep typing"),
