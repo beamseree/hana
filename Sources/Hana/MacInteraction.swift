@@ -458,7 +458,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         updateActivationPolicy()
         guard let controller = workingWindows[destination], let window = controller.window else { return false }
         if let section { controller.selectSection(section) }
-        if window.isMiniaturized { window.deminiaturize(nil) }
+        let wasMiniaturized = window.isMiniaturized
         // Only explicit destination opening activates the process. Ordinary bar
         // invocation never orders unrelated working windows or changes policy.
         // Name the app we are transferring activation from. Plain NSApp.activate()
@@ -470,7 +470,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         } else {
             NSApp.activate()
         }
-        window.makeKeyAndOrderFront(nil)
+        if wasMiniaturized { window.deminiaturize(nil) }
+        else { window.makeKeyAndOrderFront(nil) }
         record("working.open", extra: ["destination": "main"])
         return true
     }
@@ -533,12 +534,15 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private func showNote(_ controller: NoteWindowController, atEnd: Bool = false) {
         updateActivationPolicy()
         if let window = controller.window {
-            if window.isMiniaturized { window.deminiaturize(nil) }
+            let wasMiniaturized = window.isMiniaturized
             if let source = NSWorkspace.shared.frontmostApplication {
                 let allowed = NSRunningApplication.current.activate(from: source, options: [])
                 record("working.activation-request", extra: ["allowed": allowed])
             } else { NSApp.activate() }
-            window.makeKeyAndOrderFront(nil)
+            // AppKit makes a restored window key when its Dock transition
+            // completes. An earlier manual key request acknowledges too soon.
+            if wasMiniaturized { window.deminiaturize(nil) }
+            else { window.makeKeyAndOrderFront(nil) }
             controller.focus(atEnd: atEnd)
         }
     }
