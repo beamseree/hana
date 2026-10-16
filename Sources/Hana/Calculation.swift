@@ -2,21 +2,41 @@ import Foundation
 
 /// The answer's display and clipboard text belong to the evaluator, not the UI.
 struct Answer: Equatable, Sendable {
+    enum State: Equatable, Sendable { case value, incomplete, divisionByZero, invalid }
+
+    let state: State
     let title: String
     let subtitle: String
     let copyableText: String?
+
+    init(state: State = .value, title: String, subtitle: String, copyableText: String?) {
+        self.state = state
+        self.title = title
+        self.subtitle = subtitle
+        self.copyableText = copyableText
+    }
 }
 
 /// Pure, synchronous arithmetic at the Search text + locale boundary.
 enum Calculation {
     static func answer(for text: String, locale: Locale) -> Answer? {
         guard recognizes(text, locale: locale) else { return nil }
-        guard let tokens = tokens(in: text, locale: locale), tokens.count <= 512 else { return nil }
+        let invalid = Answer(state: .invalid, title: "Not a valid calculation", subtitle: text, copyableText: nil)
+        guard let tokens = tokens(in: text, locale: locale), tokens.count <= 512 else { return invalid }
         var parser = Parser(tokens: tokens)
-        guard let value = parser.expression(), parser.index == tokens.count, !value.isNaN else { return nil }
-        guard let title = formatted(value, locale: locale) else { return nil }
-        let copy = title.replacingOccurrences(of: locale.groupingSeparator ?? ",", with: "")
-        return Answer(title: title, subtitle: text, copyableText: copy)
+        do {
+            let value = try parser.expression()
+            guard parser.index == tokens.count else { return invalid }
+            if parser.divisionByZero {
+                return Answer(state: .divisionByZero, title: "Uh oh", subtitle: "Can't divide by zero", copyableText: nil)
+            }
+            guard !value.isNaN,
+                  let title = formatted(value, locale: locale) else { return invalid }
+            let copy = title.replacingOccurrences(of: locale.groupingSeparator ?? ",", with: "")
+            return Answer(title: title, subtitle: text, copyableText: copy)
+        } catch Parser.Failure.incomplete {
+            return Answer(state: .incomplete, title: "…", subtitle: "Keep typing", copyableText: nil)
+        } catch { return invalid }
     }
 
     private static func formatted(_ value: Decimal, locale: Locale) -> String? {
@@ -74,8 +94,10 @@ enum Calculation {
     }
 
     private struct Parser {
+        enum Failure: Error { case incomplete, invalid }
         let tokens: [Token]
         var index = 0
+        var divisionByZero = false
 
         mutating func take(_ token: Token) -> Bool {
             guard index < tokens.count, tokens[index] == token else { return false }
@@ -83,43 +105,54 @@ enum Calculation {
             return true
         }
 
-        mutating func expression() -> Decimal? {
-            guard var value = product() else { return nil }
+        mutating func expression() throws -> Decimal {
+            var value = try product()
             while index < tokens.count {
                 if take(.operation("+")) {
-                    guard let right = product() else { return nil }
+                    let right = try product()
                     value += right
                 } else if take(.operation("-")) {
-                    guard let right = product() else { return nil }
+                    let right = try product()
                     value -= right
                 } else { break }
             }
             return value
         }
 
-        mutating func product() -> Decimal? {
-            guard var value = unary() else { return nil }
+        mutating func product() throws -> Decimal {
+            var value = try unary()
             while index < tokens.count {
                 if take(.operation("*")) {
-                    guard let right = unary() else { return nil }
+                    let right = try unary()
                     value *= right
                 } else if take(.operation("/")) {
-                    guard let right = unary(), right != .zero else { return nil }
-                    value /= right
+                    let right = try unary()
+                    if right == .zero {
+                        // Finish parsing so malformed or unfinished text still
+                        // reports its syntax before any arithmetic failure.
+                        divisionByZero = true
+                        value = .zero
+                    } else { value /= right }
                 } else { break }
             }
             return value
         }
 
-        mutating func unary() -> Decimal? {
-            if take(.operation("-")) { return unary().map { -$0 } }
+        mutating func unary() throws -> Decimal {
+            guard index < tokens.count else { throw Failure.incomplete }
+            if take(.operation("-")) { return try -unary() }
             if take(.left) {
-                guard let value = expression(), take(.right) else { return nil }
+                let value = try expression()
+                guard take(.right) else {
+                    throw index == tokens.count ? Failure.incomplete : Failure.invalid
+                }
                 return value
             }
-            guard index < tokens.count, case .number(let text) = tokens[index] else { return nil }
+            if case .function = tokens[index], index + 1 == tokens.count { throw Failure.incomplete }
+            guard case .number(let text) = tokens[index],
+                  let value = Decimal(string: text, locale: Locale(identifier: "en_US_POSIX")) else { throw Failure.invalid }
             index += 1
-            return Decimal(string: text, locale: Locale(identifier: "en_US_POSIX"))
+            return value
         }
     }
 

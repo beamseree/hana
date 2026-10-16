@@ -134,6 +134,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         if let calculationAnswer { return [.answer(calculationAnswer)] + results.map(SearchRow.result) }
         return results.map(SearchRow.result) + (hasQuery ? CaptureSession.Suggestion.allCases.map(SearchRow.suggestion) : [])
     }
+    private var defaultSelectedRow: SearchRow.ID? {
+        if let calculationAnswer, calculationAnswer.state != .value, let firstResult = results.first {
+            return .result(firstResult.id)
+        }
+        return rows.first?.id
+    }
     private var hasQuery: Bool { !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     private let diagnostics: Diagnostics
     let automaticSwitchOptions: AutomaticSwitchOptionsStore
@@ -1721,6 +1727,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     /// Native editor changes and callers use the same query-to-batches path.
     func updateQuery(_ text: String) {
         guard currentInvocation != nil else { return }
+        let wasCalculation = calculationAnswer != nil
         if editor.string != text {
             editor.string = text
             _ = capture.handle(.edited(text: text, selection: editor.selectedRange()))
@@ -1736,7 +1743,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         heldEnter = nil
         let request = Search.Request(text: CaptureSession.searchQuery(for: text))
         self.request = request
-        userMovedSelection = false
+        userMovedSelection = userMovedSelection && wasCalculation && calculationAnswer != nil
         openFailure = nil
         let stream = search.search(request)
         gateResults = stream.initial.results
@@ -1747,7 +1754,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             results = stream.initial.results
             displayedResultsGeneration = request.generation
         }
-        selectedRow = rows.first?.id
+        if !userMovedSelection || !rows.contains(where: { $0.id == selectedRow }) {
+            selectedRow = defaultSelectedRow
+            userMovedSelection = false
+        }
         icons = icons.filter { id, _ in results.contains { $0.id == id } }
         sourceStatus = stream.initial.appStatus
         fileStatus = stream.initial.fileStatus
@@ -1773,7 +1783,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
                     self.displayedResultsGeneration = batch.generation
                     self.icons = self.icons.filter { id, _ in batch.results.contains { $0.id == id } }
                     if !self.userMovedSelection || !self.rows.contains(where: { $0.id == self.selectedRow }) {
-                        self.selectedRow = self.rows.first?.id
+                        self.selectedRow = self.defaultSelectedRow
                         self.userMovedSelection = false
                     }
                 }
