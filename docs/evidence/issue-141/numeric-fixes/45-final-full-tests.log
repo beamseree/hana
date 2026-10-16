@@ -1,0 +1,1467 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.49s)
+Test Suite 'All tests' started at 2026-10-16 19:40:06.081.
+Test Suite 'All tests' passed at 2026-10-16 19:40:06.082.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchDebugInteractionTests started.
+􀟈  Test menuToggleAppliesImmediatelyWithoutChangingThePolicyOrEditor() started.
+􀢄  Test menuToggleAppliesImmediatelyWithoutChangingThePolicyOrEditor() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test menuToggleAppliesImmediatelyWithoutChangingThePolicyOrEditor() recorded an issue at AutomaticSwitchDebugInteractionTests.swift:78:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test menuToggleAppliesImmediatelyWithoutChangingThePolicyOrEditor() failed after 3.179 seconds with 2 issues.
+􀟈  Test footerRemainsVisibleWithTheCauseAcrossAutomaticCaptureAndEditing(label:) started.
+􀟈  Test case passing 1 argument label → .note to footerRemainsVisibleWithTheCauseAcrossAutomaticCaptureAndEditing(label:) started.
+􀢄  Test footerRemainsVisibleWithTheCauseAcrossAutomaticCaptureAndEditing(label:) recorded an issue with 1 argument label → .note at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test footerRemainsVisibleWithTheCauseAcrossAutomaticCaptureAndEditing(label:) recorded an issue with 1 argument label → .note at AutomaticSwitchDebugInteractionTests.swift:78:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument label → .task to footerRemainsVisibleWithTheCauseAcrossAutomaticCaptureAndEditing(label:) started.
+􀢄  Test footerRemainsVisibleWithTheCauseAcrossAutomaticCaptureAndEditing(label:) recorded an issue with 1 argument label → .task at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test footerRemainsVisibleWithTheCauseAcrossAutomaticCaptureAndEditing(label:) recorded an issue with 1 argument label → .task at AutomaticSwitchDebugInteractionTests.swift:78:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test footerRemainsVisibleWithTheCauseAcrossAutomaticCaptureAndEditing(label:) with 2 test cases failed after 6.175 seconds with 4 issues.
+􀢄  Suite AutomaticSwitchDebugInteractionTests failed after 9.355 seconds with 6 issues.
+􀄵  /// Requires the native testing slot; compiled with the suite but intentionally
+􀄵  /// left unrun until the user hands over that slot.
+􀟈  Suite AutomaticSwitchDebugTests started.
+􀟈  Test preferencePersistsSeparatelyFromTheSessionPolicy() started.
+􁁛  Test preferencePersistsSeparatelyFromTheSessionPolicy() passed after 0.016 seconds.
+􀟈  Test waitingAndQueueSnapshotsDoNotFireOrAdvanceThePolicy() started.
+􁁛  Test waitingAndQueueSnapshotsDoNotFireOrAdvanceThePolicy() passed after 0.001 seconds.
+􀟈  Test switchCauseSurvivesCaptureEditsAndCancelledLateReplies(label:) started.
+􀟈  Test case passing 1 argument label → .note to switchCauseSurvivesCaptureEditsAndCancelledLateReplies(label:) started.
+􀟈  Test case passing 1 argument label → .task to switchCauseSurvivesCaptureEditsAndCancelledLateReplies(label:) started.
+􁁛  Test switchCauseSurvivesCaptureEditsAndCancelledLateReplies(label:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test cachedAnswerHasNoNetworkLatencyOrRequestNumber() started.
+􁁛  Test cachedAnswerHasNoNetworkLatencyOrRequestNumber() passed after 0.001 seconds.
+􀟈  Test agreementAndWaitingForSourcesShowTheActualAnswer() started.
+􁁛  Test agreementAndWaitingForSourcesShowTheActualAnswer() passed after 0.001 seconds.
+􀟈  Test anOldReplyDoesNotReplaceANewerDecisionAndRelevanceTracksEdits() started.
+􁁛  Test anOldReplyDoesNotReplaceANewerDecisionAndRelevanceTracksEdits() passed after 0.001 seconds.
+􀟈  Test blockedSuspendedBackoffAndTimeoutStatesAreContentFree() started.
+􁁛  Test blockedSuspendedBackoffAndTimeoutStatesAreContentFree() passed after 0.001 seconds.
+􀟈  Test legacyStrategiesCorrelateRawRequestsAndFreezeTheirSwitchAgreement() started.
+􁁛  Test legacyStrategiesCorrelateRawRequestsAndFreezeTheirSwitchAgreement() passed after 0.001 seconds.
+􀟈  Test foundationModelsIsLabeledLocalAndUnavailableJevIsNotLabeledNetwork() started.
+􁁛  Test foundationModelsIsLabeledLocalAndUnavailableJevIsNotLabeledNetwork() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchDebugTests passed after 0.022 seconds.
+􀟈  Suite AutomaticSwitchDeletionTests started.
+􀟈  Test aQualifyingAnswerWaitsUntilTheDeletionPause() started.
+􁁛  Test aQualifyingAnswerWaitsUntilTheDeletionPause() passed after 0.001 seconds.
+􀟈  Test heldAnswersAreRecheckedAgainstTheFinalText(finalText:) started.
+􀟈  Test case passing 1 argument finalText → "call mom tomorr" to heldAnswersAreRecheckedAgainstTheFinalText(finalText:) started.
+􀟈  Test case passing 1 argument finalText → "call mo" to heldAnswersAreRecheckedAgainstTheFinalText(finalText:) started.
+􁁛  Test heldAnswersAreRecheckedAgainstTheFinalText(finalText:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test twoConsecutiveHeldAnswersCanAgreeAtThePause() started.
+􁁛  Test twoConsecutiveHeldAnswersCanAgreeAtThePause() passed after 0.001 seconds.
+􀟈  Test nativeReplacementStartsABurstEvenWhenTheTextLooksAppendedOrUnchanged(before:) started.
+􀟈  Test case passing 1 argument before → "call mo" to nativeReplacementStartsABurstEvenWhenTheTextLooksAppendedOrUnchanged(before:) started.
+􀟈  Test case passing 1 argument before → "call mom " to nativeReplacementStartsABurstEvenWhenTheTextLooksAppendedOrUnchanged(before:) started.
+􁁛  Test nativeReplacementStartsABurstEvenWhenTheTextLooksAppendedOrUnchanged(before:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test aWordBoundaryDuringACorrectionWaitsForThePauseThenSendingResumes() started.
+􁁛  Test aWordBoundaryDuringACorrectionWaitsForThePauseThenSendingResumes() passed after 0.001 seconds.
+􀟈  Test aNewerFailureDiscardsAnOlderHeldAnswer() started.
+􁁛  Test aNewerFailureDiscardsAnOlderHeldAnswer() passed after 0.001 seconds.
+􀟈  Test holdingBackspaceSendsNothingUntilThePause() started.
+􁁛  Test holdingBackspaceSendsNothingUntilThePause() passed after 0.001 seconds.
+􀟈  Test onlyRemovedRequestsAreCancelledAndCancellationHasNoLatencyOrContent() started.
+􁁛  Test onlyRemovedRequestsAreCancelledAndCancellationHasNoLatencyOrContent() passed after 0.002 seconds.
+􀟈  Test clearingResetsConfidenceAndNavigationSuspension() started.
+􁁛  Test clearingResetsConfidenceAndNavigationSuspension() passed after 0.001 seconds.
+􀟈  Test enterHoldingAnOpenDiscardsHeldAnswersAndCancelsRemainingRequests() started.
+􁁛  Test enterHoldingAnOpenDiscardsHeldAnswersAndCancelsRemainingRequests() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchDeletionTests passed after 0.006 seconds.
+􀟈  Suite AutomaticSwitchDiagnosticsTests started.
+􀟈  Test optionsDefaultOffAndPersistAcrossStoreInstances() started.
+􁁛  Test optionsDefaultOffAndPersistAcrossStoreInstances() passed after 0.002 seconds.
+􀟈  Test disabledLoggingCreatesNothingAndEnabledScriptNeverRecordsInput() started.
+􁁛  Test disabledLoggingCreatesNothingAndEnabledScriptNeverRecordsInput() passed after 0.002 seconds.
+􀟈  Test countsAndPerClassifierLatenciesRebuildFromLogAndResetWithoutDeletingHistory() started.
+􁁛  Test countsAndPerClassifierLatenciesRebuildFromLogAndResetWithoutDeletingHistory() passed after 0.006 seconds.
+􀟈  Test storedPipelineChoiceMigratesToWordPaced() started.
+􁁛  Test storedPipelineChoiceMigratesToWordPaced() passed after 0.001 seconds.
+􀟈  Test sessionRowCountsRequestsAndLegacyPipelineRowsStillCount() started.
+􁁛  Test sessionRowCountsRequestsAndLegacyPipelineRowsStillCount() passed after 0.001 seconds.
+􀟈  Test cancelledRequestsOfEveryStrategyAddNoLatencySample() started.
+􁁛  Test cancelledRequestsOfEveryStrategyAddNoLatencySample() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchDiagnosticsTests passed after 0.015 seconds.
+􀟈  Suite AutomaticSwitchInteractionTests started.
+􀟈  Test submenuPersistsToggleAndResetsCountsWithoutOpeningWorkingWindowsOrChangingPolicy() started.
+􁁛  Test submenuPersistsToggleAndResetsCountsWithoutOpeningWorkingWindowsOrChangingPolicy() passed after 0.023 seconds.
+􀟈  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀟈  Test case passing 2 arguments enabled → true, suggestion → .note to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀢄  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) recorded an issue with 2 arguments enabled → true, suggestion → .note at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) recorded an issue with 2 arguments enabled → true, suggestion → .note at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments enabled → true, suggestion → .task to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀢄  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) recorded an issue with 2 arguments enabled → true, suggestion → .task at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) recorded an issue with 2 arguments enabled → true, suggestion → .task at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments enabled → false, suggestion → .note to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀢄  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) recorded an issue with 2 arguments enabled → false, suggestion → .note at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) recorded an issue with 2 arguments enabled → false, suggestion → .note at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments enabled → false, suggestion → .task to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀢄  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) recorded an issue with 2 arguments enabled → false, suggestion → .task at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) recorded an issue with 2 arguments enabled → false, suggestion → .task at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) with 4 test cases failed after 12.134 seconds with 8 issues.
+􀟈  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􀟈  Test case passing 2 arguments label → .note, enter → .saves to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􀢄  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) recorded an issue with 2 arguments label → .note, enter → .saves at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) recorded an issue with 2 arguments label → .note, enter → .saves at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments label → .note, enter → .ignoreFor300Milliseconds to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􀢄  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) recorded an issue with 2 arguments label → .note, enter → .ignoreFor300Milliseconds at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) recorded an issue with 2 arguments label → .note, enter → .ignoreFor300Milliseconds at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments label → .task, enter → .saves to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􀢄  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) recorded an issue with 2 arguments label → .task, enter → .saves at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) recorded an issue with 2 arguments label → .task, enter → .saves at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments label → .task, enter → .ignoreFor300Milliseconds to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􀢄  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) recorded an issue with 2 arguments label → .task, enter → .ignoreFor300Milliseconds at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) recorded an issue with 2 arguments label → .task, enter → .ignoreFor300Milliseconds at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) with 4 test cases failed after 12.339 seconds with 8 issues.
+􀟈  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) started.
+􀟈  Test case passing 1 argument method → .escape to automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) started.
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) recorded an issue with 1 argument method → .escape at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) recorded an issue with 1 argument method → .escape at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument method → .backspace to automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) started.
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) recorded an issue with 1 argument method → .backspace at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) recorded an issue with 1 argument method → .backspace at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) with 2 test cases failed after 6.169 seconds with 4 issues.
+􀟈  Test heldSearchEnterCancelsFoundationModelsClassificationAndCannotTurnIntoAnAutomaticCapture() started.
+􀢄  Test heldSearchEnterCancelsFoundationModelsClassificationAndCannotTurnIntoAnAutomaticCapture() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test heldSearchEnterCancelsFoundationModelsClassificationAndCannotTurnIntoAnAutomaticCapture() recorded an issue at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test heldSearchEnterCancelsFoundationModelsClassificationAndCannotTurnIntoAnAutomaticCapture() failed after 3.084 seconds with 2 issues.
+􀟈  Test pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch(wordPaced:) started.
+􀟈  Test case passing 1 argument wordPaced → false to pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch(wordPaced:) started.
+􀢄  Test pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch(wordPaced:) recorded an issue with 1 argument wordPaced → false at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch(wordPaced:) recorded an issue with 1 argument wordPaced → false at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument wordPaced → true to pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch(wordPaced:) started.
+􀢄  Test pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch(wordPaced:) recorded an issue with 1 argument wordPaced → true at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch(wordPaced:) recorded an issue with 1 argument wordPaced → true at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch(wordPaced:) with 2 test cases failed after 6.160 seconds with 4 issues.
+􀟈  Test taskVerdictCannotFlattenPastedMultilineText() started.
+􀢄  Test taskVerdictCannotFlattenPastedMultilineText() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test taskVerdictCannotFlattenPastedMultilineText() recorded an issue at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test taskVerdictCannotFlattenPastedMultilineText() failed after 3.066 seconds with 2 issues.
+􀟈  Test everyBehaviorSubmenuPersistsARadioChoiceForTheNextInvocation() started.
+􁁛  Test everyBehaviorSubmenuPersistsARadioChoiceForTheNextInvocation() passed after 0.082 seconds.
+􀟈  Test lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) started.
+􀟈  Test case passing 1 argument option → .returnToSearch to lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) started.
+􀢄  Test lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) recorded an issue with 1 argument option → .returnToSearch at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) recorded an issue with 1 argument option → .returnToSearch at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument option → .stay to lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) started.
+􀢄  Test lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) recorded an issue with 1 argument option → .stay at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) recorded an issue with 1 argument option → .stay at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) with 2 test cases failed after 6.145 seconds with 4 issues.
+􀟈  Test escapeAfterAnAutomaticSwitchReversesOnceThenDismisses() started.
+􀢄  Test escapeAfterAnAutomaticSwitchReversesOnceThenDismisses() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test escapeAfterAnAutomaticSwitchReversesOnceThenDismisses() recorded an issue at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test escapeAfterAnAutomaticSwitchReversesOnceThenDismisses() failed after 3.076 seconds with 2 issues.
+􀟈  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀟈  Test case passing 1 argument saved → false to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → false at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → false at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument saved → true to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → true at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → true at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) with 2 test cases failed after 6.169 seconds with 4 issues.
+􀟈  Test missedManualCaptureRecordsTheLastSearchVerdictLabel() started.
+􀢄  Test missedManualCaptureRecordsTheLastSearchVerdictLabel() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test missedManualCaptureRecordsTheLastSearchVerdictLabel() recorded an issue at AutomaticSwitchInteractionTests.swift:399:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test missedManualCaptureRecordsTheLastSearchVerdictLabel() failed after 3.075 seconds with 2 issues.
+􀢄  Suite AutomaticSwitchInteractionTests failed after 61.530 seconds with 40 issues.
+􀟈  Suite AutomaticSwitchReversalOptionsTests started.
+􀟈  Test legacyReversalChoicesMigrateWithoutResettingTheSnapshot(suspends:) started.
+􀟈  Test case passing 1 argument suspends → true to legacyReversalChoicesMigrateWithoutResettingTheSnapshot(suspends:) started.
+􀟈  Test case passing 1 argument suspends → false to legacyReversalChoicesMigrateWithoutResettingTheSnapshot(suspends:) started.
+􁁛  Test legacyReversalChoicesMigrateWithoutResettingTheSnapshot(suspends:) with 2 test cases passed after 0.007 seconds.
+􀟈  Test freshWordPacedUsesModeBlocking() started.
+􁁛  Test freshWordPacedUsesModeBlocking() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchReversalOptionsTests passed after 0.007 seconds.
+􀟈  Suite AutomaticSwitchReviewPolicyTests started.
+􀟈  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "buy milk " to replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "call mo " to replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) started.
+􁁛  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test retypingCancelledTextWaitsUntilItsRequestActuallyFinishes() started.
+􁁛  Test retypingCancelledTextWaitsUntilItsRequestActuallyFinishes() passed after 0.001 seconds.
+􀟈  Test anIdenticalRequestFromAClosedBarWaitsForItsTerminalCallback() started.
+􁁛  Test anIdenticalRequestFromAClosedBarWaitsForItsTerminalCallback() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchReviewPolicyTests passed after 0.001 seconds.
+􀟈  Suite AutomaticSwitchSessionCountTests started.
+􀟈  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, classifier → .foundationModels to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, classifier → .jev to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, classifier → .foundationModels to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, classifier → .jev to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, classifier → .foundationModels to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, classifier → .jev to sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) started.
+􁁛  Test sessionCountsRequestsForTheOtherFiringStrategies(firing:classifier:) with 6 test cases passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchSessionCountTests passed after 0.001 seconds.
+􀟈  Suite AutomaticSwitchSubmissionTests started.
+􀟈  Test enterFlushesTheFullTextAndSavesOnce(firing:label:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, label → .note to enterFlushesTheFullTextAndSavesOnce(firing:label:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, label → .task to enterFlushesTheFullTextAndSavesOnce(firing:label:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, label → .note to enterFlushesTheFullTextAndSavesOnce(firing:label:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, label → .task to enterFlushesTheFullTextAndSavesOnce(firing:label:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, label → .note to enterFlushesTheFullTextAndSavesOnce(firing:label:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, label → .task to enterFlushesTheFullTextAndSavesOnce(firing:label:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, label → .note to enterFlushesTheFullTextAndSavesOnce(firing:label:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, label → .task to enterFlushesTheFullTextAndSavesOnce(firing:label:) started.
+􁁛  Test enterFlushesTheFullTextAndSavesOnce(firing:label:) with 8 test cases passed after 0.001 seconds.
+􀟈  Test prefixRepliesCannotSwitchOrSaveTheFinishedText() started.
+􁁛  Test prefixRepliesCannotSwitchOrSaveTheFinishedText() passed after 0.001 seconds.
+􀟈  Test busySlotsKeepOnlyTheFullSubmissionWaiting() started.
+􁁛  Test busySlotsKeepOnlyTheFullSubmissionWaiting() passed after 0.001 seconds.
+􀟈  Test exactPendingRequestIsReusedAndRawTextIsSaved() started.
+􁁛  Test exactPendingRequestIsReusedAndRawTextIsSaved() passed after 0.001 seconds.
+􀟈  Test exactCachedDecisionCanCommitWithoutANewRequest() started.
+􁁛  Test exactCachedDecisionCanCommitWithoutANewRequest() passed after 0.001 seconds.
+􀟈  Test rejectedDecisionsKeepTheBuffer(label:) started.
+􀟈  Test case passing 1 argument label → .search to rejectedDecisionsKeepTheBuffer(label:) started.
+􀟈  Test case passing 1 argument label → .unsure to rejectedDecisionsKeepTheBuffer(label:) started.
+􀟈  Test case passing 1 argument label → .task to rejectedDecisionsKeepTheBuffer(label:) started.
+􀟈  Test case passing 1 argument label → .note to rejectedDecisionsKeepTheBuffer(label:) started.
+􁁛  Test rejectedDecisionsKeepTheBuffer(label:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test aSingleModerateConfidenceAnswerDoesNotBypassWordPacedAgreement() started.
+􁁛  Test aSingleModerateConfidenceAnswerDoesNotBypassWordPacedAgreement() passed after 0.001 seconds.
+􀟈  Test reusingTheSameAnswerOnEnterCannotManufactureAgreement() started.
+􁁛  Test reusingTheSameAnswerOnEnterCannotManufactureAgreement() passed after 0.001 seconds.
+􀟈  Test multilineTaskIsNeverFlattenedOrSaved() started.
+􁁛  Test multilineTaskIsNeverFlattenedOrSaved() passed after 0.001 seconds.
+􀟈  Test changingIntentCancelsTheQueuedSave(action:) started.
+􀟈  Test case passing 1 argument action → "edit" to changingIntentCancelsTheQueuedSave(action:) started.
+􀟈  Test case passing 1 argument action → "replace" to changingIntentCancelsTheQueuedSave(action:) started.
+􀟈  Test case passing 1 argument action → "navigate" to changingIntentCancelsTheQueuedSave(action:) started.
+􀟈  Test case passing 1 argument action → "dismiss" to changingIntentCancelsTheQueuedSave(action:) started.
+􀟈  Test case passing 1 argument action → "mode" to changingIntentCancelsTheQueuedSave(action:) started.
+􀟈  Test case passing 1 argument action → "compose" to changingIntentCancelsTheQueuedSave(action:) started.
+􁁛  Test changingIntentCancelsTheQueuedSave(action:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test timeoutAndLateAnswerCannotSave() started.
+􁁛  Test timeoutAndLateAnswerCannotSave() passed after 0.001 seconds.
+􀟈  Test failureAndBackoffEndTheWait() started.
+􁁛  Test failureAndBackoffEndTheWait() passed after 0.001 seconds.
+􀟈  Test lateStrongMatchCancelsSaveWithoutOpeningAnything() started.
+􁁛  Test lateStrongMatchCancelsSaveWithoutOpeningAnything() passed after 0.001 seconds.
+􀟈  Test fullDecisionWaitsForTheSearchGateToSettle() started.
+􁁛  Test fullDecisionWaitsForTheSearchGateToSettle() passed after 0.001 seconds.
+􀟈  Test anEarlierFailureCannotEraseTheFullDecisionWaitingForSearch() started.
+􁁛  Test anEarlierFailureCannotEraseTheFullDecisionWaitingForSearch() passed after 0.001 seconds.
+􀟈  Test enterReusesAFullAnswerAlreadyWaitingForSearch(firing:) started.
+􀟈  Test case passing 1 argument firing → .wordPaced to enterReusesAFullAnswerAlreadyWaitingForSearch(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to enterReusesAFullAnswerAlreadyWaitingForSearch(firing:) started.
+􁁛  Test enterReusesAFullAnswerAlreadyWaitingForSearch(firing:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test blockedSearchKeepsNormalEnter(reason:) started.
+􀟈  Test case passing 1 argument reason → .oneWord to blockedSearchKeepsNormalEnter(reason:) started.
+􀟈  Test case passing 1 argument reason → .strongMatch(Hana.StrongMatchGate.Kind.application) to blockedSearchKeepsNormalEnter(reason:) started.
+􀟈  Test case passing 1 argument reason → .strongMatch(Hana.StrongMatchGate.Kind.note) to blockedSearchKeepsNormalEnter(reason:) started.
+􀟈  Test case passing 1 argument reason → .strongMatch(Hana.StrongMatchGate.Kind.task) to blockedSearchKeepsNormalEnter(reason:) started.
+􀟈  Test case passing 1 argument reason → .strongMatch(Hana.StrongMatchGate.Kind.file) to blockedSearchKeepsNormalEnter(reason:) started.
+􀟈  Test case passing 1 argument reason → .collectionUnavailable to blockedSearchKeepsNormalEnter(reason:) started.
+􁁛  Test blockedSearchKeepsNormalEnter(reason:) with 6 test cases passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchSubmissionTests passed after 0.007 seconds.
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() started.
+􁁛  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() passed after 0.001 seconds.
+􀟈  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() started.
+􁁛  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() passed after 0.001 seconds.
+􀟈  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .escape to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .backspace to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􁁛  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() started.
+􁁛  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() passed after 0.001 seconds.
+􀟈  Test firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .debounced to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .onPause to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .wordPaced to firingStrategiesRespectTheirDelay(firing:) started.
+􁁛  Test firingStrategiesRespectTheirDelay(firing:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() started.
+􁁛  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() passed after 0.001 seconds.
+􀟈  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() started.
+􁁛  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() passed after 0.001 seconds.
+􀟈  Test jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p50 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p60 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p70 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p80 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p90 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p95 to jevNeedsTheSelectedThreshold(threshold:) started.
+􁁛  Test jevNeedsTheSelectedThreshold(threshold:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() started.
+􁁛  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() passed after 0.001 seconds.
+􀟈  Test anAutomaticSwitchStaysInItsModeWithoutFurtherRequests() started.
+􁁛  Test anAutomaticSwitchStaysInItsModeWithoutFurtherRequests() passed after 0.001 seconds.
+􀟈  Test navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → true to navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → false to navigationSuspensionIsAnOption(suspends:) started.
+􁁛  Test navigationSuspensionIsAnOption(suspends:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􁁛  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .saves to enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .ignoreFor300Milliseconds to enterGraceEndsAt300Milliseconds(option:) started.
+􁁛  Test enterGraceEndsAt300Milliseconds(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .allSources to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .appsAndCollection to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .none to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􁁛  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .returnToSearch to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .stay to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􁁛  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() started.
+􁁛  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() passed after 0.001 seconds.
+􀟈  Test disabledAndIneligibleSessionsNeverSwitch() started.
+􁁛  Test disabledAndIneligibleSessionsNeverSwitch() passed after 0.001 seconds.
+􀟈  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() started.
+􁁛  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() passed after 0.001 seconds.
+􀟈  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() started.
+􁁛  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() passed after 0.001 seconds.
+􀟈  Test reinvocationClearsReversalSuspension() started.
+􁁛  Test reinvocationClearsReversalSuspension() passed after 0.001 seconds.
+􀟈  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() started.
+􁁛  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() passed after 0.002 seconds.
+􀟈  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → false to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → true to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􁁛  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) with 2 test cases passed after 0.003 seconds.
+􁁛  Suite AutomaticSwitchTests passed after 0.011 seconds.
+􀟈  Suite AutomaticSwitchWakeUpInteractionTests started.
+􀟈  Test debouncedRequestFiresAtItsReportedTimeAndNothingWakesWhileNothingIsPending() started.
+􀢄  Test debouncedRequestFiresAtItsReportedTimeAndNothingWakesWhileNothingIsPending() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test debouncedRequestFiresAtItsReportedTimeAndNothingWakesWhileNothingIsPending() recorded an issue at AutomaticSwitchWakeUpInteractionTests.swift:84:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test debouncedRequestFiresAtItsReportedTimeAndNothingWakesWhileNothingIsPending() failed after 3.058 seconds with 2 issues.
+􀟈  Test newerWakeUpTimeReplacesThePendingSleep() started.
+􀢄  Test newerWakeUpTimeReplacesThePendingSleep() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test newerWakeUpTimeReplacesThePendingSleep() recorded an issue at AutomaticSwitchWakeUpInteractionTests.swift:84:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test newerWakeUpTimeReplacesThePendingSleep() failed after 3.074 seconds with 2 issues.
+􀟈  Test dismissCancelsThePendingWakeUp() started.
+􀢄  Test dismissCancelsThePendingWakeUp() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissCancelsThePendingWakeUp() recorded an issue at AutomaticSwitchWakeUpInteractionTests.swift:84:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test dismissCancelsThePendingWakeUp() failed after 3.072 seconds with 2 issues.
+􀢄  Suite AutomaticSwitchWakeUpInteractionTests failed after 9.205 seconds with 6 issues.
+􀄵  /// Mac Interaction sleeps until the policy's reported wake-up time instead of ticking every 25 ms.
+􀟈  Suite AutomaticSwitchWakeUpTests started.
+􀟈  Test firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, delay → 0.0 seconds to firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, delay → 0.15 seconds to firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, delay → 0.5 seconds to firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) started.
+􁁛  Test firingDeadlineIsTheReportedWakeUpAndFiresExactlyThen(firing:delay:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test wordPacedPauseAndDeadlineAreReportedAndBusySlotsStillReportThePause() started.
+􁁛  Test wordPacedPauseAndDeadlineAreReportedAndBusySlotsStillReportThePause() passed after 0.001 seconds.
+􀟈  Test requestTimeoutIsReportedAndConsumedAtOnePointFiveSeconds() started.
+􁁛  Test requestTimeoutIsReportedAndConsumedAtOnePointFiveSeconds() passed after 0.001 seconds.
+􀟈  Test allSourcesWaitCapIsReportedOneSecondAfterTheEdit() started.
+􁁛  Test allSourcesWaitCapIsReportedOneSecondAfterTheEdit() passed after 0.001 seconds.
+􀟈  Test enterGraceWindowEndIsReportedThreeHundredMillisecondsAfterTheSwitch() started.
+􁁛  Test enterGraceWindowEndIsReportedThreeHundredMillisecondsAfterTheSwitch() passed after 0.001 seconds.
+􀟈  Test enterThatSavesReportsNoGraceWindow() started.
+􁁛  Test enterThatSavesReportsNoGraceWindow() passed after 0.001 seconds.
+􀟈  Test enterGraceEndIsReportedAndTypingAfterAStayingSwitchAddsNoDeadline() started.
+􁁛  Test enterGraceEndIsReportedAndTypingAfterAStayingSwitchAddsNoDeadline() passed after 0.001 seconds.
+􀟈  Test nothingPendingReportsNone() started.
+􁁛  Test nothingPendingReportsNone() passed after 0.001 seconds.
+􀟈  Test wakingOnlyAtReportedTimesMatchesTheEarlier25MillisecondTicks() started.
+􁁛  Test wakingOnlyAtReportedTimesMatchesTheEarlier25MillisecondTicks() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchWakeUpTests passed after 0.005 seconds.
+􀟈  Suite AutomaticSwitchWithdrawalDiagnosticsTests started.
+􀟈  Test withdrawnReturnsAndReversalsRemainDistinctAlongsideHistoricalRows() started.
+􁁛  Test withdrawnReturnsAndReversalsRemainDistinctAlongsideHistoricalRows() passed after 0.008 seconds.
+􁁛  Suite AutomaticSwitchWithdrawalDiagnosticsTests passed after 0.009 seconds.
+􀟈  Suite AutomaticSwitchWithdrawalTests started.
+􀟈  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() started.
+􁁛  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() passed after 0.002 seconds.
+􀟈  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() started.
+􁁛  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() passed after 0.001 seconds.
+􀟈  Test reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) started.
+􀟈  Test case passing 1 argument method → .backspace to reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) started.
+􀟈  Test case passing 1 argument method → .escape to reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) started.
+􁁛  Test reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test stopUntilClearedStillSuspendsBothModes() started.
+􁁛  Test stopUntilClearedStillSuspendsBothModes() passed after 0.001 seconds.
+􀟈  Test clearingAutomaticCaptureWithdrawsAtThePauseAndRearms() started.
+􁁛  Test clearingAutomaticCaptureWithdrawsAtThePauseAndRearms() passed after 0.001 seconds.
+􀟈  Test editingEarlierOrKeepingTheSwitchPointKeepsTheMode(text:atEnd:) started.
+􀟈  Test case passing 2 arguments text → "call mom ", atEnd → false to editingEarlierOrKeepingTheSwitchPointKeepsTheMode(text:atEnd:) started.
+􀟈  Test case passing 2 arguments text → "call mom mom", atEnd → true to editingEarlierOrKeepingTheSwitchPointKeepsTheMode(text:atEnd:) started.
+􀟈  Test case passing 2 arguments text → "call mom mom edited", atEnd → true to editingEarlierOrKeepingTheSwitchPointKeepsTheMode(text:atEnd:) started.
+􁁛  Test editingEarlierOrKeepingTheSwitchPointKeepsTheMode(text:atEnd:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test theSwitchPointIsTheAnswersPrefixRatherThanTheLaterBuffer() started.
+􁁛  Test theSwitchPointIsTheAnswersPrefixRatherThanTheLaterBuffer() passed after 0.001 seconds.
+􀟈  Test deletingBeforeRejectedTextOrClearingLiftsTheVeto(clear:) started.
+􀟈  Test case passing 1 argument clear → false to deletingBeforeRejectedTextOrClearingLiftsTheVeto(clear:) started.
+􀟈  Test case passing 1 argument clear → true to deletingBeforeRejectedTextOrClearingLiftsTheVeto(clear:) started.
+􁁛  Test deletingBeforeRejectedTextOrClearingLiftsTheVeto(clear:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test anExplicitlyEnteredModeNeverWithdraws() started.
+􁁛  Test anExplicitlyEnteredModeNeverWithdraws() passed after 0.001 seconds.
+􀟈  Test enterSavingTheShownModePreventsPendingWithdrawal() started.
+􁁛  Test enterSavingTheShownModePreventsPendingWithdrawal() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchWithdrawalTests passed after 0.008 seconds.
+􀟈  Suite AutomaticSwitchWordCacheTests started.
+􀟈  Test anAnswerFromAnEarlierBarSessionSwitchesWithoutARequest() started.
+􁁛  Test anAnswerFromAnEarlierBarSessionSwitchesWithoutARequest() passed after 0.001 seconds.
+􀟈  Test cacheHitsAreMarkedWithoutLatencyOrInputText() started.
+􁁛  Test cacheHitsAreMarkedWithoutLatencyOrInputText() passed after 0.002 seconds.
+􀟈  Test theSixtyFifthAnswerEvictsTheLeastRecentlyUsedEntry() started.
+􁁛  Test theSixtyFifthAnswerEvictsTheLeastRecentlyUsedEntry() passed after 0.005 seconds.
+􀟈  Test differentWordingOrModelMissesTheCache(identity:) started.
+􀟈  Test case passing 1 argument identity → CacheIdentity(wordingVersion: "automatic-switch-v2", model: "jev-1.13.0") to differentWordingOrModelMissesTheCache(identity:) started.
+􀟈  Test case passing 1 argument identity → CacheIdentity(wordingVersion: "automatic-switch-v1", model: "jev-future-model") to differentWordingOrModelMissesTheCache(identity:) started.
+􁁛  Test differentWordingOrModelMissesTheCache(identity:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test aBorderlineAnswerWaitsForTheNextAgreeingAnswerWithoutResending() started.
+􁁛  Test aBorderlineAnswerWaitsForTheNextAgreeingAnswerWithoutResending() passed after 0.001 seconds.
+􀟈  Test consecutiveBorderlineAnswersAgreeWhileSearchSourcesAreStillSettling() started.
+􁁛  Test consecutiveBorderlineAnswersAgreeWhileSearchSourcesAreStillSettling() passed after 0.001 seconds.
+􀟈  Test aCachedAnswerAppliesAsSoonAsTheGateAllows() started.
+􁁛  Test aCachedAnswerAppliesAsSoonAsTheGateAllows() passed after 0.001 seconds.
+􀟈  Test anOlderSuccessfulAnswerIsCachedEvenWhenANewerAnswerAlreadyWon() started.
+􁁛  Test anOlderSuccessfulAnswerIsCachedEvenWhenANewerAnswerAlreadyWon() passed after 0.001 seconds.
+􀟈  Test failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .network to failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .authentication to failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .rateLimited to failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .malformedResponse to failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .other to failuresAreNeverCached(kind:) started.
+􁁛  Test failuresAreNeverCached(kind:) with 5 test cases passed after 0.001 seconds.
+􀟈  Test clearAnswersSwitchAtOnce(probability:) started.
+􀟈  Test case passing 1 argument probability → 0.9 to clearAnswersSwitchAtOnce(probability:) started.
+􀟈  Test case passing 1 argument probability → 0.95 to clearAnswersSwitchAtOnce(probability:) started.
+􀟈  Test case passing 1 argument probability → 1.0 to clearAnswersSwitchAtOnce(probability:) started.
+􁁛  Test clearAnswersSwitchAtOnce(probability:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test thePointNineFiveThresholdStillGoverns() started.
+􁁛  Test thePointNineFiveThresholdStillGoverns() passed after 0.001 seconds.
+􀟈  Test disagreementRequiresANewConsecutivePair() started.
+􁁛  Test disagreementRequiresANewConsecutivePair() passed after 0.001 seconds.
+􀟈  Test unsureAndBelowThresholdAnswersBreakAgreement(label:) started.
+􀟈  Test case passing 1 argument label → .unsure to unsureAndBelowThresholdAnswersBreakAgreement(label:) started.
+􀟈  Test case passing 1 argument label → .note to unsureAndBelowThresholdAnswersBreakAgreement(label:) started.
+􁁛  Test unsureAndBelowThresholdAnswersBreakAgreement(label:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test twoAgreeingClearAnswersDoNotResendTheSameText() started.
+􁁛  Test twoAgreeingClearAnswersDoNotResendTheSameText() passed after 0.001 seconds.
+􀟈  Test normalizationSharesTheCacheButPreservesCase() started.
+􁁛  Test normalizationSharesTheCacheButPreservesCase() passed after 0.001 seconds.
+􀟈  Test multilineTaskCacheHitsStillCannotSwitch() started.
+􁁛  Test multilineTaskCacheHitsStillCannotSwitch() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchWordCacheTests passed after 0.014 seconds.
+􀟈  Suite AutomaticSwitchWordPacedTests started.
+􀟈  Test wordBoundarySendsImmediately(boundary:sent:) started.
+􀟈  Test case passing 2 arguments boundary → " ", sent → "call mom" to wordBoundarySendsImmediately(boundary:sent:) started.
+􀟈  Test case passing 2 arguments boundary → ".", sent → "call mom." to wordBoundarySendsImmediately(boundary:sent:) started.
+􀟈  Test case passing 2 arguments boundary → "?", sent → "call mom?" to wordBoundarySendsImmediately(boundary:sent:) started.
+􁁛  Test wordBoundarySendsImmediately(boundary:sent:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test apostrophesAndHyphensDoNotCompleteAWord() started.
+􁁛  Test apostrophesAndHyphensDoNotCompleteAWord() passed after 0.001 seconds.
+􀟈  Test pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) started.
+􀟈  Test case passing 3 arguments text → "buy milk", gap → 0.15 seconds, threshold → 0.21 seconds to pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) started.
+􀟈  Test case passing 3 arguments text → "buy milk", gap → 0.05 seconds, threshold → 0.12 seconds to pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) started.
+􀟈  Test case passing 3 arguments text → "go up", gap → 0.1 seconds, threshold → 0.18 seconds to pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) started.
+􁁛  Test pauseSendsAtExactlyTheAdaptiveThreshold(text:gap:threshold:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test typingGapsAreSharedAcrossSessionsInTheLaunch() started.
+􁁛  Test typingGapsAreSharedAcrossSessionsInTheLaunch() passed after 0.001 seconds.
+􀟈  Test noSendForOneNormalizedWord() started.
+􁁛  Test noSendForOneNormalizedWord() passed after 0.001 seconds.
+􀟈  Test noSendForGateBlockedText() started.
+􁁛  Test noSendForGateBlockedText() passed after 0.001 seconds.
+􀟈  Test noSendWhileComposing() started.
+􁁛  Test noSendWhileComposing() passed after 0.001 seconds.
+􀟈  Test noSendAfterASwitchThatStays() started.
+􁁛  Test noSendAfterASwitchThatStays() passed after 0.001 seconds.
+􀟈  Test aPauseFollowedByASpaceSendsOnce() started.
+􁁛  Test aPauseFollowedByASpaceSendsOnce() passed after 0.001 seconds.
+􀟈  Test nfdAndNfcAreTheSameText() started.
+􁁛  Test nfdAndNfcAreTheSameText() passed after 0.001 seconds.
+􀟈  Test capacityIsTwoPlusOneWaitingSlotHoldingOnlyTheNewestText() started.
+􁁛  Test capacityIsTwoPlusOneWaitingSlotHoldingOnlyTheNewestText() passed after 0.001 seconds.
+􀟈  Test waitingTextIsDroppedWhenItIsRemoved() started.
+􁁛  Test waitingTextIsDroppedWhenItIsRemoved() passed after 0.001 seconds.
+􀟈  Test capacityCountsRequestsLeftOverFromAnEarlierSession() started.
+􁁛  Test capacityCountsRequestsLeftOverFromAnEarlierSession() passed after 0.001 seconds.
+􀟈  Test answerForEarlierWordsSwitches() started.
+􁁛  Test answerForEarlierWordsSwitches() passed after 0.001 seconds.
+􀟈  Test answerForRemovedTextDoesNotSwitch(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "call mo" to answerForRemovedTextDoesNotSwitch(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "call" to answerForRemovedTextDoesNotSwitch(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "buy milk" to answerForRemovedTextDoesNotSwitch(replacement:) started.
+􁁛  Test answerForRemovedTextDoesNotSwitch(replacement:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test appendingKeepsEveryRequestRunning() started.
+􁁛  Test appendingKeepsEveryRequestRunning() passed after 0.001 seconds.
+􀟈  Test answerOlderThanAHandledAnswerDoesNotSwitch(newerFails:) started.
+􀟈  Test case passing 1 argument newerFails → false to answerOlderThanAHandledAnswerDoesNotSwitch(newerFails:) started.
+􀟈  Test case passing 1 argument newerFails → true to answerOlderThanAHandledAnswerDoesNotSwitch(newerFails:) started.
+􁁛  Test answerOlderThanAHandledAnswerDoesNotSwitch(newerFails:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test answerLaterThanOnePointTwoSecondsIsATimeout(answerAt:) started.
+􀟈  Test case passing 1 argument answerAt → 1199 to answerLaterThanOnePointTwoSecondsIsATimeout(answerAt:) started.
+􀟈  Test case passing 1 argument answerAt → 1200 to answerLaterThanOnePointTwoSecondsIsATimeout(answerAt:) started.
+􁁛  Test answerLaterThanOnePointTwoSecondsIsATimeout(answerAt:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test deadlineTimesOutAndKeepsTheSlotUntilTheProviderAcknowledges() started.
+􁁛  Test deadlineTimesOutAndKeepsTheSlotUntilTheProviderAcknowledges() passed after 0.001 seconds.
+􀟈  Test clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) started.
+􀟈  Test case passing 1 argument reverseFirst → false to clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) started.
+􀟈  Test case passing 1 argument reverseFirst → true to clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) started.
+􁁛  Test clearingAutomaticCaptureReturnsSearchAndRearmsDespiteReversalSuspension(reverseFirst:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test gateBecomingAllowedSendsAfterThePause() started.
+􁁛  Test gateBecomingAllowedSendsAfterThePause() passed after 0.001 seconds.
+􀟈  Test secondAgreeingVerdictComesFromTheNextAnswerNeverAResend() started.
+􁁛  Test secondAgreeingVerdictComesFromTheNextAnswerNeverAResend() passed after 0.001 seconds.
+􀟈  Test sessionRecordsRequestsSentAndCancelledRequestsAddNoLatency() started.
+􁁛  Test sessionRecordsRequestsSentAndCancelledRequestsAddNoLatency() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchWordPacedTests passed after 0.009 seconds.
+􀟈  Suite CalculationAutomaticSwitchInteractionTests started.
+􀟈  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀢄  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) recorded an issue with 1 argument firing → .everyKeystroke at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) recorded an issue with 1 argument firing → .everyKeystroke at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument firing → .debounced to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀢄  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) recorded an issue with 1 argument firing → .debounced at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) recorded an issue with 1 argument firing → .debounced at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument firing → .onPause to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀢄  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) recorded an issue with 1 argument firing → .onPause at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) recorded an issue with 1 argument firing → .onPause at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument firing → .wordPaced to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀢄  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) recorded an issue with 1 argument firing → .wordPaced at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) recorded an issue with 1 argument firing → .wordPaced at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) with 4 test cases failed after 12.319 seconds with 8 issues.
+􀟈  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "12 *" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "12 *" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "12 *" at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "(3 + 4" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "(3 + 4" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "(3 + 4" at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "sqrt" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "sqrt" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "sqrt" at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "1 / 0" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "1 / 0" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "1 / 0" at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "sqrt(-1)" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "sqrt(-1)" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "sqrt(-1)" at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "9^9^9" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "9^9^9" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "9^9^9" at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "3 + * 4" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "3 + * 4" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "3 + * 4" at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "1..2" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "1..2" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) recorded an issue with 1 argument text → "1..2" at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) with 8 test cases failed after 24.300 seconds with 16 issues.
+􀟈  Test addingAWordRestoresSuggestionsAndTheClassifier() started.
+􀢄  Test addingAWordRestoresSuggestionsAndTheClassifier() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test addingAWordRestoresSuggestionsAndTheClassifier() recorded an issue at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test addingAWordRestoresSuggestionsAndTheClassifier() failed after 3.076 seconds with 2 issues.
+􀟈  Test replacingAQueuedSubmissionWithACalculationCopiesWithoutALateSave() started.
+􀢄  Test replacingAQueuedSubmissionWithACalculationCopiesWithoutALateSave() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test replacingAQueuedSubmissionWithACalculationCopiesWithoutALateSave() recorded an issue at CalculationAutomaticSwitchInteractionTests.swift:108:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test replacingAQueuedSubmissionWithACalculationCopiesWithoutALateSave() failed after 3.078 seconds with 2 issues.
+􀢄  Suite CalculationAutomaticSwitchInteractionTests failed after 42.774 seconds with 28 issues.
+􀄵  /// Native command delivery with disposable defaults, storage and a scripted classifier.
+􀟈  Suite CalculationAutomaticSwitchTests started.
+􀟈  Test calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "12 * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "12 *" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "(3 + 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "sqrt" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "1 / 0" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "sqrt(-1)" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "9^9^9" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "3 + * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "1..2" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "12 * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "12 *" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "(3 + 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "sqrt" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "1 / 0" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "sqrt(-1)" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "9^9^9" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "3 + * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "1..2" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "12 * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "12 *" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "(3 + 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "sqrt" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "1 / 0" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "sqrt(-1)" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "9^9^9" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "3 + * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "1..2" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "12 * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "12 *" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "(3 + 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "sqrt" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "1 / 0" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "sqrt(-1)" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "9^9^9" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "3 + * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "1..2" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􁁛  Test calculationsNeverRequestClassificationOrQueueASave(firing:text:) with 36 test cases passed after 0.009 seconds.
+􀟈  Test addingAWordRestoresClassification(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to addingAWordRestoresClassification(firing:) started.
+􀟈  Test case passing 1 argument firing → .debounced to addingAWordRestoresClassification(firing:) started.
+􀟈  Test case passing 1 argument firing → .onPause to addingAWordRestoresClassification(firing:) started.
+􀟈  Test case passing 1 argument firing → .wordPaced to addingAWordRestoresClassification(firing:) started.
+􁁛  Test addingAWordRestoresClassification(firing:) with 4 test cases passed after 0.001 seconds.
+􁁛  Suite CalculationAutomaticSwitchTests passed after 0.010 seconds.
+􀟈  Suite CalculationInteractionTests started.
+􀟈  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "12 *", title → "…", subtitle → "Keep typing" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "5 / 0", title → "Uh oh", subtitle → "Can't divide by zero" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "3 + * 4", title → "Not a valid calculation", subtitle → "3 + * 4" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "sqrt(-1)", title → "Uh oh", subtitle → "Undefined" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "9^9^9", title → "Uh oh", subtitle → "Too large" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􁁛  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) with 5 test cases passed after 0.301 seconds.
+􀟈  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􀟈  Test case passing 1 argument userNavigated → false to completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􀟈  Test case passing 1 argument userNavigated → true to completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􁁛  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) with 2 test cases passed after 0.132 seconds.
+􀟈  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "12 *" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "12 *" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "12 *" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "12 *" at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "5 / 0" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "5 / 0" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "5 / 0" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "5 / 0" at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "3 + * 4" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "3 + * 4" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "3 + * 4" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "3 + * 4" at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "sqrt(-1)" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "sqrt(-1)" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "sqrt(-1)" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "sqrt(-1)" at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument text → "9^9^9" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "9^9^9" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "9^9^9" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) recorded an issue with 1 argument text → "9^9^9" at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) with 5 test cases failed after 30.231 seconds with 15 issues.
+􀟈  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1200 / 3", expected → "400" to enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) started.
+􀢄  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) recorded an issue with 2 arguments text → "1200 / 3", expected → "400" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) recorded an issue with 2 arguments text → "1200 / 3", expected → "400" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) recorded an issue with 2 arguments text → "1200 / 3", expected → "400" at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments text → "sqrt(16)", expected → "4" to enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) started.
+􀢄  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) recorded an issue with 2 arguments text → "sqrt(16)", expected → "4" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) recorded an issue with 2 arguments text → "sqrt(16)", expected → "4" at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) recorded an issue with 2 arguments text → "sqrt(16)", expected → "4" at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text:expected:) with 2 test cases failed after 12.088 seconds with 6 issues.
+􀟈  Test answerStaysAboveLateBatchesAndPreservesAnExplicitResultSelection() started.
+􁁛  Test answerStaysAboveLateBatchesAndPreservesAnExplicitResultSelection() passed after 0.080 seconds.
+􀟈  Test suggestionsReturnAsSoonAsTheTextGainsAWord() started.
+􁁛  Test suggestionsReturnAsSoonAsTheTextGainsAWord() passed after 0.013 seconds.
+􀟈  Test calculationsStayPlainTextInCapture(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to calculationsStayPlainTextInCapture(mode:) started.
+􀢄  Test calculationsStayPlainTextInCapture(mode:) recorded an issue with 1 argument mode → .note at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test calculationsStayPlainTextInCapture(mode:) recorded an issue with 1 argument mode → .note at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument mode → .task to calculationsStayPlainTextInCapture(mode:) started.
+􀢄  Test calculationsStayPlainTextInCapture(mode:) recorded an issue with 1 argument mode → .task at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test calculationsStayPlainTextInCapture(mode:) recorded an issue with 1 argument mode → .task at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test calculationsStayPlainTextInCapture(mode:) with 2 test cases failed after 6.046 seconds with 4 issues.
+􀟈  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() started.
+􀢄  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() recorded an issue at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() recorded an issue at CalculationInteractionTests.swift:217:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() failed after 3.032 seconds with 2 issues.
+􀢄  Suite CalculationInteractionTests failed after 51.930 seconds with 27 issues.
+􀟈  Suite CalculationTests started.
+􀟈  Test exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-65 * 1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-65 * 1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-65 * -1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-65 * -1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "9e-128 * 0.1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / 10" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-128 / 10" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / -10" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "10^-129" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "0.5^500" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "4e127 * 1e38" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-4e127 * 1e38" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e127 / 1e-39" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e166" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "10e9223372036854775807" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "0.1e-9223372036854775808" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e99999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211456e127" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "3.40282366920938463463374607431768211456e165" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "3402823669209384634633746074317682114551e126" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "9.99999999999999999999999999999999999999e-129" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 * 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 / 0.99999999999999999999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 * 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 / 0.99999999999999999999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 * 2" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-128 / 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / -1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 * 0.99999999999999999999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 + 1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 - -1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 + -1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 - 1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211450e127 + 6e127" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "3402823669209384634633746074317682114550000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001 + 0" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􁁛  Test exactArithmeticRejectsOutOfRangeScales(text:) with 36 test cases passed after 0.010 seconds.
+􀟈  Test decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 1", expected → "1e-100" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 10", expected → "1e-101" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-128 / 1", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e-100 / 1", expected → "-1e-100" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / -1", expected → "-1e-100" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e-100 / -1", expected → "1e-100" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-127 / 10", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 1e28", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 3", expected → "3.3333333e-101" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "4e-128 / 3", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "15e-128 / 10", expected → "2e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-15e-128 / 10", expected → "-2e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-128 / 0.99999999999999999999999999999999999999", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-128 * 1.00000000000000000000000000000000000001", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e126 / 340282366920938463463374607431768211454", expected → "2.9387359e87" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e100 / 170141183460469231731687303715884105727e127", expected → "-5.8774718e-66" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e-64 / -340282366920938463463374607431768211454e-64", expected → "2.9387359e-39" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.3 / 340282366920938463463374607431768211455e-64", expected → "8.8162076e24" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􁁛  Test decimalDivisionPreservesRepresentableSmallValues(text:expected:) with 18 test cases passed after 0.005 seconds.
+􀟈  Test exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5e-65 * 2e-64", expected → "1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5e-65 * 2e-64", expected → "-1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5e-65 * -2e-64", expected → "-1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5e-65 * -2e-64", expected → "1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 * 1e-28", expected → "1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-400", expected → "3.8725919e-121" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.5^400", expected → "3.8725919e-121" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-0.5)^401", expected → "-1.936296e-121" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10^-128", expected → "1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-120%", expected → "1e-122" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.1 * 0.2 / 0.5", expected → "0.04" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "((0.1 + 0.2) * 1e-100) / 1e-100", expected → "0.3" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 * 0.1 + 1e-101", expected → "2e-101" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 10 - 1e-101", expected → "0" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 1e-100", expected → "1" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-128 * 0", expected → "0" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0 / 1e-128", expected → "0" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􁁛  Test exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) with 17 test cases passed after 0.005 seconds.
+􀟈  Test exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5e127 * 2", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 * 10", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 / 0.1", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5e127 * 2", expected → "-1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5e127 * -2", expected → "-1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5e127 * -2", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e127 / 0.1", expected → "-1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 / -0.1", expected → "-1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e127 / -0.1", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "9e127 + 1e127", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10e127 + 0", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 * 11", expected → "1.1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 * 1e38", expected → "1e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3e127 * 1e38", expected → "3e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10^128", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^500", expected → "3.2733906e150" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 * 1", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 / 1", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 * 0.99999999999999999999999999999999999999", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 / 1.00000000000000000000000000000000000001", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-340282366920938463463374607431768211455e127 / 1", expected → "-3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 / -1", expected → "-3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 * 0.1 / 0.1", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-340282366920938463463374607431768211455e127 * 0.99999999999999999999999999999999999999", expected → "-3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 + 0", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211450e127 + 5e127", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211450e127 + 1", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 - 340282366920938463463374607431768211450e127", expected → "5e127" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 - 340282366920938463463374607431768211455e127", expected → "0" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􁁛  Test exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) with 29 test cases passed after 0.007 seconds.
+􀟈  Test equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e128 + 0", expected → "1e128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10e127 + 0", expected → "1e128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.1e129 + 0", expected → "1e128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e128 + 0", expected → "-1e128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1E+128 / 10", expected → "1e127" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e165 + 0", expected → "1e165" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3.4e165 + 0", expected → "3.4e165" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3.40282366920938463463374607431768211455e165 * 1", expected → "3.4028237e165" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10e-129 + 0", expected → "1e-128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "100e-130 + 0", expected → "1e-128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e-200 + 0", expected → "1" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001e200 + 0", expected → "1" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3402823669209384634633746074317682114550000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 + 0", expected → "3.4028237e165" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0e99999999999999999999999", expected → "0" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0e-99999999999999999999999", expected → "0" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􁁛  Test equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) with 15 test cases passed after 0.003 seconds.
+􀟈  Test longFlatPastedCalculationsHaveNoTokenCountLimit() started.
+􁁛  Test longFlatPastedCalculationsHaveNoTokenCountLimit() passed after 0.001 seconds.
+􀟈  Test excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􀟈  Test case passing 1 argument text → "((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((1+1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))" to excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􀟈  Test case passing 1 argument text → "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------1" to excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􀟈  Test case passing 1 argument text → "1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1" to excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􀟈  Test case passing 1 argument text → "sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))" to excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􁁛  Test excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) with 4 test cases passed after 0.006 seconds.
+􀟈  Test implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2(3 + 4)", expected → "14" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(1 + 2)(3 + 4)", expected → "21" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2pi", expected → "6.2831853" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2e", expected → "5.4365637" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2sin(pi / 2)", expected → "2" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "6 / 2(1 + 2)", expected → "9" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3e5", expected → "300,000" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.2e-3", expected → "0.0012" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.2E+3", expected → "1,200" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2e3", expected → "2,000" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􁁛  Test implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) with 10 test cases passed after 0.001 seconds.
+􀟈  Test functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "sqrt(16)", title → "4", copy → "4" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "SQRT(16)", title → "4", copy → "4" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "sin(pi / 2)", title → "1", copy → "1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "cos(PI)", title → "-1", copy → "-1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "tan(Pi / 4)", title → "1", copy → "1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "log(100)", title → "2", copy → "2" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "ln(E)", title → "1", copy → "1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "2 * pi", title → "6.2831853", copy → "6.2831853" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "2 * e", title → "5.4365637", copy → "5.4365637" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "e^2", title → "7.3890561", copy → "7.3890561" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "2^0.5", title → "1.4142136", copy → "1.4142136" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "10^200.5", title → "3.1622777e200", copy → "3.1622777e200" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "sqrt(152399025)", title → "12,345", copy → "12345" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􁁛  Test functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) with 13 test cases passed after 0.001 seconds.
+􀟈  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "50%", expected → "0.5" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10%", expected → "220" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 - 10%", expected → "180" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 * 10%", expected → "20" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 / 10%", expected → "2,000" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 0.1", expected → "200.1" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10% + 10%", expected → "242" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10% * 2", expected → "200.2" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + (10%)", expected → "220" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􁁛  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) with 9 test cases passed after 0.001 seconds.
+􀟈  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^3^2", expected → "512" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-2^2", expected → "-4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-2)^2", expected → "4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-3", expected → "0.125" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-2^2", expected → "0.0625" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(0.1 + 0.2)^2", expected → "0.09" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.01^2", expected → "1.0201" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3^30", expected → "205,891,132,094,649" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1^1e100", expected → "1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1^-9223372036854775808", expected → "1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-1)^9007199254740993", expected → "-1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-1)^99999999999999999999999999999999999999", expected → "-1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-1)^1e100", expected → "1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.000000000000000001^9223372036854775808", expected → "10,131.169" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􁁛  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) with 14 test cases passed after 0.004 seconds.
+􀟈  Test basicArithmeticAppearsAsAnAnswer() started.
+􁁛  Test basicArithmeticAppearsAsAnAnswer() passed after 0.001 seconds.
+􀟈  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 *", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * -", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / (3 - 3)", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "ln(0)", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "log(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(-2)^0.5", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "9^9^9", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "10^1000.5", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1e9999", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "4e127 * 1e38", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1e-128 / 10", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "2^9223372036854775808", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "2^-9223372036854775808", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt(-1) +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "9^9^9 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt(-1) + * 2", state → .invalid, title → "Not a valid calculation", subtitle → "sqrt(-1) + * 2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "9^9^9 + * 2", state → .invalid, title → "Not a valid calculation", subtitle → "9^9^9 + * 2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt(", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sin(1", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "2^", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt 16", state → .invalid, title → "Not a valid calculation", subtitle → "sqrt 16" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "2^^3", state → .invalid, title → "Not a valid calculation", subtitle → "2^^3" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + *", state → .invalid, title → "Not a valid calculation", subtitle → "3 + *" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1..2", state → .invalid, title → "Not a valid calculation", subtitle → "1..2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1 2 + 3", state → .invalid, title → "Not a valid calculation", subtitle → "1 2 + 3" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + 4)", state → .invalid, title → "Not a valid calculation", subtitle → "3 + 4)" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "(3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + ()", state → .invalid, title → "Not a valid calculation", subtitle → "3 + ()" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * )", state → .invalid, title → "Not a valid calculation", subtitle → "12 * )" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 + * 2", state → .invalid, title → "Not a valid calculation", subtitle → "5 / 0 + * 2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → " 3 + * 4 ", state → .invalid, title → "Not a valid calculation", subtitle → " 3 + * 4 " to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􁁛  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) with 38 test cases passed after 0.004 seconds.
+􀟈  Test recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "e", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "rent 1200 / 3", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "tax 3x4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "extra", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrtish(4)", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "https://3/4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "pix2", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "pie", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "x3", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3x", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "12 *", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5 / 0", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 + * 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1..2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrt", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "SIN(pi)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2pi", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2(3 + 4)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3x4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → ".3 x .4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3×4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^10", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "50%", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-3 + 2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􁁛  Test recognizesOnlyTheCalculationLanguage(text:expected:) with 30 test cases passed after 0.001 seconds.
+􀟈  Test evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 + 3 * 4", expected → "14" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(2 + 3) * 4", expected → "20" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / (2 + 3)", expected → "2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5 + 3", expected → "-2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 * -3", expected → "-6" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-(2 + 3)", expected → "-5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → "1,998" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.1 + 0.2", expected → "0.3" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / 4", expected → "2.5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3×4", expected → "12" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3x4", expected → "12" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x 4", expected → "12" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → ".3 x .4", expected → "0.12" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "12 ÷ 4", expected → "3" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5 − 3", expected → "2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0x10", expected → "0" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􁁛  Test evaluatesArithmeticWithExactDecimals(text:expected:) with 16 test cases passed after 0.001 seconds.
+􀟈  Test formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345 + 0", title → "123,456,789,012,345", copy → "123456789012345" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "999999999999999.9 + 0", title → "1e15", copy → "1e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1234567890123456 + 0", title → "1.2345679e15", copy → "1.2345679e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 3", title → "0.33333333", copy → "0.33333333" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789 / 100", title → "1,234,567.9", copy → "1234567.9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 100000000", title → "0.00000001", copy → "0.00000001" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 1000000000", title → "1e-9", copy → "1e-9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345678901 + 0", title → "1.2345679e20", copy → "1.2345679e20" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "-1234.5 + 0", title → "-1,234.5", copy → "-1234.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "0.0000000001 - 0.0000000001", title → "0", copy → "0" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "10 / 4", title → "2.5", copy → "2.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􁁛  Test formatsAnswersAndCopyableText(text:title:copy:) with 11 test cases passed after 0.001 seconds.
+􀟈  Test typingAndDisplayFollowTheExplicitLocale() started.
+􁁛  Test typingAndDisplayFollowTheExplicitLocale() passed after 0.001 seconds.
+􁁛  Suite CalculationTests passed after 0.059 seconds.
+􀟈  Suite CaptureSafetyNativeTests started.
+􀟈  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) started.
+􀟈  Test case passing 2 arguments mode → .note, outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) started.
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .note, outcome → .committed at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .note, outcome → .committed at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .note, outcome → .committed at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments mode → .note, outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) started.
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .note, outcome → .rolledBack at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .note, outcome → .rolledBack at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .note, outcome → .rolledBack at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments mode → .note, outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) started.
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .note, outcome → .lostAcknowledgement at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .note, outcome → .lostAcknowledgement at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .note, outcome → .lostAcknowledgement at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments mode → .task, outcome → .committed to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) started.
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .task, outcome → .committed at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .task, outcome → .committed at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .task, outcome → .committed at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments mode → .task, outcome → .rolledBack to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) started.
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .task, outcome → .rolledBack at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .task, outcome → .rolledBack at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .task, outcome → .rolledBack at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 2 arguments mode → .task, outcome → .lostAcknowledgement to dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) started.
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .task, outcome → .lostAcknowledgement at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .task, outcome → .lostAcknowledgement at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) recorded an issue with 2 arguments mode → .task, outcome → .lostAcknowledgement at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test dismissalDuringAPausedSavePreservesTheOutcomeAndTheChosenFocus(mode:outcome:) with 6 test cases failed after 36.577 seconds with 18 issues.
+􀟈  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to editingAfterARolledBackNativeSaveCreatesTheEditedItem(mode:) started.
+􀢄  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(mode:) recorded an issue with 1 argument mode → .note at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(mode:) recorded an issue with 1 argument mode → .note at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument mode → .task to editingAfterARolledBackNativeSaveCreatesTheEditedItem(mode:) started.
+􀢄  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(mode:) recorded an issue with 1 argument mode → .task at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(mode:) recorded an issue with 1 argument mode → .task at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test editingAfterARolledBackNativeSaveCreatesTheEditedItem(mode:) with 2 test cases failed after 6.156 seconds with 4 issues.
+􀟈  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to anOldConfirmationCannotDismissOrAlterANewerInvocation(mode:) started.
+􀢄  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(mode:) recorded an issue with 1 argument mode → .note at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(mode:) recorded an issue with 1 argument mode → .note at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument mode → .task to anOldConfirmationCannotDismissOrAlterANewerInvocation(mode:) started.
+􀢄  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(mode:) recorded an issue with 1 argument mode → .task at MacInteractionTests.swift:980:5: Expectation failed: condition()
+􀢄  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(mode:) recorded an issue with 1 argument mode → .task at CaptureSafetyNativeTests.swift:142:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test anOldConfirmationCannotDismissOrAlterANewerInvocation(mode:) with 2 test cases failed after 6.147 seconds with 4 issues.
+􀢄  Suite CaptureSafetyNativeTests failed after 48.881 seconds with 26 issues.
+􀄵  /// Real editor, panels and disposable Store; run only with the native testing slot.
+􀟈  Suite CaptureSafetyTests started.
+􀟈  Test dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(mode:) started.
+􀟈  Test case passing 1 argument mode → .task to dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(mode:) started.
+􁁛  Test dismissalWaitsForAnUnknownOutcomeWithoutAnotherSave(mode:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(mode:) started.
+􀟈  Test case passing 1 argument mode → .task to failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(mode:) started.
+􁁛  Test failedDismissalKeepsTheCaptureAndAnUnchangedRetryKeepsItsOperation(mode:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(mode:text:) started.
+􀟈  Test case passing 2 arguments mode → .note, text → "edited" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(mode:text:) started.
+􀟈  Test case passing 2 arguments mode → .note, text → "Café" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(mode:text:) started.
+􀟈  Test case passing 2 arguments mode → .task, text → "edited" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(mode:text:) started.
+􀟈  Test case passing 2 arguments mode → .task, text → "Café" to editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(mode:text:) started.
+􁁛  Test editingAFailedCaptureStartsANewOperationIncludingCanonicalUnicode(mode:text:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test changingAFailedTasksDestinationStartsANewOperation() started.
+􁁛  Test changingAFailedTasksDestinationStartsANewOperation() passed after 0.001 seconds.
+􀟈  Test changingAFailedNotesModeStartsANewOperation() started.
+􁁛  Test changingAFailedNotesModeStartsANewOperation() passed after 0.001 seconds.
+􀟈  Test aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(mode:) started.
+􀟈  Test case passing 1 argument mode → .task to aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(mode:) started.
+􁁛  Test aLostCommitAcknowledgementThenRetryCreatesExactlyOneItem(mode:) with 2 test cases passed after 0.095 seconds.
+􀟈  Test aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(mode:) started.
+􀟈  Test case passing 1 argument mode → .task to aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(mode:) started.
+􁁛  Test aRolledBackSaveThenEditingCreatesOnlyTheEditedItem(mode:) with 2 test cases passed after 0.083 seconds.
+􀟈  Test aPausedRealStoreKeepsSavingAndSerializesDismissal(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to aPausedRealStoreKeepsSavingAndSerializesDismissal(mode:) started.
+􀟈  Test case passing 1 argument mode → .task to aPausedRealStoreKeepsSavingAndSerializesDismissal(mode:) started.
+􁁛  Test aPausedRealStoreKeepsSavingAndSerializesDismissal(mode:) with 2 test cases passed after 0.109 seconds.
+􁁛  Suite CaptureSafetyTests passed after 0.291 seconds.
+􀟈  Suite CaptureSessionTests started.
+􀟈  Test typingALeadingDashStaysLiteralInSearch(text:) started.
+􀟈  Test case passing 1 argument text → "-" to typingALeadingDashStaysLiteralInSearch(text:) started.
+􀟈  Test case passing 1 argument text → "-5 + 3" to typingALeadingDashStaysLiteralInSearch(text:) started.
+􁁛  Test typingALeadingDashStaysLiteralInSearch(text:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test typedDashBeforeExistingSearchTextIsLiteral() started.
+􁁛  Test typedDashBeforeExistingSearchTextIsLiteral() passed after 0.001 seconds.
+􀟈  Test typedDashAfterTheStartIsLiteralText() started.
+􁁛  Test typedDashAfterTheStartIsLiteralText() passed after 0.001 seconds.
+􀟈  Test typedDashReplacingASelectionAtTheStartIsLiteralText() started.
+􁁛  Test typedDashReplacingASelectionAtTheStartIsLiteralText() passed after 0.001 seconds.
+􀟈  Test untypedDashAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .paste to untypedDashAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .drop to untypedDashAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .undo to untypedDashAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .redo to untypedDashAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .programmatic to untypedDashAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .composition to untypedDashAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .compositionCommit to untypedDashAtTheStartIsLiteralText(provenance:) started.
+􁁛  Test untypedDashAtTheStartIsLiteralText(provenance:) with 7 test cases passed after 0.001 seconds.
+􀟈  Test typedDashInNoteIsLiteralText() started.
+􁁛  Test typedDashInNoteIsLiteralText() passed after 0.001 seconds.
+􀟈  Test invocationAndDismissalDiscardTheCaptureAndArmPrefixes(event:) started.
+􀟈  Test case passing 1 argument event → .invoked to invocationAndDismissalDiscardTheCaptureAndArmPrefixes(event:) started.
+􀟈  Test case passing 1 argument event → .dismissed to invocationAndDismissalDiscardTheCaptureAndArmPrefixes(event:) started.
+􁁛  Test invocationAndDismissalDiscardTheCaptureAndArmPrefixes(event:) with 2 test cases passed after 0.001 seconds.
+􁁛  Suite CaptureSessionTests passed after 0.001 seconds.
+􀟈  Suite CaptureSessionReturnTests started.
+􀟈  Test backspaceAtTheStartOfNoteReturnsToSearchKeepingTheBufferAndSelection() started.
+􁁛  Test backspaceAtTheStartOfNoteReturnsToSearchKeepingTheBufferAndSelection() passed after 0.001 seconds.
+􀟈  Test backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) started.
+􀟈  Test case passing 1 argument selection → {3, 0} to backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) started.
+􀟈  Test case passing 1 argument selection → {0, 3} to backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) started.
+􀟈  Test case passing 1 argument selection → {1, 2} to backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) started.
+􁁛  Test backspaceWithTextBeforeTheCursorOrASelectionIsOrdinaryDeletion(selection:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test backspaceAtTheStartOfSearchDoesNotDisarmPrefixes() started.
+􁁛  Test backspaceAtTheStartOfSearchDoesNotDisarmPrefixes() passed after 0.001 seconds.
+􀟈  Test typedDashAfterReturningToSearchIsLiteralText() started.
+􁁛  Test typedDashAfterReturningToSearchIsLiteralText() passed after 0.001 seconds.
+􀟈  Test returningFromAnEmptyNoteArmsPrefixesSoATypedBracketEntersTask() started.
+􁁛  Test returningFromAnEmptyNoteArmsPrefixesSoATypedBracketEntersTask() passed after 0.001 seconds.
+􀟈  Test clearingTheKeptTextAfterReturningArmsPrefixesAgain() started.
+􁁛  Test clearingTheKeptTextAfterReturningArmsPrefixesAgain() passed after 0.001 seconds.
+􀟈  Test deletingTheKeptTextAfterReturningArmsPrefixesAgain() started.
+􁁛  Test deletingTheKeptTextAfterReturningArmsPrefixesAgain() passed after 0.001 seconds.
+􀟈  Test aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .paste to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .drop to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .undo to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .redo to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .programmatic to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .composition to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .compositionCommit to aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) started.
+􁁛  Test aPastedOrOtherwiseUntypedDashIntoEmptySearchAfterAReturnStaysLiteral(provenance:) with 7 test cases passed after 0.001 seconds.
+􀟈  Test theNextInvocationArmsPrefixesAgain(event:) started.
+􀟈  Test case passing 1 argument event → .invoked to theNextInvocationArmsPrefixesAgain(event:) started.
+􀟈  Test case passing 1 argument event → .dismissed to theNextInvocationArmsPrefixesAgain(event:) started.
+􁁛  Test theNextInvocationArmsPrefixesAgain(event:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test backspaceAtTheStartWhileSavingKeepsTheCaptureInNote() started.
+􁁛  Test backspaceAtTheStartWhileSavingKeepsTheCaptureInNote() passed after 0.001 seconds.
+􀟈  Test returningToSearchLeavesTheNoteNoticeBehind() started.
+􁁛  Test returningToSearchLeavesTheNoteNoticeBehind() passed after 0.001 seconds.
+􁁛  Suite CaptureSessionReturnTests passed after 0.001 seconds.
+􀟈  Suite CaptureSubmissionTests started.
+􀟈  Test submittingANoteSavesItsExactTextOnceUnderTheSessionOperation() started.
+􁁛  Test submittingANoteSavesItsExactTextOnceUnderTheSessionOperation() passed after 0.001 seconds.
+􀟈  Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+􀟈  Test case passing 1 argument text → "" to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+􀟈  Test case passing 1 argument text → " " to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+􀟈  Test case passing 1 argument text → "
+	  
+" to aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) started.
+􁁛  Test aWhitespaceOnlyNoteIsRefusedWithAnExplanationAndNoSave(text:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test submittedTextIsFrozenWhileSaving() started.
+􁁛  Test submittedTextIsFrozenWhileSaving() passed after 0.001 seconds.
+􀟈  Test aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) started.
+􀟈  Test case passing 1 argument notice → .failed to aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) started.
+􀟈  Test case passing 1 argument notice → .collectionUnavailable to aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) started.
+􁁛  Test aFailedSaveKeepsTheTextAndModeEditableWithAnExplanation(notice:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test outcomesOutsideASaveChangeNothing() started.
+􁁛  Test outcomesOutsideASaveChangeNothing() passed after 0.001 seconds.
+􀟈  Test searchEnterIsNotACapture() started.
+􁁛  Test searchEnterIsNotACapture() passed after 0.001 seconds.
+􀟈  Test eachInvocationHasANewOperation() started.
+􁁛  Test eachInvocationHasANewOperation() passed after 0.001 seconds.
+􁁛  Suite CaptureSubmissionTests passed after 0.001 seconds.
+􀟈  Suite CaptureTaskTests started.
+􀟈  Test typedBracketOnAnEmptyBufferEntersTaskWithoutBecomingText() started.
+􁁛  Test typedBracketOnAnEmptyBufferEntersTaskWithoutBecomingText() passed after 0.001 seconds.
+􀟈  Test typedBracketBeforeExistingSearchTextKeepsTheTextAndSelection() started.
+􁁛  Test typedBracketBeforeExistingSearchTextKeepsTheTextAndSelection() passed after 0.001 seconds.
+􀟈  Test typedBracketAfterTheStartIsLiteralText() started.
+􁁛  Test typedBracketAfterTheStartIsLiteralText() passed after 0.001 seconds.
+􀟈  Test typedBracketReplacingASelectionAtTheStartIsLiteralText() started.
+􁁛  Test typedBracketReplacingASelectionAtTheStartIsLiteralText() passed after 0.001 seconds.
+􀟈  Test untypedBracketAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .paste to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .drop to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .undo to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .redo to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .programmatic to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .composition to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+􀟈  Test case passing 1 argument provenance → .compositionCommit to untypedBracketAtTheStartIsLiteralText(provenance:) started.
+􁁛  Test untypedBracketAtTheStartIsLiteralText(provenance:) with 7 test cases passed after 0.001 seconds.
+􀟈  Test typedSymbolsInTaskAreLiteralText(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "-" to typedSymbolsInTaskAreLiteralText(prefix:) started.
+􀟈  Test case passing 1 argument prefix → "[" to typedSymbolsInTaskAreLiteralText(prefix:) started.
+􁁛  Test typedSymbolsInTaskAreLiteralText(prefix:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "onetwo" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "one
+two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "one
+two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "one two" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􀟈  Test case passing 1 argument text → "trailing
+" to switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) started.
+􁁛  Test switchingToTaskWithMultilineTextIsRefusedAndChangesNothing(text:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test aLongSingleLineThatSoftWrapsEntersTask() started.
+􁁛  Test aLongSingleLineThatSoftWrapsEntersTask() passed after 0.001 seconds.
+􀟈  Test aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .paste, pasted → "
+" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .drop, pasted → "
+" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .programmatic, pasted → "
+" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "ab" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a
+b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "a b" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􀟈  Test case passing 2 arguments provenance → .typed, pasted → "
+" to aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) started.
+􁁛  Test aMultilineInsertionInTaskIsRefusedWhole(provenance:pasted:) with 24 test cases passed after 0.001 seconds.
+􀟈  Test aMultilineInsertionInNoteIsText() started.
+􁁛  Test aMultilineInsertionInNoteIsText() passed after 0.001 seconds.
+􀟈  Test theDestinationDefaultsToInboxAndTabTogglesItWithoutEnteringText() started.
+􁁛  Test theDestinationDefaultsToInboxAndTabTogglesItWithoutEnteringText() passed after 0.001 seconds.
+􀟈  Test choosingADestinationSelectsIt() started.
+􁁛  Test choosingADestinationSelectsIt() passed after 0.001 seconds.
+􀟈  Test tabOutsideTaskIsOrdinaryInputAndKeepsTheDestination() started.
+􁁛  Test tabOutsideTaskIsOrdinaryInputAndKeepsTheDestination() passed after 0.001 seconds.
+􀟈  Test aNewInvocationResetsTheDestinationToInbox(event:) started.
+􀟈  Test case passing 1 argument event → .invoked to aNewInvocationResetsTheDestinationToInbox(event:) started.
+􀟈  Test case passing 1 argument event → .dismissed to aNewInvocationResetsTheDestinationToInbox(event:) started.
+􁁛  Test aNewInvocationResetsTheDestinationToInbox(event:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test theDestinationIsFrozenWhileSaving() started.
+􁁛  Test theDestinationIsFrozenWhileSaving() passed after 0.001 seconds.
+􀟈  Test shiftEnterInTaskDoesNothing() started.
+􁁛  Test shiftEnterInTaskDoesNothing() passed after 0.001 seconds.
+􀟈  Test shiftEnterInNoteIsAnOrdinaryLineBreak() started.
+􁁛  Test shiftEnterInNoteIsAnOrdinaryLineBreak() passed after 0.001 seconds.
+􀟈  Test submittingATaskSavesItsExactTitleToTheDestinationOnce(destination:) started.
+􀟈  Test case passing 1 argument destination → .inbox to submittingATaskSavesItsExactTitleToTheDestinationOnce(destination:) started.
+􀟈  Test case passing 1 argument destination → .today to submittingATaskSavesItsExactTitleToTheDestinationOnce(destination:) started.
+􁁛  Test submittingATaskSavesItsExactTitleToTheDestinationOnce(destination:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) started.
+􀟈  Test case passing 1 argument title → "" to aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) started.
+􀟈  Test case passing 1 argument title → " " to aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) started.
+􀟈  Test case passing 1 argument title → "	  " to aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) started.
+􁁛  Test aWhitespaceOnlyTitleIsRefusedWithAnExplanationAndNoSave(title:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test aTitleThatBecameMultilineOutsideAnInsertionIsRefusedBeforeAnySave() started.
+􁁛  Test aTitleThatBecameMultilineOutsideAnInsertionIsRefusedBeforeAnySave() passed after 0.001 seconds.
+􀟈  Test enteringNoteAfterARefusedSwitchLeavesTheTaskExplanationBehind() started.
+􁁛  Test enteringNoteAfterARefusedSwitchLeavesTheTaskExplanationBehind() passed after 0.001 seconds.
+􀟈  Test typedBracketAfterReturningAndClearingTheTextEntersTaskAgain() started.
+􁁛  Test typedBracketAfterReturningAndClearingTheTextEntersTaskAgain() passed after 0.001 seconds.
+􀟈  Test returningFromAnEmptyTaskArmsPrefixesSoATypedBracketEntersTaskAgain() started.
+􁁛  Test returningFromAnEmptyTaskArmsPrefixesSoATypedBracketEntersTaskAgain() passed after 0.001 seconds.
+􀟈  Test theNextInvocationArmsTheBracketAgain(event:) started.
+􀟈  Test case passing 1 argument event → .invoked to theNextInvocationArmsTheBracketAgain(event:) started.
+􀟈  Test case passing 1 argument event → .dismissed to theNextInvocationArmsTheBracketAgain(event:) started.
+􁁛  Test theNextInvocationArmsTheBracketAgain(event:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test typedBracketAfterReturningToSearchIsLiteralText() started.
+􁁛  Test typedBracketAfterReturningToSearchIsLiteralText() passed after 0.001 seconds.
+􁁛  Suite CaptureTaskTests passed after 0.005 seconds.
+􀟈  Suite CaptureSuggestionTests started.
+􀟈  Test choosingASuggestionEntersItsModeKeepingTheExactTextAndSelectionWithoutSaving(suggestion:mode:) started.
+􀟈  Test case passing 2 arguments suggestion → .note, mode → .note to choosingASuggestionEntersItsModeKeepingTheExactTextAndSelectionWithoutSaving(suggestion:mode:) started.
+􀟈  Test case passing 2 arguments suggestion → .task, mode → .task to choosingASuggestionEntersItsModeKeepingTheExactTextAndSelectionWithoutSaving(suggestion:mode:) started.
+􁁛  Test choosingASuggestionEntersItsModeKeepingTheExactTextAndSelectionWithoutSaving(suggestion:mode:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+􀟈  Test case passing 1 argument text → "one
+two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+􀟈  Test case passing 1 argument text → "one
+two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+􀟈  Test case passing 1 argument text → "one two" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+􀟈  Test case passing 1 argument text → "trailing
+" to choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) started.
+􁁛  Test choosingNewTaskWithMultilineTextExplainsAndStaysInSearch(text:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test choosingASuggestionLeavesPrefixArmingAsItWas(armed:) started.
+􀟈  Test case passing 1 argument armed → true to choosingASuggestionLeavesPrefixArmingAsItWas(armed:) started.
+􀟈  Test case passing 1 argument armed → false to choosingASuggestionLeavesPrefixArmingAsItWas(armed:) started.
+􁁛  Test choosingASuggestionLeavesPrefixArmingAsItWas(armed:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test aSuggestionOutsideSearchChangesNothing() started.
+􁁛  Test aSuggestionOutsideSearchChangesNothing() passed after 0.001 seconds.
+􁁛  Suite CaptureSuggestionTests passed after 0.001 seconds.
+􀟈  Suite ClassifierAdapterTests started.
+􀟈  Test savedOrRemovedKeyTakesEffectOnAnAlreadyCreatedAdapter() started.
+􁁛  Test savedOrRemovedKeyTakesEffectOnAnAlreadyCreatedAdapter() passed after 0.001 seconds.
+􀟈  Test jevRateLimitCarriesAUsableRetryAfter(_:) started.
+􀟈  Test case passing 1 argument header → "5" to jevRateLimitCarriesAUsableRetryAfter(_:) started.
+􀟈  Test case passing 1 argument header → "Thu, 15 Oct 2026 12:00:05 GMT" to jevRateLimitCarriesAUsableRetryAfter(_:) started.
+􀟈  Test case passing 1 argument header → "invalid" to jevRateLimitCarriesAUsableRetryAfter(_:) started.
+􀟈  Test case passing 1 argument header → "" to jevRateLimitCarriesAUsableRetryAfter(_:) started.
+􁁛  Test jevRateLimitCarriesAUsableRetryAfter(_:) with 4 test cases passed after 0.002 seconds.
+􀟈  Test jevSerializesRequestAndChoiceKeysInStableAlphabeticalOrder() started.
+􁁛  Test jevSerializesRequestAndChoiceKeysInStableAlphabeticalOrder() passed after 0.001 seconds.
+􀟈  Test jevUsesPinnedChoiceRequestAndWinningProbability() started.
+􁁛  Test jevUsesPinnedChoiceRequestAndWinningProbability() passed after 0.001 seconds.
+􀟈  Test foundationUnavailableNeverRunsModel() started.
+􁁛  Test foundationUnavailableNeverRunsModel() passed after 0.001 seconds.
+􀟈  Test jevHTTPFailuresAreContentFree(status:kind:) started.
+􀟈  Test case passing 2 arguments status → 401, kind → .authentication to jevHTTPFailuresAreContentFree(status:kind:) started.
+􀟈  Test case passing 2 arguments status → 429, kind → .rateLimited to jevHTTPFailuresAreContentFree(status:kind:) started.
+􀟈  Test case passing 2 arguments status → 503, kind → .network to jevHTTPFailuresAreContentFree(status:kind:) started.
+􁁛  Test jevHTTPFailuresAreContentFree(status:kind:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test jevOtherMapsToUnsure() started.
+􁁛  Test jevOtherMapsToUnsure() passed after 0.001 seconds.
+􀟈  Test jevMalformedResponsesFail(_:) started.
+􀟈  Test case passing 1 argument body → "{}" to jevMalformedResponsesFail(_:) started.
+􀟈  Test case passing 1 argument body → "not json" to jevMalformedResponsesFail(_:) started.
+􀟈  Test case passing 1 argument body → "{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Task":1.9,"Other":0.07},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+􀟈  Test case passing 1 argument body → "{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Task":0.8,"Other":0.07},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+􀟈  Test case passing 1 argument body → "{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Search","probabilities":{"Search":0.03,"Task":0.9,"Other":0.07},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+􀟈  Test case passing 1 argument body → "{"model":"jev-latest","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Task":0.9,"Other":0.07},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+􀟈  Test case passing 1 argument body → "{"model":"jev-1.13.0","answers":{"classify_input":{"type":"choice","choice":"Task","probabilities":{"Search":0.03,"Task":0.9,"Unknown":0.07},"confidence":0.86}}}" to jevMalformedResponsesFail(_:) started.
+􁁛  Test jevMalformedResponsesFail(_:) with 7 test cases passed after 0.001 seconds.
+􀟈  Test jevTimeoutAndCancellationFailWithoutVerdict() started.
+􁁛  Test jevTimeoutAndCancellationFailWithoutVerdict() passed after 0.001 seconds.
+􀟈  Test foundationConsumesWarmedSessionThenUsesFreshSessions() started.
+􁁛  Test foundationConsumesWarmedSessionThenUsesFreshSessions() passed after 0.001 seconds.
+􀟈  Test foundationRunnerFailuresStayTyped(_:) started.
+􀟈  Test case passing 1 argument kind → .guardrail to foundationRunnerFailuresStayTyped(_:) started.
+􀟈  Test case passing 1 argument kind → .refusal to foundationRunnerFailuresStayTyped(_:) started.
+􀟈  Test case passing 1 argument kind → .other to foundationRunnerFailuresStayTyped(_:) started.
+􁁛  Test foundationRunnerFailuresStayTyped(_:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test foundationCancelledRunnerCannotPublishVerdict() started.
+􁁛  Test foundationCancelledRunnerCannotPublishVerdict() passed after 0.001 seconds.
+􀟈  Test availabilityText(availability:text:) started.
+􀟈  Test case passing 2 arguments availability → .available, text → nil to availabilityText(availability:text:) started.
+􀟈  Test case passing 2 arguments availability → .deviceNotEligible, text → "Mac not eligible for Apple Intelligence" to availabilityText(availability:text:) started.
+􀟈  Test case passing 2 arguments availability → .modelNotReady, text → "Foundation Models is not ready" to availabilityText(availability:text:) started.
+􀟈  Test case passing 2 arguments availability → .unknown, text → "Foundation Models is unavailable" to availabilityText(availability:text:) started.
+􁁛  Test availabilityText(availability:text:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test jevRejectsTheOldFourChoiceResponse() started.
+􁁛  Test jevRejectsTheOldFourChoiceResponse() passed after 0.001 seconds.
+􀟈  Test jevTaskFocusedWordingKeepsFoundationOptionsAndInvalidatesEarlierCaches() started.
+􁁛  Test jevTaskFocusedWordingKeepsFoundationOptionsAndInvalidatesEarlierCaches() passed after 0.001 seconds.
+􀟈  Test jevTrialDiagnosticsIdentifyTheWordingEvenWithoutAnAnswer(outcome:) started.
+􀟈  Test case passing 1 argument outcome → "error" to jevTrialDiagnosticsIdentifyTheWordingEvenWithoutAnAnswer(outcome:) started.
+􀟈  Test case passing 1 argument outcome → "timeout" to jevTrialDiagnosticsIdentifyTheWordingEvenWithoutAnAnswer(outcome:) started.
+􀟈  Test case passing 1 argument outcome → "backoff" to jevTrialDiagnosticsIdentifyTheWordingEvenWithoutAnAnswer(outcome:) started.
+􁁛  Test jevTrialDiagnosticsIdentifyTheWordingEvenWithoutAnAnswer(outcome:) with 3 test cases passed after 0.001 seconds.
+􁁛  Suite ClassifierAdapterTests passed after 0.008 seconds.
+􀟈  Suite ClassifierMenuTests started.
+􀟈  Test menuReflectsAvailabilityAndOnlyEnablesJevAfterKeySaved() started.
+􁁛  Test menuReflectsAvailabilityAndOnlyEnablesJevAfterKeySaved() passed after 0.325 seconds.
+􁁛  Suite ClassifierMenuTests passed after 0.325 seconds.
+􀟈  Suite CollectionExportHarnessTests started.
+􀟈  Test organizedCollectionSurvivesFreshProcessExportAndIndependentReconstruction() started.
+􁁛  Test organizedCollectionSurvivesFreshProcessExportAndIndependentReconstruction() passed after 0.944 seconds.
+􁁛  Suite CollectionExportHarnessTests passed after 0.945 seconds.
+􀟈  Suite CollectionExportTests started.
+􀟈  Test emptyCollectionPublishesACompleteVersionedPackage() started.
+􁁛  Test emptyCollectionPublishesACompleteVersionedPackage() passed after 0.039 seconds.
+􀟈  Test independentReconstructionPreservesExactBytesAndEveryOrganizedView() started.
+􁁛  Test independentReconstructionPreservesExactBytesAndEveryOrganizedView() passed after 0.087 seconds.
+􀟈  Test validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "valid" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "missing-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "changed-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "invalid-utf8" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "missing-tasks" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "changed-tasks" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "future-manifest" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "future-tasks" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "count" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "hash" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "path" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "id" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "duplicate-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "duplicate-task" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "revision" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "placement" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "completed-placement" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "blank-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "title" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "multiline-task" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "identity" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "extra-file" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "symlink-note" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "symlink-package" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􀟈  Test case passing 1 argument change → "unpublished-stage" to validatesTheCompletePackageAndRejectsCorruption(_:) started.
+􁁛  Test validatesTheCompletePackageAndRejectsCorruption(_:) with 25 test cases passed after 1.109 seconds.
+􀟈  Test failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+􀟈  Test case passing 1 argument failure → "write" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+􀟈  Test case passing 1 argument failure → "readonly" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+􀟈  Test case passing 1 argument failure → "space" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+􀟈  Test case passing 1 argument failure → "publication" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+􀟈  Test case passing 1 argument failure → "invalid-stage" to failedAttemptsPreserveTheSourceAndEarlierExports(_:) started.
+􁁛  Test failedAttemptsPreserveTheSourceAndEarlierExports(_:) with 5 test cases passed after 0.224 seconds.
+􀟈  Test refusesSourceStorageAliasesAndRealUnwritableDestinations() started.
+􁁛  Test refusesSourceStorageAliasesAndRealUnwritableDestinations() passed after 0.033 seconds.
+􀟈  Test editsStatusAndOrderContinueWhileAnEarlierCaptureIsBeingWritten() started.
+􁁛  Test editsStatusAndOrderContinueWhileAnEarlierCaptureIsBeingWritten() passed after 0.104 seconds.
+􀟈  Test racingExportsMatchOneOfTheActualCommittedStates() started.
+􁁛  Test racingExportsMatchOneOfTheActualCommittedStates() passed after 0.110 seconds.
+􁁛  Suite CollectionExportTests passed after 1.710 seconds.
+􀟈  Suite CollectionFixtureHarnessTests started.
+􀟈  Test createReadObserveAndRetryAcrossFreshProcesses() started.
+􁁛  Test createReadObserveAndRetryAcrossFreshProcesses() passed after 0.175 seconds.
+􀟈  Test harnessRefusesTheLiveRootWithoutCreatingIt() started.
+􁁛  Test harnessRefusesTheLiveRootWithoutCreatingIt() passed after 0.167 seconds.
+􀟈  Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􀟈  Test case passing 1 argument point → "before-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􀟈  Test case passing 1 argument point → "after-commit" to killedCreationIsAllOrNoneAndRetriesIdempotently(_:) started.
+􁁛  Test killedCreationIsAllOrNoneAndRetriesIdempotently(_:) with 2 test cases passed after 0.299 seconds.
+􀟈  Test processDeathReleasesOwnership() started.
+􁁛  Test processDeathReleasesOwnership() passed after 0.382 seconds.
+􀟈  Test unsavedSentinelNeverReachesStorageOrDiagnostics() started.
+􁁛  Test unsavedSentinelNeverReachesStorageOrDiagnostics() passed after 0.142 seconds.
+􀟈  Test editPinArchiveAndRestorePersistAcrossFreshProcesses() started.
+􁁛  Test editPinArchiveAndRestorePersistAcrossFreshProcesses() passed after 0.376 seconds.
+􀟈  Test aFailedEditLeavesNoTraceInStorageOrOutput() started.
+􁁛  Test aFailedEditLeavesNoTraceInStorageOrOutput() passed after 0.128 seconds.
+􀟈  Test killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "edit-note", point → "before-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "edit-note", point → "after-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "pin-note", point → "before-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "pin-note", point → "after-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "archive-note", point → "before-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "archive-note", point → "after-commit" to killedNoteChangeIsAllOrNone(_:_:) started.
+􁁛  Test killedNoteChangeIsAllOrNone(_:_:) with 6 test cases passed after 0.754 seconds.
+􀟈  Test taskLifecyclePersistsAcrossFreshProcessesAndTimeZones() started.
+􁁛  Test taskLifecyclePersistsAcrossFreshProcessesAndTimeZones() passed after 0.610 seconds.
+􀟈  Test creationRetriesReturnTheItemEvenAfterItLeftItsView() started.
+􁁛  Test creationRetriesReturnTheItemEvenAfterItLeftItsView() passed after 0.215 seconds.
+􀟈  Test failedTaskSavesLeaveNoTraceInStorageOrOutput() started.
+􁁛  Test failedTaskSavesLeaveNoTraceInStorageOrOutput() passed after 0.208 seconds.
+􀟈  Test killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "create-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "create-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "edit-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "edit-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "move-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "move-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "complete-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "complete-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "reopen-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "reopen-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "archive-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "archive-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "restore-task", point → "before-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􀟈  Test case passing 2 arguments action → "restore-task", point → "after-commit" to killedTaskCommandIsAllOrNone(_:_:) started.
+􁁛  Test killedTaskCommandIsAllOrNone(_:_:) with 14 test cases passed after 2.053 seconds.
+􀟈  Test manualOrderPersistsAcrossFreshProcessesAndAStaleViewIsRefused() started.
+􁁛  Test manualOrderPersistsAcrossFreshProcessesAndAStaleViewIsRefused() passed after 0.443 seconds.
+􀟈  Test killedReorderIsAllOrNoneEvenWhenItRenumbers(_:) started.
+􀟈  Test case passing 1 argument point → "before-commit" to killedReorderIsAllOrNoneEvenWhenItRenumbers(_:) started.
+􀟈  Test case passing 1 argument point → "after-commit" to killedReorderIsAllOrNoneEvenWhenItRenumbers(_:) started.
+􁁛  Test killedReorderIsAllOrNoneEvenWhenItRenumbers(_:) with 2 test cases passed after 0.540 seconds.
+􁁛  Suite CollectionFixtureHarnessTests passed after 6.498 seconds.
+􀟈  Suite CollectionSnapshotHarnessTests started.
+􀟈  Test createListInspectAndDisposableReopenAcrossFreshProcesses() started.
+􁁛  Test createListInspectAndDisposableReopenAcrossFreshProcesses() passed after 0.351 seconds.
+􀟈  Test snapshotHarnessRefusesLivePathsAliasesAndOverwritingADisposableStore() started.
+􁁛  Test snapshotHarnessRefusesLivePathsAliasesAndOverwritingADisposableStore() passed after 0.343 seconds.
+􁁛  Suite CollectionSnapshotHarnessTests passed after 0.694 seconds.
+􀟈  Suite CollectionSnapshotTests started.
+􀟈  Test snapshotReopensEveryOrganizedFactWithoutSourceWALOrUnsavedCapture() started.
+􁁛  Test snapshotReopensEveryOrganizedFactWithoutSourceWALOrUnsavedCapture() passed after 0.124 seconds.
+􀟈  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "valid" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "truncated" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "future-schema" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "future-manifest" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "bad-count" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "bad-hash" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "bad-identity" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "bad-time" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "bad-name" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "missing-manifest" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "incomplete" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "blank-note" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "multiline-task" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "bad-utf8" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "foreign-key" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "invalid-placement" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "symlink" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "missing-table" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "lowercase-note-id" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􀟈  Test case passing 1 argument damage → "lowercase-task-id" to onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) started.
+􁁛  Test onlyCompleteCompatibleValidatedSnapshotsAreUsable(_:) with 20 test cases passed after 0.964 seconds.
+􀟈  Test reopenedCanonicalIdentifiersSupportReadsAndMutations() started.
+􁁛  Test reopenedCanonicalIdentifiersSupportReadsAndMutations() passed after 0.067 seconds.
+􀟈  Test captureBarrierIncludesCommittedWALAndExcludesAConcurrentLaterCommand() started.
+􀢄  Test captureBarrierIncludesCommittedWALAndExcludesAConcurrentLaterCommand() recorded an issue at CollectionSnapshotTests.swift:125:6: Time limit was exceeded: 60.000 seconds

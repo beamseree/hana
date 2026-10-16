@@ -1,0 +1,58 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests CalculationTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (6.84s)
+Test Suite 'Selected tests' started at 2026-10-16 18:44:48.847.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 18:44:48.848.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 18:44:48.848.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 18:44:48.849.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationTests started.
+􀟈  Test exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-65 * 1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-65 * 1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-65 * -1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-65 * -1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "9e-128 * 0.1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / 10" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-128 / 10" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / -10" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "10^-129" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "0.5^500" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "4e127 * 1e38" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-4e127 * 1e38" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e127 / 1e-39" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e166" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "10e9223372036854775807" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "0.1e-9223372036854775808" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e99999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211456e127" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "3.40282366920938463463374607431768211456e165" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "3402823669209384634633746074317682114551e126" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "9.99999999999999999999999999999999999999e-129" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 * 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 / 0.99999999999999999999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 * 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 / 0.99999999999999999999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 * 2" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀢄  Test exactArithmeticRejectsOutOfRangeScales(text:) recorded an issue with 1 argument text → "1e-128 / 1.00000000000000000000000000000000000001" at CalculationTests.swift:27:9: Expectation failed: (answer.state == .tooLarge && answer.title == "Uh oh" → false) && (answer.subtitle == "Too large" → <not evaluated>)
+􀢄  Test exactArithmeticRejectsOutOfRangeScales(text:) recorded an issue with 1 argument text → "1e-128 / 1.00000000000000000000000000000000000001" at CalculationTests.swift:28:9: Expectation failed: (answer.copyableText → "0") == nil
+􀟈  Test case passing 1 argument text → "-1e-128 / 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀢄  Test exactArithmeticRejectsOutOfRangeScales(text:) recorded an issue with 1 argument text → "-1e-128 / 1.00000000000000000000000000000000000001" at CalculationTests.swift:27:9: Expectation failed: (answer.state == .tooLarge && answer.title == "Uh oh" → false) && (answer.subtitle == "Too large" → <not evaluated>)
+􀢄  Test exactArithmeticRejectsOutOfRangeScales(text:) recorded an issue with 1 argument text → "-1e-128 / 1.00000000000000000000000000000000000001" at CalculationTests.swift:28:9: Expectation failed: (answer.copyableText → "0") == nil
+􀟈  Test case passing 1 argument text → "1e-128 / -1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀢄  Test exactArithmeticRejectsOutOfRangeScales(text:) recorded an issue with 1 argument text → "1e-128 / -1.00000000000000000000000000000000000001" at CalculationTests.swift:27:9: Expectation failed: (answer.state == .tooLarge && answer.title == "Uh oh" → false) && (answer.subtitle == "Too large" → <not evaluated>)
+􀢄  Test exactArithmeticRejectsOutOfRangeScales(text:) recorded an issue with 1 argument text → "1e-128 / -1.00000000000000000000000000000000000001" at CalculationTests.swift:28:9: Expectation failed: (answer.copyableText → "0") == nil
+􀟈  Test case passing 1 argument text → "1e-128 * 0.99999999999999999999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀢄  Test exactArithmeticRejectsOutOfRangeScales(text:) with 30 test cases failed after 0.005 seconds with 6 issues.
+􀢄  Suite CalculationTests failed after 0.005 seconds with 6 issues.
+􀢄  Test run with 1 test in 1 suite failed after 0.005 seconds with 6 issues.

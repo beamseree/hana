@@ -1,0 +1,157 @@
+warning: 'hana': [fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x000000010d1144e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   libdyld.dylib                       0x0000000187bd02e4 _ZNK5dyld416LibSystemHelpers6getenvEPKc + 0
+4   dyld                                0x0000000187c07eb0 _ZNK5dyld423LibSystemHelpersWrapper4exitEi + 164
+5   dyld                                0x0000000187c07dd4 start + 7040
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x00000001043784e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   ld                                  0x0000000104139f3c main + 14120
+4   dyld                                0x0000000187c07da4 start + 6992
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x00000001096184e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   libdyld.dylib                       0x0000000187bd02e4 _ZNK5dyld416LibSystemHelpers6getenvEPKc + 0
+4   dyld                                0x0000000187c07eb0 _ZNK5dyld423LibSystemHelpersWrapper4exitEi + 164
+5   dyld                                0x0000000187c07dd4 start + 7040
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x00000001052804e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   swift-driver                        0x0000000104efa2b4 swift-driver + 8884
+4   dyld                                0x0000000187c07da4 start + 6992
+warning: 'swift-markdown': [fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x000000010c8f04e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   libdyld.dylib                       0x0000000187bd02e4 _ZNK5dyld416LibSystemHelpers6getenvEPKc + 0
+4   dyld                                0x0000000187c07eb0 _ZNK5dyld423LibSystemHelpersWrapper4exitEi + 164
+5   dyld                                0x0000000187c07dd4 start + 7040
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x0000000100b084e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   ld                                  0x00000001008c9f3c main + 14120
+4   dyld                                0x0000000187c07da4 start + 6992
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x000000010d4c44e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   libdyld.dylib                       0x0000000187bd02e4 _ZNK5dyld416LibSystemHelpers6getenvEPKc + 0
+4   dyld                                0x0000000187c07eb0 _ZNK5dyld423LibSystemHelpersWrapper4exitEi + 164
+5   dyld                                0x0000000187c07dd4 start + 7040
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x000000010496c4e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   swift-driver                        0x00000001045e62b4 swift-driver + 8884
+4   dyld                                0x0000000187c07da4 start + 6992
+warning: 'grdb.swift': [fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x000000010a8904e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   libdyld.dylib                       0x0000000187bd02e4 _ZNK5dyld416LibSystemHelpers6getenvEPKc + 0
+4   dyld                                0x0000000187c07eb0 _ZNK5dyld423LibSystemHelpersWrapper4exitEi + 164
+5   dyld                                0x0000000187c07dd4 start + 7040
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x000000010094c4e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   ld                                  0x000000010070df3c main + 14120
+4   dyld                                0x0000000187c07da4 start + 6992
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x000000010d4984e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   libdyld.dylib                       0x0000000187bd02e4 _ZNK5dyld416LibSystemHelpers6getenvEPKc + 0
+4   dyld                                0x0000000187c07eb0 _ZNK5dyld423LibSystemHelpersWrapper4exitEi + 164
+5   dyld                                0x0000000187c07dd4 start + 7040
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x0000000100c944e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   swift-driver                        0x000000010090e2b4 swift-driver + 8884
+4   dyld                                0x0000000187c07da4 start + 6992
+warning: 'swift-cmark': [fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x000000010a5004e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   libdyld.dylib                       0x0000000187bd02e4 _ZNK5dyld416LibSystemHelpers6getenvEPKc + 0
+4   dyld                                0x0000000187c07eb0 _ZNK5dyld423LibSystemHelpersWrapper4exitEi + 164
+5   dyld                                0x0000000187c07dd4 start + 7040
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x0000000100a604e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   ld                                  0x0000000100821f3c main + 14120
+4   dyld                                0x0000000187c07da4 start + 6992
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x0000000108fc44e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   libdyld.dylib                       0x0000000187bd02e4 _ZNK5dyld416LibSystemHelpers6getenvEPKc + 0
+4   dyld                                0x0000000187c07eb0 _ZNK5dyld423LibSystemHelpersWrapper4exitEi + 164
+5   dyld                                0x0000000187c07dd4 start + 7040
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x00000001006a84e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   swift-driver                        0x00000001003222b4 swift-driver + 8884
+4   dyld                                0x0000000187c07da4 start + 6992
+[0/1] Planning build
+Test Suite 'Selected tests' started at 2026-10-16 19:30:30.839.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 19:30:30.841.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 19:30:30.841.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 19:30:30.841.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x0000000100ff44e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   XCTestCore                          0x00000001010d300c _XCTestMain + 116
+4   xctest                              0x0000000100fd1e44 $s10xctesttool6xctestO4mainyyFZ + 284
+5   xctest                              0x0000000100fd1ee8 xctest + 7912
+6   dyld                                0x0000000187c07da4 start + 6992
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite NoteSaveSafetyNativeTests started.
+􀟈  Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() started.
+􁁛  Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() passed after 0.456 seconds.
+􀟈  Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+􀟈  Test case passing 1 argument action → .retry to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x0000000100e044e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   libswift_Concurrency.dylib          0x000000028c08f024 swift_createDefaultExecutorsOnce + 0
+4   libswift_Concurrency.dylib          0x000000028c0922d8 swift_task_asyncMainDrainQueue + 92
+5   HanaPackageTests                    0x0000000108a56428 main + 132
+6   swiftpm-testing-helper              0x0000000100de488c swiftpm-testing-helper + 2188
+7   swiftpm-testing-helper              0x0000000100de4748 swiftpm-testing-helper + 1864
+8   dyld                                0x0000000187c07da4 start + 6992
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x00000001018804e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   swift-package                       0x000000010001df18 swift-package + 7960
+4   libswift_Concurrency.dylib          0x000000028c088e18 _ZN5swift34runJobInEstablishedExecutorContextEPNS_3JobE + 472
+5   libswift_Concurrency.dylib          0x000000028c08a6ec _ZL17swift_job_runImplPN5swift3JobENS_17SerialExecutorRefE + 156
+6   libdispatch.dylib                   0x0000000187e40314 _dispatch_main_queue_drain.cold.6 + 612
+7   libdispatch.dylib                   0x0000000187e179e4 _dispatch_main_queue_drain + 176
+8   libdispatch.dylib                   0x0000000187e17924 _dispatch_main_queue_callback_4CF + 44
+9   CoreFoundation                      0x00000001880bd15c __CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__ + 16
+10  CoreFoundation                      0x000000018807f948 __CFRunLoopRun + 1944
+11  CoreFoundation                      0x0000000188151be0 _CFRunLoopRunSpecificWithOptions + 532
+12  CoreFoundation                      0x00000001880f5524 CFRunLoopRun + 64
+13  libswift_Concurrency.dylib          0x000000028c0e6b04 $ss14CFMainExecutorC3runyyKF + 48
+14  libswift_Concurrency.dylib          0x000000028c0e6d08 $ss20DispatchMainExecutorCs07RunLoopC0ssACP3runyyKFTW + 40
+15  libswift_Concurrency.dylib          0x000000028c0e7334 swift_task_asyncMainDrainQueueImpl + 140
+16  libswift_Concurrency.dylib          0x000000028c0922d8 swift_task_asyncMainDrainQueue + 92
+17  swift-package                       0x000000010001de04 swift-package + 7684
+18  dyld                                0x0000000187c07da4 start + 6992

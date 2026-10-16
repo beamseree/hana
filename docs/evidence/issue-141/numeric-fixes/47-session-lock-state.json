@@ -1,0 +1,9 @@
+{
+  "checked_at_utc": "2026-10-16T12:44:58.074798+00:00",
+  "source": "d54049ebef3f4674a27840fbfae0c12d3fed7e78",
+  "read_only_command": "ioreg -a -n Root -d1",
+  "IOConsoleLocked": true,
+  "CGSSessionScreenIsLocked": true,
+  "screen_locked_at_unix": 1792154039,
+  "settings_changed": false
+}

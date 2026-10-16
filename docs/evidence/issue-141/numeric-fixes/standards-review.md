@@ -1,13 +1,15 @@
-Pinned standards review: `38f4ab6406aa342bd3691469f4a9aef3be8ce0ea...a0ce847979ddee6f3a1c72943d4602b613e27d60`.
+# Numeric literal Standards review
 
-**0 hard documented-standard violations; 0 actionable smell findings.**
+Reviewed `git diff 38f4ab6406aa342bd3691469f4a9aef3be8ce0ea...924766b4c3881d84e9223790212d1e4615330224`, including commits `a0ce847`, `74ca1d8`, `9f82dc3`, `d303f20`, and `924766b`. Read AGENTS.md, CLAUDE.md, the domain/tracker/triage guides, GLOSSARY.md, the relevant product/design/technical sections, ADRs 0002/0005, and write-swift. No CONTRIBUTING.md or CODING_STANDARDS.md exists. No tests or native interaction were run for this read-only review.
 
-Reviewed the repository instructions, glossary, product/design/technical documents, ADRs 0002/0005, and `write-swift` against the three changed files. Toolchain baseline: Swift 6.3.3. No native tests or repository edits were performed.
+**Documented-standard violations: none found.**
 
-The arithmetic hunk (`Calculation.swift:165–220`) preserves the pure synchronous evaluator boundary documented in `docs/technical-design.md`, under “Calculation answers.” Helpers remain private to the owning numeric implementation. Mutable locals are required by Foundation's `inout` APIs; failures use the existing typed numeric-failure model; range validation precedes the `Int16` conversion. No new concurrency, reference semantics, unsafe API, protocol or dependency is introduced.
+- `Sources/Hana/Calculation.swift`: numerical handling remains inside the concrete value-type evaluator with private arithmetic helpers, synchronous execution, explicit locale normalization, and recoverable range failures. This follows `docs/technical-design.md`, “Calculation answers,” and write-swift §§1/2/3/7/8. The latest hunk normalizes literal digits before Foundation parsing, with overflow checks and an early zero return; it adds no abstraction or dependency. The existing new force unwrap documents its exact constant invariant, as write-swift §2 permits.
+- `Tests/HanaTests/CalculationTests.swift`: boundary and equivalent-spelling cases use a struct suite, `@Test(arguments:)`, `#require`, and `#expect`, following write-swift §11. They check the public answer state, displayed value, and copyable text rather than private helpers.
+- `docs/technical-design.md`: the numerical description stays within the evaluator boundary and distinguishes arithmetic behavior from native interaction. It adds no physical focus or destination claim, preserving `docs/agents/domain.md`'s evidence distinction.
 
-The test hunks (`CalculationTests.swift:6–43,225–226`) follow `write-swift` §11: a struct suite, Swift Testing, parameterized independent cases, and `#require` for safe optional unwrapping. They exercise the public answer boundary rather than private helper structure.
+**Baseline smell findings: none actionable.** Local coefficient conversions, decimal-bound comparisons, and paired high/low limbs do not justify additional abstractions in this bounded fix. No actionable Mysterious Name, Duplicated Code, Feature Envy, Data Clumps, Primitive Obsession, Repeated Switches, Shotgun Surgery, Divergent Change, Speculative Generality, Message Chains, Middle Man, or Refused Bequest was found. Tooling-enforced style was excluded.
 
-All supplied baseline smells were considered. In particular, the repeated one-line signed-significand extraction and operation choice do not constitute actionable **Duplicated Code** or **Repeated Switches** at this size; extracting abstractions would add indirection. `Character` reuses the existing parser/operator boundary, so a new type is not warranted as a **Primitive Obsession** correction. The local significand/exponent variables do not travel across independent callers as **Data Clumps**. No **Mysterious Name**, **Feature Envy**, **Shotgun Surgery**, **Divergent Change**, **Speculative Generality**, **Message Chains**, **Middle Man** or **Refused Bequest** finding was identified.
+Historical raw logs and earlier validation were treated as historical evidence; the final full-suite result remains outside this review.
 
-Numeric correctness and issue acceptance belong to the separate Spec axis; this report makes no additional behavioral-validation claim.
+Summary: 0 documented violations; 0 actionable heuristic findings.

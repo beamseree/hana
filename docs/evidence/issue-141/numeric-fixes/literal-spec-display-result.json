@@ -1,0 +1,6 @@
+{
+  "revision": "924766b4c3881d84e9223790212d1e4615330224",
+  "reference": "Python Decimal precision 1000, ROUND_HALF_UP, public 8 significant digit output",
+  "cases": 2083,
+  "mismatches": []
+}

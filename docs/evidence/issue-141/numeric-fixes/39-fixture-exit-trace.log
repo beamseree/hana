@@ -1,0 +1,11 @@
+[fixture-exit] atexit backtrace
+0   fixture-exit-trace.dylib            0x000000010099c4e4 trace_fixture_exit + 72
+1   libsystem_c.dylib                   0x0000000187e79e68 __cxa_finalize_ranges + 448
+2   libsystem_c.dylib                   0x0000000187e79c48 exit + 44
+3   HanaPackageTests                    0x00000001085a63a4 main + 0
+4   libswift_Concurrency.dylib          0x000000028c088e18 _ZN5swift34runJobInEstablishedExecutorContextEPNS_3JobE + 472
+5   libswift_Concurrency.dylib          0x000000028c08a6ec _ZL17swift_job_runImplPN5swift3JobENS_17SerialExecutorRefE + 156
+6   HanaPackageTests                    0x00000001085a6424 main + 128
+7   swiftpm-testing-helper              0x000000010098088c swiftpm-testing-helper + 2188
+8   swiftpm-testing-helper              0x0000000100980748 swiftpm-testing-helper + 1864
+9   dyld                                0x0000000187c07da4 start + 6992
