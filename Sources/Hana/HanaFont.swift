@@ -65,6 +65,8 @@ enum HanaFont {
     }
 
     enum Row {
+        /// Calculator, capture suggestion and fallback result symbols.
+        static let symbol = FontRole(size: 18, lineHeight: 24, weight: .regular)
         /// Search bar result names.
         static let title = FontRole(size: 16, lineHeight: 20, weight: .regular, tracking: -0.01)
     }

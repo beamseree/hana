@@ -134,18 +134,14 @@ struct SearchResultsView: View {
         switch row {
         case .answer(let answer):
             self.row(id: row.id, name: answer.title, subtitle: answer.subtitle, typeLabel: "Calculator") {
-                Image(systemName: "plus.forwardslash.minus")
-                    .font(.system(size: 18))
-                    .foregroundStyle(Color(nsColor: HanaColor.Icon.secondary))
+                symbol("plus.forwardslash.minus")
             }
         case .result(let result):
             self.row(id: row.id, name: result.name, subtitle: result.subtitle, typeLabel: result.typeLabel) { icon(result) }
         case .suggestion(let suggestion):
             // The capture keeps every character; only this preview is one line.
             self.row(id: row.id, name: suggestion.title, subtitle: query, typeLabel: nil) {
-                Image(systemName: suggestion.symbolName)
-                    .font(.system(size: 18))
-                    .foregroundStyle(Color(nsColor: HanaColor.Icon.secondary))
+                symbol(suggestion.symbolName)
             }
         }
     }
@@ -175,15 +171,19 @@ struct SearchResultsView: View {
         .contentShape(Rectangle())
     }
 
+    private func symbol(_ name: String) -> some View {
+        Image(systemName: name)
+            .font(HanaFont.Row.symbol)
+            .foregroundStyle(Color(nsColor: HanaColor.Icon.secondary))
+    }
+
     /// The generic symbol is both the loading placeholder and the fallback.
     /// Application icons keep their own colours; other kinds stay monochrome.
     @ViewBuilder private func icon(_ result: SearchResult) -> some View {
         if let icon = icons[result.id] {
             Image(decorative: icon.image, scale: icon.scale).resizable().interpolation(.high)
         } else {
-            Image(systemName: result.symbolName)
-                .font(.system(size: 18))
-                .foregroundStyle(Color(nsColor: HanaColor.Icon.secondary))
+            symbol(result.symbolName)
         }
     }
 }

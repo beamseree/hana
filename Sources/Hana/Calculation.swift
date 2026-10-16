@@ -20,12 +20,19 @@ enum Calculation {
     }
 
     private static func formatted(_ value: Decimal, locale: Locale) -> String? {
-        let magnitude = value < .zero ? -value : value
-        let scientific = magnitude >= Decimal(string: "1000000000000000")!
-            || (magnitude != .zero && magnitude < Decimal(string: "0.00000001")!)
         var original = value
         var whole = Decimal.zero
         NSDecimalRound(&whole, &original, 0, .plain)
+        var rounded = value
+        if value != whole {
+            let magnitude = value < .zero ? -value : value
+            let digits = NSDecimalNumber(decimal: magnitude.significand).stringValue.count
+            NSDecimalRound(&rounded, &original, 8 - magnitude.exponent - digits, .plain)
+        }
+        // Rounding can carry a fractional answer into a 16-digit whole number.
+        let magnitude = rounded < .zero ? -rounded : rounded
+        let scientific = magnitude >= Decimal(string: "1000000000000000")!
+            || (magnitude != .zero && magnitude < Decimal(string: "0.00000001")!)
         let formatter = NumberFormatter()
         formatter.locale = locale
         formatter.numberStyle = scientific ? .scientific : .decimal
@@ -38,7 +45,7 @@ enum Calculation {
         } else {
             formatter.maximumFractionDigits = 0
         }
-        return formatter.string(from: NSDecimalNumber(decimal: value))
+        return formatter.string(from: NSDecimalNumber(decimal: rounded))
     }
 
     /// Recognition deliberately does not depend on a successfully parsed value.
@@ -153,9 +160,13 @@ enum Calculation {
                 continue
             }
             if c == "x" {
-                let before = input[..<index].last { !$0.isWhitespace }
-                let after = input[(index + 1)...].first { !$0.isWhitespace }
-                guard let before, let after, digit(before), digit(after) else { return nil }
+                guard case .number = result.last else { return nil }
+                var next = index + 1
+                while next < input.count, input[next].isWhitespace { next += 1 }
+                guard next < input.count else { return nil }
+                let startsNumber = digit(input[next])
+                    || (input[next] == decimal && next + 1 < input.count && digit(input[next + 1]))
+                guard startsNumber else { return nil }
                 result.append(.operation("*")); index += 1; continue
             }
             if c.isLetter {
@@ -180,5 +191,4 @@ enum Calculation {
         }
         return result
     }
-
 }

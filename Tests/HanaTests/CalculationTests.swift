@@ -18,7 +18,7 @@ struct CalculationTests {
         ("2024-10-16", true), ("12 *", true), ("5 / 0", true),
         ("3 + * 4", true), ("1..2", true), ("sqrt", true),
         ("SIN(pi)", true), ("2pi", true), ("2(3 + 4)", true),
-        ("3x4", true), ("3 x 4", true), ("3×4", true),
+        ("3x4", true), (".3 x .4", true), ("3 x 4", true), ("3×4", true),
         ("2^10", true), ("50%", true), ("1e-3 + 2", true)
     ])
     func recognizesOnlyTheCalculationLanguage(text: String, expected: Bool) {
@@ -39,6 +39,7 @@ struct CalculationTests {
 
     @Test(arguments: [
         ("123456789012345 + 0", "123,456,789,012,345", "123456789012345"),
+        ("999999999999999.9 + 0", "1e15", "1e15"),
         ("1234567890123456 + 0", "1.2345679e15", "1.2345679e15"),
         ("1 / 3", "0.33333333", "0.33333333"),
         ("123456789 / 100", "1,234,567.9", "1234567.9"),
