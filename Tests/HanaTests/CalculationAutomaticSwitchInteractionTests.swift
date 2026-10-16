@@ -56,8 +56,11 @@ struct CalculationAutomaticSwitchInteractionTests {
         _ = NSApplication.shared
         let fixture = try JevWordPacedNativeFixture { $0.firing = .everyKeystroke }; defer { fixture.remove() }
         fixture.options.debugMode = true
-        let fake = ScriptedClassifier(), apps = CatalogFeed()
+        let storage = try TemporaryFixture(), fake = ScriptedClassifier(), apps = CatalogFeed()
+        defer { try? FileManager.default.removeItem(at: storage.directory) }
+        let store = try await CollectionStore.open(storage.location)
         let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            collection: Task { store },
             automaticSwitchOptions: fixture.options, automaticSwitchDiagnostics: fixture.log,
             classifierFactory: { _ in fake })
         let invocation = interaction.presentBar(); defer { interaction.dismiss(invocation, reason: .outsideClick) }
@@ -69,6 +72,7 @@ struct CalculationAutomaticSwitchInteractionTests {
         #expect(fake.inputs == ["1200 / 3 rent"])
         #expect(interaction.rows.map(\.id) == [.suggestion(.note), .suggestion(.task)])
         #expect(interaction.debugFooterText?.contains("Calculation") == false)
+        await store.close()
     }
 
     @Test func replacingAQueuedSubmissionWithACalculationCopiesWithoutALateSave() async throws {
