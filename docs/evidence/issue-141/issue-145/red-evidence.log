@@ -1,0 +1,28 @@
+# Initial red: Calculation gate reason is absent at agreed public boundary
+# Command: xcrun swift test --no-parallel --filter StrongMatchGateTests
+# Exit: 1
+
+
+/Users/beamsereeyothin/.codex/worktrees/issue-145-calculation-gate/hana/Tests/HanaTests/StrongMatchGateTests.swift:11:37: error: binary operator '==' cannot be applied to operands of type 'StrongMatchGate.Decision' and 'Other'
+  9 |         let evaluation = StrongMatchGate.evaluate(rawBuffer: buffer, results: [match], appStatus: .ready,
+ 10 |             fileStatus: .ready, titles: .init(status: .unavailable))
+ 11 |         #expect(evaluation.decision == .blocked(.calculation))
+    |                                     `- error: binary operator '==' cannot be applied to operands of type 'StrongMatchGate.Decision' and 'Other'
+ 12 |         #expect(!evaluation.settled && !evaluation.allSourcesSettled)
+ 13 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-145-calculation-gate/hana/Tests/HanaTests/StrongMatchGateTests.swift:11:41: error: reference to member 'blocked' cannot be resolved without a contextual type
+  9 |         let evaluation = StrongMatchGate.evaluate(rawBuffer: buffer, results: [match], appStatus: .ready,
+ 10 |             fileStatus: .ready, titles: .init(status: .unavailable))
+ 11 |         #expect(evaluation.decision == .blocked(.calculation))
+    |                                         `- error: reference to member 'blocked' cannot be resolved without a contextual type
+ 12 |         #expect(!evaluation.settled && !evaluation.allSourcesSettled)
+ 13 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-145-calculation-gate/hana/Tests/HanaTests/StrongMatchGateTests.swift:11:50: error: cannot infer contextual base in reference to member 'calculation'
+  9 |         let evaluation = StrongMatchGate.evaluate(rawBuffer: buffer, results: [match], appStatus: .ready,
+ 10 |             fileStatus: .ready, titles: .init(status: .unavailable))
+ 11 |         #expect(evaluation.decision == .blocked(.calculation))
+    |                                                  `- error: cannot infer contextual base in reference to member 'calculation'
+ 12 |         #expect(!evaluation.settled && !evaluation.allSourcesSettled)
+ 13 |     }

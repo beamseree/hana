@@ -1,0 +1,10 @@
+{
+  "source": "6925380b2384d7d70c29a47a297afde69b53fae9",
+  "integration": "b62412688b6bd0101574dd530f11ef6a37b02c58",
+  "command": "xcrun swift test --no-parallel",
+  "exitCode": 0,
+  "tests": 635,
+  "suites": 93,
+  "seconds": 107.772,
+  "liveIndexSkipped": 11
+}
