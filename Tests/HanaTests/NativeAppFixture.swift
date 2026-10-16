@@ -3,20 +3,20 @@ import CryptoKit
 import Testing
 @testable import Hana
 
-/// Two global key-window checks require NSApplication.run. The async-main test
+/// Global key-window and close-sheet checks require NSApplication.run. The async-main test
 /// helper does not dispatch AppKit activation, and manually doing so drains its
 /// async main queue before a test summary. Reuse the existing exact app-loop
 /// assertions in a disposable signed child; never skip or simulate key focus.
 @MainActor
 enum NativeAppFixture {
     enum Mode: String {
-        case mainWindow = "main-window", openNoteCapture = "open-note-capture"
+        case mainWindow = "main-window", openNoteCapture = "open-note-capture", noteClose = "note-close"
     }
 
     private final class BundleMarker: NSObject {}
     private enum Failure: Error { case missingProduct, timedOut, childExit(Int32), missingSuccessMarker }
 
-    static func run(_ mode: Mode, requiring marker: String) async throws {
+    static func run(_ mode: Mode, requiring marker: String, arguments: [String] = []) async throws {
         let files = FileManager.default
         let root = files.temporaryDirectory.appendingPathComponent("hana-native-app-test-\(UUID().uuidString)")
         defer { try? files.removeItem(at: root) }
@@ -37,7 +37,7 @@ enum NativeAppFixture {
         let signing = try await child(URL(fileURLWithPath: "/usr/bin/codesign"), arguments: ["--force", "--sign", "-", "--identifier", identifier, app.path], output: output)
         guard signing == 0 else { throw Failure.childExit(signing) }
         let report = root.appendingPathComponent("report.jsonl")
-        let status = try await child(binary, arguments: ["--validate-\(mode.rawValue)", "--\(mode.rawValue)-report", report.path], output: output)
+        let status = try await child(binary, arguments: ["--validate-\(mode.rawValue)", "--\(mode.rawValue)-report", report.path] + arguments, output: output)
         let trace = (try? String(contentsOf: report, encoding: .utf8)) ?? ""
         guard status == 0 else {
             for line in trace.split(separator: "\n") where line.contains("validation-failed") { print(line) }
