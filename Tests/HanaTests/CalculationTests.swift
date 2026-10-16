@@ -7,9 +7,56 @@ struct CalculationTests {
 
     @Test func basicArithmeticAppearsAsAnAnswer() throws {
         let answer = try #require(Calculation.answer(for: "12 * 4 + 3", locale: locale))
+        #expect(answer.state == .value)
         #expect(answer.title == "51")
         #expect(answer.subtitle == "12 * 4 + 3")
         #expect(answer.copyableText == "51")
+    }
+
+    @Test func trailingOperatorKeepsAnAnswerWhileTyping() throws {
+        let answer = try #require(Calculation.answer(for: "12 *", locale: locale))
+        #expect(answer.state == .incomplete)
+        #expect(answer.title == "…")
+        #expect(answer.subtitle == "Keep typing")
+        #expect(answer.copyableText == nil)
+    }
+
+    @Test func divisionByZeroExplainsWhyThereIsNoValue() throws {
+        let answer = try #require(Calculation.answer(for: "5 / 0", locale: locale))
+        #expect(answer.state == .divisionByZero)
+        #expect(answer.title == "Uh oh")
+        #expect(answer.subtitle == "Can't divide by zero")
+        #expect(answer.copyableText == nil)
+    }
+
+    @Test(arguments: [
+        ("12 *", Answer.State.incomplete, "…", "Keep typing"),
+        ("(3 + 4", .incomplete, "…", "Keep typing"),
+        ("12 * -", .incomplete, "…", "Keep typing"),
+        ("(3 + 4 +", .incomplete, "…", "Keep typing"),
+        ("sqrt", .incomplete, "…", "Keep typing"),
+        ("5 / 0 +", .incomplete, "…", "Keep typing"),
+        ("5 / 0", .divisionByZero, "Uh oh", "Can't divide by zero"),
+        ("5 / (3 - 3)", .divisionByZero, "Uh oh", "Can't divide by zero"),
+        ("3 + * 4", .invalid, "Not a valid calculation", "3 + * 4"),
+        ("3 + *", .invalid, "Not a valid calculation", "3 + *"),
+        ("1..2", .invalid, "Not a valid calculation", "1..2"),
+        ("1 2 + 3", .invalid, "Not a valid calculation", "1 2 + 3"),
+        ("3 + 4)", .invalid, "Not a valid calculation", "3 + 4)"),
+        ("(3 + * 4", .invalid, "Not a valid calculation", "(3 + * 4"),
+        ("3 + ()", .invalid, "Not a valid calculation", "3 + ()"),
+        ("12 * )", .invalid, "Not a valid calculation", "12 * )"),
+        ("5 / 0 + * 2", .invalid, "Not a valid calculation", "5 / 0 + * 2"),
+        (" 3 + * 4 ", .invalid, "Not a valid calculation", " 3 + * 4 ")
+    ])
+    func calculationsWithoutAValueCarryTheirStateAndExactWording(
+        text: String, state: Answer.State, title: String, subtitle: String
+    ) throws {
+        let answer = try #require(Calculation.answer(for: text, locale: locale))
+        #expect(answer.state == state)
+        #expect(answer.title == title)
+        #expect(answer.subtitle == subtitle)
+        #expect(answer.copyableText == nil)
     }
     @Test(arguments: [
         ("", false), ("2024", false), ("pi", false), ("e", false),
@@ -30,10 +77,9 @@ struct CalculationTests {
         ("10 / (2 + 3)", "2"), ("-5 + 3", "-2"),
         ("2 * -3", "-6"), ("-(2 + 3)", "-5"),
         ("2024-10-16", "1,998"), ("0.1 + 0.2", "0.3"),
-        ("10 / 4", "2.5"), ("12 *", nil), ("5 / 0", nil),
-        ("3 + * 4", nil), ("1..2", nil), ("(3 + 4", nil)
-    ] as [(String, String?)])
-    func evaluatesArithmeticWithExactDecimals(text: String, expected: String?) {
+        ("10 / 4", "2.5")
+    ])
+    func evaluatesArithmeticWithExactDecimals(text: String, expected: String) {
         #expect(Calculation.answer(for: text, locale: locale)?.title == expected)
     }
 

@@ -5,6 +5,96 @@ import Testing
 @Suite(.serialized, .nativeWindowSlot)
 @MainActor
 struct CalculationInteractionTests {
+    @Test(arguments: [
+        ("12 *", "…", "Keep typing"),
+        ("5 / 0", "Uh oh", "Can't divide by zero"),
+        ("3 + * 4", "Not a valid calculation", "3 + * 4")
+    ])
+    func answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(
+        text: String, title: String, subtitle: String
+    ) async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed()
+        var opened: [URL] = [], copied: [String] = []
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, typingGap: .zero),
+            launchApplication: { url in opened.append(url); return .init(activate: { true }) },
+            copyAnswer: { copied.append($0) })
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        interaction.updateQuery(text)
+        guard case .answer(let answer) = interaction.rows.first else { Issue.record("Expected an answer without a value"); return }
+        #expect(answer.title == title && answer.subtitle == subtitle && answer.copyableText == nil)
+        #expect(interaction.rows.map(\.id) == [.answer] && interaction.selectedRow == .answer)
+        let application = app(text, "/fixture/Calculation.app")
+        await apps.send([application])
+        try await eventually { interaction.results == [application] }
+        #expect(interaction.rows == [.answer(answer), .result(application)])
+        #expect(interaction.selectedResult == application)
+        await interaction.requestSelectedOpen()?.value
+        #expect(opened == [application.url] && copied.isEmpty)
+        #expect(interaction.currentInvocation == nil)
+    }
+
+    @Test(arguments: [false, true])
+    func completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated: Bool) async throws {
+        _ = NSApplication.shared
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero))
+        let invocation = interaction.presentBar()
+        defer { interaction.dismiss(invocation, reason: .outsideClick) }
+        let first = app("12 * 4 A", "/fixture/First.app"), second = app("12 * 4 B", "/fixture/Second.app")
+        interaction.updateQuery("12 *")
+        await apps.send([first, second])
+        try await eventually { interaction.results == [first, second] }
+        try await eventually { files.subscriptionCount == 1 }
+        #expect(interaction.selectedResult == first)
+        if userNavigated {
+            interaction.moveSelection(by: 1)
+            #expect(interaction.selectedResult == second)
+        }
+        interaction.updateQuery("12 * 4")
+        guard case .answer(let answer) = interaction.rows.first else { Issue.record("Expected the completed answer"); return }
+        #expect(answer.state == .value && answer.title == "48")
+        let expected: SearchRow.ID = userNavigated ? .result(second.id) : .answer
+        #expect(interaction.selectedRow == expected)
+        try await eventually { apps.subscriptionCount == 2 && files.subscriptionCount == 2 }
+        await apps.send([first, second])
+        let file = SearchResult(name: "12 * 4.txt", url: URL(fileURLWithPath: "/fixture/12 * 4.txt"), kind: .file)
+        await files.send([file], status: .loading)
+        try await eventually { interaction.results.contains(file) }
+        #expect(interaction.rows.first == .answer(answer))
+        #expect(interaction.selectedRow == expected)
+        await files.send([file])
+        try await eventually { !interaction.isLoading }
+        #expect(interaction.selectedRow == expected)
+    }
+
+    @Test(arguments: ["12 *", "5 / 0", "3 + * 4"])
+    func enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text: String) async throws {
+        _ = NSApplication.shared
+        var copied: [String] = []
+        let interaction = MacInteraction(search: Search(source: { CatalogFeed().stream() }, typingGap: .zero),
+                                         copyAnswer: { copied.append($0) }, frontmostApplication: { .current })
+        let origin = CalculationOriginPanel(contentRect: NSRect(x: 200, y: 200, width: 320, height: 80),
+                                            styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        let field = NSTextField(frame: NSRect(x: 20, y: 20, width: 280, height: 24))
+        origin.contentView?.addSubview(field)
+        origin.makeKeyAndOrderFront(nil)
+        #expect(origin.makeFirstResponder(field))
+        try await eventually { NSApp.keyWindow === origin }
+        let responder = try #require(origin.firstResponder)
+        defer { origin.close() }
+        _ = interaction.presentBar()
+        defer { if let invocation = interaction.currentInvocation { interaction.dismiss(invocation, reason: .outsideClick) } }
+        let editor = try await firstResponderEditor()
+        editor.insertText(text, replacementRange: NSRange(location: NSNotFound, length: 0))
+        #expect(interaction.rows.map(\.id) == [.answer] && interaction.selectedRow == .answer)
+        #expect(interaction.isLoading)
+        editor.keyDown(with: try returnKey())
+        #expect(copied.isEmpty && interaction.currentInvocation == nil)
+        #expect(origin.isKeyWindow && origin.firstResponder === responder)
+    }
+
     @Test func enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin() async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
