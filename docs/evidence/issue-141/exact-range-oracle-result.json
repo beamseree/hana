@@ -1,0 +1,8 @@
+{
+  "source": "924766b4c3881d84e9223790212d1e4615330224",
+  "reference": "Python Decimal precision 600, seed 141",
+  "cases": 320,
+  "results": 320,
+  "mismatches": [],
+  "compiler_stderr": ""
+}
