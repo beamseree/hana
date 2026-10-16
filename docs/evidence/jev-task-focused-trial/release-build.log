@@ -1,0 +1,24 @@
+[0/1] Planning build
+Building for production...
+[0/3] Write sources
+[1/3] Write swift-version--112E4EF74740DA65.txt
+[3/4] Compiling Hana ApplicationCatalog.swift
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[3/5] Write Objects.LinkFileList
+[4/5] Linking Hana
+Build complete! (29.35s)
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app/Contents/Info.plist: OK
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app: replacing existing signature
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app: valid on disk
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app: satisfies its Designated Requirement
+Hana signing identity: 5C1F81113ECCDB4AE9B6D5C89AA22B045A29417B
+designated => identifier "com.beamseree.hana" and certificate leaf = H"5c1f81113eccdb4ae9b6d5c89aa22b045a29417b"
+/Users/beamsereeyothin/.codex/worktrees/ec6f/hana/build/Hana.app

@@ -22,7 +22,8 @@ enum TrickyInputCheck {
         let classifier: AutomaticSwitchOptions.Classifier
         let options: AutomaticSwitchOptions
         var text: String {
-            let header = "Hana tricky-input check\nClassifier: \(classifier == .jev ? "Jev (jev-1.13.0)" : "Foundation Models")\nWording: \(ClassifierWording.version.rawValue)\nJev threshold: \(options.jevThreshold.rawValue)\nFoundation Models unsure: \(options.foundationModelsUnsure)\nFixed fixture collection; no live content. Requests ignore the gate; a timeout stops remaining requests.\nInput\tGate\tLabel\tProbability/unsure\tLatency ms\n"
+            let wordingVersion = classifier == .jev ? ClassifierWording.jevVersion : ClassifierWording.version
+            let header = "Hana tricky-input check\nClassifier: \(classifier == .jev ? "Jev (jev-1.13.0)" : "Foundation Models")\nWording: \(wordingVersion.rawValue)\nJev threshold: \(options.jevThreshold.rawValue)\nFoundation Models unsure: \(options.foundationModelsUnsure)\nFixed fixture collection; no live content. Requests ignore the gate; a timeout stops remaining requests.\nInput\tGate\tLabel\tProbability/unsure\tLatency ms\n"
             return header + rows.map {
                 "\(Self.escape($0.input))\t\($0.gate)\t\($0.label)\t\($0.score)\t\($0.latencyMilliseconds.map { String(format: "%.1f", $0) } ?? "unmeasured")"
             }.joined(separator: "\n") + "\n"

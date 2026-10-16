@@ -9,7 +9,7 @@ final class JevLaunchMemory {
     struct CacheIdentity: Hashable {
         let wordingVersion: String
         let model: String
-        static var current: Self { Self(wordingVersion: ClassifierWording.version.rawValue, model: JevClassifier.model) }
+        static var current: Self { Self(wordingVersion: ClassifierWording.jevVersion.rawValue, model: JevClassifier.model) }
     }
     private struct CacheKey: Hashable { let text: String; let identity: CacheIdentity }
     static let capacity = 2

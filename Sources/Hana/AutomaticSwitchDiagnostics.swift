@@ -6,7 +6,11 @@ import Foundation
 final class AutomaticSwitchDiagnostics {
     enum Label: String, Codable, Sendable { case search, note, task, unsure, none }
     enum Mode: String, Codable, Sendable { case search, note, task }
-    enum WordingVersion: String, Codable, Sendable { case v1 = "automatic-switch-v1" }
+    enum WordingVersion: String, Codable, Sendable {
+        case v1 = "automatic-switch-v1"
+        case jevWithoutNoteV1 = "jev-without-note-v1"
+        case jevTaskFocusedV1 = "jev-task-focused-v1"
+    }
     enum Outcome: String, Codable, Sendable {
         case switched, belowThreshold = "below-threshold", unsure, awaitingAgreement = "awaiting-agreement"
         case blocked, stale, multiline, suspended, error, timeout, backoff

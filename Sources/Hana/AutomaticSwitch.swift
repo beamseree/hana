@@ -294,14 +294,14 @@ struct AutomaticSwitch {
             candidate = value
             return apply(value)
         case .failed(let id, let kind, let latency, let retryAfter):
-            if isWordPaced { return wordPacedCompleted(id: id, verdict: .init(label: .unsure), error: kind, latency: latency, retryAfter: retryAfter) }
+            if isWordPaced { return wordPacedCompleted(id: id, verdict: failureVerdict, error: kind, latency: latency, retryAfter: retryAfter) }
             guard request?.id == id else {
-                return [staleDiagnostic(id: id, value: Candidate(verdict: .init(label: .unsure), latency: latency,
+                return [staleDiagnostic(id: id, value: Candidate(verdict: failureVerdict, latency: latency,
                     debugRequest: debugRequests[id]))]
             }
             if let timeout = timeoutIfDue() { return timeout }
             request = nil; candidate = nil; agreements = 0; agreementLabel = nil
-            return [diagnostic(Candidate(verdict: .init(label: .unsure), latency: latency,
+            return [diagnostic(Candidate(verdict: failureVerdict, latency: latency,
                 debugRequest: debugRequests[id]), .error, error: kind)]
         case .navigated:
             guard options.navigationSuspends else { return [] }
@@ -413,7 +413,7 @@ struct AutomaticSwitch {
                 where request.valid && now() - request.started >= requestDeadline {
                 wordRequests[id]?.valid = false
                 unsampledRequests.insert(id)
-                effects += [.cancel(id), diagnostic(Candidate(verdict: .init(label: .unsure),
+                effects += [.cancel(id), diagnostic(Candidate(verdict: failureVerdict,
                     latency: milliseconds(now() - request.started), debugRequest: debugRequests[id]), .timeout)]
             }
             return effects.isEmpty ? nil : effects
@@ -421,7 +421,7 @@ struct AutomaticSwitch {
         guard let request, now() - request.started >= requestDeadline else { return nil }
         self.request = nil; candidate = nil
         unsampledRequests.insert(request.id)
-        return [.cancel(request.id), diagnostic(Candidate(verdict: .init(label: .unsure),
+        return [.cancel(request.id), diagnostic(Candidate(verdict: failureVerdict,
             latency: milliseconds(now() - request.started), debugRequest: debugRequests[request.id]), .timeout)]
     }
 
@@ -625,7 +625,7 @@ struct AutomaticSwitch {
         guard !memory.hasRequest(for: value) else { waitingText = value; return [] }
         if let reason = memory.backoffReason(at: now()) {
             waitingText = nil
-            return [.record(.verdict(.init(classifier: .jev, label: .none, latencyMilliseconds: nil,
+            return [.record(.verdict(.init(classifier: .jev, wordingVersion: ClassifierWording.jevVersion, label: .none, latencyMilliseconds: nil,
                 outcome: .backoff, backoffReason: reason)))]
         }
         guard memory.hasCapacity else { waitingText = value; return [] }
@@ -683,7 +683,7 @@ struct AutomaticSwitch {
         }
         if now() - request.started >= requestDeadline {
             unsampledRequests.insert(id)
-            return [diagnostic(Candidate(verdict: .init(label: .unsure),
+            return [diagnostic(Candidate(verdict: failureVerdict,
                 latency: milliseconds(now() - request.started), debugRequest: debugRequests[id]), .timeout)] + sendWaiting()
         }
         if let error {
@@ -746,6 +746,10 @@ struct AutomaticSwitch {
         (character.isWhitespace || character.isPunctuation) && !"'’-‐".contains(character)
     }
 
+    private var failureVerdict: ClassifierVerdict {
+        .init(label: .unsure, wordingVersion: options.classifier == .jev ? ClassifierWording.jevVersion : ClassifierWording.version)
+    }
+
     private mutating func staleDiagnostic(id: UUID, value: Candidate) -> Effect {
         diagnostic(Candidate(verdict: value.verdict,
             latency: unsampledRequests.contains(id) ? nil : value.latency, debugRequest: debugRequests[id]), .stale)
@@ -754,6 +758,7 @@ struct AutomaticSwitch {
     private mutating func diagnostic(_ value: Candidate?, _ outcome: AutomaticSwitchDiagnostics.Outcome,
                             error: AutomaticSwitchDiagnostics.ErrorKind? = nil) -> Effect {
         var row = AutomaticSwitchDiagnostics.Verdict(classifier: options.classifier,
+            wordingVersion: options.classifier == .jev ? ClassifierWording.jevVersion : ClassifierWording.version,
             label: value.map { diagnosticLabel($0.verdict.label) } ?? .none,
             latencyMilliseconds: value?.latency, outcome: outcome, errorKind: error,
             wordCount: text.split(whereSeparator: \.isWhitespace).count)
