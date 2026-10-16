@@ -157,14 +157,12 @@ struct AutomaticSwitchInteractionTests {
         await store.close()
     }
 
-    @Test(arguments: [false, true])
-    func heldEnterCancelsClassificationAndCannotTurnIntoAnAutomaticCapture(wordPaced: Bool) async throws {
+    @Test func heldSearchEnterCancelsFoundationModelsClassificationAndCannotTurnIntoAnAutomaticCapture() async throws {
         _ = NSApplication.shared
         let fixture = try Fixture(); defer { fixture.remove() }
         let storage = try TemporaryFixture(); let store = try await CollectionStore.open(storage.location)
         let fake = ScriptedClassifier(), apps = CatalogFeed(), files = CatalogFeed()
         var options = fixture.options.read(); options.isEnabled = true; options.wait = .none
-        if wordPaced { options.classifier = .jev; options.firing = .wordPaced }
         fixture.options.write(options)
         let interaction = MacInteraction(search: Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero),
             collection: Task { store }, automaticSwitchOptions: fixture.options,
@@ -205,6 +203,7 @@ struct AutomaticSwitchInteractionTests {
         editor.insertText("call mom", replacementRange: NSRange(location: NSNotFound, length: 0))
         let weak = SearchResult(name: "My call mom tool", url: URL(fileURLWithPath: "/fixture/Weak.app"))
         await apps.send([weak]); try await eventually { interaction.selectedResult == weak && fake.pendingCount == 1 }
+        interaction.moveSelection(by: 0)
         let opening = interaction.requestSelectedOpen()
         try await eventually { release != nil }
         fake.reply(.task, probability: 0.95)

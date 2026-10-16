@@ -19,6 +19,8 @@ struct AutomaticSwitch {
         case failed(id: UUID, AutomaticSwitchDiagnostics.ErrorKind, latencyMilliseconds: Double, retryAfter: Duration? = nil)
         case navigated
         case enter
+        /// Enter in un-navigated Search: classify the complete buffer before saving.
+        case submitRequested
         case reversed(AutomaticSwitchDiagnostics.ReversalMethod)
         case manualModeChanged(CaptureSession.Mode)
         case tick
@@ -31,6 +33,7 @@ struct AutomaticSwitch {
         case enterMode(CaptureSession.Mode)
         case returnToSearch
         case swallowEnter
+        case submitCapture(text: String, mode: CaptureSession.Mode)
         case record(AutomaticSwitchDiagnostics.Event)
     }
     private struct Request { let id: UUID; let started: Duration }
@@ -99,6 +102,14 @@ struct AutomaticSwitch {
     private var actedOnText: String?
     var hasActedOnCurrentBuffer: Bool { actedOnText.map { $0.utf8.elementsEqual(text.utf8) } ?? false }
     private var ended = false
+    private struct Submission {
+        let text: String
+        let deadline: Duration
+    }
+    enum SubmissionOutcome { case undecided, failed, timedOut, blocked }
+    private var submission: Submission?
+    private(set) var submissionOutcome: SubmissionOutcome?
+    var isAwaitingSubmission: Bool { submission != nil }
     private var lateKind: StrongMatchGate.Kind?
     private(set) var lastVerdict = AutomaticSwitchDiagnostics.Label.none
     var lastModeChangeWasAutomatic: Bool { switchedAt != nil }
@@ -110,6 +121,7 @@ struct AutomaticSwitch {
     var nextWakeUp: Duration? {
         guard options.isEnabled, active else { return nil }
         var times: [Duration] = []
+        if let submission { times.append(submission.deadline) }
         // A deadline behind an in-flight request waits for that request's event, not for time.
         // A Word-paced pause still fires with both slots busy, to fill the waiting slot.
         if let due, !composing, canClassify, isWordPaced || request == nil {
@@ -140,7 +152,42 @@ struct AutomaticSwitch {
         text.precomposedStringWithCanonicalMapping.split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }
 
+    mutating func requestSubmission(gate: StrongMatchGate.Evaluation) -> [Effect] {
+        self.gate = gate
+        return handle(.submitRequested)
+    }
+
     mutating func handle(_ event: Event) -> [Effect] {
+        // The intent belongs to this exact editor revision, not a prefix or a
+        // subsequent edit. Navigation cancels it even when navigationSuspends is off.
+        switch event {
+        case .bufferChanged(let newText, let composing, _, let edit)
+            where !newText.utf8.elementsEqual(text.utf8) || composing || edit != nil:
+            submission = nil; submissionOutcome = nil
+        case .navigated, .manualModeChanged, .invoked, .dismissed:
+            submission = nil; submissionOutcome = nil
+        case .eligibilityChanged(false): submission = nil
+        default: break
+        }
+        if let submission, now() >= submission.deadline {
+            let effects = timeoutIfDue() ?? []
+            return effects + finishSubmission(.timedOut)
+        }
+        if submission != nil, case .gateChanged(let gate) = event, gate.decision != .allowed {
+            self.gate = gate
+            return finishSubmission(.blocked)
+        }
+        let failedSubmission: Bool
+        if submission != nil, case .failed(let id, _, _, _) = event {
+            failedSubmission = isWordPaced
+                ? wordRequests[id].map { $0.valid && $0.text == Self.normalized(text) } == true
+                : request?.id == id
+        } else { failedSubmission = false }
+        let effects = handleEvent(event)
+        return failedSubmission && submission != nil ? effects + finishSubmission(.failed) : effects
+    }
+
+    private mutating func handleEvent(_ event: Event) -> [Effect] {
         guard options.isEnabled else { return [] }
         switch event {
         case .invoked:
@@ -238,6 +285,33 @@ struct AutomaticSwitch {
             guard let switchedAt, options.enterBehavior == .ignoreFor300Milliseconds,
                   now() - switchedAt < .milliseconds(300) else { return [] }
             return [.swallowEnter]
+        case .submitRequested:
+            if submission != nil { return [.swallowEnter] }
+            guard options.classifier == .jev, mode == .search, canClassify,
+                  !composing, gate.decision == .allowed,
+                  Self.normalized(text).split(separator: " ").count >= 2 else { return [] }
+            submissionOutcome = nil
+            submission = Submission(text: text, deadline: now() + requestDeadline)
+            // Enter flushes the debounce and a correction burst. A partial
+            // answer can still be cached, but cannot switch or save this buffer.
+            deletionPause = nil; heldWordAnswers = []
+            if let candidate, candidate.prefix == nil || candidate.prefix == Self.normalized(text) {
+                return [.swallowEnter] + apply(candidate)
+            }
+            candidate = nil
+            if isWordPaced {
+                if let cached = applyCachedAnswer(for: Self.normalized(text), preservingAgreement: true) {
+                    return [.swallowEnter] + cached
+                }
+                due = nil
+                let effects = sendWordPaced()
+                if memory.backoffReason(at: now()) != nil {
+                    return [.swallowEnter] + effects + finishSubmission(.failed)
+                }
+                return [.swallowEnter] + effects
+            }
+            due = now()
+            return [.swallowEnter] + fireIfDue()
         case .reversed(let method):
             guard eligible, !composing, let switchedAt, mode != .search,
                   method == .backspace || options.escapeBehavior == .returnsToSearch else { return [] }
@@ -262,6 +336,21 @@ struct AutomaticSwitch {
             return isWordPaced ? sendWaiting() : []
         case .invoked, .dismissed: return []
         }
+    }
+
+    private mutating func finishSubmission(_ outcome: SubmissionOutcome) -> [Effect] {
+        submission = nil; submissionOutcome = outcome
+        candidate = nil; due = nil
+        return cancel()
+    }
+
+    /// Rejected final decisions leave the text available, without replaying
+    /// Enter against whatever Search row happens to be selected later.
+    private mutating func decisionEffects(_ value: Candidate,
+                                         _ outcome: AutomaticSwitchDiagnostics.Outcome) -> [Effect] {
+        let effects = [diagnostic(value, outcome)]
+        guard submission != nil else { return effects }
+        return effects + finishSubmission(.undecided)
     }
 
     private mutating func lateStrongMatchIfNeeded() -> [Effect]? {
@@ -348,16 +437,20 @@ struct AutomaticSwitch {
     private mutating func apply(_ incoming: Candidate, allowingSwitch: Bool = true) -> [Effect] {
         guard deletionPause == nil else { return [] }
         var value = incoming
+        if submission != nil, let prefix = value.prefix, prefix != Self.normalized(text) {
+            candidate = nil
+            return [diagnostic(value, .stale)]
+        }
         if let prefix = value.prefix, !Self.normalized(text).utf8.starts(with: prefix.utf8) {
             candidate = nil
             return [diagnostic(value, .stale)]
         }
-        guard !suspended else { candidate = nil; return [diagnostic(value, .suspended)] }
-        guard eligible, !composing, canClassify else { candidate = nil; return [diagnostic(value, .blocked)] }
-        guard gate.decision == .allowed else { candidate = nil; agreements = 0; return [diagnostic(value, .blocked)] }
+        guard !suspended else { candidate = nil; return decisionEffects(value, .suspended) }
+        guard eligible, !composing, canClassify else { candidate = nil; return decisionEffects(value, .blocked) }
+        guard gate.decision == .allowed else { candidate = nil; agreements = 0; return decisionEffects(value, .blocked) }
         if isWordPaced, let veto = vetoes[value.verdict.label], Self.normalized(text).utf8.starts(with: veto.utf8) {
             candidate = nil; agreements = 0; agreementLabel = nil
-            return [diagnostic(value, .blocked)]
+            return decisionEffects(value, .blocked)
         }
         if isWordPaced, value.agreementCount == nil {
             let accepts = value.verdict.label != .unsure
@@ -378,15 +471,16 @@ struct AutomaticSwitch {
         if options.wait == .allSources, !gate.allSourcesSettled, now() - changedAt < .seconds(1) { return [] }
         if options.wait == .appsAndCollection, !gate.settled { return [] }
         candidate = nil
-        if value.verdict.label == .unsure { agreements = 0; return [diagnostic(value, .unsure)] }
+        if value.verdict.label == .unsure { agreements = 0; return decisionEffects(value, .unsure) }
         if options.classifier == .jev,
            !(value.verdict.probability.map { $0.isFinite && $0 >= options.jevThreshold.rawValue } ?? false) {
-            agreements = 0; return [diagnostic(value, .belowThreshold)]
+            agreements = 0; return decisionEffects(value, .belowThreshold)
         }
         let target: CaptureSession.Mode = switch value.verdict.label {
         case .search, .unsure: .search; case .note: .note; case .task: .task
         }
-        if target == .task, TaskItem.isMultiline(text) { agreements = 0; return [diagnostic(value, .multiline)] }
+        if target == .task, TaskItem.isMultiline(text) { agreements = 0; return decisionEffects(value, .multiline) }
+        if submission != nil, target == .search { return decisionEffects(value, .blocked) }
         guard target != mode else { agreements = 0; return [diagnostic(value, .blocked)] }
         if !isWordPaced {
             if agreementLabel == value.verdict.label { agreements += 1 }
@@ -397,7 +491,7 @@ struct AutomaticSwitch {
         if (value.agreementCount ?? agreements) < requiredAgreements || !allowingSwitch {
             // Word-paced never resends the same text for a second opinion; the next answer may agree.
             if !isWordPaced { due = now() + max(firingDelay, .milliseconds(150)) }
-            return [diagnostic(value, .awaitingAgreement)]
+            return decisionEffects(value, .awaitingAgreement)
         }
         mode = target; switchedAt = target == .search ? nil : now(); hadSwitch = true; actedOnText = text; ended = false
         switchPoint = isWordPaced && target != .search ? value.prefix ?? Self.normalized(text) : nil
@@ -409,6 +503,11 @@ struct AutomaticSwitch {
         if isWordPaced, target != .search, options.afterSwitch == .stay {
             due = nil
             effects += cancel()
+        }
+        if let submission {
+            self.submission = nil
+            effects += cancel()
+            effects.append(.submitCapture(text: submission.text, mode: target))
         }
         return effects
     }
@@ -514,14 +613,18 @@ struct AutomaticSwitch {
         return sendWordPaced(waiting)
     }
 
-    private mutating func applyCachedAnswer(for text: String) -> [Effect]? {
+    private mutating func applyCachedAnswer(for text: String, preservingAgreement: Bool = false) -> [Effect]? {
         guard !composing, canClassify, gate.decision == .allowed,
               text.split(separator: " ").count >= 2,
               let verdict = memory.cachedVerdict(for: text, identity: cacheIdentity) else { return nil }
+        // Enter reusing a decision already handled in this session is not a
+        // second agreeing answer. Preserve its count before updating answeredText.
+        let existingAgreement = preservingAgreement && answeredText == text ? agreements : nil
         due = nil; waitingText = nil; answeredText = text
         sequence += 1; newestHandledSequence = sequence
         lastVerdict = diagnosticLabel(verdict.label)
-        let value = Candidate(verdict: verdict, latency: nil, prefix: text, cached: true)
+        let value = Candidate(verdict: verdict, latency: nil, prefix: text, cached: true,
+                              agreementCount: existingAgreement)
         candidate = value
         return apply(value)
     }
@@ -551,6 +654,11 @@ struct AutomaticSwitch {
                 latency: milliseconds(now() - request.started)), .timeout)] + sendWaiting()
         }
         if let error {
+            // A failed earlier prefix must not erase a full-text decision
+            // which is waiting for Search's gate to settle.
+            if submission != nil, request.text != Self.normalized(text) {
+                return [diagnostic(value, .error, error: error)] + sendWaiting()
+            }
             newestHandledSequence = max(newestHandledSequence, request.sequence)
             candidate = nil; heldWordAnswers = []; agreements = 0; agreementLabel = nil
             var effects = [diagnostic(value, .error, error: error)]
