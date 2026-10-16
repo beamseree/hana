@@ -3,12 +3,20 @@ import Testing
 @testable import Hana
 
 struct CalculationTests {
-    @Test func longFlatPastedCalculationsWorkWhileExcessiveNestingIsBounded() throws {
+    @Test func longFlatPastedCalculationsHaveNoTokenCountLimit() throws {
         let sum = Array(repeating: "1", count: 300).joined(separator: "+")
         let answer = try #require(Calculation.answer(for: sum, locale: locale))
         #expect(answer.state == .value && answer.title == "300" && answer.copyableText == "300")
-        let nested = String(repeating: "(", count: 1_024) + "1+1" + String(repeating: ")", count: 1_024)
-        let bounded = try #require(Calculation.answer(for: nested, locale: locale))
+    }
+
+    @Test(arguments: [
+        String(repeating: "(", count: 1_024) + "1+1" + String(repeating: ")", count: 1_024),
+        String(repeating: "-", count: 1_024) + "1",
+        Array(repeating: "1", count: 1_024).joined(separator: "^"),
+        String(repeating: "sqrt(", count: 1_024) + "1" + String(repeating: ")", count: 1_024)
+    ])
+    func excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text: String) throws {
+        let bounded = try #require(Calculation.answer(for: text, locale: locale))
         #expect(bounded.state == .tooLarge && bounded.title == "Uh oh" && bounded.subtitle == "Too large")
         #expect(bounded.copyableText == nil)
     }
