@@ -1,0 +1,4 @@
+Another instance of SwiftPM (PID: 63761) is already running using '/Users/beamsereeyothin/.codex/worktrees/issue-112-strong-match-gate/hana/.build', waiting until that process has finished execution...[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.27s)

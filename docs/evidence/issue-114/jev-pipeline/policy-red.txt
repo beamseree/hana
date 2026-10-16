@@ -1,0 +1,99 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Compiling HanaTests AutomaticSwitchTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (4.60s)
+Test Suite 'Selected tests' started at 2026-10-15 19:53:52.673.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 19:53:52.674.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 19:53:52.674.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 19:53:52.674.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() started.
+􁁛  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() passed after 0.001 seconds.
+􀟈  Test jevPipelineRetainsPrefixesAndStartsAtMostThreeRequests100MillisecondsApart() started.
+􁁛  Test jevPipelineRetainsPrefixesAndStartsAtMostThreeRequests100MillisecondsApart() passed after 0.001 seconds.
+􀟈  Test cancelledPipelineSlotsDrainWhileTheSessionIsDismissed() started.
+􀢄  Test cancelledPipelineSlotsDrainWhileTheSessionIsDismissed() recorded an issue at AutomaticSwitchTests.swift:49:9: Expectation failed: (requests(h.policy.handle(.bufferChanged(text: "buy milk", composing: false))).map(\.text) → []) == ["buy milk"]
+􀅺  removed ["buy milk"]
+􀢄  Test cancelledPipelineSlotsDrainWhileTheSessionIsDismissed() failed after 0.001 seconds with 1 issue.
+􀟈  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() started.
+􁁛  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() passed after 0.001 seconds.
+􀟈  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .escape to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .backspace to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􁁛  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() started.
+􁁛  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() passed after 0.001 seconds.
+􀟈  Test firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .debounced to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .onPause to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .pipelinedJev to firingStrategiesRespectTheirDelay(firing:) started.
+􁁛  Test firingStrategiesRespectTheirDelay(firing:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() started.
+􁁛  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() passed after 0.001 seconds.
+􀟈  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() started.
+􁁛  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() passed after 0.001 seconds.
+􀟈  Test jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p50 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p60 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p70 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p80 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p90 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p95 to jevNeedsTheSelectedThreshold(threshold:) started.
+􁁛  Test jevNeedsTheSelectedThreshold(threshold:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() started.
+􁁛  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() passed after 0.001 seconds.
+􀟈  Test afterSwitchStaysOrKeepsClassifying(option:) started.
+􀟈  Test case passing 1 argument option → .stay to afterSwitchStaysOrKeepsClassifying(option:) started.
+􀟈  Test case passing 1 argument option → .keepClassifying to afterSwitchStaysOrKeepsClassifying(option:) started.
+􁁛  Test afterSwitchStaysOrKeepsClassifying(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → true to navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → false to navigationSuspensionIsAnOption(suspends:) started.
+􁁛  Test navigationSuspensionIsAnOption(suspends:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􁁛  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .saves to enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .ignoreFor300Milliseconds to enterGraceEndsAt300Milliseconds(option:) started.
+􁁛  Test enterGraceEndsAt300Milliseconds(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .allSources to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .appsAndCollection to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .none to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􁁛  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .returnToSearch to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .stay to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􁁛  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() started.
+􁁛  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() passed after 0.001 seconds.
+􀟈  Test disabledAndIneligibleSessionsNeverSwitch() started.
+􁁛  Test disabledAndIneligibleSessionsNeverSwitch() passed after 0.001 seconds.
+􀟈  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() started.
+􁁛  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() passed after 0.001 seconds.
+􀟈  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() started.
+􁁛  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() passed after 0.001 seconds.
+􀟈  Test escapeDismissOptionDoesNotReverseAndReinvocationClearsSuspension() started.
+􁁛  Test escapeDismissOptionDoesNotReverseAndReinvocationClearsSuspension() passed after 0.001 seconds.
+􀟈  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() started.
+􁁛  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() passed after 0.005 seconds.
+􀟈  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → false to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → true to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􁁛  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) with 2 test cases passed after 0.003 seconds.
+􀢄  Suite AutomaticSwitchTests failed after 0.018 seconds with 1 issue.
+􀢄  Test run with 24 tests in 1 suite failed after 0.018 seconds with 1 issue.

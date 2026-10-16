@@ -1,0 +1,36 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Compiling HanaTests AutomaticSwitchReviewPolicyTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (5.34s)
+Test Suite 'Selected tests' started at 2026-10-15 22:53:07.024.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:53:07.026.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:53:07.026.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:53:07.026.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchReviewPolicyTests started.
+􀟈  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "buy milk " to replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) started.
+􀟈  Test case passing 1 argument replacement → "call mo " to replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) started.
+􁁛  Test replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test retypingCancelledTextWaitsUntilItsRequestActuallyFinishes() started.
+􀢄  Test retypingCancelledTextWaitsUntilItsRequestActuallyFinishes() recorded an issue at AutomaticSwitchReviewPolicyTests.swift:29:9: Expectation failed: (requests(h.policy.handle(.tick)) → [(id: 4394C7C2-5521-4156-9699-6CE83140CDDE, text: "call mom")]).isEmpty → false
+􀢄  Test retypingCancelledTextWaitsUntilItsRequestActuallyFinishes() recorded an issue at AutomaticSwitchReviewPolicyTests.swift:32:9: Expectation failed: (requests(finished).map(\.text) → []) == ["call mom"]
+􀅺  removed ["call mom"]
+􀢄  Test retypingCancelledTextWaitsUntilItsRequestActuallyFinishes() failed after 0.001 seconds with 2 issues.
+􀟈  Test anIdenticalRequestFromAClosedBarWaitsForItsTerminalCallback() started.
+􀢄  Test anIdenticalRequestFromAClosedBarWaitsForItsTerminalCallback() recorded an issue at AutomaticSwitchReviewPolicyTests.swift:42:9: Expectation failed: (requests(second.edit("  caf\u{E9}  notes ")) → [(id: 1D58077C-C06C-47FB-A7D9-FB471A311F09, text: "café notes")]).isEmpty → false
+􀄵  // The spelling differs in whitespace and Unicode representation but asks the same question.
+􀢄  Test anIdenticalRequestFromAClosedBarWaitsForItsTerminalCallback() recorded an issue at AutomaticSwitchReviewPolicyTests.swift:47:9: Expectation failed: (requests(released).map(\.text) → []) == (["caf\u{E9} notes"] → ["café notes"])
+􀅺  removed ["café notes"]
+􀢄  Test anIdenticalRequestFromAClosedBarWaitsForItsTerminalCallback() failed after 0.001 seconds with 2 issues.
+􀢄  Suite AutomaticSwitchReviewPolicyTests failed after 0.003 seconds with 4 issues.
+􀄵  /// Integration-review regressions at the agreed policy seam. Terminal callbacks are deliberately withheld.
+􀢄  Test run with 3 tests in 1 suite failed after 0.003 seconds with 4 issues.

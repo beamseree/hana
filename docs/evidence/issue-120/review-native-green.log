@@ -1,0 +1,63 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--112E4EF74740DA65.txt
+[3/9] Compiling HanaTests JevWordPacedDeletionNativeTests.swift
+[4/9] Emitting module HanaTests
+[5/9] Compiling HanaTests JevWordPacedNativeTests.swift
+[6/9] Compiling HanaTests JevWordPacedWithdrawalNativeTests.swift
+[7/9] Compiling HanaTests JevWordPacedNativeFixture.swift
+[7/9] Write Objects.LinkFileList
+[8/9] Linking HanaPackageTests
+Build complete! (5.57s)
+Test Suite 'Selected tests' started at 2026-10-15 22:55:32.748.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:55:32.749.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:55:32.749.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:55:32.749.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite JevWordPacedDeletionNativeTests started.
+􀟈  Test nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) started.
+􀟈  Test case passing 1 argument deletion → .character to nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) started.
+􀟈  Test case passing 1 argument deletion → .word to nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) started.
+􀟈  Test case passing 1 argument deletion → .line to nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) started.
+􁁛  Test nativeDeletionHoldsApplicableAnswersAndPreservesTextAndSelection(deletion:) with 3 test cases passed after 0.925 seconds.
+􀟈  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() started.
+􁁛  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() passed after 0.321 seconds.
+􀟈  Test replacingASelectionThatLooksLikeAnAppendStillHoldsTheAnswer() started.
+􁁛  Test replacingASelectionThatLooksLikeAnAppendStillHoldsTheAnswer() passed after 0.353 seconds.
+􁁛  Suite JevWordPacedDeletionNativeTests passed after 1.601 seconds.
+􀟈  Suite JevWordPacedNativeTests started.
+􀟈  Test typingAPhraseSendsOnlyBoundaryAndPauseRequestsAndASwitchKeepsTextAndSelection() started.
+􁁛  Test typingAPhraseSendsOnlyBoundaryAndPauseRequestsAndASwitchKeepsTextAndSelection() passed after 0.724 seconds.
+􀟈  Test prefixAnswerKeepsTheCurrentBufferAndSelectionAndEnterSavesExactlyOnce() started.
+􁁛  Test prefixAnswerKeepsTheCurrentBufferAndSelectionAndEnterSavesExactlyOnce() passed after 0.608 seconds.
+􀟈  Test captureStopsRequestsUntilNativeDeleteClearsItAndRearmsSearch() started.
+􁁛  Test captureStopsRequestsUntilNativeDeleteClearsItAndRearmsSearch() passed after 0.841 seconds.
+􀟈  Test backspaceAtTheStartKeepsTextAndSuspendsUntilTheBufferIsCleared() started.
+􁁛  Test backspaceAtTheStartKeepsTextAndSuspendsUntilTheBufferIsCleared() passed after 0.635 seconds.
+􀟈  Test requestsLeftOverFromAClosedBarStillCountTowardTheCapOfTwo() started.
+􁁛  Test requestsLeftOverFromAClosedBarStillCountTowardTheCapOfTwo() passed after 0.503 seconds.
+􀟈  Test firesMenuShowsWordPacedOnlyForJevAndMigratesAStoredPipelineChoice() started.
+􁁛  Test firesMenuShowsWordPacedOnlyForJevAndMigratesAStoredPipelineChoice() passed after 0.064 seconds.
+􁁛  Suite JevWordPacedNativeTests passed after 3.378 seconds.
+􀟈  Suite JevWordPacedWithdrawalNativeTests started.
+􀟈  Test withdrawalKeepsTheCurrentTextAndUTF16SelectionAndRetypingUsesCache() started.
+􁁛  Test withdrawalKeepsTheCurrentTextAndUTF16SelectionAndRetypingUsesCache() passed after 0.249 seconds.
+􀟈  Test editingInTheMiddleNeverWithdrawsEvenWhenTheResultIsAStrictPrefix() started.
+􁁛  Test editingInTheMiddleNeverWithdrawsEvenWhenTheResultIsAStrictPrefix() passed after 0.322 seconds.
+􀟈  Test backspaceAtTheStartPreservesTextAndVetoesOnlyTheRejectedMode() started.
+􁁛  Test backspaceAtTheStartPreservesTextAndVetoesOnlyTheRejectedMode() passed after 0.174 seconds.
+􀟈  Test escapeFollowsItsConfiguredOption(option:) started.
+􀟈  Test case passing 1 argument option → .returnsToSearch to escapeFollowsItsConfiguredOption(option:) started.
+􀟈  Test case passing 1 argument option → .dismisses to escapeFollowsItsConfiguredOption(option:) started.
+􁁛  Test escapeFollowsItsConfiguredOption(option:) with 2 test cases passed after 0.225 seconds.
+􀟈  Test enterJustAfterDeletingSavesTheShownTaskExactlyOnce() started.
+􁁛  Test enterJustAfterDeletingSavesTheShownTaskExactlyOnce() passed after 0.119 seconds.
+􀟈  Test submenuShowsMigratedReversalChoiceAndSeparateWithdrawnCount() started.
+􁁛  Test submenuShowsMigratedReversalChoiceAndSeparateWithdrawnCount() passed after 0.027 seconds.
+􁁛  Suite JevWordPacedWithdrawalNativeTests passed after 1.119 seconds.
+􁁛  Test run with 15 tests in 3 suites passed after 6.100 seconds.

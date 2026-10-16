@@ -1,0 +1,9 @@
+Final targeted Spec recheck at source `b1e9cfd16b22962edcc6c87b77c8c039b6cc8916` in `/Users/beamsereeyothin/.codex/worktrees/issue-110-review-fixes/hana`. Inspected repairs since `4eec8ef`, most recently `8e78dd3..b1e9cfd`. Read-only; no tests, model calls, or native windows.
+
+**Original P1: resolved by source inspection.** Reversal now checks eligibility/composition; Escape refreshes eligibility and falls back to ordinary dismissal. During saving, that reaches the existing deferred-dismissal/key-release path; successful completion closes with `.saved`. No false reversal is emitted.
+
+**Saved-confirmation follow-up P2: resolved.** #110 states: “A switch followed by a save counts as right.” `Sources/Hana/MacInteraction.swift:299` now chooses `.saved` whenever Capture Session is already saved, including Escape dismissal. This prevents a committed capture from being counted as ambiguous. The parameterized native regression asserts `ambiguous == 0`, exactly one ended event, and `end == saved` for both saving and saved-confirmation dismissal (`Tests/HanaTests/AutomaticSwitchInteractionTests.swift:395–399`).
+
+**Original P2: resolved by source inspection.** Timed-out request IDs suppress latency in subsequent stale failure/verdict rows while preserving those events. The new pure test covers both callbacks and checks exactly two samples (1500 ms timeout and 100 ms normal response), median 800 ms, maximum 1500 ms. Reported passing pure tests are supporting evidence; this reviewer did not rerun them.
+
+All original Spec-axis findings and the targeted follow-up are resolved. The orchestrator reports native red reproduction followed by targeted green on this source; this reviewer did not execute tests. The full serial suite was still running at recheck. Real classifier checks and Beam's days-of-use trial remain pending, separate from automated evidence.

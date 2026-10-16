@@ -1,0 +1,22 @@
+Test Suite 'Selected tests' started at 2026-10-15 22:32:10.003.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:32:10.004.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:32:10.004.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:32:10.004.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchWithdrawalTests started.
+􀟈  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() started.
+􁁛  Test deletingPastTheSwitchPointWithdrawsAtThePauseAndRetypingUsesTheCache() passed after 0.003 seconds.
+􀟈  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() started.
+􁁛  Test aLateStrongMatchCannotChangeModeDuringTheDeletionBurst() passed after 0.001 seconds.
+􀟈  Test reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) started.
+􀟈  Test case passing 1 argument method → .backspace to reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) started.
+􀢄  Test reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) recorded an issue with 1 argument method → .backspace at AutomaticSwitchWithdrawalTests.swift:54:24: Expectation failed: (requests(h.edit("call mom  tomorrow ")).first → nil).id → nil → nil
+􀟈  Test case passing 1 argument method → .escape to reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) started.
+􀢄  Test reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) recorded an issue with 1 argument method → .escape at AutomaticSwitchWithdrawalTests.swift:54:24: Expectation failed: (requests(h.edit("call mom  tomorrow ")).first → nil).id → nil → nil
+􀢄  Test reversingBlocksTheRejectedModeButAllowsTheOtherCaptureMode(method:) with 2 test cases failed after 0.001 seconds with 2 issues.
+􀢄  Suite AutomaticSwitchWithdrawalTests failed after 0.004 seconds with 2 issues.
+􀢄  Test run with 3 tests in 1 suite failed after 0.004 seconds with 2 issues.

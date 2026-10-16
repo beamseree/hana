@@ -1,0 +1,67 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/7] Compiling Hana AutomaticSwitch.swift
+[4/7] Emitting module Hana
+[5/14] Compiling Hana MixedSearchValidation.swift
+[6/14] Compiling Hana PerformanceValidation.swift
+[7/14] Compiling Hana SearchCorrectnessValidation.swift
+[8/14] Compiling Hana CoverageValidation.swift
+[9/14] Compiling Hana HanaApp.swift
+[10/14] Compiling Hana MacInteraction.swift
+[11/14] Compiling Hana MainWindowValidation.swift
+[11/16] Write Objects.LinkFileList
+[12/16] Linking Hana
+[13/16] Applying Hana
+[15/28] Compiling HanaTests NoteSaveTests.swift
+[16/28] Compiling HanaTests SuggestionInteractionTests.swift
+[17/28] Compiling HanaTests NoteModeTests.swift
+[18/28] Compiling HanaTests NativeEditingTests.swift
+[19/28] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[20/28] Compiling HanaTests MainWindowTests.swift
+[21/29] Compiling HanaTests TaskSaveTests.swift
+[22/29] Compiling HanaTests ModeIconTests.swift
+[23/29] Compiling HanaTests AutomaticSwitchTests.swift
+[24/29] Compiling HanaTests DisplayPlacementTests.swift
+[25/29] Compiling HanaTests CaptureSafetyNativeTests.swift
+[26/29] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[27/29] Emitting module HanaTests
+[27/29] Write Objects.LinkFileList
+[28/29] Linking HanaPackageTests
+Build complete! (7.78s)
+Test Suite 'Selected tests' started at 2026-10-15 17:59:52.256.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 17:59:52.257.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 17:59:52.257.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 17:59:52.257.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() started.
+􁁛  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() passed after 0.001 seconds.
+􀟈  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() started.
+􁁛  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() passed after 0.001 seconds.
+􀟈  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() started.
+􁁛  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchTests passed after 0.001 seconds.
+􁁛  Test run with 3 tests in 1 suite passed after 0.001 seconds.

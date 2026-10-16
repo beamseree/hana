@@ -1,0 +1,21 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests AutomaticSwitchDeletionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-124-word-deletion/hana/Tests/HanaTests/AutomaticSwitchDeletionTests.swift:57:20: error: extra argument 'edit' in call
+55 |             ?? requests(h.edit(before + " ")).first?.id)
+56 |         let replaced = h.policy.handle(.bufferChanged(text: "call mom ", composing: false,
+57 |             edit: .replacement(caretAtEnd: true)))
+   |                    `- error: extra argument 'edit' in call
+58 |         #expect(requests(replaced).isEmpty)
+59 |         #expect(modes(h.policy.handle(.verdict(id: id, task, latencyMilliseconds: 40))).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-124-word-deletion/hana/Tests/HanaTests/AutomaticSwitchDeletionTests.swift:57:20: error: cannot infer contextual base in reference to member 'replacement'
+55 |             ?? requests(h.edit(before + " ")).first?.id)
+56 |         let replaced = h.policy.handle(.bufferChanged(text: "call mom ", composing: false,
+57 |             edit: .replacement(caretAtEnd: true)))
+   |                    `- error: cannot infer contextual base in reference to member 'replacement'
+58 |         #expect(requests(replaced).isEmpty)
+59 |         #expect(modes(h.policy.handle(.verdict(id: id, task, latencyMilliseconds: 40))).isEmpty)
+error: fatalError

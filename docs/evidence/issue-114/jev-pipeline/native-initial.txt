@@ -1,0 +1,71 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.36s)
+Test Suite 'Selected tests' started at 2026-10-15 19:56:13.914.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 19:56:13.915.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 19:56:13.915.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 19:56:13.915.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchInteractionTests started.
+􀟈  Test submenuPersistsToggleAndResetsCountsWithoutOpeningWorkingWindowsOrChangingPolicy() started.
+􁁛  Test submenuPersistsToggleAndResetsCountsWithoutOpeningWorkingWindowsOrChangingPolicy() passed after 0.181 seconds.
+􀟈  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀟈  Test case passing 2 arguments enabled → true, suggestion → .note to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀟈  Test case passing 2 arguments enabled → true, suggestion → .task to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀟈  Test case passing 2 arguments enabled → false, suggestion → .note to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􀟈  Test case passing 2 arguments enabled → false, suggestion → .task to prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) started.
+􁁛  Test prefixAndSuggestionKeepTheirBehaviorAndRecordMissedOnlyWhenEnabled(enabled:suggestion:) with 4 test cases passed after 0.865 seconds.
+􀟈  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􀟈  Test case passing 2 arguments label → .note, enter → .saves to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􀟈  Test case passing 2 arguments label → .note, enter → .ignoreFor300Milliseconds to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􀟈  Test case passing 2 arguments label → .task, enter → .saves to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􀟈  Test case passing 2 arguments label → .task, enter → .ignoreFor300Milliseconds to automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) started.
+􁁛  Test automaticCaptureKeepsTextAndSelectionAndCommitsExactlyOneItem(label:enter:) with 4 test cases passed after 2.046 seconds.
+􀟈  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) started.
+􀟈  Test case passing 1 argument method → .escape to automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) started.
+􀟈  Test case passing 1 argument method → .backspace to automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) started.
+􁁛  Test automaticReversalKeepsTextAndDoesNotCountTheSameManualCaptureAsMissed(method:) with 2 test cases passed after 0.634 seconds.
+􀟈  Test heldEnterCancelsClassificationAndCannotTurnIntoAnAutomaticCapture() started.
+􁁛  Test heldEnterCancelsClassificationAndCannotTurnIntoAnAutomaticCapture() passed after 0.299 seconds.
+􀟈  Test pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch() started.
+􁁛  Test pendingLaunchCancelsClassificationBeforeItsVerdictCanSwitch() passed after 0.307 seconds.
+􀟈  Test taskVerdictCannotFlattenPastedMultilineText() started.
+􁁛  Test taskVerdictCannotFlattenPastedMultilineText() passed after 0.232 seconds.
+􀟈  Test everyBehaviorSubmenuPersistsARadioChoiceForTheNextInvocation() started.
+􀢄  Test everyBehaviorSubmenuPersistsARadioChoiceForTheNextInvocation() recorded an issue at AutomaticSwitchInteractionTests.swift:261:9: Expectation failed: (stored.classifier == .jev && stored.firing == .onPause → false) && (stored.jevThreshold == .p95 → <not evaluated>)
+􀢄  Test everyBehaviorSubmenuPersistsARadioChoiceForTheNextInvocation() failed after 0.100 seconds with 1 issue.
+􀟈  Test lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) started.
+􀟈  Test case passing 1 argument option → .returnToSearch to lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) started.
+􀟈  Test case passing 1 argument option → .stay to lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) started.
+􁁛  Test lateGateBatchesRemainLiveInCaptureWithoutResurrectingSearchRows(option:) with 2 test cases passed after 0.508 seconds.
+􀟈  Test keepClassifyingMovesCaptureModesAndBackToSearchWithoutEditingTextOrSelection() started.
+􁁛  Test keepClassifyingMovesCaptureModesAndBackToSearchWithoutEditingTextOrSelection() passed after 0.605 seconds.
+􀟈  Test escapeAfterAnAutomaticSwitchReversesOnceOrDismissesAsConfigured(option:) started.
+􀟈  Test case passing 1 argument option → .returnsToSearch to escapeAfterAnAutomaticSwitchReversesOnceOrDismissesAsConfigured(option:) started.
+􀟈  Test case passing 1 argument option → .dismisses to escapeAfterAnAutomaticSwitchReversesOnceOrDismissesAsConfigured(option:) started.
+􁁛  Test escapeAfterAnAutomaticSwitchReversesOnceOrDismissesAsConfigured(option:) with 2 test cases passed after 0.547 seconds.
+􀟈  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀟈  Test case passing 1 argument saved → false to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀟈  Test case passing 1 argument saved → true to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􁁛  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) with 2 test cases passed after 0.535 seconds.
+􀟈  Test missedManualCaptureRecordsTheLastSearchVerdictLabel() started.
+􁁛  Test missedManualCaptureRecordsTheLastSearchVerdictLabel() passed after 0.232 seconds.
+􀢄  Suite AutomaticSwitchInteractionTests failed after 7.099 seconds with 1 issue.
+􀟈  Suite ClassifierMenuTests started.
+􀟈  Test menuReflectsAvailabilityAndOnlyEnablesJevAfterKeySaved() started.
+􁁛  Test menuReflectsAvailabilityAndOnlyEnablesJevAfterKeySaved() passed after 0.121 seconds.
+􁁛  Suite ClassifierMenuTests passed after 0.121 seconds.
+􀟈  Suite JevPipelineNativeTests started.
+􀟈  Test prefixAnswerKeepsTheCurrentBufferAndSelectionAndEnterSavesExactlyOnce() started.
+􁁛  Test prefixAnswerKeepsTheCurrentBufferAndSelectionAndEnterSavesExactlyOnce() passed after 0.425 seconds.
+􀟈  Test captureStopsRequestsUntilNativeDeleteClearsItAndRearmsSearch() started.
+􁁛  Test captureStopsRequestsUntilNativeDeleteClearsItAndRearmsSearch() passed after 0.365 seconds.
+􀟈  Test backspaceAtTheStartKeepsTextAndSuspendsUntilTheBufferIsCleared() started.
+􁁛  Test backspaceAtTheStartKeepsTextAndSuspendsUntilTheBufferIsCleared() passed after 0.369 seconds.
+􁁛  Suite JevPipelineNativeTests passed after 1.161 seconds.
+􀢄  Test run with 17 tests in 3 suites failed after 8.382 seconds with 1 issue.

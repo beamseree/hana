@@ -1,0 +1,43 @@
+[0/1] Planning build
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/9] Compiling Hana CollectionStore.swift
+[4/9] Compiling Hana CollectionTitleSource.swift
+[5/9] Emitting module Hana
+[6/9] Compiling Hana StrongMatchGate.swift
+[7/40] Compiling Hana SearchCorrectnessValidation.swift
+[8/40] Compiling Hana SearchName.swift
+[9/40] Compiling Hana CollectionExportFixture.swift
+[10/40] Compiling Hana CollectionFixtureHarness.swift
+[11/40] Compiling Hana CollectionLocation.swift
+[12/40] Compiling Hana CollectionSchema.swift
+[13/40] Compiling Hana CollectionSnapshotFixture.swift
+[14/40] Compiling Hana CollectionSnapshots.swift
+[15/40] Compiling Hana GlobalShortcut.swift
+[16/40] Compiling Hana HanaApp.swift
+[17/40] Compiling Hana HanaFont.swift
+[18/40] Compiling Hana ResultIcons.swift
+[19/40] Compiling Hana Search.swift
+[20/40] Compiling Hana ApplicationCatalog.swift
+[21/40] Compiling Hana AutomaticSwitchDiagnostics.swift
+[22/40] Compiling Hana AutomaticSwitchOptions.swift
+[23/40] Compiling Hana SearchResultsView.swift
+[24/40] Compiling Hana SegmentedControl.swift
+[25/40] Compiling Hana ModeIcon.swift
+[26/40] Compiling Hana PerformanceValidation.swift
+[27/40] Compiling Hana SpotlightSource.swift
+[28/40] Compiling Hana WorkingWindowController.swift
+[29/40] Compiling Hana CoverageValidation.swift
+[30/40] Compiling Hana Diagnostics.swift
+[31/40] Compiling Hana FocusedWindowGeometry.swift
+[32/40] Compiling Hana BarStyle.swift
+[33/40] Compiling Hana CaptureSession.swift
+[34/40] Compiling Hana CollectionExport.swift
+[35/40] Compiling Hana MacInteraction.swift
+[36/40] Compiling Hana MainWindowValidation.swift
+[37/40] Compiling Hana MixedSearchValidation.swift
+[37/40] Write Objects.LinkFileList
+[38/40] Linking Hana
+[39/40] Applying Hana
+Build complete! (4.16s)

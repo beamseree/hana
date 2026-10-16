@@ -1,0 +1,32 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests AutomaticSwitchTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (3.16s)
+Test Suite 'Selected tests' started at 2026-10-15 18:34:34.152.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 18:34:34.153.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 18:34:34.153.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 18:34:34.153.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → false to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀢄  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) recorded an issue with 1 argument lateVerdict → false at AutomaticSwitchTests.swift:281:9: Expectation failed: (counts.latencies[.foundationModels]?.medianMilliseconds → 1500.0) == (800 → 800.0)
+􀄵  // Exactly two observations: the 1500 ms abandonment and the 100 ms normal verdict.
+􀢄  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) recorded an issue with 1 argument lateVerdict → false at AutomaticSwitchTests.swift:282:9: Expectation failed: (counts.latencies[.foundationModels]?.maximumMilliseconds → 1700.0) == (1500 → 1500.0)
+􀢄  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) recorded an issue with 1 argument lateVerdict → false at AutomaticSwitchTests.swift:285:9: Expectation failed: (rows.filter { $0["latencyMilliseconds"] != nil }.count → 3) == 2
+􀟈  Test case passing 1 argument lateVerdict → true to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀢄  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) recorded an issue with 1 argument lateVerdict → true at AutomaticSwitchTests.swift:281:9: Expectation failed: (counts.latencies[.foundationModels]?.medianMilliseconds → 1500.0) == (800 → 800.0)
+􀄵  // Exactly two observations: the 1500 ms abandonment and the 100 ms normal verdict.
+􀢄  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) recorded an issue with 1 argument lateVerdict → true at AutomaticSwitchTests.swift:282:9: Expectation failed: (counts.latencies[.foundationModels]?.maximumMilliseconds → 1700.0) == (1500 → 1500.0)
+􀢄  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) recorded an issue with 1 argument lateVerdict → true at AutomaticSwitchTests.swift:285:9: Expectation failed: (rows.filter { $0["latencyMilliseconds"] != nil }.count → 3) == 2
+􀢄  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) with 2 test cases failed after 0.005 seconds with 6 issues.
+􀢄  Suite AutomaticSwitchTests failed after 0.005 seconds with 6 issues.
+􀢄  Test run with 1 test in 1 suite failed after 0.005 seconds with 6 issues.

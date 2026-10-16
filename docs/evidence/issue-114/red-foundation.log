@@ -1,0 +1,69 @@
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--112E4EF74740DA65.txt
+[3/9] Compiling HanaTests CaptureSessionTests.swift
+[4/9] Compiling HanaTests CollectionExportHarnessTests.swift
+[5/9] Compiling HanaTests CaptureSafetyTests.swift
+[6/9] Emitting module HanaTests
+[7/9] Compiling HanaTests ClassifierAdapterTests.swift
+macro expansion #require:1:56: error: recursive expansion of macro 'require(_:_:sourceLocation:)'
+`- <worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:12:118: note: expanded code originates here
+10 |             #expect(request.httpMethod == "POST")
+11 |             #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer test-secret")
+12 |             let body = try #require(JSONSerialization.jsonObject(with: #require(request.httpBody)) as? [String: Any])
+   |                            `- note: in expansion of macro 'require' here
+   +--- macro expansion #require ---------------------------------------
+   |1 | Testing.__checkCast(JSONSerialization.jsonObject(with: #require(request.httpBody)),as: ([String: Any]).self,expression: .__fromBinaryOperation(.__fromSyntaxNode("JSONSerialization.jsonObject(with: #require(request.httpBody))"),"as?",.__fromSyntaxNode("[String: Any]")),comments: [],isRequired: true,sourceLocation: Testing.SourceLocation.__here()).__required()
+   |  |                                                        `- error: recursive expansion of macro 'require(_:_:sourceLocation:)'
+   +--------------------------------------------------------------------
+13 |             #expect(body["model"] as? String == "jev-1.13.0")
+14 |             #expect(body["state"] as? String == "call mom tomorrow")
+
+<worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:30:23: error: cannot find 'FoundationModelsClassifier' in scope
+28 |
+29 |     @Test func foundationUnavailableNeverRunsModel() async throws {
+30 |         let adapter = FoundationModelsClassifier(unsure: true, availability: { .appleIntelligenceOff }, makeSession: {
+   |                       `- error: cannot find 'FoundationModelsClassifier' in scope
+31 |             Issue.record("Unavailable model must not create a session")
+32 |             return .init(prewarm: {}, respond: { _ in .task })
+
+<worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:30:81: error: cannot infer contextual base in reference to member 'appleIntelligenceOff'
+28 |
+29 |     @Test func foundationUnavailableNeverRunsModel() async throws {
+30 |         let adapter = FoundationModelsClassifier(unsure: true, availability: { .appleIntelligenceOff }, makeSession: {
+   |                                                                                 `- error: cannot infer contextual base in reference to member 'appleIntelligenceOff'
+31 |             Issue.record("Unavailable model must not create a session")
+32 |             return .init(prewarm: {}, respond: { _ in .task })
+
+<worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:32:21: error: cannot infer contextual base in reference to member 'init'
+30 |         let adapter = FoundationModelsClassifier(unsure: true, availability: { .appleIntelligenceOff }, makeSession: {
+31 |             Issue.record("Unavailable model must not create a session")
+32 |             return .init(prewarm: {}, respond: { _ in .task })
+   |                     `- error: cannot infer contextual base in reference to member 'init'
+33 |         })
+34 |         adapter.prewarm()
+
+<worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:32:56: error: cannot infer contextual base in reference to member 'task'
+30 |         let adapter = FoundationModelsClassifier(unsure: true, availability: { .appleIntelligenceOff }, makeSession: {
+31 |             Issue.record("Unavailable model must not create a session")
+32 |             return .init(prewarm: {}, respond: { _ in .task })
+   |                                                        `- error: cannot infer contextual base in reference to member 'task'
+33 |         })
+34 |         adapter.prewarm()
+
+<worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:36:17: error: cannot find 'FoundationModelAvailability' in scope
+34 |         adapter.prewarm()
+35 |         await #expect(throws: ClassifierFailure.self) { try await adapter.classify("call mom") }
+36 |         #expect(FoundationModelAvailability.appleIntelligenceOff.menuText == "Apple Intelligence is off")
+   |                 `- error: cannot find 'FoundationModelAvailability' in scope
+37 |     }
+38 |
+
+<worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:35:9: warning: no 'async' operations occur within 'await' expression
+33 |         })
+34 |         adapter.prewarm()
+35 |         await #expect(throws: ClassifierFailure.self) { try await adapter.classify("call mom") }
+   |         `- warning: no 'async' operations occur within 'await' expression
+36 |         #expect(FoundationModelAvailability.appleIntelligenceOff.menuText == "Apple Intelligence is off")
+37 |     }
+error: fatalError

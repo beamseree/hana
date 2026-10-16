@@ -41,6 +41,8 @@ struct CaptureSession {
         case tab, newline
         /// Enter on a capture suggestion selected in Search.
         case chooseSuggestion(Suggestion)
+        /// Prototype transitions share the explicit capture and return paths.
+        case automaticMode(Mode)
         /// A click on Task's destination selector.
         case chooseDestination(TaskPlacement)
         /// A new invocation, or a dismissal. An in-flight save defers discard.
@@ -149,11 +151,10 @@ struct CaptureSession {
             // Once submitted, the capture stays put until the save settles.
             guard state.mode != .search, state.phase == .editing,
                   state.selection == NSRange(location: 0, length: 0) else { return [] }
-            payloadChanged()
-            state.mode = .search
-            state.prefixesArmed = state.text.isEmpty
-            state.notice = nil
-            return [.enterMode(.search)]
+            return returnToSearch()
+        case .automaticMode(let mode):
+            guard state.phase == .editing, mode != state.mode else { return [] }
+            return mode == .search ? returnToSearch() : enterCapture(mode)
         case .chooseSuggestion(let suggestion):
             guard state.mode == .search, state.phase == .editing else { return [] }
             return enterCapture(suggestion.mode)
@@ -228,6 +229,14 @@ struct CaptureSession {
             state.notice = notice
             return []
         }
+    }
+
+    private mutating func returnToSearch() -> [Effect] {
+        payloadChanged()
+        state.mode = .search
+        state.prefixesArmed = state.text.isEmpty
+        state.notice = nil
+        return [.enterMode(.search)]
     }
 
     /// Search to Note or Task, by a typed prefix or a chosen suggestion, keeping

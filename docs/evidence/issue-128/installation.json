@@ -1,0 +1,60 @@
+{
+  "installedAt": "2026-10-15T23:05:53.400435+07:00",
+  "codeCommit": "b31ae3260922790218cbbf7f38b51a62c7573311",
+  "installedApp": "/Users/beamsereeyothin/Applications/Hana.app",
+  "executableSHA256": "5f87731b1a5addd15b8e6f860179195711fd6588fb9e8a6e6e24274389b91290",
+  "builtExecutableSHA256": "5f87731b1a5addd15b8e6f860179195711fd6588fb9e8a6e6e24274389b91290",
+  "deepStrictSignature": "passed",
+  "previousExecutableSHA256": "eddc754a8e33ddcb097d65667e22005cf8e37152028f74cc3956d8deba4593c6",
+  "previousAppBackup": "/Users/beamsereeyothin/.codex/worktrees/6c95/hana/build/word-paced-candidate/previous-Hana.app",
+  "settingsBefore": {
+    "jevThreshold": 0.7,
+    "navigationSuspends": true,
+    "isEnabled": true,
+    "reversalSuspends": true,
+    "firing": "pipelinedJev",
+    "foundationModelsUnsure": true,
+    "classifier": "jev",
+    "enterBehavior": "saves",
+    "wait": "none",
+    "lateStrongMatch": "stay",
+    "agreeingVerdicts": 1,
+    "escapeBehavior": "returnsToSearch",
+    "afterSwitch": "stay"
+  },
+  "settings": {
+    "jevThreshold": 0.7,
+    "navigationSuspends": true,
+    "isEnabled": true,
+    "reversalSuspends": true,
+    "firing": "wordPaced",
+    "foundationModelsUnsure": true,
+    "classifier": "jev",
+    "enterBehavior": "saves",
+    "wait": "none",
+    "lateStrongMatch": "stay",
+    "agreeingVerdicts": 1,
+    "escapeBehavior": "returnsToSearch",
+    "afterSwitch": "stay",
+    "reversalBehavior": "blockModeForText"
+  },
+  "settingsChanges": {
+    "firing": {
+      "before": "pipelinedJev",
+      "after": "wordPaced"
+    },
+    "reversalBehavior": {
+      "before": null,
+      "after": "blockModeForText"
+    }
+  },
+  "resetMarkerTime": "2026-10-15T23:05:53.400435+07:00",
+  "diagnosticsLog": "/Users/beamsereeyothin/Library/Logs/Hana/automatic-switch.jsonl",
+  "priorHistoryPreserved": true,
+  "launchVerification": "running installed executable; AppKit event loop sampled and Task capture UI observed by exact app path",
+  "runningPID": 68957,
+  "runningCommand": "/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana",
+  "verifiedAt": "2026-10-15T23:12:06.841833+07:00",
+  "physicalFocusOrLatencyClaim": false,
+  "nativeTestingSlotReleased": true
+}

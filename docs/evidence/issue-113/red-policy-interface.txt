@@ -1,0 +1,683 @@
+Fetching https://github.com/groue/GRDB.swift from cache
+Fetched https://github.com/groue/GRDB.swift from cache (0.02s)
+Creating working copy for https://github.com/groue/GRDB.swift
+Working copy of https://github.com/groue/GRDB.swift resolved at 7.11.1
+Building for debugging...
+[0/14] /Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/.build/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[1/14] Write sources
+[2/14] Write Hana-entitlement.plist
+[3/14] Write sources
+[5/14] Copying Info.plist
+[6/14] Copying PrivacyInfo.xcprivacy
+[8/14] Write swift-version--112E4EF74740DA65.txt
+[10/169] Compiling GRDB DatabasePromise.swift
+[11/169] Compiling GRDB SQLAssociation.swift
+[12/169] Compiling GRDB SQLCollection.swift
+[13/169] Compiling GRDB SQLExpression.swift
+[14/169] Compiling GRDB SQLForeignKeyRequest.swift
+[15/169] Compiling GRDB SQLFunctions.swift
+[16/169] Compiling GRDB SQLOperators.swift
+[17/169] Compiling GRDB SQLOrdering.swift
+[18/169] Compiling GRDB SQLRelation.swift
+[19/169] Compiling GRDB SQLSelection.swift
+[20/169] Compiling GRDB SQLSubquery.swift
+[21/169] Compiling GRDB Table.swift
+[22/169] Compiling GRDB SQLColumnGenerator.swift
+[23/169] Compiling GRDB SQLGenerationContext.swift
+[24/183] Compiling GRDB PersistableRecord+Save.swift
+[25/183] Compiling GRDB PersistableRecord+Upsert.swift
+[26/183] Compiling GRDB PersistableRecord.swift
+[27/183] Compiling GRDB Record.swift
+[28/183] Compiling GRDB TableRecord.swift
+[29/183] Compiling GRDB CaseInsensitiveIdentifier.swift
+[30/183] Compiling GRDB Inflections+English.swift
+[31/183] Compiling GRDB Inflections.swift
+[32/183] Compiling GRDB Mutex.swift
+[33/183] Compiling GRDB OnDemandFuture.swift
+[34/183] Compiling GRDB OrderedDictionary.swift
+[35/183] Compiling GRDB Pool.swift
+[36/183] Compiling GRDB ReadWriteLock.swift
+[37/183] Compiling GRDB ReceiveValuesOn.swift
+[38/183] Compiling GRDB TransactionObserver.swift
+[39/183] Compiling GRDB WALSnapshot.swift
+[40/183] Compiling GRDB WALSnapshotTransaction.swift
+[41/183] Compiling GRDB Database+Dump.swift
+[42/183] Compiling GRDB DatabaseReader+dump.swift
+[43/183] Compiling GRDB DumpFormat.swift
+[44/183] Compiling GRDB DebugDumpFormat.swift
+[45/183] Compiling GRDB JSONDumpFormat.swift
+[46/183] Compiling GRDB LineDumpFormat.swift
+[47/183] Compiling GRDB ListDumpFormat.swift
+[48/183] Compiling GRDB QuoteDumpFormat.swift
+[49/183] Compiling GRDB FTS3.swift
+[50/183] Compiling GRDB FTS3Pattern.swift
+[51/183] Compiling GRDB FTS3TokenizerDescriptor.swift
+[52/183] Compiling GRDB DatabaseRegion.swift
+[53/183] Compiling GRDB DatabaseRegionObservation.swift
+[54/183] Compiling GRDB DatabaseSchemaCache.swift
+[55/183] Compiling GRDB DatabaseSchemaSource.swift
+[56/183] Compiling GRDB DatabaseSnapshot.swift
+[57/183] Compiling GRDB DatabaseSnapshotPool.swift
+[58/183] Compiling GRDB DatabaseValue.swift
+[59/183] Compiling GRDB DatabaseValueConvertible.swift
+[60/183] Compiling GRDB DatabaseWriter.swift
+[61/183] Compiling GRDB DispatchQueueActor.swift
+[62/183] Compiling GRDB FetchRequest.swift
+[63/183] Compiling GRDB Row.swift
+[64/183] Compiling GRDB RowAdapter.swift
+[65/183] Compiling GRDB RowDecodingError.swift
+[66/183] Compiling GRDB FTS5+QueryInterface.swift
+[67/183] Compiling GRDB ForeignKey.swift
+[68/183] Compiling GRDB Association.swift
+[69/183] Compiling GRDB AssociationAggregate.swift
+[70/183] Compiling GRDB BelongsToAssociation.swift
+[71/183] Compiling GRDB HasManyAssociation.swift
+[72/183] Compiling GRDB HasManyThroughAssociation.swift
+[73/183] Compiling GRDB HasOneAssociation.swift
+[74/183] Compiling GRDB HasOneThroughAssociation.swift
+[75/183] Compiling GRDB JoinAssociation.swift
+[76/183] Compiling GRDB CommonTableExpression.swift
+[77/183] Compiling GRDB QueryInterfaceRequest.swift
+[78/183] Compiling GRDB RequestProtocols.swift
+[79/183] Compiling GRDB Column.swift
+[80/183] Emitting module GRDB
+[81/183] Compiling GRDB SQLIndexGenerator.swift
+[82/183] Compiling GRDB SQLQueryGenerator.swift
+[83/183] Compiling GRDB SQLTableAlterationGenerator.swift
+[84/183] Compiling GRDB SQLTableGenerator.swift
+[85/183] Compiling GRDB TableAlias.swift
+[86/183] Compiling GRDB SQLInterpolation+QueryInterface.swift
+[87/183] Compiling GRDB ColumnDefinition.swift
+[88/183] Compiling GRDB Database+SchemaDefinition.swift
+[89/183] Compiling GRDB ForeignKeyDefinition.swift
+[90/183] Compiling GRDB IndexDefinition.swift
+[91/183] Compiling GRDB TableAlteration.swift
+[92/183] Compiling GRDB TableDefinition.swift
+[93/183] Compiling GRDB VirtualTableModule.swift
+[94/183] Compiling GRDB TableRecord+Association.swift
+[95/183] Compiling GRDB TableRecord+QueryInterfaceRequest.swift
+[96/183] Compiling GRDB EncodableRecord+Encodable.swift
+[97/183] Compiling GRDB EncodableRecord.swift
+[98/183] Compiling GRDB FetchableRecord+Decodable.swift
+[99/183] Compiling GRDB FetchableRecord+TableRecord.swift
+[100/183] Compiling GRDB FetchableRecord.swift
+[101/183] Compiling GRDB MutablePersistableRecord+DAO.swift
+[102/183] Compiling GRDB MutablePersistableRecord+Delete.swift
+[103/183] Compiling GRDB MutablePersistableRecord+Insert.swift
+[104/183] Compiling GRDB MutablePersistableRecord+Save.swift
+[105/183] Compiling GRDB MutablePersistableRecord+Update.swift
+[106/183] Compiling GRDB MutablePersistableRecord+Upsert.swift
+[107/183] Compiling GRDB MutablePersistableRecord.swift
+[108/183] Compiling GRDB PersistableRecord+Insert.swift
+[109/183] Compiling GRDB SQL.swift
+[110/183] Compiling GRDB SQLInterpolation.swift
+[111/183] Compiling GRDB SQLRequest.swift
+[112/183] Compiling GRDB SchedulingWatchdog.swift
+[113/183] Compiling GRDB SerializedDatabase.swift
+[114/183] Compiling GRDB Statement.swift
+[115/183] Compiling GRDB StatementAuthorizer.swift
+[116/183] Compiling GRDB StatementColumnConvertible.swift
+[117/183] Compiling GRDB CGFloat.swift
+[118/183] Compiling GRDB Data.swift
+[119/183] Compiling GRDB DatabaseDateComponents.swift
+[120/183] Compiling GRDB DatabaseValueConvertible+ReferenceConvertible.swift
+[121/183] Compiling GRDB Date.swift
+[122/183] Compiling GRDB Decimal.swift
+[123/183] Compiling GRDB FTS4.swift
+[124/183] Compiling GRDB FTS5.swift
+[125/183] Compiling GRDB FTS5CustomTokenizer.swift
+[126/183] Compiling GRDB FTS5Pattern.swift
+[127/183] Compiling GRDB FTS5Tokenizer.swift
+[128/183] Compiling GRDB FTS5TokenizerDescriptor.swift
+[129/183] Compiling GRDB FTS5WrapperTokenizer.swift
+[130/183] Compiling GRDB Fixits.swift
+[131/183] Compiling GRDB JSONColumn.swift
+[132/183] Compiling GRDB SQLJSONExpressible.swift
+[133/183] Compiling GRDB SQLJSONFunctions.swift
+[134/183] Compiling GRDB DatabaseMigrator.swift
+[135/183] Compiling GRDB Migration.swift
+[136/183] Compiling GRDB FTS3+QueryInterface.swift
+[137/183] Compiling GRDB Refinable.swift
+[138/183] Compiling GRDB Utils.swift
+[139/183] Compiling GRDB DatabaseCancellable.swift
+[140/183] Compiling GRDB ValueConcurrentObserver.swift
+[141/183] Compiling GRDB ValueWriteOnlyObserver.swift
+[142/183] Compiling GRDB Fetch.swift
+[143/183] Compiling GRDB Map.swift
+[144/183] Compiling GRDB RemoveDuplicates.swift
+[145/183] Compiling GRDB Trace.swift
+[146/183] Compiling GRDB ValueReducer.swift
+[147/183] Compiling GRDB SharedValueObservation.swift
+[148/183] Compiling GRDB ValueObservation.swift
+[149/183] Compiling GRDB ValueObservationScheduler.swift
+[150/183] Compiling GRDB resource_bundle_accessor.swift
+[151/183] Compiling GRDB Configuration.swift
+[152/183] Compiling GRDB Cursor.swift
+[153/183] Compiling GRDB Database+SQLCipher.swift
+[154/183] Compiling GRDB Database+Schema.swift
+[155/183] Compiling GRDB Database+Statements.swift
+[156/183] Compiling GRDB Database.swift
+[157/183] Compiling GRDB DatabaseBackupProgress.swift
+[158/183] Compiling GRDB DatabaseCollation.swift
+[159/183] Compiling GRDB DatabaseError.swift
+[160/183] Compiling GRDB DatabaseFunction.swift
+[161/183] Compiling GRDB DatabasePool.swift
+[162/183] Compiling GRDB DatabasePublishers.swift
+[163/183] Compiling GRDB DatabaseQueue.swift
+[164/183] Compiling GRDB DatabaseReader.swift
+[165/183] Compiling GRDB NSData.swift
+[166/183] Compiling GRDB NSNull.swift
+[167/183] Compiling GRDB NSNumber.swift
+[168/183] Compiling GRDB NSString.swift
+[169/183] Compiling GRDB SQLiteDateParser.swift
+[170/183] Compiling GRDB URL.swift
+[171/183] Compiling GRDB UUID.swift
+[172/183] Compiling GRDB DatabaseValueConvertible+Decodable.swift
+[173/183] Compiling GRDB DatabaseValueConvertible+Encodable.swift
+[174/183] Compiling GRDB DatabaseValueConvertible+RawRepresentable.swift
+[175/183] Compiling GRDB JSONRequiredEncoder.swift
+[176/183] Compiling GRDB Optional.swift
+[177/183] Compiling GRDB StandardLibrary.swift
+[178/183] Compiling GRDB TransactionClock.swift
+[179/221] Emitting module Hana
+[180/221] Compiling Hana ResultIcons.swift
+[181/221] Compiling Hana Search.swift
+[182/221] Compiling Hana SearchCorrectnessValidation.swift
+[183/221] Compiling Hana CaptureSession.swift
+[184/221] Compiling Hana CollectionExport.swift
+[185/221] Compiling Hana CollectionExportFixture.swift
+[186/221] Compiling Hana CollectionFixtureHarness.swift
+[187/224] Compiling Hana ApplicationCatalog.swift
+[188/224] Compiling Hana AutomaticSwitchDiagnostics.swift
+[189/224] Compiling Hana AutomaticSwitchOptions.swift
+[190/224] Compiling Hana BarStyle.swift
+[191/224] Compiling Hana Diagnostics.swift
+[192/224] Compiling Hana DisplayPlacement.swift
+[193/224] Compiling Hana FocusedWindowGeometry.swift
+[194/224] Compiling Hana ModeIcon.swift
+[195/224] Compiling Hana NoteScroller.swift
+[196/224] Compiling Hana PerformanceValidation.swift
+[197/224] Compiling Hana HanaFont.swift
+[198/224] Compiling Hana HanaRadius.swift
+[199/224] Compiling Hana HanaShadow.swift
+[200/224] Compiling Hana SearchName.swift
+[201/224] Compiling Hana SearchResultsView.swift
+[202/224] Compiling Hana SegmentedControl.swift
+[203/224] Compiling Hana CollectionSnapshots.swift
+[204/224] Compiling Hana CollectionStore.swift
+[205/224] Compiling Hana CollectionTitleSource.swift
+[206/224] Compiling Hana CoverageValidation.swift
+[207/224] Compiling Hana CollectionLocation.swift
+[208/224] Compiling Hana CollectionRecovery.swift
+[209/224] Compiling Hana CollectionSchema.swift
+[210/224] Compiling Hana CollectionSnapshotFixture.swift
+[211/224] Compiling Hana GlobalShortcut.swift
+[212/224] Compiling Hana HanaApp.swift
+[213/224] Compiling Hana HanaColor.swift
+[214/224] Compiling Hana MacInteraction.swift
+[215/224] Compiling Hana MainWindowValidation.swift
+[216/224] Compiling Hana MixedSearchValidation.swift
+[217/224] Compiling Hana SpotlightSource.swift
+[218/224] Compiling Hana StrongMatchGate.swift
+[219/224] Compiling Hana WorkingWindowController.swift
+[219/224] Write Objects.LinkFileList
+[220/224] Linking Hana
+[221/224] Applying Hana
+[223/260] Compiling HanaTests SearchExclusionTests.swift
+[224/260] Compiling HanaTests SearchRankingTests.swift
+[225/260] Compiling HanaTests SearchResponsivenessTests.swift
+error: emit-module command failed with exit code 1 (use -v to see invocation)
+[226/263] Compiling HanaTests NoteSaveTests.swift
+[227/263] Compiling HanaTests OrganizedCollectionFixture.swift
+[228/263] Compiling HanaTests ResultIconsTests.swift
+[229/263] Compiling HanaTests MainWindowTests.swift
+[230/263] Compiling HanaTests ModeIconTests.swift
+[231/263] Compiling HanaTests NativeEditingTests.swift
+[232/263] Compiling HanaTests CollectionStoreOpeningTests.swift
+[233/263] Compiling HanaTests CollectionStoreTests.swift
+[234/263] Compiling HanaTests CollectionTitleSourceTests.swift
+[235/263] Compiling HanaTests NativeWindowSlot.swift
+[236/263] Compiling HanaTests NoteModeTests.swift
+[237/263] Compiling HanaTests NoteOrganizationTests.swift
+[238/263] Compiling HanaTests SearchTests.swift
+[239/263] Compiling HanaTests SearchTypingGapTests.swift
+[240/263] Compiling HanaTests SpotlightStageTests.swift
+[241/263] Compiling HanaTests DisplayPlacementTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[242/263] Compiling HanaTests IndependentExportDecoder.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[243/263] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[244/263] Emitting module HanaTests
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:73: error: cannot find type 'UUID' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                                                         `- error: cannot find type 'UUID' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:39: error: cannot find type 'AutomaticSwitch' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                       `- error: cannot find type 'AutomaticSwitch' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+[245/263] Compiling HanaTests StrongMatchGateTests.swift
+[246/263] Compiling HanaTests SuggestionInteractionTests.swift
+[247/263] Compiling HanaTests TaskLifecycleTests.swift
+[248/263] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[249/263] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[250/263] Compiling HanaTests CollectionSnapshotTests.swift
+[251/263] Compiling HanaTests CaptureSafetyTests.swift
+[252/263] Compiling HanaTests CaptureSessionTests.swift
+[253/263] Compiling HanaTests CollectionExportHarnessTests.swift
+[254/263] Compiling HanaTests CollectionExportTests.swift
+[255/263] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:73: error: cannot find type 'UUID' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                                                         `- error: cannot find type 'UUID' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:39: error: cannot find type 'AutomaticSwitch' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                       `- error: cannot find type 'AutomaticSwitch' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:9:22: error: cannot find 'AutomaticSwitch' in scope
+ 7 |         let clock = TestClock()
+ 8 |         var options = AutomaticSwitchOptions(); options.isEnabled = true
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+   |                      `- error: cannot find 'AutomaticSwitch' in scope
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:10:28: error: cannot infer contextual base in reference to member 'invoked'
+ 8 |         var options = AutomaticSwitchOptions(); options.isEnabled = true
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+   |                            `- error: cannot infer contextual base in reference to member 'invoked'
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:28: error: cannot infer contextual base in reference to member 'gateChanged'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                            `- error: cannot infer contextual base in reference to member 'gateChanged'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:41: error: cannot infer contextual base in reference to member 'init'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                                         `- error: cannot infer contextual base in reference to member 'init'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:57: error: cannot infer contextual base in reference to member 'allowed'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                                                         `- error: cannot infer contextual base in reference to member 'allowed'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:12:41: error: cannot infer contextual base in reference to member 'bufferChanged'
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+   |                                         `- error: cannot infer contextual base in reference to member 'bufferChanged'
+13 |         clock.advance(by: .milliseconds(149))
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:14:41: error: cannot infer contextual base in reference to member 'tick'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+   |                                         `- error: cannot infer contextual base in reference to member 'tick'
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:16:41: error: cannot infer contextual base in reference to member 'tick'
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+   |                                         `- error: cannot infer contextual base in reference to member 'tick'
+17 |     }
+18 |
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:16:52: error: cannot infer key path type from context; consider explicitly specifying a root type
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+   |                                                    `- error: cannot infer key path type from context; consider explicitly specifying a root type
+17 |     }
+18 |
+[256/263] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:73: error: cannot find type 'UUID' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                                                         `- error: cannot find type 'UUID' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:39: error: cannot find type 'AutomaticSwitch' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                       `- error: cannot find type 'AutomaticSwitch' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:9:22: error: cannot find 'AutomaticSwitch' in scope
+ 7 |         let clock = TestClock()
+ 8 |         var options = AutomaticSwitchOptions(); options.isEnabled = true
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+   |                      `- error: cannot find 'AutomaticSwitch' in scope
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:10:28: error: cannot infer contextual base in reference to member 'invoked'
+ 8 |         var options = AutomaticSwitchOptions(); options.isEnabled = true
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+   |                            `- error: cannot infer contextual base in reference to member 'invoked'
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:28: error: cannot infer contextual base in reference to member 'gateChanged'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                            `- error: cannot infer contextual base in reference to member 'gateChanged'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:41: error: cannot infer contextual base in reference to member 'init'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                                         `- error: cannot infer contextual base in reference to member 'init'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:57: error: cannot infer contextual base in reference to member 'allowed'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                                                         `- error: cannot infer contextual base in reference to member 'allowed'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:12:41: error: cannot infer contextual base in reference to member 'bufferChanged'
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+   |                                         `- error: cannot infer contextual base in reference to member 'bufferChanged'
+13 |         clock.advance(by: .milliseconds(149))
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:14:41: error: cannot infer contextual base in reference to member 'tick'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+   |                                         `- error: cannot infer contextual base in reference to member 'tick'
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:16:41: error: cannot infer contextual base in reference to member 'tick'
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+   |                                         `- error: cannot infer contextual base in reference to member 'tick'
+17 |     }
+18 |
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:16:52: error: cannot infer key path type from context; consider explicitly specifying a root type
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+   |                                                    `- error: cannot infer key path type from context; consider explicitly specifying a root type
+17 |     }
+18 |
+[257/263] Compiling HanaTests AutomaticSwitchTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:73: error: cannot find type 'UUID' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                                                         `- error: cannot find type 'UUID' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:39: error: cannot find type 'AutomaticSwitch' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                       `- error: cannot find type 'AutomaticSwitch' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:9:22: error: cannot find 'AutomaticSwitch' in scope
+ 7 |         let clock = TestClock()
+ 8 |         var options = AutomaticSwitchOptions(); options.isEnabled = true
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+   |                      `- error: cannot find 'AutomaticSwitch' in scope
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:10:28: error: cannot infer contextual base in reference to member 'invoked'
+ 8 |         var options = AutomaticSwitchOptions(); options.isEnabled = true
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+   |                            `- error: cannot infer contextual base in reference to member 'invoked'
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:28: error: cannot infer contextual base in reference to member 'gateChanged'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                            `- error: cannot infer contextual base in reference to member 'gateChanged'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:41: error: cannot infer contextual base in reference to member 'init'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                                         `- error: cannot infer contextual base in reference to member 'init'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:57: error: cannot infer contextual base in reference to member 'allowed'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                                                         `- error: cannot infer contextual base in reference to member 'allowed'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:12:41: error: cannot infer contextual base in reference to member 'bufferChanged'
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+   |                                         `- error: cannot infer contextual base in reference to member 'bufferChanged'
+13 |         clock.advance(by: .milliseconds(149))
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:14:41: error: cannot infer contextual base in reference to member 'tick'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+   |                                         `- error: cannot infer contextual base in reference to member 'tick'
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:16:41: error: cannot infer contextual base in reference to member 'tick'
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+   |                                         `- error: cannot infer contextual base in reference to member 'tick'
+17 |     }
+18 |
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:16:52: error: cannot infer key path type from context; consider explicitly specifying a root type
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+   |                                                    `- error: cannot infer key path type from context; consider explicitly specifying a root type
+17 |     }
+18 |
+[258/263] Compiling HanaTests CaptureSafetyNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:73: error: cannot find type 'UUID' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                                                         `- error: cannot find type 'UUID' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:19:39: error: cannot find type 'AutomaticSwitch' in scope
+17 |     }
+18 |
+19 |     private func requests(_ effects: [AutomaticSwitch.Effect]) -> [(id: UUID, text: String)] {
+   |                                       `- error: cannot find type 'AutomaticSwitch' in scope
+20 |         effects.compactMap { if case .classify(let id, let text) = $0 { (id, text) } else { nil } }
+21 |     }
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:9:22: error: cannot find 'AutomaticSwitch' in scope
+ 7 |         let clock = TestClock()
+ 8 |         var options = AutomaticSwitchOptions(); options.isEnabled = true
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+   |                      `- error: cannot find 'AutomaticSwitch' in scope
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:10:28: error: cannot infer contextual base in reference to member 'invoked'
+ 8 |         var options = AutomaticSwitchOptions(); options.isEnabled = true
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+   |                            `- error: cannot infer contextual base in reference to member 'invoked'
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:28: error: cannot infer contextual base in reference to member 'gateChanged'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                            `- error: cannot infer contextual base in reference to member 'gateChanged'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:41: error: cannot infer contextual base in reference to member 'init'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                                         `- error: cannot infer contextual base in reference to member 'init'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:11:57: error: cannot infer contextual base in reference to member 'allowed'
+ 9 |         var policy = AutomaticSwitch(options: options, now: { clock.now.offset })
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+   |                                                         `- error: cannot infer contextual base in reference to member 'allowed'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:12:41: error: cannot infer contextual base in reference to member 'bufferChanged'
+10 |         _ = policy.handle(.invoked)
+11 |         _ = policy.handle(.gateChanged(.init(decision: .allowed, settled: true, allSourcesSettled: true)))
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+   |                                         `- error: cannot infer contextual base in reference to member 'bufferChanged'
+13 |         clock.advance(by: .milliseconds(149))
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:14:41: error: cannot infer contextual base in reference to member 'tick'
+12 |         #expect(requests(policy.handle(.bufferChanged(text: "call mom", composing: false))).isEmpty)
+13 |         clock.advance(by: .milliseconds(149))
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+   |                                         `- error: cannot infer contextual base in reference to member 'tick'
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:16:41: error: cannot infer contextual base in reference to member 'tick'
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+   |                                         `- error: cannot infer contextual base in reference to member 'tick'
+17 |     }
+18 |
+
+/Users/beamsereeyothin/.codex/worktrees/issue-113-automatic-switch-policy/hana/Tests/HanaTests/AutomaticSwitchTests.swift:16:52: error: cannot infer key path type from context; consider explicitly specifying a root type
+14 |         #expect(requests(policy.handle(.tick)).isEmpty)
+15 |         clock.advance(by: .milliseconds(1))
+16 |         #expect(requests(policy.handle(.tick)).map(\.text) == ["call mom"])
+   |                                                    `- error: cannot infer key path type from context; consider explicitly specifying a root type
+17 |     }
+18 |
+[259/263] Compiling HanaTests TaskOrderingTests.swift
+[260/263] Compiling HanaTests TaskSaveTests.swift
+[261/263] Compiling HanaTests TestClock.swift
+error: fatalError

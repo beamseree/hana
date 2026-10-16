@@ -1,0 +1,61 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:22:19: error: cannot find 'AutomaticSwitchDiagnostics' in scope
+20 |         defer { try? FileManager.default.removeItem(at: directory) }
+21 |         let url = directory.appendingPathComponent("automatic-switch.jsonl")
+22 |         let log = AutomaticSwitchDiagnostics(file: url)
+   |                   `- error: cannot find 'AutomaticSwitchDiagnostics' in scope
+23 |         var options = AutomaticSwitchOptions()
+24 |         log.record(.missed(mode: .note, lastVerdict: .none), options: options)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:24:21: error: cannot infer contextual base in reference to member 'missed'
+22 |         let log = AutomaticSwitchDiagnostics(file: url)
+23 |         var options = AutomaticSwitchOptions()
+24 |         log.record(.missed(mode: .note, lastVerdict: .none), options: options)
+   |                     `- error: cannot infer contextual base in reference to member 'missed'
+25 |         #expect(!FileManager.default.fileExists(atPath: url.path))
+26 |         options.isEnabled = true
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:24:35: error: cannot infer contextual base in reference to member 'note'
+22 |         let log = AutomaticSwitchDiagnostics(file: url)
+23 |         var options = AutomaticSwitchOptions()
+24 |         log.record(.missed(mode: .note, lastVerdict: .none), options: options)
+   |                                   `- error: cannot infer contextual base in reference to member 'note'
+25 |         #expect(!FileManager.default.fileExists(atPath: url.path))
+26 |         options.isEnabled = true
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:24:55: error: cannot infer contextual base in reference to member 'none'
+22 |         let log = AutomaticSwitchDiagnostics(file: url)
+23 |         var options = AutomaticSwitchOptions()
+24 |         log.record(.missed(mode: .note, lastVerdict: .none), options: options)
+   |                                                       `- error: cannot infer contextual base in reference to member 'none'
+25 |         #expect(!FileManager.default.fileExists(atPath: url.path))
+26 |         options.isEnabled = true
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:31:21: error: cannot infer contextual base in reference to member 'missed'
+29 |         _ = session.handle(.edited(text: input, selection: NSRange(location: 0, length: 0)))
+30 |         _ = session.handle(.chooseSuggestion(.note))
+31 |         log.record(.missed(mode: .note, lastVerdict: .none), options: options)
+   |                     `- error: cannot infer contextual base in reference to member 'missed'
+32 |         let recorded = try String(contentsOf: url, encoding: .utf8)
+33 |         #expect(recorded.contains("autoswitch.missed"))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:31:35: error: cannot infer contextual base in reference to member 'note'
+29 |         _ = session.handle(.edited(text: input, selection: NSRange(location: 0, length: 0)))
+30 |         _ = session.handle(.chooseSuggestion(.note))
+31 |         log.record(.missed(mode: .note, lastVerdict: .none), options: options)
+   |                                   `- error: cannot infer contextual base in reference to member 'note'
+32 |         let recorded = try String(contentsOf: url, encoding: .utf8)
+33 |         #expect(recorded.contains("autoswitch.missed"))
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:31:55: error: cannot infer contextual base in reference to member 'none'
+29 |         _ = session.handle(.edited(text: input, selection: NSRange(location: 0, length: 0)))
+30 |         _ = session.handle(.chooseSuggestion(.note))
+31 |         log.record(.missed(mode: .note, lastVerdict: .none), options: options)
+   |                                                       `- error: cannot infer contextual base in reference to member 'none'
+32 |         let recorded = try String(contentsOf: url, encoding: .utf8)
+33 |         #expect(recorded.contains("autoswitch.missed"))
+error: fatalError

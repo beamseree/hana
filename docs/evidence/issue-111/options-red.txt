@@ -1,0 +1,381 @@
+Fetching https://github.com/groue/GRDB.swift from cache
+Fetched https://github.com/groue/GRDB.swift from cache (0.02s)
+Creating working copy for https://github.com/groue/GRDB.swift
+Working copy of https://github.com/groue/GRDB.swift resolved at 7.11.1
+Building for debugging...
+[0/14] /Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/.build/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[1/14] Write sources
+[3/14] Write Hana-entitlement.plist
+[3/14] Write sources
+[5/14] Copying PrivacyInfo.xcprivacy
+[6/14] Write sources
+[6/14] Copying Info.plist
+[8/14] Write swift-version--112E4EF74740DA65.txt
+[10/169] Compiling GRDB SQLIndexGenerator.swift
+[11/169] Compiling GRDB SQLQueryGenerator.swift
+[12/169] Compiling GRDB SQLTableAlterationGenerator.swift
+[13/169] Compiling GRDB SQLTableGenerator.swift
+[14/169] Compiling GRDB TableAlias.swift
+[15/169] Compiling GRDB SQLInterpolation+QueryInterface.swift
+[16/169] Compiling GRDB ColumnDefinition.swift
+[17/169] Compiling GRDB Database+SchemaDefinition.swift
+[18/169] Compiling GRDB ForeignKeyDefinition.swift
+[19/169] Compiling GRDB IndexDefinition.swift
+[20/169] Compiling GRDB TableAlteration.swift
+[21/169] Compiling GRDB TableDefinition.swift
+[22/169] Compiling GRDB VirtualTableModule.swift
+[23/169] Compiling GRDB TableRecord+Association.swift
+[24/183] Compiling GRDB FTS4.swift
+[25/183] Compiling GRDB FTS5.swift
+[26/183] Compiling GRDB FTS5CustomTokenizer.swift
+[27/183] Compiling GRDB FTS5Pattern.swift
+[28/183] Compiling GRDB FTS5Tokenizer.swift
+[29/183] Compiling GRDB FTS5TokenizerDescriptor.swift
+[30/183] Compiling GRDB FTS5WrapperTokenizer.swift
+[31/183] Compiling GRDB Fixits.swift
+[32/183] Compiling GRDB JSONColumn.swift
+[33/183] Compiling GRDB SQLJSONExpressible.swift
+[34/183] Compiling GRDB SQLJSONFunctions.swift
+[35/183] Compiling GRDB DatabaseMigrator.swift
+[36/183] Compiling GRDB Migration.swift
+[37/183] Compiling GRDB FTS3+QueryInterface.swift
+[38/183] Compiling GRDB NSData.swift
+[39/183] Compiling GRDB NSNull.swift
+[40/183] Compiling GRDB NSNumber.swift
+[41/183] Compiling GRDB NSString.swift
+[42/183] Compiling GRDB SQLiteDateParser.swift
+[43/183] Compiling GRDB URL.swift
+[44/183] Compiling GRDB UUID.swift
+[45/183] Compiling GRDB DatabaseValueConvertible+Decodable.swift
+[46/183] Compiling GRDB DatabaseValueConvertible+Encodable.swift
+[47/183] Compiling GRDB DatabaseValueConvertible+RawRepresentable.swift
+[48/183] Compiling GRDB JSONRequiredEncoder.swift
+[49/183] Compiling GRDB Optional.swift
+[50/183] Compiling GRDB StandardLibrary.swift
+[51/183] Compiling GRDB TransactionClock.swift
+[52/183] Compiling GRDB TransactionObserver.swift
+[53/183] Compiling GRDB WALSnapshot.swift
+[54/183] Compiling GRDB WALSnapshotTransaction.swift
+[55/183] Compiling GRDB Database+Dump.swift
+[56/183] Compiling GRDB DatabaseReader+dump.swift
+[57/183] Compiling GRDB DumpFormat.swift
+[58/183] Compiling GRDB DebugDumpFormat.swift
+[59/183] Compiling GRDB JSONDumpFormat.swift
+[60/183] Compiling GRDB LineDumpFormat.swift
+[61/183] Compiling GRDB ListDumpFormat.swift
+[62/183] Compiling GRDB QuoteDumpFormat.swift
+[63/183] Compiling GRDB FTS3.swift
+[64/183] Compiling GRDB FTS3Pattern.swift
+[65/183] Compiling GRDB FTS3TokenizerDescriptor.swift
+[66/183] Emitting module GRDB
+[67/183] Compiling GRDB DatabaseRegion.swift
+[68/183] Compiling GRDB DatabaseRegionObservation.swift
+[69/183] Compiling GRDB DatabaseSchemaCache.swift
+[70/183] Compiling GRDB DatabaseSchemaSource.swift
+[71/183] Compiling GRDB DatabaseSnapshot.swift
+[72/183] Compiling GRDB DatabaseSnapshotPool.swift
+[73/183] Compiling GRDB DatabaseValue.swift
+[74/183] Compiling GRDB DatabaseValueConvertible.swift
+[75/183] Compiling GRDB DatabaseWriter.swift
+[76/183] Compiling GRDB DispatchQueueActor.swift
+[77/183] Compiling GRDB FetchRequest.swift
+[78/183] Compiling GRDB Row.swift
+[79/183] Compiling GRDB RowAdapter.swift
+[80/183] Compiling GRDB RowDecodingError.swift
+[81/183] Compiling GRDB SQL.swift
+[82/183] Compiling GRDB SQLInterpolation.swift
+[83/183] Compiling GRDB SQLRequest.swift
+[84/183] Compiling GRDB SchedulingWatchdog.swift
+[85/183] Compiling GRDB SerializedDatabase.swift
+[86/183] Compiling GRDB Statement.swift
+[87/183] Compiling GRDB StatementAuthorizer.swift
+[88/183] Compiling GRDB StatementColumnConvertible.swift
+[89/183] Compiling GRDB CGFloat.swift
+[90/183] Compiling GRDB Data.swift
+[91/183] Compiling GRDB DatabaseDateComponents.swift
+[92/183] Compiling GRDB DatabaseValueConvertible+ReferenceConvertible.swift
+[93/183] Compiling GRDB Date.swift
+[94/183] Compiling GRDB Decimal.swift
+[95/183] Compiling GRDB Refinable.swift
+[96/183] Compiling GRDB Utils.swift
+[97/183] Compiling GRDB DatabaseCancellable.swift
+[98/183] Compiling GRDB ValueConcurrentObserver.swift
+[99/183] Compiling GRDB ValueWriteOnlyObserver.swift
+[100/183] Compiling GRDB Fetch.swift
+[101/183] Compiling GRDB Map.swift
+[102/183] Compiling GRDB RemoveDuplicates.swift
+[103/183] Compiling GRDB Trace.swift
+[104/183] Compiling GRDB ValueReducer.swift
+[105/183] Compiling GRDB SharedValueObservation.swift
+[106/183] Compiling GRDB ValueObservation.swift
+[107/183] Compiling GRDB ValueObservationScheduler.swift
+[108/183] Compiling GRDB resource_bundle_accessor.swift
+[109/183] Compiling GRDB DatabasePromise.swift
+[110/183] Compiling GRDB SQLAssociation.swift
+[111/183] Compiling GRDB SQLCollection.swift
+[112/183] Compiling GRDB SQLExpression.swift
+[113/183] Compiling GRDB SQLForeignKeyRequest.swift
+[114/183] Compiling GRDB SQLFunctions.swift
+[115/183] Compiling GRDB SQLOperators.swift
+[116/183] Compiling GRDB SQLOrdering.swift
+[117/183] Compiling GRDB SQLRelation.swift
+[118/183] Compiling GRDB SQLSelection.swift
+[119/183] Compiling GRDB SQLSubquery.swift
+[120/183] Compiling GRDB Table.swift
+[121/183] Compiling GRDB SQLColumnGenerator.swift
+[122/183] Compiling GRDB SQLGenerationContext.swift
+[123/183] Compiling GRDB PersistableRecord+Save.swift
+[124/183] Compiling GRDB PersistableRecord+Upsert.swift
+[125/183] Compiling GRDB PersistableRecord.swift
+[126/183] Compiling GRDB Record.swift
+[127/183] Compiling GRDB TableRecord.swift
+[128/183] Compiling GRDB CaseInsensitiveIdentifier.swift
+[129/183] Compiling GRDB Inflections+English.swift
+[130/183] Compiling GRDB Inflections.swift
+[131/183] Compiling GRDB Mutex.swift
+[132/183] Compiling GRDB OnDemandFuture.swift
+[133/183] Compiling GRDB OrderedDictionary.swift
+[134/183] Compiling GRDB Pool.swift
+[135/183] Compiling GRDB ReadWriteLock.swift
+[136/183] Compiling GRDB ReceiveValuesOn.swift
+[137/183] Compiling GRDB FTS5+QueryInterface.swift
+[138/183] Compiling GRDB ForeignKey.swift
+[139/183] Compiling GRDB Association.swift
+[140/183] Compiling GRDB AssociationAggregate.swift
+[141/183] Compiling GRDB BelongsToAssociation.swift
+[142/183] Compiling GRDB HasManyAssociation.swift
+[143/183] Compiling GRDB HasManyThroughAssociation.swift
+[144/183] Compiling GRDB HasOneAssociation.swift
+[145/183] Compiling GRDB HasOneThroughAssociation.swift
+[146/183] Compiling GRDB JoinAssociation.swift
+[147/183] Compiling GRDB CommonTableExpression.swift
+[148/183] Compiling GRDB QueryInterfaceRequest.swift
+[149/183] Compiling GRDB RequestProtocols.swift
+[150/183] Compiling GRDB Column.swift
+[151/183] Compiling GRDB TableRecord+QueryInterfaceRequest.swift
+[152/183] Compiling GRDB EncodableRecord+Encodable.swift
+[153/183] Compiling GRDB EncodableRecord.swift
+[154/183] Compiling GRDB FetchableRecord+Decodable.swift
+[155/183] Compiling GRDB FetchableRecord+TableRecord.swift
+[156/183] Compiling GRDB FetchableRecord.swift
+[157/183] Compiling GRDB MutablePersistableRecord+DAO.swift
+[158/183] Compiling GRDB MutablePersistableRecord+Delete.swift
+[159/183] Compiling GRDB MutablePersistableRecord+Insert.swift
+[160/183] Compiling GRDB MutablePersistableRecord+Save.swift
+[161/183] Compiling GRDB MutablePersistableRecord+Update.swift
+[162/183] Compiling GRDB MutablePersistableRecord+Upsert.swift
+[163/183] Compiling GRDB MutablePersistableRecord.swift
+[164/183] Compiling GRDB PersistableRecord+Insert.swift
+[165/183] Compiling GRDB Configuration.swift
+[166/183] Compiling GRDB Cursor.swift
+[167/183] Compiling GRDB Database+SQLCipher.swift
+[168/183] Compiling GRDB Database+Schema.swift
+[169/183] Compiling GRDB Database+Statements.swift
+[170/183] Compiling GRDB Database.swift
+[171/183] Compiling GRDB DatabaseBackupProgress.swift
+[172/183] Compiling GRDB DatabaseCollation.swift
+[173/183] Compiling GRDB DatabaseError.swift
+[174/183] Compiling GRDB DatabaseFunction.swift
+[175/183] Compiling GRDB DatabasePool.swift
+[176/183] Compiling GRDB DatabasePublishers.swift
+[177/183] Compiling GRDB DatabaseQueue.swift
+[178/183] Compiling GRDB DatabaseReader.swift
+[179/217] Compiling Hana ApplicationCatalog.swift
+[180/217] Compiling Hana BarStyle.swift
+[181/217] Compiling Hana CaptureSession.swift
+[182/220] Compiling Hana CollectionSnapshotFixture.swift
+[183/220] Compiling Hana CollectionSnapshots.swift
+[184/220] Compiling Hana CollectionStore.swift
+[185/220] Compiling Hana CoverageValidation.swift
+[186/220] Compiling Hana Diagnostics.swift
+[187/220] Compiling Hana DisplayPlacement.swift
+[188/220] Compiling Hana CollectionLocation.swift
+[189/220] Compiling Hana CollectionRecovery.swift
+[190/220] Compiling Hana CollectionSchema.swift
+[191/220] Compiling Hana FocusedWindowGeometry.swift
+[192/220] Compiling Hana GlobalShortcut.swift
+[193/220] Compiling Hana HanaApp.swift
+[194/220] Compiling Hana PerformanceValidation.swift
+[195/220] Compiling Hana ResultIcons.swift
+[196/220] Compiling Hana Search.swift
+[197/220] Emitting module Hana
+[198/220] Compiling Hana CollectionExport.swift
+[199/220] Compiling Hana CollectionExportFixture.swift
+[200/220] Compiling Hana CollectionFixtureHarness.swift
+[201/220] Compiling Hana HanaColor.swift
+[202/220] Compiling Hana HanaFont.swift
+[203/220] Compiling Hana HanaRadius.swift
+[204/220] Compiling Hana MixedSearchValidation.swift
+[205/220] Compiling Hana ModeIcon.swift
+[206/220] Compiling Hana NoteScroller.swift
+[207/220] Compiling Hana SearchCorrectnessValidation.swift
+[208/220] Compiling Hana SearchName.swift
+[209/220] Compiling Hana SearchResultsView.swift
+[210/220] Compiling Hana HanaShadow.swift
+[211/220] Compiling Hana MacInteraction.swift
+[212/220] Compiling Hana MainWindowValidation.swift
+[213/220] Compiling Hana SegmentedControl.swift
+[214/220] Compiling Hana SpotlightSource.swift
+[215/220] Compiling Hana WorkingWindowController.swift
+[215/220] Write Objects.LinkFileList
+[216/220] Linking Hana
+[217/220] Applying Hana
+[219/253] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:10:21: error: cannot find 'AutomaticSwitchOptionsStore' in scope
+ 8 |         let defaults = try #require(UserDefaults(suiteName: name))
+ 9 |         defer { defaults.removePersistentDomain(forName: name) }
+10 |         let store = AutomaticSwitchOptionsStore(defaults: defaults)
+   |                     `- error: cannot find 'AutomaticSwitchOptionsStore' in scope
+11 |         #expect(store.read() == AutomaticSwitchOptions())
+12 |         #expect(!store.read().isEnabled)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:11:33: error: cannot find 'AutomaticSwitchOptions' in scope
+ 9 |         defer { defaults.removePersistentDomain(forName: name) }
+10 |         let store = AutomaticSwitchOptionsStore(defaults: defaults)
+11 |         #expect(store.read() == AutomaticSwitchOptions())
+   |                                 `- error: cannot find 'AutomaticSwitchOptions' in scope
+12 |         #expect(!store.read().isEnabled)
+13 |         var options = store.read()
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:16:17: error: cannot find 'AutomaticSwitchOptionsStore' in scope
+14 |         options.isEnabled = true
+15 |         store.write(options)
+16 |         #expect(AutomaticSwitchOptionsStore(defaults: defaults).read().isEnabled)
+   |                 `- error: cannot find 'AutomaticSwitchOptionsStore' in scope
+17 |     }
+18 | }
+[220/253] Compiling HanaTests CaptureSafetyNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:10:21: error: cannot find 'AutomaticSwitchOptionsStore' in scope
+ 8 |         let defaults = try #require(UserDefaults(suiteName: name))
+ 9 |         defer { defaults.removePersistentDomain(forName: name) }
+10 |         let store = AutomaticSwitchOptionsStore(defaults: defaults)
+   |                     `- error: cannot find 'AutomaticSwitchOptionsStore' in scope
+11 |         #expect(store.read() == AutomaticSwitchOptions())
+12 |         #expect(!store.read().isEnabled)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:11:33: error: cannot find 'AutomaticSwitchOptions' in scope
+ 9 |         defer { defaults.removePersistentDomain(forName: name) }
+10 |         let store = AutomaticSwitchOptionsStore(defaults: defaults)
+11 |         #expect(store.read() == AutomaticSwitchOptions())
+   |                                 `- error: cannot find 'AutomaticSwitchOptions' in scope
+12 |         #expect(!store.read().isEnabled)
+13 |         var options = store.read()
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:16:17: error: cannot find 'AutomaticSwitchOptionsStore' in scope
+14 |         options.isEnabled = true
+15 |         store.write(options)
+16 |         #expect(AutomaticSwitchOptionsStore(defaults: defaults).read().isEnabled)
+   |                 `- error: cannot find 'AutomaticSwitchOptionsStore' in scope
+17 |     }
+18 | }
+[221/253] Compiling HanaTests CaptureSafetyTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:10:21: error: cannot find 'AutomaticSwitchOptionsStore' in scope
+ 8 |         let defaults = try #require(UserDefaults(suiteName: name))
+ 9 |         defer { defaults.removePersistentDomain(forName: name) }
+10 |         let store = AutomaticSwitchOptionsStore(defaults: defaults)
+   |                     `- error: cannot find 'AutomaticSwitchOptionsStore' in scope
+11 |         #expect(store.read() == AutomaticSwitchOptions())
+12 |         #expect(!store.read().isEnabled)
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:11:33: error: cannot find 'AutomaticSwitchOptions' in scope
+ 9 |         defer { defaults.removePersistentDomain(forName: name) }
+10 |         let store = AutomaticSwitchOptionsStore(defaults: defaults)
+11 |         #expect(store.read() == AutomaticSwitchOptions())
+   |                                 `- error: cannot find 'AutomaticSwitchOptions' in scope
+12 |         #expect(!store.read().isEnabled)
+13 |         var options = store.read()
+
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/AutomaticSwitchDiagnosticsTests.swift:16:17: error: cannot find 'AutomaticSwitchOptionsStore' in scope
+14 |         options.isEnabled = true
+15 |         store.write(options)
+16 |         #expect(AutomaticSwitchOptionsStore(defaults: defaults).read().isEnabled)
+   |                 `- error: cannot find 'AutomaticSwitchOptionsStore' in scope
+17 |     }
+18 | }
+[222/255] Emitting module HanaTests
+[223/255] Compiling HanaTests SearchTypingGapTests.swift
+[224/255] Compiling HanaTests SpotlightStageTests.swift
+[225/255] Compiling HanaTests SuggestionInteractionTests.swift
+[226/255] Compiling HanaTests TaskSaveTests.swift
+[227/255] Compiling HanaTests TestClock.swift
+[228/255] Compiling HanaTests ModeIconTests.swift
+[229/255] Compiling HanaTests NativeEditingTests.swift
+[230/255] Compiling HanaTests NativeWindowSlot.swift
+[231/255] Compiling HanaTests SearchRankingTests.swift
+[232/255] Compiling HanaTests SearchResponsivenessTests.swift
+[233/255] Compiling HanaTests SearchTests.swift
+[234/255] Compiling HanaTests OrganizedCollectionFixture.swift
+[235/255] Compiling HanaTests ResultIconsTests.swift
+[236/255] Compiling HanaTests SearchExclusionTests.swift
+[237/255] Compiling HanaTests IndependentExportDecoder.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[238/255] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[239/255] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-111-automatic-switch-home/hana/Tests/HanaTests/MacInteractionTests.swift:423:20: warning: 'shouldFail' mutated after capture by sendable closure
+407 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+408 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+409 |         var shouldFail = true
+    |             `- note: variable defined here
+410 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+411 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+412 |             return .init(activate: { true })
+413 |         })
+    :
+421 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+422 |         #expect(interaction.currentInvocation == invocation)
+423 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+424 |         await interaction.requestSelectedOpen()?.value
+425 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[240/255] Compiling HanaTests NoteModeTests.swift
+[241/255] Compiling HanaTests NoteOrganizationTests.swift
+[242/255] Compiling HanaTests NoteSaveTests.swift
+[243/255] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[244/255] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[245/255] Compiling HanaTests CollectionSnapshotTests.swift
+[246/255] Compiling HanaTests CollectionStoreOpeningTests.swift
+[247/255] Compiling HanaTests CollectionStoreTests.swift
+[248/255] Compiling HanaTests DisplayPlacementTests.swift
+[249/255] Compiling HanaTests TaskLifecycleTests.swift
+[250/255] Compiling HanaTests TaskOrderingTests.swift
+[251/255] Compiling HanaTests CaptureSessionTests.swift
+[252/255] Compiling HanaTests CollectionExportHarnessTests.swift
+[253/255] Compiling HanaTests CollectionExportTests.swift
+error: fatalError

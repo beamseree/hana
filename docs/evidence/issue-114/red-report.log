@@ -1,0 +1,59 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--112E4EF74740DA65.txt
+[3/7] Emitting module HanaTests
+[4/7] Compiling HanaTests ClassifierAdapterTests.swift
+macro expansion @Test:13:26: error: expression is 'async' but is not marked with 'await'
+`- <worktree>/Tests/HanaTests/ClassifierAdapterTests.swift:62:6: note: expanded code originates here
+ 51 |         #expect(verdict.label == .unsure && verdict.probability == 0.9)
+ 52 |     }
+ 53 |     @Test(arguments: ["{}", "not json", taskResponse.replacingOccurrences(of: "0.9", with: "1.9"),
+    |     |- note: in expansion of macro 'Test' on instance method 'jevMalformedResponsesFail' here
+    |     |- note: in expansion of macro 'Test' on instance method 'jevMalformedResponsesFail' here
+    |     |- note: in expansion of macro 'Test' on instance method 'jevMalformedResponsesFail' here
+    |     |- note: in expansion of macro 'Test' on instance method 'jevMalformedResponsesFail' here
+    |     |- note: in expansion of macro 'Test' on instance method 'jevMalformedResponsesFail' here
+    |     `- note: in expansion of macro 'Test' on instance method 'jevMalformedResponsesFail' here
+ 54 |         taskResponse.replacingOccurrences(of: #""Task":0.9"#, with: #""Task":0.8"#),
+ 55 |         taskResponse.replacingOccurrences(of: #""choice":"Task""#, with: #""choice":"Search""#),
+    :
+ 60 |         do { _ = try await adapter.classify("private input"); Issue.record("Expected malformed failure") }
+ 61 |         catch { #expect((error as? ClassifierFailure)?.kind == .malformedResponse) }
+ 62 |     }
+    +--- macro expansion @Test -----------------------------------------
+    |11 |   in: ClassifierAdapterTests.self,
+    |12 |   xcTestCompatibleSelector: nil,
+    |13 |   traits: [],arguments: {["{}", "not json", taskResponse.replacingOccurrences(of: "0.9", with: "1.9"),
+    |   |                          |                  `- note: property access is 'async'
+    |   |                          `- error: expression is 'async' but is not marked with 'await'
+    |14 |         taskResponse.replacingOccurrences(of: #""Task":0.9"#, with: #""Task":0.8"#),
+    |   |         `- note: property access is 'async'
+    |15 |         taskResponse.replacingOccurrences(of: #""choice":"Task""#, with: #""choice":"Search""#),
+    |   |         `- note: property access is 'async'
+    |16 |         taskResponse.replacingOccurrences(of: "jev-1.13.0", with: "jev-latest"),
+    |   |         `- note: property access is 'async'
+    |17 |         taskResponse.replacingOccurrences(of: #""Other":0.03"#, with: #""Unknown":0.03"#)]},sourceLocation: Testing.SourceLocation(__uncheckedFileID: "HanaTests/ClassifierAdapterTests.swift", filePath: "<worktree>/Tests/HanaTests/ClassifierAdapterTests.swift", line: 53, column: 6),
+    |   |         `- note: property access is 'async'
+    |18 |   parameters: [(firstName: "_",secondName: "body",type: (String).self)],
+    |19 |   testFunction: $s9HanaTests017ClassifierAdapterB0V25jevMalformedResponsesFail4TestfMp_17Z70338af7f0432a54fMu_
+    +-------------------------------------------------------------------
+ 63 |     @Test func jevTimeoutAndCancellationFailWithoutVerdict() async {
+ 64 |         let timedOut = JevClassifier(key: "secret", transport: { _ in throw URLError(.timedOut) })
+[5/7] Compiling HanaTests TrickyInputCheckTests.swift
+<worktree>/Tests/HanaTests/TrickyInputCheckTests.swift:8:32: error: cannot find 'TrickyInputCheck' in scope
+ 6 | struct TrickyInputCheckTests {
+ 7 |     @Test func fakeClassifierReportContainsFixedInputsGateLabelScoreAndLatency() async throws {
+ 8 |         let report = try await TrickyInputCheck.run(classifier: ReportClassifier(), options: .init())
+   |                                `- error: cannot find 'TrickyInputCheck' in scope
+ 9 |         #expect(report.rows.count == 30)
+10 |         #expect(report.rows.first?.input == "term")
+
+<worktree>/Tests/HanaTests/TrickyInputCheckTests.swift:8:95: error: cannot infer contextual base in reference to member 'init'
+ 6 | struct TrickyInputCheckTests {
+ 7 |     @Test func fakeClassifierReportContainsFixedInputsGateLabelScoreAndLatency() async throws {
+ 8 |         let report = try await TrickyInputCheck.run(classifier: ReportClassifier(), options: .init())
+   |                                                                                               `- error: cannot infer contextual base in reference to member 'init'
+ 9 |         #expect(report.rows.count == 30)
+10 |         #expect(report.rows.first?.input == "term")
+error: fatalError

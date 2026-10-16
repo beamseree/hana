@@ -1,0 +1,29 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests AutomaticSwitchTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.88s)
+Test Suite 'Selected tests' started at 2026-10-15 17:59:31.188.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 17:59:31.189.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 17:59:31.189.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 17:59:31.189.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() started.
+􁁛  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() passed after 0.001 seconds.
+􀟈  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() started.
+􁁛  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() passed after 0.001 seconds.
+􀟈  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() started.
+􀢄  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() recorded an issue at AutomaticSwitchTests.swift:40:9: Expectation failed: (modes(effects) → [Hana.CaptureSession.Mode.task]).isEmpty → false
+􀢄  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() recorded an issue at AutomaticSwitchTests.swift:41:9: Expectation failed: (outcomes(effects) → [Hana.AutomaticSwitchDiagnostics.Outcome.switched]) == ([.timeout] → [Hana.AutomaticSwitchDiagnostics.Outcome.timeout])
+􀅺  inserted [Hana.AutomaticSwitchDiagnostics.Outcome.switched], removed [Hana.AutomaticSwitchDiagnostics.Outcome.timeout]
+􀢄  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() failed after 0.001 seconds with 2 issues.
+􀢄  Suite AutomaticSwitchTests failed after 0.001 seconds with 2 issues.
+􀢄  Test run with 3 tests in 1 suite failed after 0.001 seconds with 2 issues.

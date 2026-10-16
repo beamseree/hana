@@ -1,0 +1,15 @@
+{
+  "jevThreshold": 0.7,
+  "navigationSuspends": true,
+  "isEnabled": true,
+  "reversalSuspends": true,
+  "firing": "pipelinedJev",
+  "foundationModelsUnsure": true,
+  "classifier": "jev",
+  "enterBehavior": "saves",
+  "wait": "none",
+  "lateStrongMatch": "stay",
+  "agreeingVerdicts": 1,
+  "escapeBehavior": "returnsToSearch",
+  "afterSwitch": "stay"
+}
