@@ -1,18 +1,20 @@
 import SwiftUI
 
-/// A row in Search's list: an actual match, or a capture suggestion. Suggestions
-/// always follow every match.
+/// An answer comes first; capture suggestions follow matches when no answer shows.
 enum SearchRow: Identifiable, Equatable {
+    case answer(Answer)
     case result(SearchResult)
     case suggestion(CaptureSession.Suggestion)
 
     enum ID: Hashable {
+        case answer
         case result(SearchResult.ID)
         case suggestion(CaptureSession.Suggestion)
     }
 
     var id: ID {
         switch self {
+        case .answer: .answer
         case .result(let result): .result(result.id)
         case .suggestion(let suggestion): .suggestion(suggestion)
         }
@@ -122,6 +124,7 @@ struct SearchResultsView: View {
 
     private func accessibilityLabel(_ row: SearchRow) -> String {
         switch row {
+        case .answer(let answer): "\(answer.title), Calculator, \(answer.subtitle)"
         case .result(let result): "\(result.name), \(result.typeLabel), \(result.subtitle)"
         case .suggestion(let suggestion): "\(suggestion.title), \(query)"
         }
@@ -129,6 +132,12 @@ struct SearchResultsView: View {
 
     @ViewBuilder private func label(_ row: SearchRow) -> some View {
         switch row {
+        case .answer(let answer):
+            self.row(id: row.id, name: answer.title, subtitle: answer.subtitle, typeLabel: "Calculator") {
+                Image(systemName: "plus.forwardslash.minus")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color(nsColor: HanaColor.Icon.secondary))
+            }
         case .result(let result):
             self.row(id: row.id, name: result.name, subtitle: result.subtitle, typeLabel: result.typeLabel) { icon(result) }
         case .suggestion(let suggestion):

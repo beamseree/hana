@@ -20,6 +20,12 @@ _Avoid_: Auto-mode, smart mode.
 **Strong match**:
 A search result whose name equals or begins with the Search text, from an app, an active note, an unfinished task, or a file named exactly that text; while one exists, no automatic switch happens.
 
+**Calculation**:
+Search text made from the supported numbers, operators, functions and constants, with an operation, function or implicit multiplication; it can be incomplete or invalid and still be a calculation.
+
+**Answer**:
+The first Search row for a calculation, showing its value or explaining why a value is not available. Enter copies a value and returns to the invocation origin; an answer without a value dismisses without copying.
+
 **Note**:
 A separate saved piece of writing within the app's collection.
 
