@@ -768,6 +768,7 @@ struct AutomaticSwitch {
         }
         if case .blocked(let reason) = gate.decision {
             switch reason {
+            case .calculation: row.gateReason = .calculation
             case .oneWord: row.gateReason = .oneWord
             case .collectionUnavailable: row.gateReason = .collectionUnavailable
             case .strongMatch(let kind): row.gateReason = .strongMatch; row.matchedKind = diagnosticKind(kind)
@@ -808,6 +809,7 @@ struct AutomaticSwitch {
         else if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { state = "idle" }
         else if case .blocked(let reason) = gate.decision {
             state = switch reason {
+            case .calculation: "blocked: Calculation"
             case .oneWord: "not sent: one word"
             case .collectionUnavailable: "blocked: collection unavailable"
             case .strongMatch(let kind): "blocked: strong \(diagnosticKind(kind).rawValue) match"
@@ -881,6 +883,7 @@ struct AutomaticSwitch {
         case .blocked:
             if case .blocked(let reason) = gate.decision {
                 switch reason {
+                case .calculation: "blocked: Calculation"
                 case .oneWord: "blocked: one word"
                 case .collectionUnavailable: "blocked: collection unavailable"
                 case .strongMatch(let kind): "blocked: strong \(diagnosticKind(kind).rawValue) match"
