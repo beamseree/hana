@@ -1,0 +1,28 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/7] Emitting module Hana
+[4/7] Compiling Hana MacInteraction.swift
+[4/9] Write Objects.LinkFileList
+[5/9] Linking Hana
+[6/9] Applying Hana
+[8/10] Emitting module HanaTests
+[8/10] Write Objects.LinkFileList
+[9/10] Linking HanaPackageTests
+Build complete! (5.56s)
+Test Suite 'Selected tests' started at 2026-10-15 18:39:21.469.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 18:39:21.470.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 18:39:21.470.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 18:39:21.470.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchInteractionTests started.
+􀟈  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀟈  Test case passing 1 argument saved → false to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀟈  Test case passing 1 argument saved → true to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􁁛  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) with 2 test cases passed after 0.682 seconds.
+􁁛  Suite AutomaticSwitchInteractionTests passed after 0.682 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 0.683 seconds.

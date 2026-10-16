@@ -1,0 +1,26 @@
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--112E4EF74740DA65.txt
+[3/8] Compiling HanaTests DisplayPlacementTests.swift
+[4/8] Compiling HanaTests CollectionStoreTests.swift
+[5/8] Compiling HanaTests CollectionTitleSourceTests.swift
+[6/8] Emitting module HanaTests
+[6/8] Write Objects.LinkFileList
+[7/8] Linking HanaPackageTests
+Build complete! (2.81s)
+Test Suite 'Selected tests' started at 2026-10-15 17:45:34.345.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 17:45:34.346.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 17:45:34.347.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 17:45:34.347.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CollectionTitleSourceTests started.
+􀟈  Test missingStoreIsUnavailableImmediately() started.
+􀟈  Test committedTitlesBlockAndCompletedOrArchivedItemsStopBlocking() started.
+􁁛  Test missingStoreIsUnavailableImmediately() passed after 0.003 seconds.
+􁁛  Test committedTitlesBlockAndCompletedOrArchivedItemsStopBlocking() passed after 0.050 seconds.
+􁁛  Suite CollectionTitleSourceTests passed after 0.050 seconds.
+􁁛  Test run with 2 tests in 1 suite passed after 0.050 seconds.

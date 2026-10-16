@@ -1,0 +1,190 @@
+{
+  "capturedAt": "2026-10-15T23:05:53.283135+07:00",
+  "installedExecutableSHA256": "eddc754a8e33ddcb097d65667e22005cf8e37152028f74cc3956d8deba4593c6",
+  "resetFound": false,
+  "limitations": [
+    "Mixed existing use since launch history; not a controlled same-phrase comparison.",
+    "Old pipeline records may include cancelled/stale latency samples.",
+    "Requests per session unavailable unless autoswitch.session existed in that candidate.",
+    "Counts and recorded latency do not establish perceived timing or classifier quality."
+  ],
+  "combinations": [
+    {
+      "options": {
+        "afterSwitch": "stay",
+        "agreeingVerdicts": 1,
+        "classifier": "foundationModels",
+        "enterBehavior": "ignoreFor300Milliseconds",
+        "escapeBehavior": "returnsToSearch",
+        "firing": "debounced",
+        "foundationModelsUnsure": true,
+        "isEnabled": true,
+        "jevThreshold": 0.7,
+        "lateStrongMatch": "stay",
+        "navigationSuspends": true,
+        "reversalSuspends": true,
+        "wait": "appsAndCollection"
+      },
+      "events": {
+        "autoswitch.verdict": 43,
+        "autoswitch.switched": 2,
+        "autoswitch.reversed": 1,
+        "autoswitch.ended": 2
+      },
+      "verdictOutcomes": {
+        "blocked": 6,
+        "stale": 6,
+        "switched": 2,
+        "suspended": 29
+      },
+      "wrongSwitches": 1,
+      "latencySamples": 9,
+      "latencyMedianMilliseconds": 205.172584,
+      "latencyMaximumMilliseconds": 392.731584,
+      "requestsPerSession": null
+    },
+    {
+      "options": {
+        "afterSwitch": "stay",
+        "agreeingVerdicts": 1,
+        "classifier": "jev",
+        "enterBehavior": "ignoreFor300Milliseconds",
+        "escapeBehavior": "returnsToSearch",
+        "firing": "everyKeystroke",
+        "foundationModelsUnsure": true,
+        "isEnabled": true,
+        "jevThreshold": 0.7,
+        "lateStrongMatch": "stay",
+        "navigationSuspends": true,
+        "reversalSuspends": true,
+        "wait": "appsAndCollection"
+      },
+      "events": {
+        "autoswitch.verdict": 21,
+        "autoswitch.switched": 1,
+        "autoswitch.ended": 1
+      },
+      "verdictOutcomes": {
+        "blocked": 5,
+        "stale": 15,
+        "switched": 1
+      },
+      "wrongSwitches": 0,
+      "latencySamples": 16,
+      "latencyMedianMilliseconds": 109.2184165,
+      "latencyMaximumMilliseconds": 306.764542,
+      "requestsPerSession": null
+    },
+    {
+      "options": {
+        "afterSwitch": "stay",
+        "agreeingVerdicts": 1,
+        "classifier": "jev",
+        "enterBehavior": "ignoreFor300Milliseconds",
+        "escapeBehavior": "returnsToSearch",
+        "firing": "everyKeystroke",
+        "foundationModelsUnsure": true,
+        "isEnabled": true,
+        "jevThreshold": 0.7,
+        "lateStrongMatch": "stay",
+        "navigationSuspends": true,
+        "reversalSuspends": true,
+        "wait": "none"
+      },
+      "events": {
+        "autoswitch.verdict": 21,
+        "autoswitch.switched": 2,
+        "autoswitch.late-strong-match": 3,
+        "autoswitch.ended": 2,
+        "autoswitch.reversed": 1
+      },
+      "verdictOutcomes": {
+        "blocked": 11,
+        "stale": 7,
+        "switched": 2,
+        "error": 1
+      },
+      "wrongSwitches": 1,
+      "latencySamples": 10,
+      "latencyMedianMilliseconds": 136.9343125,
+      "latencyMaximumMilliseconds": 293.603375,
+      "requestsPerSession": null
+    },
+    {
+      "options": {
+        "afterSwitch": "keepClassifying",
+        "agreeingVerdicts": 1,
+        "classifier": "jev",
+        "enterBehavior": "ignoreFor300Milliseconds",
+        "escapeBehavior": "returnsToSearch",
+        "firing": "everyKeystroke",
+        "foundationModelsUnsure": true,
+        "isEnabled": true,
+        "jevThreshold": 0.7,
+        "lateStrongMatch": "stay",
+        "navigationSuspends": true,
+        "reversalSuspends": true,
+        "wait": "none"
+      },
+      "events": {
+        "autoswitch.verdict": 200,
+        "autoswitch.switched": 7,
+        "autoswitch.late-strong-match": 4,
+        "autoswitch.reversed": 5,
+        "autoswitch.ended": 6
+      },
+      "verdictOutcomes": {
+        "blocked": 54,
+        "stale": 112,
+        "switched": 7,
+        "below-threshold": 5,
+        "suspended": 20,
+        "unsure": 2
+      },
+      "wrongSwitches": 5,
+      "latencySamples": 127,
+      "latencyMedianMilliseconds": 122.8555,
+      "latencyMaximumMilliseconds": 342.683833,
+      "requestsPerSession": null
+    },
+    {
+      "options": {
+        "afterSwitch": "stay",
+        "agreeingVerdicts": 1,
+        "classifier": "jev",
+        "enterBehavior": "saves",
+        "escapeBehavior": "returnsToSearch",
+        "firing": "pipelinedJev",
+        "foundationModelsUnsure": true,
+        "isEnabled": true,
+        "jevThreshold": 0.7,
+        "lateStrongMatch": "stay",
+        "navigationSuspends": true,
+        "reversalSuspends": true,
+        "wait": "none"
+      },
+      "events": {
+        "autoswitch.verdict": 561,
+        "autoswitch.switched": 14,
+        "autoswitch.ended": 14,
+        "autoswitch.late-strong-match": 1,
+        "autoswitch.reversed": 2
+      },
+      "verdictOutcomes": {
+        "blocked": 275,
+        "below-threshold": 54,
+        "switched": 14,
+        "stale": 42,
+        "unsure": 171,
+        "error": 2,
+        "timeout": 3
+      },
+      "wrongSwitches": 2,
+      "latencySamples": 285,
+      "latencyMedianMilliseconds": 262.600333,
+      "latencyMaximumMilliseconds": 1517.3544160000001,
+      "requestsPerSession": null
+    }
+  ],
+  "recordedSourceForMatchingExecutable": "de98347dcf9e7fd270598bc54f0f56bd47684dbe"
+}

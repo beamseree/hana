@@ -1,0 +1,21 @@
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.13s)
+Test Suite 'Selected tests' started at 2026-10-15 22:22:17.629.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 22:22:17.630.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 22:22:17.630.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 22:22:17.630.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite JevWordPacedDeletionNativeTests started.
+􀟈  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() started.
+􀢄  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+􀢄  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() recorded an issue at JevWordPacedDeletionNativeTests.swift:91:9: Expectation failed: (interaction.mode == .note → false) && (editor.string == expected → <not evaluated>)
+􀢄  Test enterImmediatelyAfterDeletingUsesSearchAndALateAnswerCannotStealIt() failed after 3.498 seconds with 2 issues.
+􀢄  Suite JevWordPacedDeletionNativeTests failed after 3.499 seconds with 2 issues.
+􀄵  /// Real editor commands with a fixture Store and controlled Jev. These tests
+􀄵  /// establish command delivery and UTF-16 selection, not physical focus.
+􀢄  Test run with 1 test in 1 suite failed after 3.499 seconds with 2 issues.

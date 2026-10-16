@@ -1,0 +1,30 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Compiling HanaTests AutomaticSwitchTests.swift
+[4/5] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (3.00s)
+Test Suite 'Selected tests' started at 2026-10-15 18:33:25.085.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 18:33:25.086.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 18:33:25.086.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 18:33:25.086.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .escape to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀢄  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) recorded an issue with 1 argument method → .escape at AutomaticSwitchTests.swift:41:9: Expectation failed: (h.policy.handle(.reversed(method)) → [Hana.AutomaticSwitch.Effect.returnToSearch, Hana.AutomaticSwitch.Effect.record(Hana.AutomaticSwitchDiagnostics.Event.reversed(method: Hana.AutomaticSwitchDiagnostics.ReversalMethod.escape, millisecondsSinceSwitch: 0.0)), Hana.AutomaticSwitch.Effect.record(Hana.AutomaticSwitchDiagnostics.Event.ended(Hana.AutomaticSwitchDiagnostics.End.reversed))]).isEmpty → false
+􀢄  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) recorded an issue with 1 argument method → .escape at AutomaticSwitchTests.swift:42:9: Expectation failed: (h.policy → AutomaticSwitch(options: Hana.AutomaticSwitchOptions(isEnabled: true, classifier: Hana.AutomaticSwitchOptions.Classifier.foundationModels, firing: Hana.AutomaticSwitchOptions.Firing.everyKeystroke, jevThreshold: Hana.AutomaticSwitchOptions.Threshold.p70, foundationModelsUnsure: true, agreeingVerdicts: Hana.AutomaticSwitchOptions.Agreement.one, afterSwitch: Hana.AutomaticSwitchOptions.AfterSwitch.stay, navigationSuspends: true, enterBehavior: Hana.AutomaticSwitchOptions.EnterBehavior.ignoreFor300Milliseconds, escapeBehavior: Hana.AutomaticSwitchOptions.EscapeBehavior.returnsToSearch, reversalSuspends: true, wait: Hana.AutomaticSwitchOptions.Wait.appsAndCollection, lateStrongMatch: Hana.AutomaticSwitchOptions.LateStrongMatch.stay), now: (Function), active: true, text: "call mom", composing: false, eligible: false, suspended: true, mode: Hana.CaptureSession.Mode.search, gate: Hana.StrongMatchGate.Evaluation(decision: Hana.StrongMatchGate.Decision.allowed, settled: true, allSourcesSettled: true), request: nil, due: nil, changedAt: 0.0 seconds, candidate: nil, agreementLabel: nil, agreements: 0, switchedAt: nil, hadSwitch: true, actedOnText: Optional("call mom"), ended: true, lateKind: nil, lastVerdict: Hana.AutomaticSwitchDiagnostics.Label.note)).lastModeChangeWasAutomatic → false
+􀢄  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) recorded an issue with 1 argument method → .escape at AutomaticSwitchTests.swift:44:9: Expectation failed: finished.contains { if case .record(.ended(.saved)) = $0 { true } else { false } }
+􀟈  Test case passing 1 argument method → .backspace to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀢄  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) recorded an issue with 1 argument method → .backspace at AutomaticSwitchTests.swift:41:9: Expectation failed: (h.policy.handle(.reversed(method)) → [Hana.AutomaticSwitch.Effect.returnToSearch, Hana.AutomaticSwitch.Effect.record(Hana.AutomaticSwitchDiagnostics.Event.reversed(method: Hana.AutomaticSwitchDiagnostics.ReversalMethod.backspace, millisecondsSinceSwitch: 0.0)), Hana.AutomaticSwitch.Effect.record(Hana.AutomaticSwitchDiagnostics.Event.ended(Hana.AutomaticSwitchDiagnostics.End.reversed))]).isEmpty → false
+􀢄  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) recorded an issue with 1 argument method → .backspace at AutomaticSwitchTests.swift:42:9: Expectation failed: (h.policy → AutomaticSwitch(options: Hana.AutomaticSwitchOptions(isEnabled: true, classifier: Hana.AutomaticSwitchOptions.Classifier.foundationModels, firing: Hana.AutomaticSwitchOptions.Firing.everyKeystroke, jevThreshold: Hana.AutomaticSwitchOptions.Threshold.p70, foundationModelsUnsure: true, agreeingVerdicts: Hana.AutomaticSwitchOptions.Agreement.one, afterSwitch: Hana.AutomaticSwitchOptions.AfterSwitch.stay, navigationSuspends: true, enterBehavior: Hana.AutomaticSwitchOptions.EnterBehavior.ignoreFor300Milliseconds, escapeBehavior: Hana.AutomaticSwitchOptions.EscapeBehavior.returnsToSearch, reversalSuspends: true, wait: Hana.AutomaticSwitchOptions.Wait.appsAndCollection, lateStrongMatch: Hana.AutomaticSwitchOptions.LateStrongMatch.stay), now: (Function), active: true, text: "call mom", composing: false, eligible: false, suspended: true, mode: Hana.CaptureSession.Mode.search, gate: Hana.StrongMatchGate.Evaluation(decision: Hana.StrongMatchGate.Decision.allowed, settled: true, allSourcesSettled: true), request: nil, due: nil, changedAt: 0.0 seconds, candidate: nil, agreementLabel: nil, agreements: 0, switchedAt: nil, hadSwitch: true, actedOnText: Optional("call mom"), ended: true, lateKind: nil, lastVerdict: Hana.AutomaticSwitchDiagnostics.Label.note)).lastModeChangeWasAutomatic → false
+􀢄  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) recorded an issue with 1 argument method → .backspace at AutomaticSwitchTests.swift:44:9: Expectation failed: finished.contains { if case .record(.ended(.saved)) = $0 { true } else { false } }
+􀢄  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) with 2 test cases failed after 0.003 seconds with 6 issues.
+􀢄  Suite AutomaticSwitchTests failed after 0.003 seconds with 6 issues.
+􀢄  Test run with 1 test in 1 suite failed after 0.003 seconds with 6 issues.

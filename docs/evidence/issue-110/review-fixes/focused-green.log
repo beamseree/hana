@@ -1,0 +1,167 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/7] Emitting module Hana
+[4/7] Compiling Hana CollectionTitleSource.swift
+[5/14] Compiling Hana PerformanceValidation.swift
+[6/14] Compiling Hana SearchCorrectnessValidation.swift
+[7/14] Compiling Hana MainWindowValidation.swift
+[8/14] Compiling Hana MixedSearchValidation.swift
+[9/14] Compiling Hana CoverageValidation.swift
+[10/14] Compiling Hana HanaApp.swift
+[11/14] Compiling Hana MacInteraction.swift
+[11/16] Write Objects.LinkFileList
+[12/16] Linking Hana
+[13/16] Applying Hana
+[15/18] Compiling HanaTests CollectionTitleSourceTests.swift
+[16/18] Emitting module HanaTests
+[16/18] Write Objects.LinkFileList
+[17/18] Linking HanaPackageTests
+Build complete! (6.32s)
+Test Suite 'Selected tests' started at 2026-10-15 18:36:31.642.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 18:36:31.643.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 18:36:31.643.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 18:36:31.643.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchDiagnosticsTests started.
+􀟈  Test optionsDefaultOffAndPersistAcrossStoreInstances() started.
+􁁛  Test optionsDefaultOffAndPersistAcrossStoreInstances() passed after 0.004 seconds.
+􀟈  Test disabledLoggingCreatesNothingAndEnabledScriptNeverRecordsInput() started.
+􁁛  Test disabledLoggingCreatesNothingAndEnabledScriptNeverRecordsInput() passed after 0.002 seconds.
+􀟈  Test countsAndPerClassifierLatenciesRebuildFromLogAndResetWithoutDeletingHistory() started.
+􁁛  Test countsAndPerClassifierLatenciesRebuildFromLogAndResetWithoutDeletingHistory() passed after 0.004 seconds.
+􁁛  Suite AutomaticSwitchDiagnosticsTests passed after 0.011 seconds.
+􀟈  Suite AutomaticSwitchTests started.
+􀟈  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() started.
+􁁛  Test debounceClassifiesTheUnchangedBufferAfter150Milliseconds() passed after 0.001 seconds.
+􀟈  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() started.
+􁁛  Test lateStrongMatchWaitsUntilCompositionEndsBeforeRecordingAReturn() passed after 0.001 seconds.
+􀟈  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .escape to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􀟈  Test case passing 1 argument method → .backspace to ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) started.
+􁁛  Test ineligibleAutomaticCaptureCannotReverseOrCountAsWrong(method:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() started.
+􁁛  Test responseAtTheTimeoutCannotSwitchBeforeTheNextTick() passed after 0.001 seconds.
+􀟈  Test firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .debounced to firingStrategiesRespectTheirDelay(firing:) started.
+􀟈  Test case passing 1 argument firing → .onPause to firingStrategiesRespectTheirDelay(firing:) started.
+􁁛  Test firingStrategiesRespectTheirDelay(firing:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() started.
+􁁛  Test changedBufferCancelsAndMakesTheEarlierVerdictStale() passed after 0.001 seconds.
+􀟈  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() started.
+􁁛  Test tickAbandonsARequestAtOnePointFiveSecondsAndErrorsKeepSearch() passed after 0.001 seconds.
+􀟈  Test jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p50 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p60 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p70 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p80 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p90 to jevNeedsTheSelectedThreshold(threshold:) started.
+􀟈  Test case passing 1 argument threshold → .p95 to jevNeedsTheSelectedThreshold(threshold:) started.
+􁁛  Test jevNeedsTheSelectedThreshold(threshold:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() started.
+􁁛  Test unsureAndMissingProbabilityNeverSwitchAndAgreementRequiresTwoVerdicts() passed after 0.001 seconds.
+􀟈  Test afterSwitchStaysOrKeepsClassifying(option:) started.
+􀟈  Test case passing 1 argument option → .stay to afterSwitchStaysOrKeepsClassifying(option:) started.
+􀟈  Test case passing 1 argument option → .keepClassifying to afterSwitchStaysOrKeepsClassifying(option:) started.
+􁁛  Test afterSwitchStaysOrKeepsClassifying(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → true to navigationSuspensionIsAnOption(suspends:) started.
+􀟈  Test case passing 1 argument suspends → false to navigationSuspensionIsAnOption(suspends:) started.
+􁁛  Test navigationSuspensionIsAnOption(suspends:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → true, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .escape to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􀟈  Test case passing 2 arguments suspends → false, method → .backspace to reversalKeepsSearchAndOptionallySuspends(suspends:method:) started.
+􁁛  Test reversalKeepsSearchAndOptionallySuspends(suspends:method:) with 4 test cases passed after 0.001 seconds.
+􀟈  Test enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .saves to enterGraceEndsAt300Milliseconds(option:) started.
+􀟈  Test case passing 1 argument option → .ignoreFor300Milliseconds to enterGraceEndsAt300Milliseconds(option:) started.
+􁁛  Test enterGraceEndsAt300Milliseconds(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .allSources to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .appsAndCollection to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􀟈  Test case passing 1 argument wait → .none to waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) started.
+􁁛  Test waitsForTheChosenSourcesAndAllSourcesHasAHardCap(wait:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .returnToSearch to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􀟈  Test case passing 1 argument option → .stay to lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) started.
+􁁛  Test lateMatchStaysOrReturnsAndRecordsExactlyOneOutcome(option:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() started.
+􁁛  Test compositionAndCurrentGateBlockAndTaskRefusesMultiline() passed after 0.001 seconds.
+􀟈  Test disabledAndIneligibleSessionsNeverSwitch() started.
+􁁛  Test disabledAndIneligibleSessionsNeverSwitch() passed after 0.001 seconds.
+􀟈  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() started.
+􁁛  Test collectionBecomingAvailableCanClassifyWithoutAnotherKeystroke() passed after 0.001 seconds.
+􀟈  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() started.
+􁁛  Test changingOnlyUnicodeNormalizationStillCancelsTheOldRequest() passed after 0.001 seconds.
+􀟈  Test escapeDismissOptionDoesNotReverseAndReinvocationClearsSuspension() started.
+􁁛  Test escapeDismissOptionDoesNotReverseAndReinvocationClearsSuspension() passed after 0.001 seconds.
+􀟈  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() started.
+􁁛  Test recordedPolicySessionHasNoInputAndGateOnlyEventsDoNotAddLatencySamples() passed after 0.001 seconds.
+􀟈  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → false to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􀟈  Test case passing 1 argument lateVerdict → true to timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) started.
+􁁛  Test timeoutAndStaleTerminalCallbackContributeOneLatencySample(lateVerdict:) with 2 test cases passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchTests passed after 0.007 seconds.
+􀟈  Suite CollectionTitleSourceTests started.
+􀟈  Test committedTitlesBlockAndCompletedOrArchivedItemsStopBlocking() started.
+􁁛  Test committedTitlesBlockAndCompletedOrArchivedItemsStopBlocking() passed after 0.050 seconds.
+􀟈  Test rapidCommittedEditsPublishLatestPreparedNamesBeforeStoreClosure() started.
+􁁛  Test rapidCommittedEditsPublishLatestPreparedNamesBeforeStoreClosure() passed after 0.035 seconds.
+􀟈  Test missingStoreIsUnavailableImmediately() started.
+􁁛  Test missingStoreIsUnavailableImmediately() passed after 0.001 seconds.
+􁁛  Suite CollectionTitleSourceTests passed after 0.085 seconds.
+􀟈  Suite StrongMatchGateTests started.
+􀟈  Test onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Visual Studio", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "visual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Studio ", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "isual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget plan", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "plan ", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "udget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Call mom", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Call m", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "mom ", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "all m", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget.xlsx ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget p", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "plan ", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "udget p", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "xlsx ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􁁛  Test onlyStrongNameTiersBlock(_:) with 18 test cases passed after 0.004 seconds.
+􀟈  Test rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "remind ", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "  remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "	 remind	", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "call mom", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "
+", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􁁛  Test rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test unavailableCollectionAlwaysBlocks(_:) started.
+􀟈  Test case passing 1 argument buffer → "remind" to unavailableCollectionAlwaysBlocks(_:) started.
+􀟈  Test case passing 1 argument buffer → "remind " to unavailableCollectionAlwaysBlocks(_:) started.
+􀟈  Test case passing 1 argument buffer → "Visual Studio" to unavailableCollectionAlwaysBlocks(_:) started.
+􁁛  Test unavailableCollectionAlwaysBlocks(_:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .loading, titles → .ready, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .partial, titles → .ready, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .loading, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .ready, files → .loading, settled → true, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .ready, files → .partial, settled → true, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .ready, files → .ready, settled → true, allSettled → true to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .failed, titles → .ready, files → .failed, settled → true, allSettled → true to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􁁛  Test sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) with 7 test cases passed after 0.001 seconds.
+􀟈  Test aliasesAndExactFolderNamesBlock() started.
+􁁛  Test aliasesAndExactFolderNamesBlock() passed after 0.001 seconds.
+􁁛  Suite StrongMatchGateTests passed after 0.005 seconds.
+􁁛  Test run with 33 tests in 4 suites passed after 0.110 seconds.

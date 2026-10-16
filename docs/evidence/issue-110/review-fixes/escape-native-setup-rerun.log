@@ -1,0 +1,24 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.28s)
+Test Suite 'Selected tests' started at 2026-10-15 18:32:16.077.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-15 18:32:16.078.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-15 18:32:16.078.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-15 18:32:16.078.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchInteractionTests started.
+􀟈  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀟈  Test case passing 1 argument saved → false to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → false at MacInteractionTests.swift:946:5: Expectation failed: condition()
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → false at AutomaticSwitchInteractionTests.swift:422:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀟈  Test case passing 1 argument saved → true to escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) started.
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → true at MacInteractionTests.swift:946:5: Expectation failed: condition()
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) recorded an issue with 1 argument saved → true at AutomaticSwitchInteractionTests.swift:422:20: Expectation failed: (NSApp.keyWindow?.firstResponder → nil) as? (NSTextView → Optional<NSResponder>)
+􀢄  Test escapeDuringAutomaticSaveUsesSafeDismissalWithoutCountingAReversal(saved:) with 2 test cases failed after 6.201 seconds with 4 issues.
+􀢄  Suite AutomaticSwitchInteractionTests failed after 6.202 seconds with 4 issues.
+􀢄  Test run with 1 test in 1 suite failed after 6.202 seconds with 4 issues.

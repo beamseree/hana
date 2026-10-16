@@ -1,0 +1,16 @@
+Building for production...
+[0/7] Write sources
+[1/7] Copying PrivacyInfo.xcprivacy
+[2/7] Copying Info.plist
+[2/7] Write sources
+[4/7] Write swift-version--112E4EF74740DA65.txt
+[6/8] Compiling GRDB Configuration.swift
+[7/9] Compiling Hana ApplicationCatalog.swift
+[7/9] Write Objects.LinkFileList
+[8/9] Linking Hana
+Build complete! (79.23s)
+/Users/beamsereeyothin/.codex/worktrees/126b/hana/build/Hana.app/Contents/Info.plist: OK
+/Users/beamsereeyothin/.codex/worktrees/126b/hana/build/Hana.app: replacing existing signature
+/Users/beamsereeyothin/.codex/worktrees/126b/hana/build/Hana.app: valid on disk
+/Users/beamsereeyothin/.codex/worktrees/126b/hana/build/Hana.app: satisfies its Designated Requirement
+/Users/beamsereeyothin/.codex/worktrees/126b/hana/build/Hana.app
