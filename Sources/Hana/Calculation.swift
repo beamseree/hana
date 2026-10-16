@@ -197,20 +197,19 @@ enum Calculation {
                     if base == 1 { return .decimal(1) }
                     if base == 0 { return .decimal(power == 0 ? 1 : 0) }
                     if base == -1 {
-                        // Dividing a full-precision odd integer by two can lose
-                        // its final .5, so read parity from its exact digits.
-                        let lastDigit = NSDecimalNumber(decimal: power).stringValue.last
-                        let odd = power.exponent <= 0 && lastDigit.map { "13579".contains($0) } == true
-                        return .decimal(odd ? -1 : 1)
+                        return .decimal(Self.isOdd(power) ? -1 : 1)
                     }
-                    guard let integer = Int(NSDecimalNumber(decimal: power).stringValue) else { return .failure(.tooLarge) }
-                    // Unsigned magnitude handles Int.min without negation overflow.
-                    var remaining = integer.magnitude
-                    var factor = integer < 0 ? Number.decimal(1).applying("/", to: self) : self
+                    var remaining = power < 0 ? -power : power
+                    var factor = power < 0 ? Number.decimal(1).applying("/", to: self) : self
                     var result = Number.decimal(1)
                     while remaining > 0 {
-                        if remaining & 1 == 1 { result = result.applying("*", to: factor) }
-                        remaining >>= 1
+                        if Self.isOdd(remaining) {
+                            result = result.applying("*", to: factor)
+                            // Remove the odd unit before halving so a full-
+                            // precision integer never rounds away its final .5.
+                            remaining -= 1
+                        }
+                        remaining /= 2
                         if remaining > 0 { factor = factor.applying("*", to: factor) }
                         if case .failure = result { return result }
                         if case .failure = factor { return factor }
@@ -221,6 +220,11 @@ enum Calculation {
             let result = Foundation.pow(double, exponent.double)
             if result == 0, double != 0 { return .failure(.tooLarge) }
             return .checked(result)
+        }
+
+        private static func isOdd(_ integer: Decimal) -> Bool {
+            let lastDigit = NSDecimalNumber(decimal: integer).stringValue.last
+            return integer.exponent <= 0 && lastDigit.map { "13579".contains($0) } == true
         }
 
         func applyingFunction(_ function: Function) -> Number {

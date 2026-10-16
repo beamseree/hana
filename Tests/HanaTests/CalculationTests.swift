@@ -46,7 +46,8 @@ struct CalculationTests {
         ("1^-9223372036854775808", "1"),
         ("(-1)^9007199254740993", "-1"),
         ("(-1)^99999999999999999999999999999999999999", "-1"),
-        ("(-1)^1e100", "1")
+        ("(-1)^1e100", "1"),
+        ("1.000000000000000001^9223372036854775808", "10,131.169")
     ])
     func integerPowersAreExactAndBindBeforeUnaryMinus(text: String, expected: String) {
         #expect(Calculation.answer(for: text, locale: locale)?.title == expected)
