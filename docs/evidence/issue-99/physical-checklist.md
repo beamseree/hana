@@ -1,6 +1,6 @@
 # Working windows — Beam's physical checks
 
-All observations below are **pending**. The launcher now uses the reviewed release at source `df98878`; [final-identity.json](final-identity.json) records its signed hash and build environment. Final native suite/app-loop checks are pending because the Mac was locked; automated fixture observations below remain separate from physical acceptance. The launcher checks the signed executable hash and bundle ID, holds the native testing slot for its owned process, and preserves the marked fixture across normal quit/relaunch.
+All observations below are **pending**. The launcher now uses the reviewed release at source `11331fc`; [final-identity.json](final-identity.json) records its signed hash and build environment. The full394-test suite, all three signed app-loop validators and the release quit/relaunch smoke passed; physical acceptance remains separate. The launcher checks the signed executable hash and bundle ID, holds the native testing slot for its owned process, and preserves the marked fixture across normal quit/relaunch.
 
 When the agent hands over the final bundle, run the same command for first launch and every relaunch:
 
@@ -10,7 +10,7 @@ When the agent hands over the final bundle, run the same command for first launc
 
 Keep that Terminal open while testing. Quit the fixture with Command-Q while one of its windows is focused. Wait for the command to finish before relaunching. Do not force-kill, delete its data, rebuild or replace the bundle between the persistence steps. The fixture is **Hana Working Windows Fixture**, ID `com.beamseree.hana.validation.issue99`; it uses `/tmp/hana-spec-88/physical-fixture`, with runtime metadata at `/tmp/hana-spec-88/physical-runtime.jsonl`. It is separate from the installed Hana.
 
-The installed Hana currently owns Option+Space: the fixture reported registration status **-9878**, unavailable. The agent has left it running. If you choose to free that shortcut, quit your installed Hana yourself, normally quit this fixture, then rerun the command to retry registration. Its menu must say **Option+Space is available** before recording global shortcut checks. Otherwise mark those rows unavailable; use its menu's Search/Open Hana for other checks. No shortcut, permission or Spaces settings need changing.
+The earlier provisional fixture reported Option+Space conflict **-9878** while installed Hana owned it. The final automated release smoke reported registration **0** in both processes. Check the fixture menu when you launch: it must say **Option+Space is available** before global shortcut checks. If it reports a conflict, you may quit your installed Hana yourself, normally quit this fixture and relaunch the same command; otherwise mark shortcut rows unavailable and use its Search/Open Hana menu. No shortcut, permission or Spaces settings need changing.
 
 | Check | What to do and observe | Result |
 | --- | --- | --- |

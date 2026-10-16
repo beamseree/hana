@@ -1,0 +1,21 @@
+{
+  "recordedUTC": "2026-10-15T17:47:40.923305+00:00",
+  "sourceCommit": "df98878034be7268a13c40d87007ca9942a970a5",
+  "build": "reviewed release; runtime acceptance pending",
+  "baseCommit": "ced5e5f4fa5d7a9561ae5d298201bb897961882b",
+  "productionExecutableSHA256": "5c4b684fd58eda59586b6e65066c53fba39189e9dbef11f76e380365b917f34a",
+  "fixtureExecutableSHA256": "697051761990ba6ccd90edfc6f65365d42f7956672a2328261de966bab8e0082",
+  "bundleIdentifier": "com.beamseree.hana.validation.issue99",
+  "bundleDisplayName": "Hana Working Windows Fixture",
+  "version": "0.1.0 (1)",
+  "lockfileSHA256": "73b55b3d3de58e45668b776c88a502de20f3d09c2482e778da5dc53d01ffd6e0",
+  "macOS": "ProductName:\t\tmacOS\nProductVersion:\t\t26.5.1\nBuildVersion:\t\t25F80",
+  "architecture": "arm64",
+  "swift": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx26.0",
+  "sdk": "26.5",
+  "developerDirectory": "/Library/Developer/CommandLineTools",
+  "strictSignatureExit": 0,
+  "signatureDetails": "Identifier=com.beamseree.hana.validation.issue99\nFormat=app bundle with Mach-O thin (arm64)\nCodeDirectory v=20400 size=22846 flags=0x2(adhoc) hashes=707+3 location=embedded\nVersionPlatform=1\nVersionMin=1703936\nVersionSDK=1705216\nHash type=sha256 size=32\nCandidateCDHash sha256=17ebda79533553c71c968c3b8a19846f922580fc\nCandidateCDHashFull sha256=17ebda79533553c71c968c3b8a19846f922580fc5ff64e16f4fb8ca52ad56642\nHash choices=sha256\nCMSDigest=17ebda79533553c71c968c3b8a19846f922580fc5ff64e16f4fb8ca52ad56642\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=5373952\nExecutable Segment flags=0x1\nPage size=16384\nCDHash=17ebda79533553c71c968c3b8a19846f922580fc\nSignature=adhoc\nInfo.plist entries=10\nTeamIdentifier=not set\nSealed Resources version=2 rules=13 files=2\nInternal requirements count=0 size=12",
+  "consoleScreenLocked": true,
+  "runtimeGate": "Final global-key suite and signed app-loop/normal-quit harnesses pending unlock. Earlier runtime metadata belongs to its recorded provisional binary; no final runtime AX/display/shortcut value is claimed."
+}

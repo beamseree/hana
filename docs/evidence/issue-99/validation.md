@@ -1,6 +1,6 @@
 # Working-window milestone validation — issue #99
 
-2026-10-15, Asia/Bangkok. **Physical acceptance is pending.** This record adds a persistent isolated fixture and two-process normal quit/relaunch proof. It reuses the feature fixtures and existing MainWindow/NoteWindow/OpenNoteCapture app-loop validators; it does not replace their assertions with a second comprehensive validator. The reviewed release is now built and identified below. Final global-key suite/app-loop checks remain blocked by the locked Mac; physical acceptance remains pending. Earlier runtime observations belong to the provisional debug identity.
+2026-10-15, Asia/Bangkok. **Physical acceptance is pending.** This record adds a persistent isolated fixture and two-process normal quit/relaunch proof. It reuses the feature fixtures and existing MainWindow/NoteWindow/OpenNoteCapture app-loop validators; it does not replace their assertions with a second comprehensive validator. The reviewed release is now built and identified below. The later unlocked final run passes the full suite and all signed release validators; physical acceptance remains pending. Earlier runtime observations belong to the provisional debug identity.
 
 ## Automated tests and native runtime
 
@@ -47,3 +47,7 @@ Source `df98878034be7268a13c40d87007ca9942a970a5` includes all review fixes. Bot
 `IOConsoleUsers` again reported `consoleScreenLocked: true` during final packaging. Final full native suite, signed MainWindow/NoteWindow/OpenNoteCapture validators and release two-process normal-quit smoke were **not retried while locked**. Their original key/query assertions remain intact. Earlier per-ticket and provisional two-process passes above are retained without implying final-release runtime acceptance. Native drag/drop commit and Beam's checklist remain unverified. PR129 stays draft; #99 is not included in its closing directives until acceptance or explicit deferral.
 
 Final whole-branch whitespace validation also visualizes trailing literal whitespace as `␠`/`⇥` in two earlier red/regression logs (`issue-94/initial-red.txt`, `issue-98/capture-regressions.txt`); assertions and diagnostic messages are retained. `git diff ced5e5f..HEAD --check` passes after this evidence-only normalization.
+
+## Final unlocked verification complete
+
+[Reviewed verification](reviewed-validation/validation.md) supersedes the earlier automated pending gates: **394 tests/57 suites pass**, rebuilt release/signature pass, all three signed window validators pass, and exact-byte two-process normal quit/relaunch passes. [Native-context corrections](../issue-88/native-context-corrections/validation.md) and independent reviews record the measured Dock restore handoff and exact assertion relocation. The earlier blocked/failing outcomes remain preserved rather than rewritten as passes. Physical checks, committed drag/drop and ADR0005 remain pending; PR129 remains draft.

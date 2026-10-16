@@ -37,6 +37,8 @@ security find-identity -v -p codesigning
 
 The build product is `build/Hana.app`; the repeatable installed location is `~/Applications/Hana.app`. `scripts/run` refuses replacement while Hana is running. Normal `open` uses the existing process; do not use `open -n` to start competing instances. The executable is `Hana`, with stable bundle identifier **com.beamseree.hana** and `LSUIElement=true`. The app is accessory with zero working windows and regular while any working window remains open, including minimized windows. Dock reopening explicitly opens or raises the main window.
 
+Two global-focus tests use bounded signed disposable app subprocesses, because the Swift Testing async-main host does not run the native AppKit event loop. They require the original assertions and completion markers; no focus assertion is skipped or simulated. Minimized working windows let AppKit complete its native restore without an early extra key request.
+
 On the Command Line Tools selected for #88 (Swift 6.3.3), Swift Testing needs explicit framework and interop search paths. If the plain test command cannot import `Testing`, use:
 
 ```sh

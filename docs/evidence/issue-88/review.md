@@ -56,3 +56,9 @@ All eight findings plus the additional confirmed closed-note Archive/open race a
 ## Independent fix verification
 
 Both reviewers inspected immutable `a17608f` against `6319140` after implementation. [Standards verification](review-fixes/standards-verification.md) and [Spec verification](review-fixes/spec-verification.md) found no remaining actionable finding in the targeted fixes. These were source/test/evidence inspections, not new native test runs. All original findings above remain recorded; final native and physical acceptance gates are separate.
+
+## Unlocked native-context follow-up
+
+The unlocked final checks exposed a measured asynchronous Dock restore handoff and two Swift Testing host-context failures. [Native-context corrections](native-context-corrections/validation.md) preserve the failing runs, AppKit re-key stack, controlled comparisons, async-main exit stack and bounded focused passes. Minimized windows now use AppKit's restore without a redundant early key request. The two exact focus cases run through the existing actual-app validators using bounded signed disposable children, retaining their names/count and assertions.
+
+[Standards review](native-context-corrections/standards-review.md) found no actionable issue in source `ee5471a`. [Spec review](native-context-corrections/spec-review.md) found one intermediate old-panel-hidden assertion omitted during relocation; the same implementer restored it at `f7a7c79`, and the reviewer verified it with no remaining actionable targeted defect. Original final key/responder/query/no-window checks and completion markers remain intact. The first combined follow-up child failure has an unknown step because its report was deleted; it is preserved without inventing a cause. The adapter now emits bounded failed-event diagnostics before cleanup.
