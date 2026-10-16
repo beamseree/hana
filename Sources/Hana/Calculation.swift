@@ -50,17 +50,8 @@ enum Calculation {
             let rounded = whole ? double : Double(String(format: "%.8g", locale: Locale(identifier: "en_US_POSIX"), double)) ?? double
             let magnitude = abs(rounded)
             let scientific = magnitude >= 1e15 || (magnitude != 0 && magnitude < 1e-8)
-            let formatter = NumberFormatter()
-            formatter.locale = locale
-            formatter.numberStyle = scientific ? .scientific : .decimal
-            formatter.exponentSymbol = "e"
-            formatter.usesGroupingSeparator = !scientific
-            if scientific || !whole {
-                formatter.usesSignificantDigits = true
-                formatter.minimumSignificantDigits = 1
-                formatter.maximumSignificantDigits = 8
-            } else { formatter.maximumFractionDigits = 0 }
-            return formatter.string(from: NSNumber(value: rounded == 0 ? 0 : rounded))
+            return formatted(NSNumber(value: rounded == 0 ? 0 : rounded),
+                             scientific: scientific, fractional: !whole, locale: locale)
         }
     }
 
@@ -78,19 +69,22 @@ enum Calculation {
         let magnitude = rounded < .zero ? -rounded : rounded
         let scientific = magnitude >= Decimal(string: "1000000000000000")!
             || (magnitude != .zero && magnitude < Decimal(string: "0.00000001")!)
+        return formatted(NSDecimalNumber(decimal: rounded),
+                         scientific: scientific, fractional: value != whole, locale: locale)
+    }
+
+    private static func formatted(_ value: NSNumber, scientific: Bool, fractional: Bool, locale: Locale) -> String? {
         let formatter = NumberFormatter()
         formatter.locale = locale
         formatter.numberStyle = scientific ? .scientific : .decimal
         formatter.exponentSymbol = "e"
         formatter.usesGroupingSeparator = !scientific
-        if scientific || value != whole {
+        if scientific || fractional {
             formatter.usesSignificantDigits = true
             formatter.minimumSignificantDigits = 1
             formatter.maximumSignificantDigits = 8
-        } else {
-            formatter.maximumFractionDigits = 0
-        }
-        return formatter.string(from: NSDecimalNumber(decimal: rounded))
+        } else { formatter.maximumFractionDigits = 0 }
+        return formatter.string(from: value)
     }
 
     /// Recognition deliberately does not depend on a successfully parsed value.
@@ -108,8 +102,12 @@ enum Calculation {
         }
     }
 
+    private enum Function: String {
+        case sqrt, sin, cos, tan, log, ln
+    }
+
     private enum Token: Equatable {
-        case number(String), constant(String), function(String), operation(Character), left, right
+        case number(String), constant(String), function(Function), operation(Character), left, right
 
         var endsOperand: Bool {
             switch self { case .number, .constant, .right: true; default: false }
@@ -225,19 +223,19 @@ enum Calculation {
             return .checked(result)
         }
 
-        func applyingFunction(_ name: String) -> Number {
+        func applyingFunction(_ function: Function) -> Number {
             if case .failure = self { return self }
             let argument = double
-            if name == "sqrt", argument < 0 { return .failure(.undefined) }
-            if (name == "ln" || name == "log"), argument <= 0 { return .failure(.undefined) }
+            if function == .sqrt, argument < 0 { return .failure(.undefined) }
+            if (function == .ln || function == .log), argument <= 0 { return .failure(.undefined) }
             let result: Double
-            switch name {
-            case "sqrt": result = Foundation.sqrt(argument)
-            case "sin": result = Foundation.sin(argument)
-            case "cos": result = Foundation.cos(argument)
-            case "tan": result = Foundation.tan(argument)
-            case "log": result = Foundation.log10(argument)
-            default: result = Foundation.log(argument)
+            switch function {
+            case .sqrt: result = Foundation.sqrt(argument)
+            case .sin: result = Foundation.sin(argument)
+            case .cos: result = Foundation.cos(argument)
+            case .tan: result = Foundation.tan(argument)
+            case .log: result = Foundation.log10(argument)
+            case .ln: result = Foundation.log(argument)
             }
             return .checked(result)
         }
@@ -359,7 +357,6 @@ enum Calculation {
         let input = Array(text.lowercased())
         let decimal = Character(locale.decimalSeparator ?? ".")
         let grouping = Character(locale.groupingSeparator ?? ",")
-        let functions: Set<String> = ["sqrt", "sin", "cos", "tan", "log", "ln"]
         var result: [Token] = []
         var index = 0
         func digit(_ c: Character) -> Bool { c >= "0" && c <= "9" }
@@ -405,7 +402,7 @@ enum Calculation {
                 let start = index
                 while index < input.count, input[index].isLetter { index += 1 }
                 let name = String(input[start..<index])
-                if functions.contains(name) { result.append(.function(name)) }
+                if let function = Function(rawValue: name) { result.append(.function(function)) }
                 else if name == "pi" || name == "e" { result.append(.constant(name)) }
                 else { return nil }
                 continue
