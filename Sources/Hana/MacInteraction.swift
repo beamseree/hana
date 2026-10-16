@@ -73,6 +73,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private let loadingIndicator = NSProgressIndicator()
     private let search: Search
     private let launchApplication: @MainActor (URL) async throws -> ValidatedDestination
+    private let copyAnswer: @MainActor (String) -> Void
+    private var calculationAnswer: Answer?
     private let openFile: @MainActor (URL) async throws -> ValidatedDestination
     private let loadIcon: @MainActor (URL, CGFloat) async -> ResultIcon?
     private var iconRequests: Set<SearchResult.ID> = []
@@ -81,7 +83,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private var fileStatus: SourceStatus = .ready
     private var searchTask: Task<Void, Never>?
     private var request: Search.Request?
-    /// A match or a capture suggestion; nil only while there are no rows.
+    /// An answer, match or capture suggestion; nil only while there are no rows.
     private(set) var selectedRow: SearchRow.ID?
     private var userMovedSelection = false
     private var resultSurface: NSHostingView<SearchResultsView>?
@@ -126,9 +128,10 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         guard case .result(let id) = selectedRow else { return nil }
         return results.first { $0.id == id }
     }
-    /// Search's list: every match, then New note and New task while it has a query.
+    /// Answers precede matches; otherwise capture suggestions follow them.
     var rows: [SearchRow] {
         guard mode == .search else { return [] }
+        if let calculationAnswer { return [.answer(calculationAnswer)] + results.map(SearchRow.result) }
         return results.map(SearchRow.result) + (hasQuery ? CaptureSession.Suggestion.allCases.map(SearchRow.suggestion) : [])
     }
     private var hasQuery: Bool { !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
@@ -302,6 +305,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     init(diagnostics: Diagnostics = Diagnostics(), search: Search = Search(),
          launchApplication: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.launch,
          openFile: @escaping @MainActor (URL) async throws -> ValidatedDestination = MacInteraction.openFileDestination,
+         copyAnswer: @escaping @MainActor (String) -> Void = MacInteraction.copyToPasteboard,
          loadIcon: (@MainActor (URL, CGFloat) async -> ResultIcon?)? = nil,
          collection: Task<CollectionStore, any Error>? = nil, confirmationDuration: Duration = .milliseconds(500),
          automaticSwitchOptions: AutomaticSwitchOptionsStore = AutomaticSwitchOptionsStore(),
@@ -328,6 +332,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         self.frontmostApplication = frontmostApplication
         self.launchApplication = launchApplication
         self.openFile = openFile
+        self.copyAnswer = copyAnswer
         let icons = ResultIcons(pointSize: BarStyle.resultIconSize)
         self.loadIcon = loadIcon ?? { await icons.icon(for: $0, scale: $1) }
         super.init()
@@ -1688,6 +1693,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             // Ordinary deletion, tab or line break.
             if event == .deleteBackward || mode != .search { return false }
         }
+        if mode == .search, selectedRow == .answer,
+           commandSelector == #selector(NSResponder.insertNewline(_:)), !editor.shiftHeld {
+            requestSelectedOpen()
+            return true
+        }
         if commandSelector == #selector(NSResponder.insertNewline(_:)), !editor.shiftHeld {
             let effects = automaticSwitch?.handle(.enter) ?? []
             if effects.contains(where: { if case .swallowEnter = $0 { true } else { false } }) { return true }
@@ -1715,6 +1725,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             editor.string = text
             _ = capture.handle(.edited(text: text, selection: editor.selectedRange()))
         }
+        calculationAnswer = mode == .search ? Calculation.answer(for: text, locale: .current) : nil
         // Automatic capture uses Search only as a gate, never as visible rows.
         guard mode == .search || automaticSwitch?.lastModeChangeWasAutomatic == true else { return renderResults() }
         updateModeIcon()
@@ -1795,7 +1806,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     /// selected row does not match the current request.
     @discardableResult
     func requestSelectedOpen() -> Task<Void, Never>? {
-        guard currentInvocation != nil, pendingLaunch == nil else { return nil }
+        guard let invocation = currentInvocation, pendingLaunch == nil else { return nil }
+        if mode == .search, selectedRow == .answer, let calculationAnswer {
+            if let text = calculationAnswer.copyableText { copyAnswer(text) }
+            dismiss(invocation, reason: .escape)
+            return nil
+        }
         if mode == .search, !userMovedSelection, heldEnter == nil, !editor.hasMarkedText() {
             // Re-evaluate synchronously so a newly arrived strong match keeps
             // the normal Search path even if the policy hasn't seen it yet.
@@ -1813,7 +1829,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             }
             return nil
         }
-        guard let invocation = currentInvocation, let destination = selectedResult else { return nil }
+        guard let destination = selectedResult else { return nil }
         // Enter again after navigating to a matching row opens it at once.
         guard currentMatchIDs.contains(destination.id) else {
             hold(.result, destinationKind: destination.typeLabel)
@@ -1991,6 +2007,11 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         modeIcon.setShowsQuery(!editor.string.isEmpty || editor.hasMarkedText(), animated: panel.isVisible)
     }
 
+    private static func copyToPasteboard(_ text: String) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+    }
+
     private func resetSearch() {
         searchTask?.cancel()
         searchTask = nil
@@ -2000,6 +2021,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         pendingLaunch = nil
         heldEnter = nil
         results = []
+        calculationAnswer = nil
         displayedResultsGeneration = nil
         icons = [:]
         selectedRow = nil
@@ -2096,7 +2118,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         }
         else if sourceStatus == .partial || fileStatus == .partial { status = "Partial search results — refine your query for more specific matches." }
         else if loading { status = nil }
-        else { status = results.isEmpty ? "No matches returned. Indexing and access can limit results." : nil }
+        else { status = results.isEmpty && calculationAnswer == nil ? "No matches returned. Indexing and access can limit results." : nil }
         // Results extend the card downward below the input row, so the input
         // position never moves while expanding.
         let needed = hasQuery || notice != nil ? SearchResultsView.height(rowCount: rows.count, hasStatus: status != nil) : 0

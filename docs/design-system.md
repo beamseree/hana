@@ -99,6 +99,7 @@ Hana uses the system font, SF Pro, through `NSFont.systemFont` and SwiftUI's `.s
 | --- | --- | --- | --- | --- |
 | `bar.input` | 26 / 40 | Regular | −1% | Search query, Note and Task text, placeholder |
 | `heading.window` | 20 / 26 | Medium | −1% | Main window list titles |
+| `row.symbol` | 18 / 24 | Regular | 0 | Calculator, capture suggestion and fallback result symbols |
 | `row.title` | 16 / 20 | Regular | −1% | Search bar result names |
 | `note.body` | 15 / 22 | Regular | 0 | Writing in a Note window |
 | `body` | 13 / 18 | Regular | 0 | List rows, task titles, controls such as segmented controls, fields |
