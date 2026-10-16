@@ -1,0 +1,17 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--1AB21518FC5DEDBE.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests NativeAppFixture.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (2.25s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite OpenNoteCaptureTests started.
+◇ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() started.
+NATIVE_APP_FIXTURE mode=open-note-capture status=0 marker=open-note-capture.newer-bar sha256=069595fa3d09d00b57839f879c04c7a634c5a1b5475cee732b9a77eb84f687a5
+✔ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() passed after 2.587 seconds.
+✔ Suite OpenNoteCaptureTests passed after 2.587 seconds.
+✔ Test run with 1 test in 1 suite passed after 2.587 seconds.

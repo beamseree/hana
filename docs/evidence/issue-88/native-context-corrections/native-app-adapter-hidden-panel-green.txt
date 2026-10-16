@@ -1,0 +1,17 @@
+Building for debugging...
+[0/4] Write swift-version--1AB21518FC5DEDBE.txt
+Build complete! (0.09s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite MainNoteOrganizationTests started.
+◇ Suite OpenNoteCaptureTests started.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+NATIVE_APP_FIXTURE mode=main-window status=0 marker=main-window.note-menu-assertions-passed sha256=fa41e3ca74d436813dc64778ef9d0c4aa7904302efdc7a44223a30832eb2f59e
+✔ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 3.623 seconds.
+✔ Suite MainNoteOrganizationTests passed after 3.623 seconds.
+◇ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() started.
+NATIVE_APP_FIXTURE mode=open-note-capture status=0 marker=open-note-capture.newer-bar sha256=ad2ff4f7d185c0fff62b187b1f1f8f734c65c51a213277b7662ebe8058c84668
+✔ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() passed after 2.625 seconds.
+✔ Suite OpenNoteCaptureTests passed after 6.249 seconds.
+✔ Test run with 2 tests in 2 suites passed after 6.249 seconds.

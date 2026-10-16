@@ -39,7 +39,10 @@ enum NativeAppFixture {
         let report = root.appendingPathComponent("report.jsonl")
         let status = try await child(binary, arguments: ["--validate-\(mode.rawValue)", "--\(mode.rawValue)-report", report.path], output: output)
         let trace = (try? String(contentsOf: report, encoding: .utf8)) ?? ""
-        guard status == 0 else { throw Failure.childExit(status) }
+        guard status == 0 else {
+            for line in trace.split(separator: "\n") where line.contains("validation-failed") { print(line) }
+            throw Failure.childExit(status)
+        }
         guard trace.contains("\"event\":\"\(marker)\""),
               trace.contains("\"event\":\"\(mode.rawValue).validation-passed\""), !trace.contains("validation-failed") else { throw Failure.missingSuccessMarker }
         let hash = SHA256.hash(data: try Data(contentsOf: binary)).map { String(format: "%02x", $0) }.joined()
