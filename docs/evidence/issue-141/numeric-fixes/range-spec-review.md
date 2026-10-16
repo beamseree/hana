@@ -1,0 +1,11 @@
+Pinned Spec review: `38f4ab6406aa342bd3691469f4a9aef3be8ce0ea...d303f209090806984669569c8d921351cc91855d`. Numeric fixes only; no repository mutations or native tests.
+
+**2 partial Spec requirements; worst P2. Prior arithmetic findings resolved. Both remaining literal gaps also reproduce at the baseline, so neither is a new regression.**
+
+- **[P2] Check unrounded magnitude for ordinary decimal literals too.** #141: “An answer outside the representable range is *too large*.” At `Sources/Hana/Calculation.swift:160–168`, `literalMagnitudeFits` runs only when the token has `e`; ordinary digits bypass it. Let `M = (2^128 - 1) * 10^127`, Decimal's maximum. The plain decimal spelling of `M + 1`, followed by ` + 0`, returns copyable `3.4028237e165` instead of Too large (negative symmetry likewise). Appending `e0` to exactly the same token correctly returns Too large. Foundation truncates the unrounded plain literal into range before the new checks can inspect it. Apply the spelling check to both forms and add public regressions.
+
+- **[P2] Apply the scientific scale before requiring a representable coefficient.** #141: “Scientific notation (`3e5`, `1.2e-3`, `1.2E+3`) is a number literal,” and “An answer outside the representable range is *too large*.” At `Calculation.swift:166–169`, the coefficient must independently parse as Decimal before its exponent is applied. A token comprising `1`, 200 zeroes, then `e-200 + 0` returns Too large although its exact answer is `1`; `0.`, 199 zeroes, then `1e200 + 0` also rejects exact `1`. Normalize coefficient digits and their combined scale before construction; this needs no arbitrary-precision dependency.
+
+Independent public probes: 460 signed arithmetic/range/cancellation cases compared with Python Decimal precision 600 have 0 mismatches; 20 locale, error-precedence, power and finite-Double checks have 0 mismatches. Upper/lower same-sign overflow and underflow near one are repaired. No material scope creep found.
+
+Evidence under `/tmp/hana-issue-141-context/`: `range-spec-public-{probe.swift,cases.json,result.json}`, `range-spec-baseline-{probe.swift,result.json}`, `range-spec-arithmetic-{cases,result}.json`, `range-spec-regression-{cases,result}.json`. Final full-suite validation remains separate; #141 and human trial #146 remain open.

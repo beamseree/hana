@@ -1,0 +1,23 @@
+{
+  "command": [
+    "xcrun",
+    "swift",
+    "test",
+    "--no-parallel"
+  ],
+  "source": "d54049ebef3f4674a27840fbfae0c12d3fed7e78",
+  "started_at_utc": "2026-10-16T12:40:04.969774+00:00",
+  "finished_at_utc": "2026-10-16T12:46:29.709308+00:00",
+  "wall_seconds": 384.734,
+  "exit_code": 1,
+  "suite_summary_found": false,
+  "validation_status": "interrupted after native failures with macOS console locked; not a full-suite pass",
+  "skip_lines": [],
+  "interrupted": true,
+  "interruption_signal": "SIGINT",
+  "owned_helper_pid": 87898,
+  "swiftpm_pid": 87821,
+  "lock_evidence": "47-session-lock-state.json",
+  "final_test_count": null,
+  "final_suite_count": null
+}

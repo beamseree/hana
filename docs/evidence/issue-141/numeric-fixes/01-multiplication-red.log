@@ -1,0 +1,812 @@
+Fetching https://github.com/swiftlang/swift-markdown.git from cache
+Fetching https://github.com/swiftlang/swift-cmark.git from cache
+Fetching https://github.com/groue/GRDB.swift from cache
+Fetched https://github.com/groue/GRDB.swift from cache (0.03s)
+Fetched https://github.com/swiftlang/swift-cmark.git from cache (0.03s)
+Fetched https://github.com/swiftlang/swift-markdown.git from cache (0.03s)
+Creating working copy for https://github.com/swiftlang/swift-cmark.git
+Creating working copy for https://github.com/groue/GRDB.swift
+Creating working copy for https://github.com/swiftlang/swift-markdown.git
+Working copy of https://github.com/swiftlang/swift-cmark.git resolved at 0.9.0
+Working copy of https://github.com/swiftlang/swift-markdown.git resolved at 0.9.0
+Working copy of https://github.com/groue/GRDB.swift resolved at 7.11.1
+Building for debugging...
+[0/50] /Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/.build/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[1/50] Write swift-version--112E4EF74740DA65.txt
+[2/50] Compiling cmark-gfm xml.c
+[3/50] Compiling cmark-gfm render.c
+[4/50] Compiling cmark-gfm utf8.c
+[5/50] Compiling cmark-gfm-extensions core-extensions.c
+[6/50] Compiling cmark-gfm plugin.c
+[7/50] Compiling cmark-gfm registry.c
+[8/50] Compiling cmark-gfm-extensions strikethrough.c
+[9/50] Compiling cmark-gfm references.c
+[10/50] Compiling cmark-gfm plaintext.c
+[11/50] Compiling cmark-gfm scanners.c
+[12/50] Compiling cmark-gfm-extensions tasklist.c
+[13/50] Compiling cmark-gfm linked_list.c
+[14/50] Compiling cmark-gfm map.c
+[15/50] Compiling cmark-gfm-extensions tagfilter.c
+[16/50] Compiling cmark-gfm man.c
+[17/50] Compiling cmark-gfm syntax_extension.c
+[18/50] Compiling cmark-gfm iterator.c
+[19/50] Compiling cmark-gfm-extensions ext_scanners.c
+[20/50] Compiling cmark-gfm houdini_html_e.c
+[21/50] Compiling cmark-gfm houdini_href_e.c
+[21/50] Compiling cmark-gfm html.c
+[23/50] Compiling cmark-gfm latex.c
+[24/50] Compiling cmark-gfm footnotes.c
+[25/50] Write sources
+[29/50] Write Hana-entitlement.plist
+[30/50] Copying PrivacyInfo.xcprivacy
+[31/50] Copying Info.plist
+[32/50] Write sources
+[33/50] Compiling cmark-gfm houdini_html_u.c
+[34/50] Compiling cmark-gfm cmark.c
+[35/50] Compiling cmark-gfm cmark_ctype.c
+[36/50] Compiling cmark-gfm commonmark.c
+[37/50] Compiling cmark-gfm node.c
+[38/50] Compiling cmark-gfm buffer.c
+[39/50] Compiling cmark-gfm arena.c
+[40/50] Compiling CAtomic CAtomic.c
+[41/50] Compiling cmark-gfm inlines.c
+[42/50] Compiling cmark-gfm blocks.c
+[43/79] Compiling cmark-gfm-extensions table.c
+[44/205] Compiling cmark-gfm-extensions autolink.c
+[46/271] Compiling Markdown BasicBlockContainer.swift
+[47/271] Compiling Markdown BasicInlineContainer.swift
+[48/271] Compiling Markdown BlockContainer.swift
+[49/271] Compiling Markdown BlockMarkup.swift
+[50/271] Compiling Markdown InlineContainer.swift
+[51/271] Compiling Markdown InlineMarkup.swift
+[52/276] Emitting module Markdown
+[53/276] Compiling Markdown ThematicBreak.swift
+[54/276] Compiling Markdown Table.swift
+[55/276] Compiling Markdown TableBody.swift
+[56/276] Compiling Markdown TableCell.swift
+[57/276] Compiling Markdown TableCellContainer.swift
+[58/276] Compiling Markdown TableHead.swift
+[59/276] Compiling Markdown DoxygenAbstract.swift
+[60/276] Compiling Markdown DoxygenDiscussion.swift
+[61/276] Compiling Markdown DoxygenNote.swift
+[62/276] Compiling Markdown DoxygenParameter.swift
+[63/276] Compiling Markdown DoxygenReturns.swift
+[64/276] Compiling Markdown ListItem.swift
+[65/276] Compiling Markdown MarkupData.swift
+[66/276] Compiling Markdown PlainTextConvertibleMarkup.swift
+[67/276] Compiling Markdown RawMarkup.swift
+[68/276] Compiling Markdown BlockDirective.swift
+[69/276] Compiling Markdown BlockQuote.swift
+[70/276] Compiling Markdown CustomBlock.swift
+[71/276] Compiling Markdown ListItemContainer.swift
+[72/276] Compiling Markdown AtomicCounter.swift
+[73/276] Compiling Markdown CharacterExtensions.swift
+[74/276] Compiling Markdown CollectionExtensions.swift
+[75/276] Compiling Markdown StringExtensions.swift
+[76/276] Compiling Markdown Link.swift
+[77/276] Compiling Markdown Strikethrough.swift
+[78/276] Compiling Markdown Strong.swift
+[79/276] Compiling Markdown CustomInline.swift
+[80/276] Compiling Markdown InlineCode.swift
+[81/276] Compiling Markdown InlineHTML.swift
+[82/276] Compiling Markdown OrderedList.swift
+[83/276] Compiling Markdown UnorderedList.swift
+[84/276] Compiling Markdown Paragraph.swift
+[85/276] Compiling Markdown CodeBlock.swift
+[86/276] Compiling Markdown HTMLBlock.swift
+[87/276] Compiling Markdown Heading.swift
+[88/276] Compiling Markdown TableRow.swift
+[89/276] Compiling Markdown Replacement.swift
+[90/276] Compiling Markdown SourceLocation.swift
+[91/276] Compiling Markdown Emphasis.swift
+[92/276] Compiling Markdown Image.swift
+[93/276] Compiling Markdown InlineAttributes.swift
+[94/276] Compiling Markdown LineBreak.swift
+[95/276] Compiling Markdown SoftBreak.swift
+[96/276] Compiling Markdown SymbolLink.swift
+[97/276] Compiling Markdown Text.swift
+[98/276] Compiling Markdown Aside.swift
+[99/276] Compiling Markdown BlockDirectiveParser.swift
+[100/276] Compiling Markdown ChildIndexPath.swift
+[101/276] Compiling Markdown DirectiveArgument.swift
+[102/276] Compiling Markdown Document.swift
+[103/276] Compiling Markdown LiteralMarkup.swift
+[104/276] Compiling Markdown Markup.swift
+[105/276] Compiling Markdown MarkupChildren.swift
+[106/276] Compiling Markdown CommonMarkConverter.swift
+[107/276] Compiling Markdown LazySplitLines.swift
+[108/276] Compiling Markdown ParseOptions.swift
+[109/276] Compiling Markdown RangeAdjuster.swift
+[110/276] Compiling Markdown RangerTracker.swift
+[111/276] Compiling Markdown MarkupRewriter.swift
+[112/276] Compiling Markdown MarkupVisitor.swift
+[113/276] Compiling Markdown MarkupWalker.swift
+[114/276] Compiling Markdown HTMLFormatter.swift
+[115/276] Compiling Markdown MarkupFormatter.swift
+[116/276] Compiling Markdown MarkupTreeDumper.swift
+[117/276] Compiling GRDB FTS5+QueryInterface.swift
+[118/276] Compiling GRDB ForeignKey.swift
+[119/276] Compiling GRDB Association.swift
+[120/276] Compiling GRDB AssociationAggregate.swift
+[121/276] Compiling GRDB BelongsToAssociation.swift
+[122/276] Compiling GRDB HasManyAssociation.swift
+[123/276] Compiling GRDB HasManyThroughAssociation.swift
+[124/276] Compiling GRDB HasOneAssociation.swift
+[125/276] Compiling GRDB HasOneThroughAssociation.swift
+[126/276] Compiling GRDB JoinAssociation.swift
+[127/276] Compiling GRDB CommonTableExpression.swift
+[128/276] Compiling GRDB QueryInterfaceRequest.swift
+[129/276] Compiling GRDB RequestProtocols.swift
+[130/276] Compiling GRDB Column.swift
+[131/290] Compiling GRDB SQLIndexGenerator.swift
+[132/290] Compiling GRDB SQLQueryGenerator.swift
+[133/290] Compiling GRDB SQLTableAlterationGenerator.swift
+[134/290] Compiling GRDB SQLTableGenerator.swift
+[135/290] Compiling GRDB TableAlias.swift
+[136/290] Compiling GRDB SQLInterpolation+QueryInterface.swift
+[137/290] Compiling GRDB ColumnDefinition.swift
+[138/290] Compiling GRDB Database+SchemaDefinition.swift
+[139/290] Compiling GRDB ForeignKeyDefinition.swift
+[140/290] Compiling GRDB IndexDefinition.swift
+[141/290] Compiling GRDB TableAlteration.swift
+[142/290] Compiling GRDB TableDefinition.swift
+[143/290] Compiling GRDB VirtualTableModule.swift
+[144/290] Compiling GRDB TableRecord+Association.swift
+[159/290] Compiling GRDB PersistableRecord+Save.swift
+[160/290] Compiling GRDB PersistableRecord+Upsert.swift
+[161/290] Compiling GRDB PersistableRecord.swift
+[162/290] Compiling GRDB Record.swift
+[163/290] Compiling GRDB TableRecord.swift
+[164/290] Compiling GRDB CaseInsensitiveIdentifier.swift
+[165/290] Compiling GRDB Inflections+English.swift
+[166/290] Compiling GRDB Inflections.swift
+[167/290] Compiling GRDB Mutex.swift
+[168/290] Compiling GRDB OnDemandFuture.swift
+[169/290] Compiling GRDB OrderedDictionary.swift
+[170/290] Compiling GRDB Pool.swift
+[171/290] Compiling GRDB ReadWriteLock.swift
+[172/290] Compiling GRDB ReceiveValuesOn.swift
+[173/290] Compiling GRDB FTS4.swift
+[174/290] Compiling GRDB FTS5.swift
+[175/290] Compiling GRDB FTS5CustomTokenizer.swift
+[176/290] Compiling GRDB FTS5Pattern.swift
+[177/290] Compiling GRDB FTS5Tokenizer.swift
+[178/290] Compiling GRDB FTS5TokenizerDescriptor.swift
+[179/290] Compiling GRDB FTS5WrapperTokenizer.swift
+[180/290] Compiling GRDB Fixits.swift
+[181/290] Compiling GRDB JSONColumn.swift
+[182/290] Compiling GRDB SQLJSONExpressible.swift
+[183/290] Compiling GRDB SQLJSONFunctions.swift
+[184/290] Compiling GRDB DatabaseMigrator.swift
+[185/290] Compiling GRDB Migration.swift
+[186/290] Compiling GRDB FTS3+QueryInterface.swift
+[229/290] Compiling GRDB TableRecord+QueryInterfaceRequest.swift
+[230/290] Compiling GRDB EncodableRecord+Encodable.swift
+[231/290] Compiling GRDB EncodableRecord.swift
+[232/290] Compiling GRDB FetchableRecord+Decodable.swift
+[233/290] Compiling GRDB FetchableRecord+TableRecord.swift
+[234/290] Compiling GRDB FetchableRecord.swift
+[235/290] Compiling GRDB MutablePersistableRecord+DAO.swift
+[236/290] Compiling GRDB MutablePersistableRecord+Delete.swift
+[237/290] Compiling GRDB MutablePersistableRecord+Insert.swift
+[238/290] Compiling GRDB MutablePersistableRecord+Save.swift
+[239/290] Compiling GRDB MutablePersistableRecord+Update.swift
+[240/290] Compiling GRDB MutablePersistableRecord+Upsert.swift
+[241/290] Compiling GRDB MutablePersistableRecord.swift
+[242/290] Compiling GRDB PersistableRecord+Insert.swift
+[243/290] Emitting module GRDB
+[244/290] Compiling GRDB DatabaseRegion.swift
+[245/290] Compiling GRDB DatabaseRegionObservation.swift
+[246/290] Compiling GRDB DatabaseSchemaCache.swift
+[247/290] Compiling GRDB DatabaseSchemaSource.swift
+[248/290] Compiling GRDB DatabaseSnapshot.swift
+[249/290] Compiling GRDB DatabaseSnapshotPool.swift
+[250/290] Compiling GRDB DatabaseValue.swift
+[251/290] Compiling GRDB DatabaseValueConvertible.swift
+[252/290] Compiling GRDB DatabaseWriter.swift
+[253/290] Compiling GRDB DispatchQueueActor.swift
+[254/290] Compiling GRDB FetchRequest.swift
+[255/290] Compiling GRDB Row.swift
+[256/290] Compiling GRDB RowAdapter.swift
+[257/290] Compiling GRDB RowDecodingError.swift
+[258/290] Compiling GRDB Refinable.swift
+[259/290] Compiling GRDB Utils.swift
+[260/290] Compiling GRDB DatabaseCancellable.swift
+[261/290] Compiling GRDB ValueConcurrentObserver.swift
+[262/290] Compiling GRDB ValueWriteOnlyObserver.swift
+[263/290] Compiling GRDB Fetch.swift
+[264/290] Compiling GRDB Map.swift
+[265/290] Compiling GRDB RemoveDuplicates.swift
+[266/290] Compiling GRDB Trace.swift
+[267/290] Compiling GRDB ValueReducer.swift
+[268/290] Compiling GRDB SharedValueObservation.swift
+[269/290] Compiling GRDB ValueObservation.swift
+[270/290] Compiling GRDB ValueObservationScheduler.swift
+[271/290] Compiling GRDB resource_bundle_accessor.swift
+[286/355] Emitting module Hana
+[287/360] Compiling Hana AutomaticSwitchOptions.swift
+[288/360] Compiling Hana BarStyle.swift
+[289/360] Compiling Hana Calculation.swift
+[290/360] Compiling Hana CaptureSession.swift
+[291/360] Compiling Hana Classifier.swift
+[292/360] Compiling Hana ClassifierServices.swift
+[293/360] Compiling Hana CollectionSchema.swift
+[294/360] Compiling Hana CollectionSnapshotFixture.swift
+[295/360] Compiling Hana CollectionSnapshots.swift
+[296/360] Compiling Hana CollectionStore.swift
+[297/360] Compiling Hana CollectionTitleSource.swift
+[298/360] Compiling Hana CoverageValidation.swift
+[299/360] Compiling Hana ShortcutMenuController.swift
+[300/360] Compiling Hana SpotlightSource.swift
+[301/360] Compiling Hana StrongMatchGate.swift
+[302/360] Compiling Hana TaskWorkspace.swift
+[303/360] Compiling Hana TrickyInputCheck.swift
+[304/360] Compiling Hana ClassifierWording.swift
+[305/360] Compiling Hana CollectionExport.swift
+[306/360] Compiling Hana CollectionExportFixture.swift
+[307/360] Compiling Hana CollectionFixtureHarness.swift
+[308/360] Compiling Hana CollectionLocation.swift
+[309/360] Compiling Hana CollectionRecovery.swift
+[310/360] Compiling Hana Search.swift
+[311/360] Compiling Hana SearchCorrectnessValidation.swift
+[312/360] Compiling Hana SearchName.swift
+[313/360] Compiling Hana SearchResultsView.swift
+[314/360] Compiling Hana SegmentedControl.swift
+[315/360] Compiling Hana MarkdownPreviewRenderer.swift
+[316/360] Compiling Hana MixedSearchValidation.swift
+[317/360] Compiling Hana ModeIcon.swift
+[318/360] Compiling Hana NoteEditing.swift
+[319/360] Compiling Hana NotePreview.swift
+[320/360] Compiling Hana NotePreviewSession.swift
+[321/360] Compiling Hana NoteScroller.swift
+[322/360] Compiling Hana NoteWindowController.swift
+[323/360] Compiling Hana NoteWindowValidation.swift
+[324/360] Compiling Hana OpenNoteCaptureValidation.swift
+[325/360] Compiling Hana PerformanceValidation.swift
+[326/360] Compiling Hana ResultIcons.swift
+[327/360] Compiling Hana TrickyInputRequest.swift
+[328/360] Compiling Hana WorkingWindowController.swift
+[329/360] Compiling Hana WorkingWindowsFixture.swift
+[330/360] Compiling Hana WorkingWindowsOptions.swift
+[331/360] Compiling Hana WorkingWindowsValidation.swift
+[332/360] Compiling Hana HanaColor.swift
+[333/360] Compiling Hana HanaFont.swift
+[334/360] Compiling Hana HanaRadius.swift
+[335/360] Compiling Hana HanaShadow.swift
+[336/360] Compiling Hana JevClassifier.swift
+[337/360] Compiling Hana JevHTTPSession.swift
+[338/360] Compiling Hana ApplicationCatalog.swift
+[339/360] Compiling Hana ArchiveWorkspace.swift
+[340/360] Compiling Hana AutomaticSwitch.swift
+[341/360] Compiling Hana AutomaticSwitchDebugFooter.swift
+[342/360] Compiling Hana AutomaticSwitchDebugSnapshot.swift
+[343/360] Compiling Hana AutomaticSwitchDiagnostics.swift
+[344/360] Compiling Hana Diagnostics.swift
+[345/360] Compiling Hana DisplayPlacement.swift
+[346/360] Compiling Hana FocusedWindowGeometry.swift
+[347/360] Compiling Hana FoundationModelsClassifier.swift
+[348/360] Compiling Hana GlobalShortcut.swift
+[349/360] Compiling Hana HanaApp.swift
+[350/360] Compiling Hana JevKeychainStore.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[351/360] Compiling Hana JevLaunchMemory.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[352/360] Compiling Hana JevRequestActivity.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[353/360] Compiling Hana JevSharedTransport.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[354/360] Compiling Hana MacInteraction.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[355/360] Compiling Hana MainWindowValidation.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[355/360] Write Objects.LinkFileList
+[356/360] Linking Hana
+[357/360] Applying Hana
+[359/442] Compiling HanaTests OrganizedCollectionFixture.swift
+[360/442] Compiling HanaTests ResultIconsTests.swift
+[361/442] Compiling HanaTests ScriptedClassifier.swift
+[362/442] Compiling HanaTests SearchExclusionTests.swift
+[363/442] Compiling HanaTests SearchRankingTests.swift
+[364/442] Compiling HanaTests SearchResponsivenessTests.swift
+[365/442] Compiling HanaTests SearchTests.swift
+[366/449] Compiling HanaTests CollectionTitleSourceTests.swift
+[367/449] Compiling HanaTests CompletedArchiveTests.swift
+[368/449] Compiling HanaTests DisplayPlacementTests.swift
+[369/449] Compiling HanaTests IndependentExportDecoder.swift
+[370/449] Compiling HanaTests JevBackoffTests.swift
+[371/449] Compiling HanaTests JevHTTPSessionTests.swift
+[372/449] Compiling HanaTests JevKeychainTests.swift
+[373/449] Compiling HanaTests NativeEditingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[374/449] Compiling HanaTests NativeTaskTitleEditor.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[375/449] Compiling HanaTests NativeWindowSlot.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[376/449] Compiling HanaTests NoteEditingLifetimeReviewTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[377/449] Compiling HanaTests NoteEditingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[378/449] Compiling HanaTests NoteModeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[379/449] Compiling HanaTests NoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[380/449] Compiling HanaTests NotePreviewTests.swift
+[381/449] Compiling HanaTests NoteSaveSafetyNativeTests.swift
+[382/449] Compiling HanaTests NoteSaveSafetyTests.swift
+[383/449] Compiling HanaTests NoteSaveTests.swift
+[384/449] Compiling HanaTests NoteWindowTests.swift
+[385/449] Compiling HanaTests OpenNoteCaptureTests.swift
+[386/449] Compiling HanaTests OpenNoteOrganizationTests.swift
+[387/449] Compiling HanaTests ClassifierMenuTests.swift
+[388/449] Compiling HanaTests CollectionExportHarnessTests.swift
+[389/449] Compiling HanaTests CollectionExportTests.swift
+[390/449] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[391/449] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[392/449] Compiling HanaTests CollectionSnapshotTests.swift
+[393/449] Compiling HanaTests CollectionStoreOpeningTests.swift
+[394/449] Compiling HanaTests CollectionStoreTests.swift
+[395/449] Compiling HanaTests CalculationAutomaticSwitchInteractionTests.swift
+[396/449] Compiling HanaTests CalculationAutomaticSwitchTests.swift
+[397/449] Compiling HanaTests CalculationInteractionTests.swift
+[398/449] Compiling HanaTests CalculationTests.swift
+[399/449] Compiling HanaTests CaptureSafetyNativeTests.swift
+[400/449] Compiling HanaTests CaptureSafetyTests.swift
+[401/449] Compiling HanaTests CaptureSessionTests.swift
+[402/449] Compiling HanaTests ClassifierAdapterTests.swift
+[403/449] Compiling HanaTests AutomaticSwitchDebugInteractionTests.swift
+[404/449] Compiling HanaTests AutomaticSwitchDebugTests.swift
+[405/449] Compiling HanaTests AutomaticSwitchDeletionTests.swift
+[406/449] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+[407/449] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[408/449] Compiling HanaTests AutomaticSwitchReversalOptionsTests.swift
+[409/449] Compiling HanaTests AutomaticSwitchReviewPolicyTests.swift
+[410/449] Compiling HanaTests AutomaticSwitchSessionCountTests.swift
+[411/449] Emitting module HanaTests
+[412/449] Compiling HanaTests AutomaticSwitchSubmissionTests.swift
+[413/449] Compiling HanaTests AutomaticSwitchTests.swift
+[414/449] Compiling HanaTests AutomaticSwitchWakeUpInteractionTests.swift
+[415/449] Compiling HanaTests AutomaticSwitchWakeUpTests.swift
+[416/449] Compiling HanaTests AutomaticSwitchWithdrawalDiagnosticsTests.swift
+[417/449] Compiling HanaTests AutomaticSwitchWithdrawalTests.swift
+[418/449] Compiling HanaTests AutomaticSwitchWordCacheTests.swift
+[419/449] Compiling HanaTests AutomaticSwitchWordPacedTests.swift
+[420/449] Compiling HanaTests JevWordPacedWithdrawalNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[421/449] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[422/449] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[423/449] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[424/449] Compiling HanaTests MarkdownPreviewTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[425/449] Compiling HanaTests ModeIconTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[426/449] Compiling HanaTests NativeAppFixture.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[427/449] Compiling HanaTests JevRejectionMenuTests.swift
+[428/449] Compiling HanaTests JevRequestActivityTests.swift
+[429/449] Compiling HanaTests JevSharedTransportTests.swift
+[430/449] Compiling HanaTests JevSubmissionNativeTests.swift
+[431/449] Compiling HanaTests JevWordPacedDeletionNativeTests.swift
+[432/449] Compiling HanaTests JevWordPacedNativeFixture.swift
+[433/449] Compiling HanaTests JevWordPacedNativeTests.swift
+[434/449] Compiling HanaTests SearchTypingGapTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[435/449] Compiling HanaTests ShortcutMenuTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[436/449] Compiling HanaTests SpotlightStageTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[437/449] Compiling HanaTests StrongMatchGateTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[438/449] Compiling HanaTests SuggestionInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[439/449] Compiling HanaTests TaskLifecycleTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[440/449] Compiling HanaTests TaskOrderingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[441/449] Compiling HanaTests TaskSaveTests.swift
+[442/449] Compiling HanaTests TaskWorkspaceOrderTests.swift
+[443/449] Compiling HanaTests TaskWorkspaceTests.swift
+[444/449] Compiling HanaTests TestClock.swift
+[445/449] Compiling HanaTests TrickyInputCheckTests.swift
+[446/449] Compiling HanaTests WorkingWindowReviewTests.swift
+[447/449] Compiling HanaTests WorkingWindowsValidationTests.swift
+[448/451] Emitting module HanaPackageTests
+[449/451] Compiling HanaPackageTests runner.swift
+[449/451] Write Objects.LinkFileList
+[450/451] Linking HanaPackageTests
+Build complete! (64.07s)
+Test Suite 'Selected tests' started at 2026-10-16 17:19:02.799.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 17:19:02.800.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 17:19:02.800.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 17:19:02.800.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationTests started.
+􀟈  Test decimalMultiplicationRejectsAnExponentBelowTheRepresentableRange() started.
+􀢄  Test decimalMultiplicationRejectsAnExponentBelowTheRepresentableRange() recorded an issue at CalculationTests.swift:8:9: Expectation failed: (answer.state == .tooLarge && answer.title == "Uh oh" → false) && (answer.subtitle == "Too large" → <not evaluated>)
+􀢄  Test decimalMultiplicationRejectsAnExponentBelowTheRepresentableRange() recorded an issue at CalculationTests.swift:9:9: Expectation failed: (answer.copyableText → "1e127") == nil
+􀢄  Test decimalMultiplicationRejectsAnExponentBelowTheRepresentableRange() failed after 0.001 seconds with 2 issues.
+􀢄  Suite CalculationTests failed after 0.001 seconds with 2 issues.
+􀢄  Test run with 1 test in 1 suite failed after 0.001 seconds with 2 issues.

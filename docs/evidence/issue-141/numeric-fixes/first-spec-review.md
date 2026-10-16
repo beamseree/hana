@@ -1,0 +1,9 @@
+Pinned review: `38f4ab6406aa342bd3691469f4a9aef3be8ce0ea...a0ce847979ddee6f3a1c72943d4602b613e27d60`; commit `a0ce847` (Preserve representable decimal scales in calculator arithmetic). Read-only Spec axis, limited to the two confirmed lower-range findings.
+
+**0 Spec findings.** No confirmed missing or partial requirements, wrong implementation, or scope creep in this fix.
+
+- #141: “`+ - * /`, `%` and integer powers use exact decimal arithmetic.” Signed significand multiplication/division and explicit decimal scaling remain entirely in `Decimal`; no new Double coercion is introduced. `5e-65 * 2e-64` now copies `1e-128`, and `0.5^400` copies `3.8725919e-121`. Percentages, negative signs and integer powers use the repaired path.
+- #141: “An answer outside the representable range is *too large*.” `1e-65 * 1e-64` now correctly reports Too large; representable `1e-100 / 1`, `1e-100 / 10` and `1e-128 / 1` return values. Rounding at Decimal’s lower exponent bound retains the representable precision and is documented.
+- #142: “Typing and display follow the system locale’s separators.” A comma-decimal small quotient retains its localized display and clipboard text. Error precedence, zero handling and mixed finite Double answers remain consistent with the existing behavior. Existing upper-range error semantics were intentionally preserved within this bounded fix.
+
+Independent evidence: original reproductions checked against `integration-numeric-reference.py` at 200-digit precision; `numeric-review-grid-probe.swift` exercised 420 product/division combinations with zero mismatches against a separate Python Decimal reference; `numeric-review-regression-probe.swift` passed 8 locale/error/mixed-value checks. Results: `numeric-review-grid-result.json`. No repository edits or native tests were performed. The orchestrator’s final serial full-suite gate remains separate; parent #141 and physical trial #146 remain open.

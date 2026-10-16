@@ -1,0 +1,17 @@
+[0/1] Planning build
+Test Suite 'Selected tests' started at 2026-10-16 19:29:53.808.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 19:29:53.809.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 19:29:53.810.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 19:29:53.810.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.002) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite NoteSaveSafetyNativeTests started.
+􀟈  Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+􀟈  Test case passing 1 argument action → .retry to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+􀟈  Test case passing 1 argument action → .discardChanges to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+􁁛  Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) with 2 test cases passed after 0.764 seconds.
+􁁛  Suite NoteSaveSafetyNativeTests passed after 0.764 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 0.764 seconds.

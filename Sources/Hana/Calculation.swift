@@ -155,18 +155,57 @@ enum Calculation {
             return .approximate(value)
         }
 
+        static func literal(_ text: String) -> Number {
+            let parts = text.split(separator: "e", maxSplits: 1, omittingEmptySubsequences: false)
+            var digits = parts[0].filter(\.isNumber).drop(while: { $0 == "0" })
+            if digits.isEmpty { return .decimal(.zero) }
+            let exponent: Int
+            if parts.count == 2 {
+                guard let parsed = Int(parts[1]) else { return .failure(.tooLarge) }
+                exponent = parsed
+            } else { exponent = 0 }
+            let fractionalDigits = parts[0].firstIndex(of: ".").map {
+                parts[0].distance(from: $0, to: parts[0].endIndex) - 1
+            } ?? 0
+            let scale = exponent.subtractingReportingOverflow(fractionalDigits)
+            guard !scale.overflow else { return .failure(.tooLarge) }
+            let integerDigits = digits.count.addingReportingOverflow(scale.partialValue)
+            // A nonzero Decimal spans 1e-128 through (2^128 - 1) * 1e127.
+            guard !integerDigits.overflow, (-127...166).contains(integerDigits.partialValue)
+            else { return .failure(.tooLarge) }
+            if integerDigits.partialValue == 166 {
+                // Check before Foundation truncates max + 1 into range.
+                let maximum = String(UInt128.max)
+                let leading = String(digits.prefix(maximum.count))
+                    + String(repeating: "0", count: max(0, maximum.count - digits.count))
+                guard leading < maximum
+                    || (leading == maximum && digits.dropFirst(maximum.count).allSatisfy { $0 == "0" })
+                else { return .failure(.tooLarge) }
+            }
+            // Normalize before parsing so compensating exponents never require
+            // Foundation to represent an out-of-range standalone coefficient.
+            while digits.last == "0" { digits = digits.dropLast() }
+            let normalized = digits.count == 1 ? String(digits)
+                : String(digits.prefix(1)) + "." + String(digits.dropFirst())
+            guard let coefficient = Decimal(string: normalized, locale: Locale(identifier: "en_US_POSIX"))
+            else { return .failure(.tooLarge) }
+            return scaled(coefficient, by: integerDigits.partialValue - 1)
+        }
+
         func applying(_ operation: Character, to right: Number) -> Number {
             if case .failure = self { return self }
             if case .failure = right { return right }
             if operation == "/", right.double == 0 { return .failure(.divisionByZero) }
             if case .decimal(var left) = self, case .decimal(var right) = right {
+                if operation == "+" || operation == "-", Self.sumExceedsUpperBound(left, right, operation: operation) {
+                    return .failure(.tooLarge)
+                }
                 var result = Decimal.zero
                 let error: Decimal.CalculationError
                 switch operation {
                 case "+": error = NSDecimalAdd(&result, &left, &right, .plain)
                 case "-": error = NSDecimalSubtract(&result, &left, &right, .plain)
-                case "*": error = NSDecimalMultiply(&result, &left, &right, .plain)
-                default: error = NSDecimalDivide(&result, &left, &right, .plain)
+                default: return Self.productOrQuotient(left, right, operation: operation)
                 }
                 switch error {
                 case .noError, .lossOfPrecision: return .decimal(result)
@@ -185,6 +224,151 @@ enum Calculation {
                 return .failure(.tooLarge)
             }
             return .checked(result)
+        }
+
+        private static func sumExceedsUpperBound(_ left: Decimal, _ right: Decimal, operation: Character) -> Bool {
+            let addingMagnitudes = operation == "+" ? left.sign == right.sign : left.sign != right.sign
+            guard addingMagnitudes else { return false }
+            let upper = left.exponent == 127 ? left : right
+            let other = left.exponent == 127 ? right : left
+            // Two operands below exponent 127 cannot sum beyond Decimal's maximum.
+            guard upper.exponent == 127 else { return false }
+            guard let a = UInt128(NSDecimalNumber(decimal: upper.significand).stringValue),
+                  let b = UInt128(NSDecimalNumber(decimal: other.significand).stringValue)
+            else { return true }
+            let remaining = UInt128.max - a
+            if remaining == 0 { return b != 0 }
+            let shift = 127 - other.exponent
+            guard shift <= 38 else { return false }
+            let power = (0..<shift).reduce(UInt128(1)) { value, _ in value * 10 }
+            let gap = remaining.multipliedFullWidth(by: power)
+            return gap.high == 0 && b > gap.low
+        }
+
+        private static func productOrQuotient(_ left: Decimal, _ right: Decimal, operation: Character) -> Number {
+            guard !outsideRange(left, right, operation: operation) else { return .failure(.tooLarge) }
+            // Foundation can wrap product exponents and underflow valid quotients.
+            // Operate on significands, then apply their decimal scales separately.
+            var leftSignificand = left.sign == .minus ? -left.significand : left.significand
+            var rightSignificand = right.sign == .minus ? -right.significand : right.significand
+            var result = Decimal.zero
+            var exponent = operation == "*" ? left.exponent + right.exponent : left.exponent - right.exponent
+            let error: Decimal.CalculationError
+            if operation == "*" {
+                error = NSDecimalMultiply(&result, &leftSignificand, &rightSignificand, .plain)
+            } else {
+                let leftDigits = NSDecimalNumber(decimal: left.significand).stringValue.count
+                let rightDigits = NSDecimalNumber(decimal: right.significand).stringValue.count
+                var normalizedLeft = Decimal.zero
+                var normalizedRight = Decimal.zero
+                guard NSDecimalMultiplyByPowerOf10(&normalizedLeft, &leftSignificand, Int16(1 - leftDigits), .plain) == .noError,
+                      NSDecimalMultiplyByPowerOf10(&normalizedRight, &rightSignificand, Int16(1 - rightDigits), .plain) == .noError
+                else { return .failure(.tooLarge) }
+                // Similar magnitudes prevent a valid quotient truncating to zero.
+                exponent += leftDigits - rightDigits
+                error = NSDecimalDivide(&result, &normalizedLeft, &normalizedRight, .plain)
+            }
+            guard error == .noError || error == .lossOfPrecision else { return .failure(.tooLarge) }
+            return scaled(result, by: exponent)
+        }
+
+        private static func outsideRange(_ left: Decimal, _ right: Decimal, operation: Character) -> Bool {
+            let scale = operation == "*" ? left.exponent + right.exponent : left.exponent - right.exponent
+            guard let a = UInt128(NSDecimalNumber(decimal: left.significand).stringValue),
+                  let b = UInt128(NSDecimalNumber(decimal: right.significand).stringValue)
+            else { return true }
+            if a == 0 || b == 0 { return false }
+            let magnitude: (high: UInt128, low: UInt128)
+            let maximum: (high: UInt128, low: UInt128)
+            if operation == "*" {
+                magnitude = a.multipliedFullWidth(by: b)
+                if scale < -128 {
+                    let reduced = dividingByPowerOfTen(magnitude, exponent: -128 - scale)
+                    return reduced.high == 0 && reduced.low == 0
+                }
+                if 127 - scale > 38 { return false }
+                if scale >= 127 {
+                    maximum = dividingByPowerOfTen((0, UInt128.max), exponent: scale - 127)
+                } else {
+                    let power = (0..<(127 - scale)).reduce(UInt128(1)) { value, _ in value * 10 }
+                    maximum = UInt128.max.multipliedFullWidth(by: power)
+                }
+            } else {
+                let shift = scale + 128
+                if shift <= 38 {
+                    if shift < -38 { return true }
+                    let power = (0..<abs(shift)).reduce(UInt128(1)) { value, _ in value * 10 }
+                    let numerator: (high: UInt128, low: UInt128) = shift < 0 ? (0, a) : a.multipliedFullWidth(by: power)
+                    let denominator: (high: UInt128, low: UInt128) = shift < 0 ? b.multipliedFullWidth(by: power) : (0, b)
+                    return numerator.high < denominator.high || (numerator.high == denominator.high && numerator.low < denominator.low)
+                }
+                if scale <= 127 { return false }
+                magnitude = (0, a)
+                maximum = dividingByPowerOfTen(UInt128.max.multipliedFullWidth(by: b), exponent: scale - 127)
+            }
+            // Compare before Foundation truncates any significant digits into range.
+            return magnitude.high > maximum.high || (magnitude.high == maximum.high && magnitude.low > maximum.low)
+        }
+
+        private static func dividingByPowerOfTen(
+            _ coefficient: (high: UInt128, low: UInt128), exponent: Int
+        ) -> (high: UInt128, low: UInt128) {
+            var value = coefficient
+            for _ in 0..<exponent {
+                let remainder = value.high % 10
+                value.high /= 10
+                // The high limb is below the divisor, so the low quotient fits.
+                value.low = UInt128(10).dividingFullWidth((high: remainder, low: value.low)).quotient
+                if value.high == 0 && value.low == 0 { break }
+            }
+            return value
+        }
+
+        private static func scaled(_ value: Decimal, by power: Int) -> Number {
+            if value == .zero { return .decimal(.zero) }
+            var significand = value.sign == .minus ? -value.significand : value.significand
+            let combined = value.exponent.addingReportingOverflow(power)
+            guard !combined.overflow else { return .failure(.tooLarge) }
+            var exponent = combined.partialValue
+            if exponent < -128 {
+                let discardedDigits = -128 - exponent
+                let digits = NSDecimalNumber(decimal: value.significand).stringValue.count
+                guard digits > discardedDigits else { return .failure(.tooLarge) }
+                // Decimal can retain fewer significant digits near its lower bound.
+                var rounded = Decimal.zero
+                NSDecimalRound(&rounded, &significand, -discardedDigits, .plain)
+                exponent += rounded.exponent
+                significand = rounded.sign == .minus ? -rounded.significand : rounded.significand
+            }
+            if exponent >= 127 {
+                // The 128-bit coefficient can absorb up to 38 extra powers of ten.
+                guard exponent - 127 <= 38,
+                      var coefficient = UInt128(NSDecimalNumber(decimal: significand.significand).stringValue)
+                else { return .failure(.tooLarge) }
+                for _ in 127..<exponent {
+                    let expanded = coefficient.multipliedReportingOverflow(by: 10)
+                    guard !expanded.overflow else { return .failure(.tooLarge) }
+                    coefficient = expanded.partialValue
+                }
+                return atUpperExponent(coefficient, negative: significand.sign == .minus)
+            }
+            guard exponent >= -128 else { return .failure(.tooLarge) }
+            var result = Decimal.zero
+            let error = NSDecimalMultiplyByPowerOf10(&result, &significand, Int16(exponent), .plain)
+            guard error == .noError || error == .lossOfPrecision else { return .failure(.tooLarge) }
+            return .decimal(result)
+        }
+
+        private static func atUpperExponent(_ coefficient: UInt128, negative: Bool) -> Number {
+            var high = NSDecimalNumber(mantissa: UInt64(coefficient >> 64), exponent: 127, isNegative: false).decimalValue
+            var low = NSDecimalNumber(mantissa: UInt64(truncatingIfNeeded: coefficient), exponent: 127, isNegative: false).decimalValue
+            // Split into public UInt64 constructors without normalizing exponent 127 away.
+            var radix = Decimal(string: "18446744073709551616")! // 2^64, exactly representable.
+            var product = Decimal.zero
+            guard NSDecimalMultiply(&product, &high, &radix, .plain) == .noError else { return .failure(.tooLarge) }
+            var result = Decimal.zero
+            guard NSDecimalAdd(&result, &product, &low, .plain) == .noError else { return .failure(.tooLarge) }
+            return .decimal(negative ? -result : result)
         }
 
         func raised(to exponent: Number) -> Number {
@@ -363,9 +547,8 @@ enum Calculation {
                 return Operand(number: argument.applyingFunction(name))
             }
             guard case .number(let text) = tokens[index], text.contains(where: \.isNumber) else { throw Failure.invalid }
-            let value = Decimal(string: text, locale: Locale(identifier: "en_US_POSIX"))
             index += 1
-            return Operand(number: value.map(Number.decimal) ?? .failure(.tooLarge))
+            return Operand(number: Number.literal(text))
         }
     }
 

@@ -60,6 +60,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Task { await validateNoteWindow { self.interaction = $0 } }
             return
         }
+        if CommandLine.arguments.contains("--validate-note-close") {
+            Task { await validateNoteClose { self.interaction = $0 } }
+            return
+        }
         if CommandLine.arguments.contains("--validate-main-window") {
             Task { await validateMainWindow { self.interaction = $0 } }
             return

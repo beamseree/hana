@@ -1,0 +1,308 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/7] Compiling Hana Calculation.swift
+[4/7] Emitting module Hana
+[4/9] Write Objects.LinkFileList
+[5/9] Linking Hana
+[6/9] Applying Hana
+[8/10] Emitting module HanaTests
+[8/10] Write Objects.LinkFileList
+[9/10] Linking HanaPackageTests
+Build complete! (10.31s)
+Test Suite 'Selected tests' started at 2026-10-16 18:49:04.847.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 18:49:04.848.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 18:49:04.848.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 18:49:04.848.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationTests started.
+􀟈  Test exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-65 * 1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-65 * 1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-65 * -1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-65 * -1e-64" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "9e-128 * 0.1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / 10" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-128 / 10" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / -10" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "10^-129" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "0.5^500" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "4e127 * 1e38" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-4e127 * 1e38" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e127 / 1e-39" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e166" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "10e9223372036854775807" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "0.1e-9223372036854775808" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e99999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211456e127" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "3.40282366920938463463374607431768211456e165" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "3402823669209384634633746074317682114551e126" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "9.99999999999999999999999999999999999999e-129" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 * 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 / 0.99999999999999999999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 * 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 / 0.99999999999999999999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 * 2" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-1e-128 / 1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 / -1.00000000000000000000000000000000000001" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "1e-128 * 0.99999999999999999999999999999999999999" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 + 1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211455e127 - -1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 + -1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "-340282366920938463463374607431768211455e127 - 1" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􀟈  Test case passing 1 argument text → "340282366920938463463374607431768211450e127 + 6e127" to exactArithmeticRejectsOutOfRangeScales(text:) started.
+􁁛  Test exactArithmeticRejectsOutOfRangeScales(text:) with 35 test cases passed after 0.005 seconds.
+􀟈  Test decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 1", expected → "1e-100" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 10", expected → "1e-101" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-128 / 1", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e-100 / 1", expected → "-1e-100" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / -1", expected → "-1e-100" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e-100 / -1", expected → "1e-100" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-127 / 10", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 1e28", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 3", expected → "3.3333333e-101" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "4e-128 / 3", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "15e-128 / 10", expected → "2e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-15e-128 / 10", expected → "-2e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-128 / 0.99999999999999999999999999999999999999", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-128 * 1.00000000000000000000000000000000000001", expected → "1e-128" to decimalDivisionPreservesRepresentableSmallValues(text:expected:) started.
+􁁛  Test decimalDivisionPreservesRepresentableSmallValues(text:expected:) with 14 test cases passed after 0.002 seconds.
+􀟈  Test exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5e-65 * 2e-64", expected → "1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5e-65 * 2e-64", expected → "-1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5e-65 * -2e-64", expected → "-1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5e-65 * -2e-64", expected → "1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 * 1e-28", expected → "1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-400", expected → "3.8725919e-121" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.5^400", expected → "3.8725919e-121" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-0.5)^401", expected → "-1.936296e-121" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10^-128", expected → "1e-128" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-120%", expected → "1e-122" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.1 * 0.2 / 0.5", expected → "0.04" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "((0.1 + 0.2) * 1e-100) / 1e-100", expected → "0.3" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 * 0.1 + 1e-101", expected → "2e-101" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 10 - 1e-101", expected → "0" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-100 / 1e-100", expected → "1" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-128 * 0", expected → "0" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0 / 1e-128", expected → "0" to exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) started.
+􁁛  Test exactArithmeticAndIntegerPowersPreserveRepresentableScales(text:expected:) with 17 test cases passed after 0.003 seconds.
+􀟈  Test exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5e127 * 2", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 * 10", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 / 0.1", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5e127 * 2", expected → "-1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5e127 * -2", expected → "-1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5e127 * -2", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e127 / 0.1", expected → "-1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 / -0.1", expected → "-1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e127 / -0.1", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "9e127 + 1e127", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10e127 + 0", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 * 11", expected → "1.1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e127 * 1e38", expected → "1e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3e127 * 1e38", expected → "3e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10^128", expected → "1e128" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^500", expected → "3.2733906e150" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 * 1", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 / 1", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 * 0.99999999999999999999999999999999999999", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 / 1.00000000000000000000000000000000000001", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-340282366920938463463374607431768211455e127 / 1", expected → "-3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 / -1", expected → "-3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 * 0.1 / 0.1", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-340282366920938463463374607431768211455e127 * 0.99999999999999999999999999999999999999", expected → "-3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 + 0", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211450e127 + 5e127", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211450e127 + 1", expected → "3.4028237e165" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 - 340282366920938463463374607431768211450e127", expected → "5e127" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "340282366920938463463374607431768211455e127 - 340282366920938463463374607431768211455e127", expected → "0" to exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) started.
+􁁛  Test exactArithmeticRetainsCoefficientsAtTheUpperExponentBound(text:expected:) with 29 test cases passed after 0.006 seconds.
+􀟈  Test equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e128 + 0", expected → "1e128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10e127 + 0", expected → "1e128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.1e129 + 0", expected → "1e128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-1e128 + 0", expected → "-1e128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1E+128 / 10", expected → "1e127" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e165 + 0", expected → "1e165" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3.4e165 + 0", expected → "3.4e165" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3.40282366920938463463374607431768211455e165 * 1", expected → "3.4028237e165" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10e-129 + 0", expected → "1e-128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "100e-130 + 0", expected → "1e-128" to equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) started.
+􁁛  Test equivalentScientificLiteralsShareTheRepresentableRange(text:expected:) with 10 test cases passed after 0.001 seconds.
+􀟈  Test longFlatPastedCalculationsHaveNoTokenCountLimit() started.
+􁁛  Test longFlatPastedCalculationsHaveNoTokenCountLimit() passed after 0.001 seconds.
+􀟈  Test excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􀟈  Test case passing 1 argument text → "((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((1+1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))" to excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􀟈  Test case passing 1 argument text → "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------1" to excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􀟈  Test case passing 1 argument text → "1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1^1" to excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􀟈  Test case passing 1 argument text → "sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(sqrt(1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))" to excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) started.
+􁁛  Test excessiveRecursiveCalculationsAreBoundedBeforeStackExhaustion(text:) with 4 test cases passed after 0.007 seconds.
+􀟈  Test implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2(3 + 4)", expected → "14" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(1 + 2)(3 + 4)", expected → "21" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2pi", expected → "6.2831853" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2e", expected → "5.4365637" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2sin(pi / 2)", expected → "2" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "6 / 2(1 + 2)", expected → "9" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3e5", expected → "300,000" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.2e-3", expected → "0.0012" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.2E+3", expected → "1,200" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2e3", expected → "2,000" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􁁛  Test implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) with 10 test cases passed after 0.001 seconds.
+􀟈  Test functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "sqrt(16)", title → "4", copy → "4" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "SQRT(16)", title → "4", copy → "4" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "sin(pi / 2)", title → "1", copy → "1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "cos(PI)", title → "-1", copy → "-1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "tan(Pi / 4)", title → "1", copy → "1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "log(100)", title → "2", copy → "2" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "ln(E)", title → "1", copy → "1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "2 * pi", title → "6.2831853", copy → "6.2831853" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "2 * e", title → "5.4365637", copy → "5.4365637" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "e^2", title → "7.3890561", copy → "7.3890561" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "2^0.5", title → "1.4142136", copy → "1.4142136" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "10^200.5", title → "3.1622777e200", copy → "3.1622777e200" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "sqrt(152399025)", title → "12,345", copy → "12345" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􁁛  Test functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) with 13 test cases passed after 0.001 seconds.
+􀟈  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "50%", expected → "0.5" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10%", expected → "220" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 - 10%", expected → "180" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 * 10%", expected → "20" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 / 10%", expected → "2,000" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 0.1", expected → "200.1" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10% + 10%", expected → "242" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10% * 2", expected → "200.2" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + (10%)", expected → "220" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􁁛  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) with 9 test cases passed after 0.001 seconds.
+􀟈  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^3^2", expected → "512" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-2^2", expected → "-4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-2)^2", expected → "4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-3", expected → "0.125" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-2^2", expected → "0.0625" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(0.1 + 0.2)^2", expected → "0.09" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.01^2", expected → "1.0201" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3^30", expected → "205,891,132,094,649" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1^1e100", expected → "1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1^-9223372036854775808", expected → "1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-1)^9007199254740993", expected → "-1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-1)^99999999999999999999999999999999999999", expected → "-1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-1)^1e100", expected → "1" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.000000000000000001^9223372036854775808", expected → "10,131.169" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􁁛  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) with 14 test cases passed after 0.004 seconds.
+􀟈  Test basicArithmeticAppearsAsAnAnswer() started.
+􁁛  Test basicArithmeticAppearsAsAnAnswer() passed after 0.001 seconds.
+􀟈  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 *", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * -", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / (3 - 3)", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "ln(0)", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "log(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(-2)^0.5", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "9^9^9", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "10^1000.5", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1e9999", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "4e127 * 1e38", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1e-128 / 10", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "2^9223372036854775808", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "2^-9223372036854775808", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt(-1) +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "9^9^9 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt(-1) + * 2", state → .invalid, title → "Not a valid calculation", subtitle → "sqrt(-1) + * 2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "9^9^9 + * 2", state → .invalid, title → "Not a valid calculation", subtitle → "9^9^9 + * 2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt(", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sin(1", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "2^", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt 16", state → .invalid, title → "Not a valid calculation", subtitle → "sqrt 16" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "2^^3", state → .invalid, title → "Not a valid calculation", subtitle → "2^^3" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + *", state → .invalid, title → "Not a valid calculation", subtitle → "3 + *" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1..2", state → .invalid, title → "Not a valid calculation", subtitle → "1..2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1 2 + 3", state → .invalid, title → "Not a valid calculation", subtitle → "1 2 + 3" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + 4)", state → .invalid, title → "Not a valid calculation", subtitle → "3 + 4)" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "(3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + ()", state → .invalid, title → "Not a valid calculation", subtitle → "3 + ()" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * )", state → .invalid, title → "Not a valid calculation", subtitle → "12 * )" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 + * 2", state → .invalid, title → "Not a valid calculation", subtitle → "5 / 0 + * 2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → " 3 + * 4 ", state → .invalid, title → "Not a valid calculation", subtitle → " 3 + * 4 " to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􁁛  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) with 38 test cases passed after 0.004 seconds.
+􀟈  Test recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "e", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "rent 1200 / 3", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "tax 3x4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "extra", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrtish(4)", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "https://3/4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "pix2", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "pie", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "x3", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3x", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "12 *", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5 / 0", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 + * 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1..2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrt", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "SIN(pi)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2pi", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2(3 + 4)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3x4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → ".3 x .4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3×4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^10", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "50%", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-3 + 2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􁁛  Test recognizesOnlyTheCalculationLanguage(text:expected:) with 30 test cases passed after 0.001 seconds.
+􀟈  Test evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 + 3 * 4", expected → "14" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(2 + 3) * 4", expected → "20" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / (2 + 3)", expected → "2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5 + 3", expected → "-2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 * -3", expected → "-6" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-(2 + 3)", expected → "-5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → "1,998" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.1 + 0.2", expected → "0.3" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / 4", expected → "2.5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3×4", expected → "12" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3x4", expected → "12" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x 4", expected → "12" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → ".3 x .4", expected → "0.12" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "12 ÷ 4", expected → "3" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5 − 3", expected → "2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0x10", expected → "0" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􁁛  Test evaluatesArithmeticWithExactDecimals(text:expected:) with 16 test cases passed after 0.001 seconds.
+􀟈  Test formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345 + 0", title → "123,456,789,012,345", copy → "123456789012345" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "999999999999999.9 + 0", title → "1e15", copy → "1e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1234567890123456 + 0", title → "1.2345679e15", copy → "1.2345679e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 3", title → "0.33333333", copy → "0.33333333" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789 / 100", title → "1,234,567.9", copy → "1234567.9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 100000000", title → "0.00000001", copy → "0.00000001" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 1000000000", title → "1e-9", copy → "1e-9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345678901 + 0", title → "1.2345679e20", copy → "1.2345679e20" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "-1234.5 + 0", title → "-1,234.5", copy → "-1234.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "0.0000000001 - 0.0000000001", title → "0", copy → "0" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "10 / 4", title → "2.5", copy → "2.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􁁛  Test formatsAnswersAndCopyableText(text:title:copy:) with 11 test cases passed after 0.001 seconds.
+􀟈  Test typingAndDisplayFollowTheExplicitLocale() started.
+􁁛  Test typingAndDisplayFollowTheExplicitLocale() passed after 0.001 seconds.
+􁁛  Suite CalculationTests passed after 0.049 seconds.
+􁁛  Test run with 17 tests in 1 suite passed after 0.049 seconds.
