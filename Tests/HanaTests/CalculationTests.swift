@@ -3,6 +3,15 @@ import Testing
 @testable import Hana
 
 struct CalculationTests {
+    @Test func longFlatPastedCalculationsWorkWhileExcessiveNestingIsBounded() throws {
+        let sum = Array(repeating: "1", count: 300).joined(separator: "+")
+        let answer = try #require(Calculation.answer(for: sum, locale: locale))
+        #expect(answer.state == .value && answer.title == "300" && answer.copyableText == "300")
+        let nested = String(repeating: "(", count: 1_024) + "1+1" + String(repeating: ")", count: 1_024)
+        let bounded = try #require(Calculation.answer(for: nested, locale: locale))
+        #expect(bounded.state == .tooLarge && bounded.title == "Uh oh" && bounded.subtitle == "Too large")
+        #expect(bounded.copyableText == nil)
+    }
     @Test(arguments: [
         ("2(3 + 4)", "14"), ("(1 + 2)(3 + 4)", "21"),
         ("2pi", "6.2831853"), ("2e", "5.4365637"),

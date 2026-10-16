@@ -22,7 +22,7 @@ enum Calculation {
     static func answer(for text: String, locale: Locale) -> Answer? {
         guard recognizes(text, locale: locale) else { return nil }
         let invalid = Answer(state: .invalid, title: "Not a valid calculation", subtitle: text, copyableText: nil)
-        guard let tokens = tokens(in: text, locale: locale), tokens.count <= 512 else { return invalid }
+        guard let tokens = tokens(in: text, locale: locale) else { return invalid }
         var parser = Parser(tokens: tokens)
         do {
             let value = try parser.expression().number
@@ -35,6 +35,8 @@ enum Calculation {
             return Answer(title: title, subtitle: text, copyableText: copy)
         } catch Parser.Failure.incomplete {
             return Answer(state: .incomplete, title: "…", subtitle: "Keep typing", copyableText: nil)
+        } catch Parser.Failure.tooLarge {
+            return Answer(state: .tooLarge, title: "Uh oh", subtitle: "Too large", copyableText: nil)
         } catch { return invalid }
     }
 
@@ -246,9 +248,19 @@ enum Calculation {
     }
 
     private struct Parser {
-        enum Failure: Error { case incomplete, invalid }
+        enum Failure: Error { case incomplete, invalid, tooLarge }
         let tokens: [Token]
         var index = 0
+        private var nesting = 0
+
+        init(tokens: [Token]) { self.tokens = tokens }
+
+        private mutating func nested(_ parse: (inout Parser) throws -> Operand) throws -> Operand {
+            guard nesting < 128 else { throw Failure.tooLarge }
+            nesting += 1
+            defer { nesting -= 1 }
+            return try parse(&self)
+        }
 
         mutating func take(_ token: Token) -> Bool {
             guard index < tokens.count, tokens[index] == token else { return false }
@@ -304,7 +316,7 @@ enum Calculation {
         mutating func unary() throws -> Operand {
             guard index < tokens.count else { throw Failure.incomplete }
             if take(.operation("-")) {
-                var value = try unary()
+                var value = try nested { try $0.unary() }
                 value.number = .decimal(-1).applying("*", to: value.number)
                 return value
             }
@@ -314,7 +326,7 @@ enum Calculation {
         mutating func power() throws -> Operand {
             var value = try postfix()
             if take(.operation("^")) {
-                let exponent = try unary()
+                let exponent = try nested { try $0.unary() }
                 value.number = value.number.raised(to: exponent.number)
                 value.directPercent = false
             }
@@ -333,7 +345,7 @@ enum Calculation {
         mutating func primary() throws -> Operand {
             guard index < tokens.count else { throw Failure.incomplete }
             if take(.left) {
-                let value = try expression()
+                let value = try nested { try $0.expression() }
                 guard take(.right) else {
                     throw index == tokens.count ? Failure.incomplete : Failure.invalid
                 }
@@ -346,7 +358,7 @@ enum Calculation {
             if case .function(let name) = tokens[index] {
                 index += 1
                 guard take(.left) else { throw index == tokens.count ? Failure.incomplete : Failure.invalid }
-                let argument = try expression().number
+                let argument = try nested { try $0.expression() }.number
                 guard take(.right) else { throw index == tokens.count ? Failure.incomplete : Failure.invalid }
                 return Operand(number: argument.applyingFunction(name))
             }

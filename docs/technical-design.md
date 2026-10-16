@@ -154,8 +154,7 @@ Use typed result IDs: note/task UUIDs; app/file resource identifiers plus volume
 | Too large | Uh oh | Too large | None |
 | Invalid | Not a valid calculation | Expression as typed | None |
 
-Incomplete means an otherwise valid expression ends while expecting an operand or closing parenthesis, such as `12 *`, `(3 + 4` or a function name awaiting its argument. A syntax error before the end remains invalid, including `3 + *`, `(3 + * 4`, `1..2` and `1 2 + 3`. The parser finishes checking syntax before reporting any numeric failure: `5 / 0 +`, `sqrt(-1) +` and `9^9^9 +` are still incomplete. Division by zero has its own state; invalid function domains or NaN results are undefined, and overflow or underflow of the active representation is too large. Numeric failures propagate through the expression without interrupting syntax checking.
-
+Incomplete means an otherwise valid expression ends while expecting an operand or closing parenthesis, such as `12 *`, `(3 + 4` or a function name awaiting its argument. A syntax error before the end remains invalid, including `3 + *`, `(3 + * 4`, `1..2` and `1 2 + 3`. The parser finishes checking syntax before reporting any numeric failure: `5 / 0 +`, `sqrt(-1) +` and `9^9^9 +` are still incomplete. Division by zero has its own state; invalid function domains or NaN results are undefined, and overflow or underflow of the active representation is too large. Numeric failures propagate through the expression without interrupting syntax checking. Flat expressions have no token-count cap, so a pasted 300-term sum evaluates normally. Recursive parentheses, function arguments, unary minus and power exponents share a 128-level nesting bound; exceeding that computation bound reports Too large without risking stack exhaustion.
 
 The supported language is:
 
