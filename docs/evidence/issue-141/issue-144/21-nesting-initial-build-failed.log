@@ -1,0 +1,28 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/7] Emitting module Hana
+[4/7] Compiling Hana Calculation.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Sources/Hana/Calculation.swift:26:22: error: 'Calculation.Parser' initializer is inaccessible due to 'private' protection level
+ 24 |         let invalid = Answer(state: .invalid, title: "Not a valid calculation", subtitle: text, copyableText: nil)
+ 25 |         guard let tokens = tokens(in: text, locale: locale) else { return invalid }
+ 26 |         var parser = Parser(tokens: tokens)
+    |                      `- error: 'Calculation.Parser' initializer is inaccessible due to 'private' protection level
+ 27 |         do {
+ 28 |             let value = try parser.expression().number
+    :
+248 |     }
+249 | 
+250 |     private struct Parser {
+    |                    `- note: 'init(tokens:index:nesting:)' declared here
+251 |         enum Failure: Error { case incomplete, invalid, tooLarge }
+252 |         let tokens: [Token]
+
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Sources/Hana/Calculation.swift:28:25: warning: no calls to throwing functions occur within 'try' expression
+ 26 |         var parser = Parser(tokens: tokens)
+ 27 |         do {
+ 28 |             let value = try parser.expression().number
+    |                         `- warning: no calls to throwing functions occur within 'try' expression
+ 29 |             guard parser.index == tokens.count else { return invalid }
+ 30 |             if case .failure(let failure) = value {
+error: fatalError

@@ -1,0 +1,23 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write sources
+[1/4] Write swift-version--112E4EF74740DA65.txt
+[3/9] Emitting module Hana
+[4/9] Compiling Hana TrickyInputCheck.swift
+[5/9] Compiling Hana StrongMatchGate.swift
+[6/9] Compiling Hana AutomaticSwitch.swift
+[7/9] Compiling Hana AutomaticSwitchDiagnostics.swift
+[8/19] Compiling Hana MainWindowValidation.swift
+[9/19] Compiling Hana OpenNoteCaptureValidation.swift
+[10/19] Compiling Hana NoteWindowValidation.swift
+[11/19] Compiling Hana HanaApp.swift
+[12/19] Compiling Hana SearchCorrectnessValidation.swift
+[13/19] Compiling Hana MixedSearchValidation.swift
+[14/19] Compiling Hana CoverageValidation.swift
+[15/19] Compiling Hana WorkingWindowsValidation.swift
+[16/19] Compiling Hana PerformanceValidation.swift
+[17/19] Compiling Hana MacInteraction.swift
+[17/20] Write Objects.LinkFileList
+[18/20] Linking Hana
+[19/20] Applying Hana
+Build complete! (6.08s)
