@@ -52,3 +52,7 @@ All eight findings plus the additional confirmed closed-note Archive/open race a
 ## Unlocked native follow-up — 2026-10-16
 
 [Measured native-context corrections](native-context-corrections/validation.md) identify the late note key change as AppKit's delayed Dock restoration after an early manual key acknowledgment. A bounded main/note restore handoff change passes the uninstrumented original NoteWindow validator. The two failing global-focus Swift Tests retain every original assertion through their existing actual NSApplication validators, using bounded signed fixture subprocesses after an LLDB probe proved async-main queue exit during manual event dispatch. Both tests now pass with a complete 2-test summary. Root's merged full suite/rebuilt release and physical gates remain separate; no incomplete exit0 run was counted as passing.
+
+## Independent fix verification
+
+Both reviewers inspected immutable `a17608f` against `6319140` after implementation. [Standards verification](review-fixes/standards-verification.md) and [Spec verification](review-fixes/spec-verification.md) found no remaining actionable finding in the targeted fixes. These were source/test/evidence inspections, not new native test runs. All original findings above remain recorded; final native and physical acceptance gates are separate.

@@ -196,7 +196,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
  79 |     let taskWorkspace: TaskWorkspacePresentation
     |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
  80 |     private var observation: Task<Void, Never>?
- 81 | 
+ 81 |␠
 [180/220] Compiling Hana MixedSearchValidation.swift
 [181/220] Compiling Hana ModeIcon.swift
 [182/220] Compiling Hana NoteScroller.swift
@@ -214,10 +214,10 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
  79 |     let taskWorkspace: TaskWorkspacePresentation
     |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
  80 |     private var observation: Task<Void, Never>?
- 81 | 
+ 81 |␠
 
 /Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:83:25: error: cannot find 'TaskWorkspacePresentation' in scope
- 81 | 
+ 81 |␠
  82 |     init(collection: Task<CollectionStore, any Error>?) {
  83 |         taskWorkspace = TaskWorkspacePresentation(collection: collection)
     |                         `- error: cannot find 'TaskWorkspacePresentation' in scope
@@ -230,10 +230,10 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
  79 |     let taskWorkspace: TaskWorkspacePresentation
     |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
  80 |     private var observation: Task<Void, Never>?
- 81 | 
+ 81 |␠
 
 /Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:83:25: error: cannot find 'TaskWorkspacePresentation' in scope
- 81 | 
+ 81 |␠
  82 |     init(collection: Task<CollectionStore, any Error>?) {
  83 |         taskWorkspace = TaskWorkspacePresentation(collection: collection)
     |                         `- error: cannot find 'TaskWorkspacePresentation' in scope
@@ -246,10 +246,10 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
  79 |     let taskWorkspace: TaskWorkspacePresentation
     |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
  80 |     private var observation: Task<Void, Never>?
- 81 | 
+ 81 |␠
 
 /Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/WorkingWindowController.swift:83:25: error: cannot find 'TaskWorkspacePresentation' in scope
- 81 | 
+ 81 |␠
  82 |     init(collection: Task<CollectionStore, any Error>?) {
  83 |         taskWorkspace = TaskWorkspacePresentation(collection: collection)
     |                         `- error: cannot find 'TaskWorkspacePresentation' in scope
@@ -278,7 +278,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
  79 |     let taskWorkspace: TaskWorkspacePresentation
     |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
  80 |     private var observation: Task<Void, Never>?
- 81 | 
+ 81 |␠
 [202/220] Compiling Hana HanaShadow.swift
 /Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/MacInteraction.swift:130:36: error: cannot find type 'TaskWorkspacePresentation' in scope
  128 |     // Membership ends on close, never on minimize or temporary invisibility.
@@ -294,7 +294,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
  79 |     let taskWorkspace: TaskWorkspacePresentation
     |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
  80 |     private var observation: Task<Void, Never>?
- 81 | 
+ 81 |␠
 [203/220] Compiling Hana MacInteraction.swift
 /Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/MacInteraction.swift:130:36: error: cannot find type 'TaskWorkspacePresentation' in scope
  128 |     // Membership ends on close, never on minimize or temporary invisibility.
@@ -310,7 +310,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
  79 |     let taskWorkspace: TaskWorkspacePresentation
     |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
  80 |     private var observation: Task<Void, Never>?
- 81 | 
+ 81 |␠
 [204/220] Compiling Hana MainWindowValidation.swift
 /Users/beamsereeyothin/.codex/worktrees/issue-94-tasks/hana/Sources/Hana/MacInteraction.swift:130:36: error: cannot find type 'TaskWorkspacePresentation' in scope
  128 |     // Membership ends on close, never on minimize or temporary invisibility.
@@ -326,7 +326,7 @@ error: emit-module command failed with exit code 1 (use -v to see invocation)
  79 |     let taskWorkspace: TaskWorkspacePresentation
     |                        `- error: cannot find type 'TaskWorkspacePresentation' in scope
  80 |     private var observation: Task<Void, Never>?
- 81 | 
+ 81 |␠
 [205/220] Compiling Hana CollectionSchema.swift
 [206/220] Compiling Hana CollectionSnapshotFixture.swift
 [207/220] Compiling Hana CollectionSnapshots.swift

@@ -1,0 +1,28 @@
+Build complete! (53.21s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite WorkingWindowReviewTests started.
+◇ Suite NoteEditingLifetimeReviewTests started.
+◇ Test ownerFlushKeepsAnUnclosedDraftAfterCallerRelease() started.
+◇ Test releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) started.
+◇ Test case passing 1 argument ending → "abandon" to releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test case passing 1 argument ending → "discard" to releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test case passing 1 argument ending → "close" to releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) started.
+◇ Test case passing 1 argument blank → false to quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) started.
+✔ Test ownerFlushKeepsAnUnclosedDraftAfterCallerRelease() passed after 0.123 seconds.
+✔ Test releasesUnownedBodiesAndPreservesOneSharedActiveSession(ending:) with 3 test cases passed after 0.790 seconds.
+✔ Suite NoteEditingLifetimeReviewTests passed after 0.790 seconds.
+◇ Test case passing 1 argument blank → true to quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) started.
+✔ Test quitDrainsTaskRenameOrKeepsRefusedDraft(blank:) with 2 test cases passed after 0.909 seconds.
+◇ Test taskMenuKeepsTheClickedTargetAcrossSelectionChanges() started.
+✔ Test taskMenuKeepsTheClickedTargetAcrossSelectionChanges() passed after 0.102 seconds.
+◇ Test staleTaskRequestsRefuseRevisionAndSectionChanges() started.
+✔ Test staleTaskRequestsRefuseRevisionAndSectionChanges() passed after 0.095 seconds.
+◇ Test quitFreezesNativeTaskAndNoteInputBeforeWaitingForRename() started.
+✔ Test quitFreezesNativeTaskAndNoteInputBeforeWaitingForRename() passed after 0.376 seconds.
+◇ Test openingDuringClosedNoteArchiveSharesTheOrganizationFreeze() started.
+✔ Test openingDuringClosedNoteArchiveSharesTheOrganizationFreeze() passed after 0.144 seconds.
+✔ Suite WorkingWindowReviewTests passed after 1.628 seconds.
+✔ Test run with 7 tests in 2 suites passed after 1.628 seconds.

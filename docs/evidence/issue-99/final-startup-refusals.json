@@ -1,0 +1,35 @@
+[
+  {
+    "arguments": [],
+    "exit": 2,
+    "stderr": "Hana: isolated working-windows bundle requires explicit fixture arguments."
+  },
+  {
+    "arguments": [
+      "--working-windows"
+    ],
+    "exit": 2,
+    "stderr": "Hana: invalid working-windows fixture arguments. Require one mode, absolute fixture root and report path."
+  },
+  {
+    "arguments": [
+      "--working-windows-interactive"
+    ],
+    "exit": 2,
+    "stderr": "Hana: invalid working-windows fixture arguments. Require one mode, absolute fixture root and report path."
+  },
+  {
+    "arguments": [
+      "--validate-working-windows"
+    ],
+    "exit": 2,
+    "stderr": "Hana: invalid working-windows fixture arguments. Require one mode, absolute fixture root and report path."
+  },
+  {
+    "arguments": [
+      "--validate-working-windows=true"
+    ],
+    "exit": 2,
+    "stderr": "Hana: invalid working-windows fixture arguments. Require one mode, absolute fixture root and report path."
+  }
+]

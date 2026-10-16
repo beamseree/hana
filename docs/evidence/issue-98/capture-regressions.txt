@@ -10,7 +10,7 @@ Build complete! (0.09s)
 ◇ Test openInWindowSubmitsTheExactNoteOnceAndRetriesTheSameReceipt() started.
 ◇ Test explicitOpeningRetryAfterADismissedFailureOwnsTheNewAttempt() started.
 ◇ Test blankNotesAreRefusedWithoutASaveEffect(text:) started.
-◇ Test case passing 1 argument text → " 
+◇ Test case passing 1 argument text → "␠
 	 " to blankNotesAreRefusedWithoutASaveEffect(text:) started.
 ◇ Test staleParsesCannotReplaceNewTextOrAReopenedPreview() started.
 ◇ Test case passing 1 argument text → "" to blankNotesAreRefusedWithoutASaveEffect(text:) started.
