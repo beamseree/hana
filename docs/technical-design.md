@@ -143,16 +143,28 @@ Use typed result IDs: note/task UUIDs; app/file resource identifiers plus volume
 
 ### Calculation answers
 
-`Calculation` is a pure synchronous evaluator: Search text plus an explicit `Locale` yields an optional `Answer` containing state, display title, subtitle and copyable text. Its independent `recognizes(_:locale:)` boundary identifies the complete accepted calculation language even when the basic arithmetic parser cannot produce a value. It owns tokenization, arithmetic and formatting; it knows nothing about panels, Search sources or Automatic switch. #142 evaluates basic decimal arithmetic, unary minus and parentheses; #143 keeps recognized calculations visible without a value and #144 completes the language described in #141. `Decimal` keeps basic arithmetic exact; localized formatting preserves 15-digit whole answers and rounds fractions to 8 significant digits, switching to scientific notation at the accepted thresholds.
+`Calculation` is a pure synchronous evaluator: Search text plus an explicit `Locale` yields an optional `Answer` containing state, display title, subtitle and copyable text. Its independent `recognizes(_:locale:)` boundary identifies the accepted calculation language without requiring a value. It owns tokenization, arithmetic and formatting; it knows nothing about panels, Search sources or Automatic switch. `Decimal` keeps decimal arithmetic and integer powers exact within its representable precision; functions, constants and non-integer powers introduce `Double` precision. Mixed operations retain that approximate representation, including finite results beyond Decimal’s range. Localized formatting preserves 15-digit whole answers and rounds fractions to 8 significant digits, switching to scientific notation beyond 15 integer digits or below `1e-8` in magnitude. Clipboard text removes grouping and retains the locale decimal separator.
 
 | Answer state | Title | Subtitle | Copyable text |
 | --- | --- | --- | --- |
 | Value | Formatted value | Expression as typed | Displayed value without grouping |
 | Incomplete | … | Keep typing | None |
 | Division by zero | Uh oh | Can't divide by zero | None |
+| Undefined | Uh oh | Undefined | None |
+| Too large | Uh oh | Too large | None |
 | Invalid | Not a valid calculation | Expression as typed | None |
 
-Incomplete means an otherwise valid expression ends while expecting an operand or closing parenthesis, such as `12 *`, `(3 + 4` or a function name awaiting its argument. A syntax error before the end remains invalid, including `3 + *`, `(3 + * 4`, `1..2` and `1 2 + 3`. The parser finishes checking syntax before reporting division by zero: `5 / 0 +` is still incomplete. Undefined and too-large answers arrive with #144 and reuse the same row and Enter handling.
+Incomplete means an otherwise valid expression ends while expecting an operand or closing parenthesis, such as `12 *`, `(3 + 4` or a function name awaiting its argument. A syntax error before the end remains invalid, including `3 + *`, `(3 + * 4`, `1..2` and `1 2 + 3`. The parser finishes checking syntax before reporting any numeric failure: `5 / 0 +`, `sqrt(-1) +` and `9^9^9 +` are still incomplete. Division by zero has its own state; invalid function domains or NaN results are undefined, and overflow or underflow of the active representation is too large. Numeric failures propagate through the expression without interrupting syntax checking.
+
+
+The supported language is:
+
+- `+ - * /`, unary minus, grouping parentheses, and pasted symbol variants `− × ÷`. Lowercase `x` multiplies only between numeric operands, with optional spaces; `0x10` therefore means `0 × 10`. Other words make the text ordinary Search.
+- `^` binds tighter than unary minus and associates right: `-2^2` is `-4`, `2^3^2` is `512`, and `2^-3` is `0.125`. Decimal integer powers use exponentiation by squaring with checked arithmetic and an unsigned exponent magnitude, avoiding linear work and signed-negation traps. Trivial bases `0`, `1` and `-1` preserve their exact results even for exponents beyond machine integers.
+- Postfix `%` divides by 100. A direct percentage operand of binary `+` or `-` is relative to the accumulated left value: `200 + 10%` is `220`; multiplication gives `200 * 10% = 20`. Grouping and unary minus preserve a direct percentage operand; a multiplication, division or power consumes it, so `200 + (10%)` is `220` and `200 + 10% * 2` is `200.2`.
+- Case-insensitive parenthesised functions `sqrt`, `sin`, `cos`, `tan`, `log` (base 10) and `ln`; trig arguments are radians. Constants `pi` and `e` use double precision. A function awaiting its argument is incomplete; `sqrt 16` is invalid. `sqrt(16)` displays the whole number `4`.
+- Implicit multiplication shares the precedence and left associativity of `* /`: `2(3 + 4)`, `2pi`, `2sin(pi / 2)` and `(1 + 2)(3 + 4)` work. Two adjacent bare number tokens remain invalid, including whitespace-separated numbers.
+- Scientific literals consume `e` and its optional sign only when exponent digits immediately follow: `3e5`, `1.2e-3` and `1.2E+3`. Otherwise `e` is the constant, as in `2e` and `e^2`. A scientific literal alone shows an answer (#146); ordinary bare numbers and lone constants remain ordinary Search.
 
 `SearchRow` has three cases: answer, result and capture suggestion. Mac Interaction computes the current answer synchronously on every Search edit before rendering or handling asynchronous source updates. An answer has one stable row identity, always precedes retained/current results and suppresses capture suggestions in every state. A value answer defaults to selected; an answer without a value defaults to the first result, or to itself when it is the only row. Completing `12 *` as `12 * 4` selects the new value unless the user navigated. Consecutive calculation edits and late batches preserve a user's chosen row while it remains present; a removed row falls back to the current default. Search's source matching/ranking remains independent of this row. Note and Task never expose it.
 

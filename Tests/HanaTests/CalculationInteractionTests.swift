@@ -8,7 +8,9 @@ struct CalculationInteractionTests {
     @Test(arguments: [
         ("12 *", "…", "Keep typing"),
         ("5 / 0", "Uh oh", "Can't divide by zero"),
-        ("3 + * 4", "Not a valid calculation", "3 + * 4")
+        ("3 + * 4", "Not a valid calculation", "3 + * 4"),
+        ("sqrt(-1)", "Uh oh", "Undefined"),
+        ("9^9^9", "Uh oh", "Too large")
     ])
     func answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(
         text: String, title: String, subtitle: String
@@ -69,7 +71,7 @@ struct CalculationInteractionTests {
         #expect(interaction.selectedRow == expected)
     }
 
-    @Test(arguments: ["12 *", "5 / 0", "3 + * 4"])
+    @Test(arguments: ["12 *", "5 / 0", "3 + * 4", "sqrt(-1)", "9^9^9"])
     func enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text: String) async throws {
         _ = NSApplication.shared
         var copied: [String] = []
@@ -95,7 +97,8 @@ struct CalculationInteractionTests {
         #expect(origin.isKeyWindow && origin.firstResponder === responder)
     }
 
-    @Test func enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin() async throws {
+    @Test(arguments: [("1200 / 3", "400"), ("sqrt(16)", "4")])
+    func enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin(text: String, expected: String) async throws {
         _ = NSApplication.shared
         let apps = CatalogFeed(), files = CatalogFeed()
         var copied: [String] = []
@@ -113,13 +116,13 @@ struct CalculationInteractionTests {
         _ = interaction.presentBar()
         defer { if let invocation = interaction.currentInvocation { interaction.dismiss(invocation, reason: .outsideClick) } }
         let editor = try await firstResponderEditor()
-        editor.insertText("1200 / 3", replacementRange: NSRange(location: NSNotFound, length: 0))
-        #expect(interaction.rows.first == .answer(Answer(title: "400", subtitle: "1200 / 3", copyableText: "400")))
+        editor.insertText(text, replacementRange: NSRange(location: NSNotFound, length: 0))
+        #expect(interaction.rows.first == .answer(Answer(title: expected, subtitle: text, copyableText: expected)))
         #expect(interaction.selectedRow == .answer)
         #expect(interaction.isLoading)
         #expect(interaction.mode == .search && interaction.modeIconShowsQuery)
         editor.keyDown(with: try returnKey())
-        #expect(copied == ["400"])
+        #expect(copied == [expected])
         #expect(interaction.currentInvocation == nil)
         #expect(origin.isKeyWindow && origin.firstResponder === responder)
     }

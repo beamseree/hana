@@ -2,7 +2,7 @@ import Foundation
 
 /// The answer's display and clipboard text belong to the evaluator, not the UI.
 struct Answer: Equatable, Sendable {
-    enum State: Equatable, Sendable { case value, incomplete, divisionByZero, invalid }
+    enum State: Equatable, Sendable { case value, incomplete, divisionByZero, undefined, tooLarge, invalid }
 
     let state: State
     let title: String
@@ -25,18 +25,43 @@ enum Calculation {
         guard let tokens = tokens(in: text, locale: locale), tokens.count <= 512 else { return invalid }
         var parser = Parser(tokens: tokens)
         do {
-            let value = try parser.expression()
+            let value = try parser.expression().number
             guard parser.index == tokens.count else { return invalid }
-            if parser.divisionByZero {
-                return Answer(state: .divisionByZero, title: "Uh oh", subtitle: "Can't divide by zero", copyableText: nil)
+            if case .failure(let failure) = value {
+                return Answer(state: failure.state, title: "Uh oh", subtitle: failure.subtitle, copyableText: nil)
             }
-            guard !value.isNaN,
-                  let title = formatted(value, locale: locale) else { return invalid }
+            guard let title = formatted(value, locale: locale) else { return invalid }
             let copy = title.replacingOccurrences(of: locale.groupingSeparator ?? ",", with: "")
             return Answer(title: title, subtitle: text, copyableText: copy)
         } catch Parser.Failure.incomplete {
             return Answer(state: .incomplete, title: "…", subtitle: "Keep typing", copyableText: nil)
         } catch { return invalid }
+    }
+
+    private static func formatted(_ value: Number, locale: Locale) -> String? {
+        switch value {
+        case .decimal(let decimal):
+            guard !decimal.isNaN else { return nil }
+            return formatted(decimal, locale: locale)
+        case .failure: return nil
+        case .approximate(let double):
+            guard double.isFinite else { return nil }
+            let whole = double.rounded() == double
+            let rounded = whole ? double : Double(String(format: "%.8g", locale: Locale(identifier: "en_US_POSIX"), double)) ?? double
+            let magnitude = abs(rounded)
+            let scientific = magnitude >= 1e15 || (magnitude != 0 && magnitude < 1e-8)
+            let formatter = NumberFormatter()
+            formatter.locale = locale
+            formatter.numberStyle = scientific ? .scientific : .decimal
+            formatter.exponentSymbol = "e"
+            formatter.usesGroupingSeparator = !scientific
+            if scientific || !whole {
+                formatter.usesSignificantDigits = true
+                formatter.minimumSignificantDigits = 1
+                formatter.maximumSignificantDigits = 8
+            } else { formatter.maximumFractionDigits = 0 }
+            return formatter.string(from: NSNumber(value: rounded == 0 ? 0 : rounded))
+        }
     }
 
     private static func formatted(_ value: Decimal, locale: Locale) -> String? {
@@ -74,6 +99,7 @@ enum Calculation {
         if tokens.contains(where: {
             switch $0 {
             case .operation, .function: true
+            case .number(let text): text.contains("e")
             default: false
             }
         }) { return true }
@@ -89,7 +115,131 @@ enum Calculation {
             switch self { case .number, .constant, .right: true; default: false }
         }
         var startsOperand: Bool {
-            switch self { case .number, .constant, .left: true; default: false }
+            switch self { case .number, .constant, .function, .left: true; default: false }
+        }
+    }
+
+    private enum NumericFailure {
+        case divisionByZero, undefined, tooLarge
+
+        var state: Answer.State {
+            switch self {
+            case .divisionByZero: .divisionByZero
+            case .undefined: .undefined
+            case .tooLarge: .tooLarge
+            }
+        }
+        var subtitle: String {
+            switch self {
+            case .divisionByZero: "Can't divide by zero"
+            case .undefined: "Undefined"
+            case .tooLarge: "Too large"
+            }
+        }
+    }
+
+    private enum Number {
+        case decimal(Decimal), approximate(Double), failure(NumericFailure)
+
+        var double: Double {
+            switch self {
+            case .decimal(let value): NSDecimalNumber(decimal: value).doubleValue
+            case .approximate(let value): value
+            case .failure: .nan
+            }
+        }
+
+        static func checked(_ value: Double) -> Number {
+            if value.isNaN { return .failure(.undefined) }
+            if !value.isFinite { return .failure(.tooLarge) }
+            return .approximate(value)
+        }
+
+        func applying(_ operation: Character, to right: Number) -> Number {
+            if case .failure = self { return self }
+            if case .failure = right { return right }
+            if operation == "/", right.double == 0 { return .failure(.divisionByZero) }
+            if case .decimal(var left) = self, case .decimal(var right) = right {
+                var result = Decimal.zero
+                let error: Decimal.CalculationError
+                switch operation {
+                case "+": error = NSDecimalAdd(&result, &left, &right, .plain)
+                case "-": error = NSDecimalSubtract(&result, &left, &right, .plain)
+                case "*": error = NSDecimalMultiply(&result, &left, &right, .plain)
+                default: error = NSDecimalDivide(&result, &left, &right, .plain)
+                }
+                switch error {
+                case .noError, .lossOfPrecision: return .decimal(result)
+                case .divideByZero: return .failure(.divisionByZero)
+                default: return .failure(.tooLarge)
+                }
+            }
+            let result: Double
+            switch operation {
+            case "+": result = double + right.double
+            case "-": result = double - right.double
+            case "*": result = double * right.double
+            default: result = double / right.double
+            }
+            if result == 0, double != 0, right.double != 0, operation == "*" || operation == "/" {
+                return .failure(.tooLarge)
+            }
+            return .checked(result)
+        }
+
+        func raised(to exponent: Number) -> Number {
+            if case .failure = self { return self }
+            if case .failure = exponent { return exponent }
+            if double == 0, exponent.double < 0 { return .failure(.divisionByZero) }
+            if case .decimal(let base) = self, case .decimal(var power) = exponent {
+                var whole = Decimal.zero
+                NSDecimalRound(&whole, &power, 0, .plain)
+                if whole == power {
+                    // Trivial bases stay representable even with an enormous exponent.
+                    if base == 1 { return .decimal(1) }
+                    if base == 0 { return .decimal(power == 0 ? 1 : 0) }
+                    if base == -1 {
+                        // Dividing a full-precision odd integer by two can lose
+                        // its final .5, so read parity from its exact digits.
+                        let lastDigit = NSDecimalNumber(decimal: power).stringValue.last
+                        let odd = power.exponent <= 0 && lastDigit.map { "13579".contains($0) } == true
+                        return .decimal(odd ? -1 : 1)
+                    }
+                    guard let integer = Int(NSDecimalNumber(decimal: power).stringValue) else { return .failure(.tooLarge) }
+                    // Unsigned magnitude handles Int.min without negation overflow.
+                    var remaining = integer.magnitude
+                    var factor = integer < 0 ? Number.decimal(1).applying("/", to: self) : self
+                    var result = Number.decimal(1)
+                    while remaining > 0 {
+                        if remaining & 1 == 1 { result = result.applying("*", to: factor) }
+                        remaining >>= 1
+                        if remaining > 0 { factor = factor.applying("*", to: factor) }
+                        if case .failure = result { return result }
+                        if case .failure = factor { return factor }
+                    }
+                    return result
+                }
+            }
+            let result = Foundation.pow(double, exponent.double)
+            if result == 0, double != 0 { return .failure(.tooLarge) }
+            return .checked(result)
+        }
+
+        func applyingFunction(_ name: String) -> Number {
+            if case .failure = self { return self }
+            let argument = double
+            if name == "sqrt", argument < 0 { return .failure(.undefined) }
+            if (name == "ln" || name == "log"), argument <= 0 { return .failure(.undefined) }
+            let result: Double
+            switch name {
+            case "sqrt": result = Foundation.sqrt(argument)
+            case "sin": result = Foundation.sin(argument)
+            case "cos": result = Foundation.cos(argument)
+            case "tan": result = Foundation.tan(argument)
+            case "log": result = Foundation.log10(argument)
+            default: result = Foundation.log(argument)
+            }
+            return .checked(result)
         }
     }
 
@@ -97,7 +247,6 @@ enum Calculation {
         enum Failure: Error { case incomplete, invalid }
         let tokens: [Token]
         var index = 0
-        var divisionByZero = false
 
         mutating func take(_ token: Token) -> Bool {
             guard index < tokens.count, tokens[index] == token else { return false }
@@ -105,42 +254,82 @@ enum Calculation {
             return true
         }
 
-        mutating func expression() throws -> Decimal {
+        struct Operand {
+            var number: Number
+            var directPercent = false
+        }
+
+        mutating func expression() throws -> Operand {
             var value = try product()
             while index < tokens.count {
                 if take(.operation("+")) {
                     let right = try product()
-                    value += right
+                    let amount = right.directPercent ? value.number.applying("*", to: right.number) : right.number
+                    value.number = value.number.applying("+", to: amount)
+                    value.directPercent = false
                 } else if take(.operation("-")) {
                     let right = try product()
-                    value -= right
+                    let amount = right.directPercent ? value.number.applying("*", to: right.number) : right.number
+                    value.number = value.number.applying("-", to: amount)
+                    value.directPercent = false
                 } else { break }
             }
             return value
         }
 
-        mutating func product() throws -> Decimal {
+        mutating func product() throws -> Operand {
             var value = try unary()
             while index < tokens.count {
                 if take(.operation("*")) {
                     let right = try unary()
-                    value *= right
+                    value.number = value.number.applying("*", to: right.number)
+                    value.directPercent = false
                 } else if take(.operation("/")) {
                     let right = try unary()
-                    if right == .zero {
-                        // Finish parsing so malformed or unfinished text still
-                        // reports its syntax before any arithmetic failure.
-                        divisionByZero = true
-                        value = .zero
-                    } else { value /= right }
+                    value.number = value.number.applying("/", to: right.number)
+                    value.directPercent = false
+                } else if tokens[index].startsOperand {
+                    // Two bare numeric tokens are malformed, never implicit multiplication.
+                    if case .number = tokens[index], case .number = tokens[index - 1] { break }
+                    let right = try unary()
+                    value.number = value.number.applying("*", to: right.number)
+                    value.directPercent = false
                 } else { break }
             }
             return value
         }
 
-        mutating func unary() throws -> Decimal {
+        mutating func unary() throws -> Operand {
             guard index < tokens.count else { throw Failure.incomplete }
-            if take(.operation("-")) { return try -unary() }
+            if take(.operation("-")) {
+                var value = try unary()
+                value.number = .decimal(-1).applying("*", to: value.number)
+                return value
+            }
+            return try power()
+        }
+
+        mutating func power() throws -> Operand {
+            var value = try postfix()
+            if take(.operation("^")) {
+                let exponent = try unary()
+                value.number = value.number.raised(to: exponent.number)
+                value.directPercent = false
+            }
+            return value
+        }
+
+        mutating func postfix() throws -> Operand {
+            var value = try primary()
+            while take(.operation("%")) {
+                value.number = value.number.applying("/", to: .decimal(100))
+                value.directPercent = true
+            }
+            return value
+        }
+
+        mutating func primary() throws -> Operand {
+            guard index < tokens.count else { throw Failure.incomplete }
             if take(.left) {
                 let value = try expression()
                 guard take(.right) else {
@@ -148,11 +337,21 @@ enum Calculation {
                 }
                 return value
             }
-            if case .function = tokens[index], index + 1 == tokens.count { throw Failure.incomplete }
-            guard case .number(let text) = tokens[index],
-                  let value = Decimal(string: text, locale: Locale(identifier: "en_US_POSIX")) else { throw Failure.invalid }
+            if case .constant(let name) = tokens[index] {
+                index += 1
+                return Operand(number: .approximate(name == "pi" ? .pi : Foundation.exp(1)))
+            }
+            if case .function(let name) = tokens[index] {
+                index += 1
+                guard take(.left) else { throw index == tokens.count ? Failure.incomplete : Failure.invalid }
+                let argument = try expression().number
+                guard take(.right) else { throw index == tokens.count ? Failure.incomplete : Failure.invalid }
+                return Operand(number: argument.applyingFunction(name))
+            }
+            guard case .number(let text) = tokens[index], text.contains(where: \.isNumber) else { throw Failure.invalid }
+            let value = Decimal(string: text, locale: Locale(identifier: "en_US_POSIX"))
             index += 1
-            return value
+            return Operand(number: value.map(Number.decimal) ?? .failure(.tooLarge))
         }
     }
 
