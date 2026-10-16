@@ -1,0 +1,18 @@
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.14s)
+Test Suite 'Selected tests' started at 2026-10-16 16:42:00.618.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:42:00.619.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:42:00.619.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:42:00.619.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite MainNoteOrganizationTests started.
+􀟈  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+NATIVE_APP_FIXTURE mode=main-window status=0 marker=main-window.note-menu-assertions-passed sha256=73e762055c43e636c8bfa2299670983f0298506314db3b41c7b060937259301f
+􁁛  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 4.084 seconds.
+􁁛  Suite MainNoteOrganizationTests passed after 4.085 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 4.085 seconds.

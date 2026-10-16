@@ -1,0 +1,152 @@
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--112E4EF74740DA65.txt
+[3/6] Compiling HanaTests CalculationAutomaticSwitchInteractionTests.swift
+[4/6] Emitting module HanaTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (4.62s)
+Test Suite 'Selected tests' started at 2026-10-16 16:11:29.302.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:11:29.303.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:11:29.303.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:11:29.303.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchDebugTests started.
+􀟈  Test preferencePersistsSeparatelyFromTheSessionPolicy() started.
+􁁛  Test preferencePersistsSeparatelyFromTheSessionPolicy() passed after 0.005 seconds.
+􀟈  Test waitingAndQueueSnapshotsDoNotFireOrAdvanceThePolicy() started.
+􁁛  Test waitingAndQueueSnapshotsDoNotFireOrAdvanceThePolicy() passed after 0.001 seconds.
+􀟈  Test switchCauseSurvivesCaptureEditsAndCancelledLateReplies(label:) started.
+􀟈  Test case passing 1 argument label → .note to switchCauseSurvivesCaptureEditsAndCancelledLateReplies(label:) started.
+􀟈  Test case passing 1 argument label → .task to switchCauseSurvivesCaptureEditsAndCancelledLateReplies(label:) started.
+􁁛  Test switchCauseSurvivesCaptureEditsAndCancelledLateReplies(label:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test cachedAnswerHasNoNetworkLatencyOrRequestNumber() started.
+􁁛  Test cachedAnswerHasNoNetworkLatencyOrRequestNumber() passed after 0.001 seconds.
+􀟈  Test agreementAndWaitingForSourcesShowTheActualAnswer() started.
+􁁛  Test agreementAndWaitingForSourcesShowTheActualAnswer() passed after 0.001 seconds.
+􀟈  Test anOldReplyDoesNotReplaceANewerDecisionAndRelevanceTracksEdits() started.
+􁁛  Test anOldReplyDoesNotReplaceANewerDecisionAndRelevanceTracksEdits() passed after 0.001 seconds.
+􀟈  Test blockedSuspendedBackoffAndTimeoutStatesAreContentFree() started.
+􁁛  Test blockedSuspendedBackoffAndTimeoutStatesAreContentFree() passed after 0.001 seconds.
+􀟈  Test legacyStrategiesCorrelateRawRequestsAndFreezeTheirSwitchAgreement() started.
+􁁛  Test legacyStrategiesCorrelateRawRequestsAndFreezeTheirSwitchAgreement() passed after 0.001 seconds.
+􀟈  Test foundationModelsIsLabeledLocalAndUnavailableJevIsNotLabeledNetwork() started.
+􁁛  Test foundationModelsIsLabeledLocalAndUnavailableJevIsNotLabeledNetwork() passed after 0.001 seconds.
+􁁛  Suite AutomaticSwitchDebugTests passed after 0.008 seconds.
+􀟈  Suite CalculationAutomaticSwitchTests started.
+􀟈  Test calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "12 * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "12 *" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "(3 + 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "sqrt" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "1 / 0" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "sqrt(-1)" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "9^9^9" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "3 + * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .everyKeystroke, text → "1..2" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "12 * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "12 *" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "(3 + 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "sqrt" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "1 / 0" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "sqrt(-1)" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "9^9^9" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "3 + * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .debounced, text → "1..2" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "12 * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "12 *" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "(3 + 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "sqrt" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "1 / 0" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "sqrt(-1)" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "9^9^9" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "3 + * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .onPause, text → "1..2" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "12 * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "12 *" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "(3 + 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "sqrt" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "1 / 0" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "sqrt(-1)" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "9^9^9" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "3 + * 4" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􀟈  Test case passing 2 arguments firing → .wordPaced, text → "1..2" to calculationsNeverRequestClassificationOrQueueASave(firing:text:) started.
+􁁛  Test calculationsNeverRequestClassificationOrQueueASave(firing:text:) with 36 test cases passed after 0.004 seconds.
+􀟈  Test addingAWordRestoresClassification(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to addingAWordRestoresClassification(firing:) started.
+􀟈  Test case passing 1 argument firing → .debounced to addingAWordRestoresClassification(firing:) started.
+􀟈  Test case passing 1 argument firing → .onPause to addingAWordRestoresClassification(firing:) started.
+􀟈  Test case passing 1 argument firing → .wordPaced to addingAWordRestoresClassification(firing:) started.
+􁁛  Test addingAWordRestoresClassification(firing:) with 4 test cases passed after 0.001 seconds.
+􁁛  Suite CalculationAutomaticSwitchTests passed after 0.005 seconds.
+􀟈  Suite StrongMatchGateTests started.
+􀟈  Test everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􀟈  Test case passing 1 argument buffer → "12 * 4" to everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􀟈  Test case passing 1 argument buffer → "12 *" to everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􀟈  Test case passing 1 argument buffer → "(3 + 4" to everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􀟈  Test case passing 1 argument buffer → "sqrt" to everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􀟈  Test case passing 1 argument buffer → "1 / 0" to everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􀟈  Test case passing 1 argument buffer → "sqrt(-1)" to everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􀟈  Test case passing 1 argument buffer → "9^9^9" to everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􀟈  Test case passing 1 argument buffer → "3 + * 4" to everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􀟈  Test case passing 1 argument buffer → "1..2" to everyRecognizedCalculationBlocksBeforeOtherReasons(_:) started.
+􁁛  Test everyRecognizedCalculationBlocksBeforeOtherReasons(_:) with 9 test cases passed after 0.001 seconds.
+􀟈  Test anOrdinaryWordRestoresTheExistingGateRules() started.
+􁁛  Test anOrdinaryWordRestoresTheExistingGateRules() passed after 0.001 seconds.
+􀟈  Test onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Visual Studio", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "visual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Studio ", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "isual st", name: "Visual Studio", kind: Hana.StrongMatchGate.Kind.application, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget plan", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Budget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "plan ", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "udget p", name: "Budget plan", kind: Hana.StrongMatchGate.Kind.note, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Call mom", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "Call m", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "mom ", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "all m", name: "Call mom", kind: Hana.StrongMatchGate.Kind.task, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget.xlsx ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: true) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "budget p", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "plan ", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "udget p", name: "budget plan.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􀟈  Test case passing 1 argument item → MatchCase(buffer: "xlsx ", name: "budget.xlsx", kind: Hana.StrongMatchGate.Kind.file, blocks: false) to onlyStrongNameTiersBlock(_:) started.
+􁁛  Test onlyStrongNameTiersBlock(_:) with 18 test cases passed after 0.004 seconds.
+􀟈  Test rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "remind ", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "  remind", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "	 remind	", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → "call mom", allowed → true to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􀟈  Test case passing 2 arguments buffer → " 
+", allowed → false to rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) started.
+􁁛  Test rawBufferKeepsTrailingWhitespaceSignificant(buffer:allowed:) with 6 test cases passed after 0.001 seconds.
+􀟈  Test unavailableCollectionAlwaysBlocks(_:) started.
+􀟈  Test case passing 1 argument buffer → "remind" to unavailableCollectionAlwaysBlocks(_:) started.
+􀟈  Test case passing 1 argument buffer → "remind " to unavailableCollectionAlwaysBlocks(_:) started.
+􀟈  Test case passing 1 argument buffer → "Visual Studio" to unavailableCollectionAlwaysBlocks(_:) started.
+􁁛  Test unavailableCollectionAlwaysBlocks(_:) with 3 test cases passed after 0.001 seconds.
+􀟈  Test sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .loading, titles → .ready, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .partial, titles → .ready, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .loading, files → .ready, settled → false, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .ready, files → .loading, settled → true, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .ready, files → .partial, settled → true, allSettled → false to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .ready, titles → .ready, files → .ready, settled → true, allSettled → true to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􀟈  Test case passing 5 arguments app → .failed, titles → .ready, files → .failed, settled → true, allSettled → true to sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) started.
+􁁛  Test sourceReadinessIsSeparateFromPermission(app:titles:files:settled:allSettled:) with 7 test cases passed after 0.001 seconds.
+􀟈  Test aliasesAndExactFolderNamesBlock() started.
+􁁛  Test aliasesAndExactFolderNamesBlock() passed after 0.001 seconds.
+􁁛  Suite StrongMatchGateTests passed after 0.008 seconds.
+􀟈  Suite TrickyInputCheckTests started.
+􀟈  Test fakeClassifierReportContainsFixedInputsGateLabelScoreAndLatency() started.
+􁁛  Test fakeClassifierReportContainsFixedInputsGateLabelScoreAndLatency() passed after 0.002 seconds.
+􀟈  Test timeoutAbandonsRunWithoutIssuingConcurrentInferenceOrInventingLatency() started.
+􁁛  Test timeoutAbandonsRunWithoutIssuingConcurrentInferenceOrInventingLatency() passed after 0.012 seconds.
+􁁛  Suite TrickyInputCheckTests passed after 0.015 seconds.
+􁁛  Test run with 20 tests in 4 suites passed after 0.037 seconds.

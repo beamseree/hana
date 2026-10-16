@@ -75,6 +75,7 @@ enum TrickyInputCheck {
     private static func gateText(_ decision: StrongMatchGate.Decision) -> String {
         switch decision {
         case .allowed: "allowed"
+        case .blocked(.calculation): "blocked:calculation"
         case .blocked(.oneWord): "blocked:one-word"
         case .blocked(.collectionUnavailable): "blocked:collection-unavailable"
         case .blocked(.strongMatch(let kind)): "blocked:strong-match:\(kind.rawValue)"

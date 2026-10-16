@@ -19,7 +19,7 @@ final class AutomaticSwitchDiagnostics {
         case unavailable, authentication, rateLimited, malformedResponse, network, refusal, guardrail, other
     }
     enum BackoffReason: String, Codable, Sendable { case keyRejected = "key-rejected", rateLimited = "rate-limited", network }
-    enum GateReason: String, Codable, Sendable { case oneWord, strongMatch, collectionUnavailable }
+    enum GateReason: String, Codable, Sendable { case calculation, oneWord, strongMatch, collectionUnavailable }
     enum MatchedKind: String, Codable, Sendable { case application, note, task, file, folder }
     enum ReversalMethod: String, Codable, Sendable { case escape, backspace }
     enum End: String, Codable, Sendable { case saved, reversed, withdrawn, dismissed }

@@ -3,6 +3,26 @@ import Testing
 @testable import Hana
 
 struct StrongMatchGateTests {
+    @Test(arguments: ["12 * 4", "12 *", "(3 + 4", "sqrt", "1 / 0", "sqrt(-1)", "9^9^9", "3 + * 4", "1..2"])
+    func everyRecognizedCalculationBlocksBeforeOtherReasons(_ buffer: String) {
+        let match = SearchResult(name: buffer, url: URL(fileURLWithPath: "/fixture/calculation"), kind: .application)
+        let evaluation = StrongMatchGate.evaluate(rawBuffer: buffer, results: [match], appStatus: .ready,
+            fileStatus: .ready, titles: .init(status: .unavailable))
+        #expect(evaluation.decision == .blocked(.calculation))
+        #expect(!evaluation.settled && !evaluation.allSourcesSettled)
+    }
+
+    @Test func anOrdinaryWordRestoresTheExistingGateRules() {
+        let buffer = "rent 1200 / 3"
+        #expect(StrongMatchGate.evaluate(rawBuffer: buffer, results: [], appStatus: .ready,
+            fileStatus: .ready, titles: .init(status: .ready)).decision == .allowed)
+        let match = SearchResult(name: buffer, url: URL(fileURLWithPath: "/fixture/Rent.app"), kind: .application)
+        #expect(StrongMatchGate.evaluate(rawBuffer: buffer, results: [match], appStatus: .ready,
+            fileStatus: .ready, titles: .init(status: .ready)).decision == .blocked(.strongMatch(.application)))
+        #expect(StrongMatchGate.evaluate(rawBuffer: buffer, results: [], appStatus: .ready,
+            fileStatus: .ready, titles: .init(status: .unavailable)).decision == .blocked(.collectionUnavailable))
+    }
+
     struct MatchCase: Sendable {
         let buffer: String
         let name: String
