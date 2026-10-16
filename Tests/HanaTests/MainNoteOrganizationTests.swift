@@ -82,42 +82,7 @@ struct MainNoteOrganizationTests {
 
 
     @Test func noteMenusActOnSelectionAndHaveKeyboardEquivalents() async throws {
-        _ = NSApplication.shared
-        let fixture = try TemporaryFixture()
-        defer { try? FileManager.default.removeItem(at: fixture.directory) }
-        let store = try await CollectionStore.open(fixture.location)
-        let note = try await store.perform(.createNote(operation: UUID(), body: "Selected note"), in: store.generation)
-        let interaction = MacInteraction(collection: Task { store })
-        let previousMenu = NSApp.mainMenu
-        let previousWindowsMenu = NSApp.windowsMenu
-        interaction.start()
-        defer {
-            interaction.stop()
-            NSApp.mainMenu = previousMenu
-            NSApp.windowsMenu = previousWindowsMenu
-        }
-        interaction.open(.main)
-        try await eventually { interaction.mainWindowPresentation?.rows.first?.id == note.id }
-        let menu = try #require(NSApp.mainMenu?.item(withTitle: "Note")?.submenu)
-        let pin = try #require(menu.item(withTitle: "Pin Note"))
-        let archive = try #require(menu.item(withTitle: "Archive Note"))
-        #expect(!interaction.validateMenuItem(pin))
-        interaction.selectMainNote(note.id)
-        #expect(interaction.validateMenuItem(pin))
-        #expect(pin.keyEquivalent == "p")
-        #expect(pin.keyEquivalentModifierMask == [.command, .control])
-        #expect(archive.keyEquivalent == "a")
-        #expect(archive.keyEquivalentModifierMask == [.command, .control])
-        menu.performActionForItem(at: menu.index(of: pin))
-        try await eventually { interaction.mainWindowPresentation?.rows.first?.isPinned == true }
-        #expect(interaction.validateMenuItem(pin))
-        #expect(pin.title == "Unpin Note")
-        menu.performActionForItem(at: menu.index(of: pin))
-        try await eventually { interaction.mainWindowPresentation?.rows.first?.isPinned == false }
-        menu.performActionForItem(at: menu.index(of: archive))
-        try await eventually { interaction.mainWindowPresentation?.rows.isEmpty == true }
-        #expect(!interaction.validateMenuItem(archive))
-        await store.close()
+        try await NativeAppFixture.run(.mainWindow, requiring: "main-window.note-menu-assertions-passed")
     }
 
 }

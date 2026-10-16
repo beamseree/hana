@@ -153,38 +153,9 @@ struct OpenNoteCaptureTests {
     }
 
     @Test func aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() async throws {
-        _ = NSApplication.shared
-        let fixture = try TemporaryFixture()
-        defer { try? FileManager.default.removeItem(at: fixture.directory) }
-        let store = try await CollectionStore.open(fixture.location)
-        let note = try await store.perform(.createNote(operation: UUID(), body: "Existing"), in: store.generation)
-        var completion: CheckedContinuation<CollectionStore, any Error>?
-        let collection = Task<CollectionStore, any Error> {
-            try await withCheckedThrowingContinuation { completion = $0 }
-        }
-        let log = fixture.directory.appendingPathComponent("open-focus.jsonl")
-        let interaction = MacInteraction(diagnostics: Diagnostics(file: log), collection: collection,
-                                         frontmostApplication: { .current })
-        defer { interaction.stop() }
-        interaction.open(.main)
-        defer { interaction.window(for: .main)?.close() }
-        let original = interaction.presentBar()
-        let originalEditor = try await captureEditor()
-        interaction.open(.note(note.id), from: original, focusAtEnd: true)
-        try await eventually { originalEditor.window?.isVisible == false }
-        try await eventually { completion != nil }
-        let current = interaction.presentBar()
-        let editor = try await captureEditor()
-        editor.insertText("new query", replacementRange: none)
-        completion?.resume(returning: store)
-        try await eventually {
-            (try? String(contentsOf: log, encoding: .utf8).contains("note.open-focus-superseded")) == true
-        }
-        #expect(interaction.currentInvocation == current)
-        #expect(NSApp.keyWindow?.firstResponder === editor && editor.string == "new query")
-        #expect(interaction.window(for: .note(note.id)) == nil)
-        await store.close()
+        try await NativeAppFixture.run(.openNoteCapture, requiring: "open-note-capture.newer-bar")
     }
+
 
     @Test func compositionKeepsTheOpenControlDisabledAndSavesNothing() async throws {
         _ = NSApplication.shared

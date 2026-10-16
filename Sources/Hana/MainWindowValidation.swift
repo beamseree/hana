@@ -31,6 +31,26 @@ func validateMainWindow(register: (MacInteraction) -> Void) async {
 
         guard let viewMenu = NSApp.mainMenu?.item(withTitle: "View")?.submenu,
               let noteMenu = NSApp.mainMenu?.item(withTitle: "Note")?.submenu else { throw MainWindowCheck.failed("review-menus") }
+        guard let pin = noteMenu.item(withTitle: "Pin Note"), let archive = noteMenu.item(withTitle: "Archive Note"),
+              !platform.validateMenuItem(pin) else { throw MainWindowCheck.failed("menu-no-selection-disabled") }
+        platform.selectMainNote(note.id)
+        guard platform.validateMenuItem(pin), pin.keyEquivalent == "p", pin.keyEquivalentModifierMask == [.command, .control],
+              archive.keyEquivalent == "a", archive.keyEquivalentModifierMask == [.command, .control] else {
+            throw MainWindowCheck.failed("note-menu-key-equivalents")
+        }
+        noteMenu.performActionForItem(at: noteMenu.index(of: pin))
+        try await check("menu-pin") { platform.mainWindowPresentation?.rows.first?.isPinned == true }
+        guard platform.validateMenuItem(pin), pin.title == "Unpin Note" else { throw MainWindowCheck.failed("menu-unpin-title") }
+        noteMenu.performActionForItem(at: noteMenu.index(of: pin))
+        try await check("menu-unpin") { platform.mainWindowPresentation?.rows.first?.isPinned == false }
+        noteMenu.performActionForItem(at: noteMenu.index(of: archive))
+        try await check("menu-archive-empty") { platform.mainWindowPresentation?.rows.isEmpty == true }
+        guard !platform.validateMenuItem(archive) else { throw MainWindowCheck.failed("menu-archive-disabled") }
+        diagnostics.record("main-window.note-menu-assertions-passed", state: ["selectionScope": true, "keyEquivalents": true, "pinUnpinArchive": true])
+        // Restore the fixture seed for the remaining existing workspace checks.
+        guard let archivedSeed = try await openedStore.read(.note(note.id), in: openedStore.generation) else { throw MainWindowCheck.failed("menu-archived-seed") }
+        _ = try await openedStore.perform(.restoreNote(note.id, expectedRevision: archivedSeed.revision), in: openedStore.generation)
+        try await check("menu-seed-restored") { platform.mainWindowPresentation?.rows.first?.id == note.id }
         for section in MainSection.allCases {
             viewMenu.performActionForItem(at: viewMenu.indexOfItem(withTitle: "Show " + section.rawValue))
             try await check("menu-section") { platform.mainWindowPresentation?.selectedSection == section }
@@ -39,7 +59,7 @@ func validateMainWindow(register: (MacInteraction) -> Void) async {
         platform.selectMainNote(note.id)
         try workspaceShortcut(code: 31, modifiers: [.command])
         try await check("menu-note-open") { NSApp.keyWindow === platform.window(for: .note(note.id)) }
-        guard let pin = noteMenu.item(withTitle: "Pin Note"), !platform.validateMenuItem(pin) else { throw MainWindowCheck.failed("background-note-command") }
+        guard !platform.validateMenuItem(pin) else { throw MainWindowCheck.failed("background-note-command") }
         noteMenu.performActionForItem(at: noteMenu.index(of: pin))
         try workspaceShortcut(code: 35, modifiers: [.command, .option])
         try await check("menu-preview") { platform.notePreview(note.id)?.isVisible == true }

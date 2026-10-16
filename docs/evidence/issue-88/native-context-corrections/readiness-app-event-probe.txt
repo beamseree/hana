@@ -1,0 +1,13 @@
+Build complete! (2.53s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite MainNoteOrganizationTests started.
+◇ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() recorded an issue at MacInteractionTests.swift:946:5: Expectation failed: condition()
+CF_PROBE before active=false running=false keyMain=false visible=true
+CF_PROBE after active=false running=false keyMain=false result=3 milliseconds=51.106000086292624
+APP_EVENT_PROBE active=true running=false keyMain=true types=[13, 13]
+✘ Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() failed after 3.433 seconds with 1 issue.
+✘ Suite MainNoteOrganizationTests failed after 3.433 seconds with 1 issue.
+✘ Test run with 1 test in 1 suite failed after 3.433 seconds with 1 issue.

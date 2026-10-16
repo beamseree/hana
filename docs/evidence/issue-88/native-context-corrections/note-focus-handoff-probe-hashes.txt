@@ -1,0 +1,2 @@
+75b6c63d1f4a59f07df78e529675eb547862a7e052111c817c266f0e2be38ef9  Sources/Hana/MacInteraction.swift
+d935742925f70cd11ea1def11ce6ee1aaf2f73b1c7ecdf0783626041b8a42b74  /tmp/hana-spec-88/HanaReview88.app/Contents/MacOS/Hana

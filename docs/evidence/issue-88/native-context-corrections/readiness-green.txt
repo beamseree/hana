@@ -1,0 +1,7 @@
+Build complete! (2.62s)
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite OpenNoteCaptureTests started.
+◇ Suite MainNoteOrganizationTests started.
+◇ Test aNewerInvocationKeepsFocusWhenAnEarlierNoteOpeningFinishes() started.

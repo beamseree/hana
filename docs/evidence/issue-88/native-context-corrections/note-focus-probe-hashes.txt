@@ -1,0 +1,2 @@
+84af8d82dfc6cf5d7f524e00ad5b886715a321e642b62faf74ed086102a4f5a4  Sources/Hana/NoteWindowValidation.swift
+7880093603363a6f3a7538d631b734461e514feaff8813db86999e4792f1e2e1  /tmp/hana-spec-88/HanaReview88.app/Contents/MacOS/Hana
