@@ -165,8 +165,7 @@ enum Calculation {
                 switch operation {
                 case "+": error = NSDecimalAdd(&result, &left, &right, .plain)
                 case "-": error = NSDecimalSubtract(&result, &left, &right, .plain)
-                case "*": error = NSDecimalMultiply(&result, &left, &right, .plain)
-                default: error = NSDecimalDivide(&result, &left, &right, .plain)
+                default: return Self.productOrQuotient(left, right, operation: operation)
                 }
                 switch error {
                 case .noError, .lossOfPrecision: return .decimal(result)
@@ -185,6 +184,41 @@ enum Calculation {
                 return .failure(.tooLarge)
             }
             return .checked(result)
+        }
+
+        private static func productOrQuotient(_ left: Decimal, _ right: Decimal, operation: Character) -> Number {
+            // Foundation can wrap product exponents and underflow valid quotients.
+            // Operate on significands, then apply their decimal scales separately.
+            var leftSignificand = left.sign == .minus ? -left.significand : left.significand
+            var rightSignificand = right.sign == .minus ? -right.significand : right.significand
+            var result = Decimal.zero
+            let error = operation == "*"
+                ? NSDecimalMultiply(&result, &leftSignificand, &rightSignificand, .plain)
+                : NSDecimalDivide(&result, &leftSignificand, &rightSignificand, .plain)
+            guard error == .noError || error == .lossOfPrecision else { return .failure(.tooLarge) }
+            let exponent = operation == "*" ? left.exponent + right.exponent : left.exponent - right.exponent
+            return scaled(result, by: exponent)
+        }
+
+        private static func scaled(_ value: Decimal, by power: Int) -> Number {
+            if value == .zero { return .decimal(.zero) }
+            var significand = value.sign == .minus ? -value.significand : value.significand
+            var exponent = value.exponent + power
+            if exponent < -128 {
+                let discardedDigits = -128 - exponent
+                let digits = NSDecimalNumber(decimal: value.significand).stringValue.count
+                guard digits > discardedDigits else { return .failure(.tooLarge) }
+                // Decimal can retain fewer significant digits near its lower bound.
+                var rounded = Decimal.zero
+                NSDecimalRound(&rounded, &significand, -discardedDigits, .plain)
+                exponent += rounded.exponent
+                significand = rounded.sign == .minus ? -rounded.significand : rounded.significand
+            }
+            guard (-128...127).contains(exponent) else { return .failure(.tooLarge) }
+            var result = Decimal.zero
+            let error = NSDecimalMultiplyByPowerOf10(&result, &significand, Int16(exponent), .plain)
+            guard error == .noError || error == .lossOfPrecision else { return .failure(.tooLarge) }
+            return .decimal(result)
         }
 
         func raised(to exponent: Number) -> Number {

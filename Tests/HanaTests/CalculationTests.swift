@@ -3,6 +3,45 @@ import Testing
 @testable import Hana
 
 struct CalculationTests {
+    @Test(arguments: [
+        "1e-65 * 1e-64", "-1e-65 * 1e-64", "1e-65 * -1e-64", "-1e-65 * -1e-64",
+        "9e-128 * 0.1", "1e-128 / 10", "-1e-128 / 10", "1e-128 / -10",
+        "10^-129", "0.5^500", "1e127 * 10", "-1e127 * 10", "1e127 / 0.1"
+    ])
+    func exactArithmeticRejectsOutOfRangeScales(text: String) throws {
+        let answer = try #require(Calculation.answer(for: text, locale: locale))
+        #expect(answer.state == .tooLarge && answer.title == "Uh oh" && answer.subtitle == "Too large")
+        #expect(answer.copyableText == nil)
+    }
+
+    @Test(arguments: [
+        ("1e-100 / 1", "1e-100"), ("1e-100 / 10", "1e-101"), ("1e-128 / 1", "1e-128"),
+        ("-1e-100 / 1", "-1e-100"), ("1e-100 / -1", "-1e-100"), ("-1e-100 / -1", "1e-100"),
+        ("1e-127 / 10", "1e-128"), ("1e-100 / 1e28", "1e-128"),
+        ("1e-100 / 3", "3.3333333e-101"), ("4e-128 / 3", "1e-128"),
+        ("15e-128 / 10", "2e-128"), ("-15e-128 / 10", "-2e-128")
+    ])
+    func decimalDivisionPreservesRepresentableSmallValues(text: String, expected: String) throws {
+        let answer = try #require(Calculation.answer(for: text, locale: locale))
+        #expect(answer.state == .value && answer.title == expected && answer.copyableText == expected)
+    }
+
+    @Test(arguments: [
+        ("5e-65 * 2e-64", "1e-128"), ("-5e-65 * 2e-64", "-1e-128"),
+        ("5e-65 * -2e-64", "-1e-128"), ("-5e-65 * -2e-64", "1e-128"),
+        ("1e-100 * 1e-28", "1e-128"), ("2^-400", "3.8725919e-121"),
+        ("0.5^400", "3.8725919e-121"), ("(-0.5)^401", "-1.936296e-121"),
+        ("10^-128", "1e-128"), ("1e-120%", "1e-122"),
+        ("0.1 * 0.2 / 0.5", "0.04"), ("((0.1 + 0.2) * 1e-100) / 1e-100", "0.3"),
+        ("1e-100 * 0.1 + 1e-101", "2e-101"), ("1e-100 / 10 - 1e-101", "0"),
+        ("1e-100 / 1e-100", "1"), ("1e-128 * 0", "0"), ("0 / 1e-128", "0")
+    ])
+    func exactArithmeticAndIntegerPowersPreserveRepresentableScales(text: String, expected: String) throws {
+        let answer = try #require(Calculation.answer(for: text, locale: locale))
+        #expect(answer.state == .value && answer.title == expected && answer.copyableText == expected)
+        #expect(answer.subtitle == text)
+    }
+
     @Test func longFlatPastedCalculationsHaveNoTokenCountLimit() throws {
         let sum = Array(repeating: "1", count: 300).joined(separator: "+")
         let answer = try #require(Calculation.answer(for: sum, locale: locale))
@@ -183,6 +222,8 @@ struct CalculationTests {
         #expect(scientific.title == "0,0012" && scientific.copyableText == "0,0012")
         let percent = try #require(Calculation.answer(for: "200 + 10,5%", locale: Locale(identifier: "de_DE")))
         #expect(percent.title == "221" && percent.copyableText == "221")
+        let small = try #require(Calculation.answer(for: "1,2e-100 / 10", locale: Locale(identifier: "de_DE")))
+        #expect(small.state == .value && small.title == "1,2e-101" && small.copyableText == "1,2e-101")
     }
 
 }
