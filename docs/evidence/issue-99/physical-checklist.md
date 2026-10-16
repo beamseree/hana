@@ -2,13 +2,13 @@
 
 All observations below are **pending**. The launcher now uses the reviewed release at source `11331fc`; [final-identity.json](final-identity.json) records its signed hash and build environment. The full394-test suite, all three signed app-loop validators and the release quit/relaunch smoke passed; physical acceptance remains separate. The launcher checks the signed executable hash and bundle ID, holds the native testing slot for its owned process, and preserves the marked fixture across normal quit/relaunch.
 
-When the agent hands over the final bundle, run the same command for first launch and every relaunch:
+The verified fixture is installed at `~/Applications/Hana Working Windows Fixture.app` and was launched for Beam on 2026-10-16. For the quit/relaunch test, double-click `Launch Hana Working Windows Fixture.command` in your Applications folder. It supplies the required isolated fixture arguments. You can also use the same terminal command for every relaunch:
 
 ```sh
 /tmp/hana-spec-88/native/launch-physical-fixture
 ```
 
-Keep that Terminal open while testing. Quit the fixture with Command-Q while one of its windows is focused. Wait for the command to finish before relaunching. Do not force-kill, delete its data, rebuild or replace the bundle between the persistence steps. The fixture is **Hana Working Windows Fixture**, ID `com.beamseree.hana.validation.issue99`; it uses `/tmp/hana-spec-88/physical-fixture`, with runtime metadata at `/tmp/hana-spec-88/physical-runtime.jsonl`. It is separate from the installed Hana.
+If you launch through the command file or Terminal, keep that Terminal open while testing. Quit the fixture with Command-Q while one of its windows is focused. Wait for the command to finish before relaunching. Do not force-kill, delete its data, rebuild or replace the bundle between the persistence steps. The fixture is **Hana Working Windows Fixture**, ID `com.beamseree.hana.validation.issue99`; it uses `/tmp/hana-spec-88/physical-fixture`, with runtime metadata at `/tmp/hana-spec-88/physical-runtime.jsonl`. It is separate from the installed Hana.
 
 The earlier provisional fixture reported Option+Space conflict **-9878** while installed Hana owned it. The final automated release smoke reported registration **0** in both processes. Check the fixture menu when you launch: it must say **Option+Space is available** before global shortcut checks. If it reports a conflict, you may quit your installed Hana yourself, normally quit this fixture and relaunch the same command; otherwise mark shortcut rows unavailable and use its Search/Open Hana menu. No shortcut, permission or Spaces settings need changing.
 
