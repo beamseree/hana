@@ -19,8 +19,10 @@ xcrun swift test --filter MacInteractionTests.oldDismissalCannotCloseAReopenedBa
 # Complete suite; real AppKit suites must own windows sequentially.
 xcrun swift test --no-parallel
 
-# Bundle, lint and ad-hoc sign without installing.
+# Provision/reuse a persistent personal signing identity, then bundle without installing.
+./scripts/setup-signing
 ./scripts/build
+./scripts/validate-signing
 # Confirm the shared native testing slot is free. Quit only your own test app.
 # Coordinate an existing Hana/prototype process with its owner before replacing it.
 # Rebuild, install to the fixed location and launch via Launch Services.
@@ -53,7 +55,7 @@ xcrun swift test --no-parallel \
 
 Coordinate native test processes with the shared `/tmp/hana-spec-88-native-lock` directory; acquire it atomically with `mkdir` and release only your own lock after the process exits. Leave keyboard/mouse idle during focus tests. Require the final Swift Testing test/suite summary as well as exit status: this CLT runner can exit early when an asynchronous native window close escapes a test's lifetime. The fixture app-loop harnesses cover native close/minimize behavior separately.
 
-No valid certificate identity was available on the tested Mac. The scripts explicitly use **ad-hoc signing**, no TeamIdentifier, no entitlements, no App Sandbox and no Hardened Runtime. Strict local signature validation is not notarization or public distribution readiness. The designated requirement for this ad-hoc build is a code hash; keeping the bundle identifier and installed path stable does **not** promise TCC permission continuity after a rebuild. No paid account is required for these local checks. No privacy grants or global shortcut/Spaces changes are performed.
+Earlier builds used ad-hoc signing with a per-build code hash as their designated requirement, which caused privacy grants to stop matching after updates. Personal builds now use one persistent certificate, provisioned by `scripts/setup-signing` and pinned outside the repository. Builds refuse ad-hoc fallback, and installation rejects an accidental signing-identity change. See [persistent signing](signing.md) for setup, the one-time permission migration, and the automated continuity check. This local certificate does not establish Developer ID distribution, notarization or physical permission-retention evidence. The app retains no entitlements, App Sandbox or Hardened Runtime; no script changes privacy grants or global shortcut/Spaces settings.
 
 ## Native behavior and boundary
 
@@ -132,7 +134,7 @@ The metadata adapter owns query lifecycle on the main run loop and sends value s
 
 Permission evidence is build-specific. The [historical #6 run](evidence/issue-6/validation.md#resolution-user-granted-full-disk-access--2026-10-13) recorded Beam enabling Full Disk Access and subsequently seeing missing files. The later [#9 run](evidence/issue-9/validation.md) recorded successful Desktop/Documents/Downloads coverage after Beam allowed macOS prompts, with the exact prompt sequence uncertain. Neither run establishes a mandatory Full Disk Access setup or a diagnosis for every empty result set.
 
-Start with existing permissions and record actual signed-app behavior. If a needed destination fails, preserve its observed error and discuss a concrete permission change with Beam before changing settings. Ad-hoc signing uses a binary-specific designated requirement, so the fixed bundle ID/path cannot promise permission continuity after rebuilding. An empty index response does not prove denial. Refine queries when a desired item falls outside the 20 visible results.
+Start with existing permissions and record actual signed-app behavior. If a needed destination fails, preserve its observed error and discuss a concrete permission change with Beam before changing settings. Migration from the old ad-hoc signature to the persistent certificate needs one final approval; subsequent builds must retain the certificate-based designated requirement. An empty index response does not prove denial. Refine queries when a desired item falls outside the 20 visible results.
 
 ## Display and editing checks — issue #8
 

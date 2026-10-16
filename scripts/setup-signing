@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+"""Provision one persistent, user-local code-signing identity for personal Hana builds."""
+import os
+from pathlib import Path
+import re
+import secrets
+import subprocess
+import tempfile
+
+NAME = "Hana Local Development"
+SECURITY = "/usr/bin/security"
+OPENSSL = "/usr/bin/openssl"
+CONFIG = Path.home() / "Library/Application Support/Hana/Signing/identity.sha1"
+
+
+def run(*args, input=None):
+    result = subprocess.run(args, input=input, text=True, capture_output=True)
+    if result.returncode != 0:
+        # Do not put command arguments (including a temporary import password)
+        # in an exception or log.
+        raise SystemExit(f"{Path(args[0]).name} {args[1]} failed: {result.stderr.strip()}")
+    return result.stdout
+
+
+def identities(valid=False):
+    args = [SECURITY, "find-identity"]
+    if valid:
+        args.append("-v")
+    return run(*args, "-p", "codesigning")
+
+
+def main():
+    os.umask(0o077)
+    valid = identities(valid=True)
+    if CONFIG.exists():
+        fingerprint = CONFIG.read_text().strip().upper()
+        if re.fullmatch(r"[0-9A-F]{40}", fingerprint) and fingerprint in valid:
+            print(f"Existing Hana signing identity is ready: {fingerprint}")
+            return
+        raise SystemExit("The pinned Hana signing identity is unavailable. Restore it in Keychain Access; do not replace it automatically.")
+
+    keychain = run(SECURITY, "default-keychain", "-d", "user").strip().strip('"')
+    matches = re.findall(r'\b([0-9A-F]{40}) "' + re.escape(NAME) + r'"', identities())
+    if len(matches) > 1:
+        raise SystemExit("Multiple Hana Local Development identities exist. Choose the existing identity explicitly.")
+
+    # Temporary private material stays mode 0600 and is removed by TemporaryDirectory
+    # even on failure. The durable key lives in the login Keychain, never the repo.
+    with tempfile.TemporaryDirectory(prefix="hana-signing-") as temporary:
+        root = Path(temporary)
+        cert = root / "certificate.pem"
+        if matches:
+            fingerprint = matches[0]
+            cert.write_text(run(SECURITY, "find-certificate", "-c", NAME, "-p", keychain))
+            actual = run(OPENSSL, "x509", "-in", str(cert), "-noout", "-fingerprint", "-sha1").strip().split("=")[-1].replace(":", "")
+            if actual != fingerprint:
+                raise SystemExit("Existing certificate does not match the Hana signing key.")
+        else:
+            key = root / "private-key.pem"
+            config = root / "certificate.cnf"
+            config.write_text("""[req]
+prompt = no
+distinguished_name = subject
+x509_extensions = extensions
+[subject]
+CN = Hana Local Development
+[extensions]
+basicConstraints = critical,CA:FALSE
+keyUsage = critical,digitalSignature
+extendedKeyUsage = critical,codeSigning
+subjectKeyIdentifier = hash
+""")
+            run(OPENSSL, "req", "-new", "-newkey", "rsa:3072", "-nodes", "-x509",
+                "-sha256", "-days", "3650", "-config", str(config),
+                "-keyout", str(key), "-out", str(cert))
+            fingerprint = run(OPENSSL, "x509", "-in", str(cert), "-noout", "-fingerprint", "-sha1").strip().split("=")[-1].replace(":", "")
+            identity = root / "identity.p12"
+            password = secrets.token_hex(32)
+            run(OPENSSL, "pkcs12", "-export", "-inkey", str(key), "-in", str(cert),
+                "-name", NAME, "-out", str(identity), "-passout", "stdin",
+                "-keypbe", "PBE-SHA1-3DES", "-certpbe", "PBE-SHA1-3DES", "-macalg", "sha1",
+                input=password + "\n")
+            run(SECURITY, "import", str(identity), "-k", keychain, "-f", "pkcs12", "-P", password, "-T", "/usr/bin/codesign")
+
+        if fingerprint not in valid:
+            print("Trusting the Hana certificate for code signing in this user's Keychain only.", flush=True)
+            run(SECURITY, "add-trusted-cert", "-r", "trustRoot", "-p", "codeSign", "-k", keychain, str(cert))
+        if fingerprint not in identities(valid=True):
+            raise SystemExit("Hana's identity is not yet valid for code signing. Review it in Keychain Access.")
+
+    CONFIG.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(mode="w", dir=CONFIG.parent, delete=False) as saved:
+        saved.write(fingerprint + "\n")
+        saved_path = saved.name
+    os.replace(saved_path, CONFIG)
+    print(f"Pinned Hana signing identity: {fingerprint}")
+    print(f"Configuration: {CONFIG}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,36 @@
+#!/bin/bash
+set -euo pipefail
+if [[ $# != 1 ]]; then
+    echo 'Usage: scripts/sign-app /absolute/path/to/Hana.app' >&2
+    exit 2
+fi
+app="$1"
+identity_file="$HOME/Library/Application Support/Hana/Signing/identity.sha1"
+identity="${HANA_SIGNING_IDENTITY:-}"
+if [[ -z "$identity" && -f "$identity_file" ]]; then
+    identity="$(cat "$identity_file")"
+fi
+if [[ ! "$identity" =~ ^[[:xdigit:]]{40}$ ]]; then
+    echo 'Hana needs a persistent signing identity. Run ./scripts/setup-signing first.' >&2
+    echo 'Alternatively set HANA_SIGNING_IDENTITY to a code-signing certificate SHA-1 fingerprint.' >&2
+    exit 1
+fi
+identity="$(echo "$identity" | tr '[:lower:]' '[:upper:]')"
+if ! /usr/bin/security find-identity -v -p codesigning | /usr/bin/grep -q "$identity"; then
+    echo "Hana signing identity $identity is unavailable or invalid. No ad-hoc fallback was used." >&2
+    exit 1
+fi
+identifier="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Contents/Info.plist")"
+if [[ "$identifier" != com.beamseree.hana ]]; then
+    echo 'Refusing to sign a bundle that is not com.beamseree.hana.' >&2
+    exit 1
+fi
+/usr/bin/codesign --force --sign "$identity" --timestamp=none --identifier "$identifier" "$app"
+/usr/bin/codesign --verify --deep --strict --verbose=2 "$app"
+requirement="$(/usr/bin/codesign --display --requirements - "$app" 2>/dev/null)"
+if [[ "$requirement" != *'designated => '* || "$requirement" == *'designated => cdhash '* ]]; then
+    echo 'Hana must have a certificate-based designated requirement, not a per-build code hash.' >&2
+    exit 1
+fi
+echo "Hana signing identity: $identity"
+echo "$requirement"

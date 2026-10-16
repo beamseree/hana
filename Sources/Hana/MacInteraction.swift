@@ -285,7 +285,7 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     private var menuDepth = 0
     private var statusItem: NSStatusItem?
     var menuBarMenu: NSMenu? { statusItem?.menu }
-    private var shortcutStatus: NSMenuItem?
+    private var shortcutMenuController: ShortcutMenuController?
     private var hotKey: GlobalShortcut?
     private var placementTask: Task<Void, Never>?
     private var currentPlacement: Placement?
@@ -328,16 +328,21 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
     /// Called once by the app delegate, never as a side effect of a test's init.
     func start() {
         NSApp.setActivationPolicy(.accessory)
-        configureMenus()
         let shortcut = GlobalShortcut { [weak self] in
             self?.record("hotkey.received")
             self?.presentBar()
         }
         hotKey = shortcut
-        let result = shortcut.register()
-        shortcutStatus?.title = result == noErr
-            ? "Option+Space is available"
-            : "Option+Space unavailable (\(result)) — use Search"
+        let shortcutMenu = ShortcutMenuController(register: { shortcut.register($0) }) { [weak self] selection, result in
+            self?.updateShortcutStatus(selection, result: result)
+        }
+        shortcutMenuController = shortcutMenu
+        configureMenus()
+        let result = shortcutMenu.activate()
+        record("startup", extra: ["shortcutStatus": result, "screenCount": NSScreen.screens.count])
+    }
+
+    private func updateShortcutStatus(_ shortcut: SearchShortcut, result: OSStatus) {
         if let button = statusItem?.button {
             // The logo stands in for the name; without the bundle it falls back to text.
             let warning = result == noErr ? "" : " !"
@@ -348,9 +353,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
             } else {
                 button.title = "Hana" + warning
             }
-            button.setAccessibilityLabel(result == noErr ? "Hana" : "Hana, Option+Space unavailable")
+            button.setAccessibilityLabel(result == noErr ? "Hana" : "Hana, \(shortcut.title) unavailable")
         }
-        record("startup", extra: ["shortcutStatus": result, "screenCount": NSScreen.screens.count])
     }
 
     func stop() {
@@ -364,6 +368,8 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         for controller in Array(workingWindows.values) { controller.close() }
         for controller in Array(noteWindows.values) { controller.window?.performClose(nil) }
         hotKey?.unregister()
+        hotKey = nil
+        shortcutMenuController = nil
         if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
         statusItem = nil
         record("shutdown")
@@ -999,10 +1005,12 @@ final class MacInteraction: NSObject, NSTextViewDelegate, NSWindowDelegate, NSMe
         let search = NSMenuItem(title: "Search", action: #selector(invokeFromMenu), keyEquivalent: "")
         search.target = self
         menu.addItem(search)
-        let availability = NSMenuItem(title: "Registering Option+Space…", action: nil, keyEquivalent: "")
-        availability.isEnabled = false
-        shortcutStatus = availability
-        menu.addItem(availability)
+        if let shortcutMenuController {
+            let setting = NSMenuItem(title: "Search Shortcut", action: nil, keyEquivalent: "")
+            setting.submenu = shortcutMenuController.menu
+            menu.addItem(setting)
+            menu.addItem(shortcutMenuController.statusItem)
+        }
         menu.addItem(.separator())
         addOpenMainWindow(to: menu, shortcut: false)
         menu.addItem(.separator())

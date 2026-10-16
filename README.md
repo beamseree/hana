@@ -24,6 +24,12 @@ The window/focus prototype supports continuing with a single-process design on t
 
 Working-window code and automated/native fixture evidence are recorded under [#88](https://github.com/beamseree/hana/issues/88). Physical acceptance of this build remains pending in [#99](https://github.com/beamseree/hana/issues/99); earlier prototype observations do not replace it. Notes/tasks in Search, Settings, automatic backups and restore belong to later work. Ad-hoc signing is local development evidence only. See the [technical design](docs/technical-design.md) and [prototype evidence](prototypes/README.md).
 
+## Search shortcut
+
+Choose **Search Shortcut → ⌥Space** or **⌘Space** in Hana's menu-bar menu. The choice takes effect immediately and is saved for the next launch; Option+Space remains the default. If the new shortcut is unavailable, Hana keeps the previous working shortcut and explains the conflict in the menu. **Search** in the same menu remains available.
+
+Personal builds now reuse a [persistent signing identity](docs/signing.md), so ordinary updates retain the same certificate-based identity. Run `./scripts/setup-signing` once before building; migration from older ad-hoc builds needs one final permission approval.
+
 ## Working windows
 
 Open **Hana → Open Hana** from the menu-bar menu, **Window → Open Hana** (Command+1), or the Dock icon to reach the single main window. Working windows retain Dock and Command-Tab membership while open or minimized; closing the last window returns to accessory mode. The mock windows used in the earlier shell milestone were removed in [#89](https://github.com/beamseree/hana/issues/89). See its [evidence](docs/evidence/issue-89/validation.md). Open a note with double-click or Return; each note reuses its existing window. Notes support pin/archive, and archived notes open read-only with Restore. Tasks support complete/reopen, move, inline rename, archive/restore and independent Inbox/Today ordering. Note capture’s Open in window saves once and continues in its editor. Working windows keep the current light appearance per [Beam’s clarification](docs/evidence/issue-88/decisions.md).
