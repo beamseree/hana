@@ -1,0 +1,10 @@
+􁁛  Test catalogRefreshesAnActiveQueryAfterRename() passed after 1.727 seconds.
+􁁛  Test catalogRefreshesAnActiveQueryAfterAnInfoPlistNameChange() passed after 2.223 seconds.
+􁁛  Test catalogFindsApplicationsInARootCreatedAfterLaunch() passed after 3.765 seconds.
+􁁛  Test catalogRefreshesAnActiveQueryForAnOrganizationalFolder() passed after 3.765 seconds.
+􁁛  Test aBurstOfChangesCoalescesIntoFewRescans() passed after 3.846 seconds.
+􁁛  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() passed after 4.352 seconds.
+􁁛  Test idleCatalogDoesNoFilesystemWorkAfterLaunch() passed after 4.693 seconds.
+􁁛  Test rewritingFilesInsideABundleCausesNoRescan() passed after 7.520 seconds.
+􁁛  Test aLongInstallationRescansAtABoundedRate() passed after 9.959 seconds.
+􁁛  Test run with 36 tests in 2 suites passed after 9.960 seconds.

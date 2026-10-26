@@ -383,6 +383,72 @@ struct SearchTests {
         #expect(removed?.results.isEmpty == true)
     }
 
+    @Test func catalogFindsApplicationsInARootCreatedAfterLaunch() async throws {
+        // Like ~/Applications, the missing root's existing ancestors are not
+        // symlinks; FSEvents treats a root beneath a symlink differently.
+        let temporary = try FileManager.default.temporaryDirectory.resourceValues(forKeys: [.canonicalPathKey])
+        let home = URL(fileURLWithPath: try #require(temporary.canonicalPath)).appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: home, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: home) }
+        let root = home.appendingPathComponent("Applications")
+        let search = Search(roots: [root], typingGap: .zero)
+        var iterator = search.search(.init(text: "Late")).makeAsyncIterator()
+        while let batch = await iterator.next(), batch.status == .loading {}
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+        // An installation some time after the root appeared, whose appearance
+        // may be reported more than once.
+        try await Task.sleep(for: .seconds(1))
+        try FileManager.default.createDirectory(at: root.appendingPathComponent("Late.app"), withIntermediateDirectories: false)
+        #expect(await advance(&iterator, toNames: ["Late"]) != nil)
+    }
+
+    @Test func catalogRefreshesAnActiveQueryAfterRename() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let original = root.appendingPathComponent("Before Rename.app")
+        try FileManager.default.createDirectory(at: original, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let search = Search(roots: [root], typingGap: .zero)
+        var iterator = search.search(.init(text: "Rename")).makeAsyncIterator()
+        var batch = await iterator.next()
+        while batch?.status == .loading { batch = await iterator.next() }
+        #expect(batch?.results.map(\.name) == ["Before Rename"])
+        try FileManager.default.moveItem(at: original, to: root.appendingPathComponent("After Rename.app"))
+        #expect(await advance(&iterator, toNames: ["After Rename"]) != nil)
+    }
+
+    @Test func catalogRefreshesAnActiveQueryForAnOrganizationalFolder() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let search = Search(roots: [root], typingGap: .zero)
+        var iterator = search.search(.init(text: "Nested")).makeAsyncIterator()
+        while let batch = await iterator.next(), batch.status == .loading {}
+        let folder = root.appendingPathComponent("Suite")
+        try FileManager.default.createDirectory(at: folder.appendingPathComponent("Tools/Nested.app"), withIntermediateDirectories: true)
+        #expect(await advance(&iterator, toNames: ["Nested"]) != nil)
+        try FileManager.default.removeItem(at: folder)
+        #expect(await advance(&iterator, toNames: []) != nil)
+    }
+
+    @Test func catalogRefreshesAnActiveQueryAfterAnInfoPlistNameChange() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let contents = root.appendingPathComponent("Plist.app/Contents")
+        try FileManager.default.createDirectory(at: contents, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        func writeName(_ name: String) throws {
+            let data = try PropertyListSerialization.data(fromPropertyList: ["CFBundleName": name], format: .xml, options: 0)
+            try data.write(to: contents.appendingPathComponent("Info.plist"))
+        }
+        try writeName("Old Name")
+        let search = Search(roots: [root], typingGap: .zero)
+        var iterator = search.search(.init(text: "Name")).makeAsyncIterator()
+        var batch = await iterator.next()
+        while batch?.status == .loading { batch = await iterator.next() }
+        #expect(batch?.results.map(\.name) == ["Old Name"])
+        try writeName("New Name")
+        #expect(await advance(&iterator, toNames: ["New Name"]) != nil)
+    }
+
     @Test func successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() async {
         let exact = app("App", "/Applications/App.app")
         let preferred = app("App Z", "/Applications/App Z.app")
@@ -439,6 +505,16 @@ struct SearchTests {
         for await batch in search.search(.init(text: "notes")) { last = batch }
         #expect(last?.results.map(\.name) == ["Notes", "Notes Pro", "My Notes"])
     }
+}
+
+/// Advances to the first batch listing exactly these names. Search can
+/// deliver one source snapshot in two batches, so the next batch after a
+/// change need not be the first to show it; the suite's time limit bounds the wait.
+private func advance(_ iterator: inout Search.Batches.AsyncIterator, toNames names: [String]) async -> Search.Batch? {
+    while let batch = await iterator.next() {
+        if batch.results.map(\.name) == names { return batch }
+    }
+    return nil
 }
 
 func app(_ name: String, _ path: String) -> SearchResult {
