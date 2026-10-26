@@ -6,6 +6,8 @@ The launch-wide Jev memory retains up to 64 successful answers in memory, keyed 
 
 Word-paced handles an exact cache hit as soon as the edit or newly allowed gate permits it, without sending a request or waiting for the typing pause. Cache verdict rows carry `cached: true` and no latency. Gate, composition, eligibility, threshold and multiline Task rules still apply.
 
+> **Superseded (Beam, 2026-10-26):** the 0.90 floor below was removed. With the one-agreement option, Word-paced now switches on a single answer at or above the threshold; see [the single-agreement record](../word-paced-single-agreement/validation.md). The rest of this paragraph describes the revision tested here.
+
 With the one-agreement option, Word-paced switches at or above `max(threshold, 0.90)` immediately. A lower answer at or above the threshold needs a previous consecutive agreeing answer. With the two-agreement option every answer needs that confirmation. Agreement is recorded once when an answer is handled, including while Search sources are settling; repeated ticks or whitespace do not manufacture another answer or request. Other strategies retain their previous confidence rules.
 
 ## Automated verification

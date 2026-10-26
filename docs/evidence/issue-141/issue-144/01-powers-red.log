@@ -1,0 +1,900 @@
+Fetching https://github.com/swiftlang/swift-cmark.git from cache
+Fetching https://github.com/groue/GRDB.swift from cache
+Fetching https://github.com/swiftlang/swift-markdown.git from cache
+Fetched https://github.com/groue/GRDB.swift from cache (0.03s)
+Fetched https://github.com/swiftlang/swift-cmark.git from cache (0.03s)
+Fetched https://github.com/swiftlang/swift-markdown.git from cache (0.03s)
+Creating working copy for https://github.com/groue/GRDB.swift
+Creating working copy for https://github.com/swiftlang/swift-cmark.git
+Creating working copy for https://github.com/swiftlang/swift-markdown.git
+Working copy of https://github.com/swiftlang/swift-cmark.git resolved at 0.9.0
+Working copy of https://github.com/swiftlang/swift-markdown.git resolved at 0.9.0
+Working copy of https://github.com/groue/GRDB.swift resolved at 7.11.1
+Building for debugging...
+[0/50] /Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/.build/arm64-apple-macosx/debug/HanaPackageTests.derived/runner.swift
+[1/50] Write swift-version--112E4EF74740DA65.txt
+[2/50] Compiling cmark-gfm arena.c
+[3/50] Compiling cmark-gfm buffer.c
+[4/50] Compiling cmark-gfm xml.c
+[5/50] Compiling cmark-gfm-extensions tagfilter.c
+[6/50] Compiling cmark-gfm blocks.c
+[7/50] Compiling cmark-gfm syntax_extension.c
+[8/50] Compiling cmark-gfm render.c
+[9/50] Compiling cmark-gfm-extensions table.c
+[10/50] Compiling cmark-gfm registry.c
+[11/50] Compiling cmark-gfm references.c
+[12/50] Compiling cmark-gfm plugin.c
+[13/50] Compiling cmark-gfm plaintext.c
+[14/50] Compiling cmark-gfm-extensions tasklist.c
+[15/50] Compiling cmark-gfm node.c
+[16/50] Compiling cmark-gfm map.c
+[17/50] Compiling cmark-gfm utf8.c
+[18/50] Compiling cmark-gfm scanners.c
+[19/50] Compiling cmark-gfm man.c
+[20/50] Compiling cmark-gfm linked_list.c
+[21/50] Compiling cmark-gfm latex.c
+[22/50] Compiling cmark-gfm-extensions ext_scanners.c
+[23/50] Compiling cmark-gfm iterator.c
+[24/50] Compiling cmark-gfm html.c
+[25/50] Write sources
+[29/50] Compiling cmark-gfm houdini_href_e.c
+[29/50] Copying PrivacyInfo.xcprivacy
+[29/50] Write Hana-entitlement.plist
+[29/50] Copying Info.plist
+[32/50] Write sources
+[33/50] Compiling cmark-gfm houdini_html_e.c
+[33/50] Compiling cmark-gfm houdini_html_u.c
+[36/50] Compiling cmark-gfm footnotes.c
+[37/50] Compiling cmark-gfm cmark_ctype.c
+[38/50] Compiling cmark-gfm-extensions strikethrough.c
+[39/50] Compiling cmark-gfm inlines.c
+[40/50] Compiling cmark-gfm cmark.c
+[41/50] Compiling cmark-gfm commonmark.c
+[42/50] Compiling CAtomic CAtomic.c
+[42/50] Compiling cmark-gfm-extensions core-extensions.c
+[44/205] Compiling cmark-gfm-extensions autolink.c
+[46/271] Emitting module Markdown
+[47/276] Compiling Markdown OrderedList.swift
+[48/276] Compiling Markdown UnorderedList.swift
+[49/276] Compiling Markdown Paragraph.swift
+[50/276] Compiling Markdown CodeBlock.swift
+[51/276] Compiling Markdown HTMLBlock.swift
+[52/276] Compiling Markdown Heading.swift
+[53/276] Compiling Markdown ListItemContainer.swift
+[54/276] Compiling Markdown AtomicCounter.swift
+[55/276] Compiling Markdown CharacterExtensions.swift
+[56/276] Compiling Markdown CollectionExtensions.swift
+[57/276] Compiling Markdown StringExtensions.swift
+[58/276] Compiling Markdown Link.swift
+[59/276] Compiling Markdown Strikethrough.swift
+[60/276] Compiling Markdown Strong.swift
+[61/276] Compiling Markdown CustomInline.swift
+[62/276] Compiling Markdown InlineCode.swift
+[63/276] Compiling Markdown InlineHTML.swift
+[64/276] Compiling Markdown ChildIndexPath.swift
+[65/276] Compiling Markdown DirectiveArgument.swift
+[66/276] Compiling Markdown Document.swift
+[67/276] Compiling Markdown LiteralMarkup.swift
+[68/276] Compiling Markdown Markup.swift
+[69/276] Compiling Markdown MarkupChildren.swift
+[70/276] Compiling Markdown BasicBlockContainer.swift
+[71/276] Compiling Markdown BasicInlineContainer.swift
+[72/276] Compiling Markdown BlockContainer.swift
+[73/276] Compiling Markdown BlockMarkup.swift
+[74/276] Compiling Markdown InlineContainer.swift
+[75/276] Compiling Markdown InlineMarkup.swift
+[76/276] Compiling Markdown ThematicBreak.swift
+[77/276] Compiling Markdown Table.swift
+[78/276] Compiling Markdown TableBody.swift
+[79/276] Compiling Markdown TableCell.swift
+[80/276] Compiling Markdown TableCellContainer.swift
+[81/276] Compiling Markdown TableHead.swift
+[82/276] Compiling Markdown TableRow.swift
+[83/276] Compiling Markdown Replacement.swift
+[84/276] Compiling Markdown SourceLocation.swift
+[85/276] Compiling Markdown Emphasis.swift
+[86/276] Compiling Markdown Image.swift
+[87/276] Compiling Markdown InlineAttributes.swift
+[88/276] Compiling Markdown MarkupData.swift
+[89/276] Compiling Markdown PlainTextConvertibleMarkup.swift
+[90/276] Compiling Markdown RawMarkup.swift
+[91/276] Compiling Markdown BlockDirective.swift
+[92/276] Compiling Markdown BlockQuote.swift
+[93/276] Compiling Markdown CustomBlock.swift
+[94/276] Compiling Markdown LineBreak.swift
+[95/276] Compiling Markdown SoftBreak.swift
+[96/276] Compiling Markdown SymbolLink.swift
+[97/276] Compiling Markdown Text.swift
+[98/276] Compiling Markdown Aside.swift
+[99/276] Compiling Markdown BlockDirectiveParser.swift
+[100/276] Compiling Markdown MarkupVisitor.swift
+[101/276] Compiling Markdown MarkupWalker.swift
+[102/276] Compiling Markdown HTMLFormatter.swift
+[103/276] Compiling Markdown MarkupFormatter.swift
+[104/276] Compiling Markdown MarkupTreeDumper.swift
+[105/276] Compiling Markdown DoxygenAbstract.swift
+[106/276] Compiling Markdown DoxygenDiscussion.swift
+[107/276] Compiling Markdown DoxygenNote.swift
+[108/276] Compiling Markdown DoxygenParameter.swift
+[109/276] Compiling Markdown DoxygenReturns.swift
+[110/276] Compiling Markdown ListItem.swift
+[111/276] Compiling Markdown CommonMarkConverter.swift
+[112/276] Compiling Markdown LazySplitLines.swift
+[113/276] Compiling Markdown ParseOptions.swift
+[114/276] Compiling Markdown RangeAdjuster.swift
+[115/276] Compiling Markdown RangerTracker.swift
+[116/276] Compiling Markdown MarkupRewriter.swift
+[117/276] Compiling GRDB SQLIndexGenerator.swift
+[118/276] Compiling GRDB SQLQueryGenerator.swift
+[119/276] Compiling GRDB SQLTableAlterationGenerator.swift
+[120/276] Compiling GRDB SQLTableGenerator.swift
+[121/276] Compiling GRDB TableAlias.swift
+[122/276] Compiling GRDB SQLInterpolation+QueryInterface.swift
+[123/276] Compiling GRDB ColumnDefinition.swift
+[124/276] Compiling GRDB Database+SchemaDefinition.swift
+[125/276] Compiling GRDB ForeignKeyDefinition.swift
+[126/276] Compiling GRDB IndexDefinition.swift
+[127/276] Compiling GRDB TableAlteration.swift
+[128/276] Compiling GRDB TableDefinition.swift
+[129/276] Compiling GRDB VirtualTableModule.swift
+[130/276] Compiling GRDB TableRecord+Association.swift
+[131/290] Compiling GRDB PersistableRecord+Save.swift
+[132/290] Compiling GRDB PersistableRecord+Upsert.swift
+[133/290] Compiling GRDB PersistableRecord.swift
+[134/290] Compiling GRDB Record.swift
+[135/290] Compiling GRDB TableRecord.swift
+[136/290] Compiling GRDB CaseInsensitiveIdentifier.swift
+[137/290] Compiling GRDB Inflections+English.swift
+[138/290] Compiling GRDB Inflections.swift
+[139/290] Compiling GRDB Mutex.swift
+[140/290] Compiling GRDB OnDemandFuture.swift
+[141/290] Compiling GRDB OrderedDictionary.swift
+[142/290] Compiling GRDB Pool.swift
+[143/290] Compiling GRDB ReadWriteLock.swift
+[144/290] Compiling GRDB ReceiveValuesOn.swift
+[159/290] Compiling GRDB TransactionObserver.swift
+[160/290] Compiling GRDB WALSnapshot.swift
+[161/290] Compiling GRDB WALSnapshotTransaction.swift
+[162/290] Compiling GRDB Database+Dump.swift
+[163/290] Compiling GRDB DatabaseReader+dump.swift
+[164/290] Compiling GRDB DumpFormat.swift
+[165/290] Compiling GRDB DebugDumpFormat.swift
+[166/290] Compiling GRDB JSONDumpFormat.swift
+[167/290] Compiling GRDB LineDumpFormat.swift
+[168/290] Compiling GRDB ListDumpFormat.swift
+[169/290] Compiling GRDB QuoteDumpFormat.swift
+[170/290] Compiling GRDB FTS3.swift
+[171/290] Compiling GRDB FTS3Pattern.swift
+[172/290] Compiling GRDB FTS3TokenizerDescriptor.swift
+[187/290] Emitting module GRDB
+[188/290] Compiling GRDB SQL.swift
+[189/290] Compiling GRDB SQLInterpolation.swift
+[190/290] Compiling GRDB SQLRequest.swift
+[191/290] Compiling GRDB SchedulingWatchdog.swift
+[192/290] Compiling GRDB SerializedDatabase.swift
+[193/290] Compiling GRDB Statement.swift
+[194/290] Compiling GRDB StatementAuthorizer.swift
+[195/290] Compiling GRDB StatementColumnConvertible.swift
+[196/290] Compiling GRDB CGFloat.swift
+[197/290] Compiling GRDB Data.swift
+[198/290] Compiling GRDB DatabaseDateComponents.swift
+[199/290] Compiling GRDB DatabaseValueConvertible+ReferenceConvertible.swift
+[200/290] Compiling GRDB Date.swift
+[201/290] Compiling GRDB Decimal.swift
+[202/290] Compiling GRDB DatabasePromise.swift
+[203/290] Compiling GRDB SQLAssociation.swift
+[204/290] Compiling GRDB SQLCollection.swift
+[205/290] Compiling GRDB SQLExpression.swift
+[206/290] Compiling GRDB SQLForeignKeyRequest.swift
+[207/290] Compiling GRDB SQLFunctions.swift
+[208/290] Compiling GRDB SQLOperators.swift
+[209/290] Compiling GRDB SQLOrdering.swift
+[210/290] Compiling GRDB SQLRelation.swift
+[211/290] Compiling GRDB SQLSelection.swift
+[212/290] Compiling GRDB SQLSubquery.swift
+[213/290] Compiling GRDB Table.swift
+[214/290] Compiling GRDB SQLColumnGenerator.swift
+[215/290] Compiling GRDB SQLGenerationContext.swift
+[216/290] Compiling GRDB DatabaseRegion.swift
+[217/290] Compiling GRDB DatabaseRegionObservation.swift
+[218/290] Compiling GRDB DatabaseSchemaCache.swift
+[219/290] Compiling GRDB DatabaseSchemaSource.swift
+[220/290] Compiling GRDB DatabaseSnapshot.swift
+[221/290] Compiling GRDB DatabaseSnapshotPool.swift
+[222/290] Compiling GRDB DatabaseValue.swift
+[223/290] Compiling GRDB DatabaseValueConvertible.swift
+[224/290] Compiling GRDB DatabaseWriter.swift
+[225/290] Compiling GRDB DispatchQueueActor.swift
+[226/290] Compiling GRDB FetchRequest.swift
+[227/290] Compiling GRDB Row.swift
+[228/290] Compiling GRDB RowAdapter.swift
+[229/290] Compiling GRDB RowDecodingError.swift
+[230/290] Compiling GRDB Refinable.swift
+[231/290] Compiling GRDB Utils.swift
+[232/290] Compiling GRDB DatabaseCancellable.swift
+[233/290] Compiling GRDB ValueConcurrentObserver.swift
+[234/290] Compiling GRDB ValueWriteOnlyObserver.swift
+[235/290] Compiling GRDB Fetch.swift
+[236/290] Compiling GRDB Map.swift
+[237/290] Compiling GRDB RemoveDuplicates.swift
+[238/290] Compiling GRDB Trace.swift
+[239/290] Compiling GRDB ValueReducer.swift
+[240/290] Compiling GRDB SharedValueObservation.swift
+[241/290] Compiling GRDB ValueObservation.swift
+[242/290] Compiling GRDB ValueObservationScheduler.swift
+[243/290] Compiling GRDB resource_bundle_accessor.swift
+[286/355] Compiling Hana ClassifierWording.swift
+[287/355] Compiling Hana CollectionExport.swift
+[288/355] Compiling Hana CollectionExportFixture.swift
+[289/355] Compiling Hana CollectionFixtureHarness.swift
+[290/355] Compiling Hana CollectionLocation.swift
+[291/355] Compiling Hana CollectionRecovery.swift
+[292/360] Compiling Hana AutomaticSwitchOptions.swift
+[293/360] Compiling Hana BarStyle.swift
+[294/360] Compiling Hana Calculation.swift
+[295/360] Compiling Hana CaptureSession.swift
+[296/360] Compiling Hana Classifier.swift
+[297/360] Compiling Hana ClassifierServices.swift
+[298/360] Compiling Hana Diagnostics.swift
+[299/360] Compiling Hana DisplayPlacement.swift
+[300/360] Compiling Hana FocusedWindowGeometry.swift
+[301/360] Compiling Hana FoundationModelsClassifier.swift
+[302/360] Compiling Hana GlobalShortcut.swift
+[303/360] Compiling Hana HanaApp.swift
+[304/360] Compiling Hana CollectionSchema.swift
+[305/360] Compiling Hana CollectionSnapshotFixture.swift
+[306/360] Compiling Hana CollectionSnapshots.swift
+[307/360] Compiling Hana CollectionStore.swift
+[308/360] Compiling Hana CollectionTitleSource.swift
+[309/360] Compiling Hana CoverageValidation.swift
+[310/360] Compiling Hana Search.swift
+[311/360] Compiling Hana SearchCorrectnessValidation.swift
+[312/360] Compiling Hana SearchName.swift
+[313/360] Compiling Hana SearchResultsView.swift
+[314/360] Compiling Hana SegmentedControl.swift
+[315/360] Compiling Hana ApplicationCatalog.swift
+[316/360] Compiling Hana ArchiveWorkspace.swift
+[317/360] Compiling Hana AutomaticSwitch.swift
+[318/360] Compiling Hana AutomaticSwitchDebugFooter.swift
+[319/360] Compiling Hana AutomaticSwitchDebugSnapshot.swift
+[320/360] Compiling Hana AutomaticSwitchDiagnostics.swift
+[321/360] Emitting module Hana
+[322/360] Compiling Hana HanaColor.swift
+[323/360] Compiling Hana HanaFont.swift
+[324/360] Compiling Hana HanaRadius.swift
+[325/360] Compiling Hana HanaShadow.swift
+[326/360] Compiling Hana JevClassifier.swift
+[327/360] Compiling Hana JevHTTPSession.swift
+[328/360] Compiling Hana ShortcutMenuController.swift
+[329/360] Compiling Hana SpotlightSource.swift
+[330/360] Compiling Hana StrongMatchGate.swift
+[331/360] Compiling Hana TaskWorkspace.swift
+[332/360] Compiling Hana TrickyInputCheck.swift
+[333/360] Compiling Hana TrickyInputRequest.swift
+[334/360] Compiling Hana WorkingWindowController.swift
+[335/360] Compiling Hana WorkingWindowsFixture.swift
+[336/360] Compiling Hana WorkingWindowsOptions.swift
+[337/360] Compiling Hana WorkingWindowsValidation.swift
+[338/360] Compiling Hana NoteScroller.swift
+[339/360] Compiling Hana NoteWindowController.swift
+[340/360] Compiling Hana NoteWindowValidation.swift
+[341/360] Compiling Hana OpenNoteCaptureValidation.swift
+[342/360] Compiling Hana PerformanceValidation.swift
+[343/360] Compiling Hana ResultIcons.swift
+[344/360] Compiling Hana MarkdownPreviewRenderer.swift
+[345/360] Compiling Hana MixedSearchValidation.swift
+[346/360] Compiling Hana ModeIcon.swift
+[347/360] Compiling Hana NoteEditing.swift
+[348/360] Compiling Hana NotePreview.swift
+[349/360] Compiling Hana NotePreviewSession.swift
+[350/360] Compiling Hana JevKeychainStore.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[351/360] Compiling Hana JevLaunchMemory.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[352/360] Compiling Hana JevRequestActivity.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[353/360] Compiling Hana JevSharedTransport.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[354/360] Compiling Hana MacInteraction.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[355/360] Compiling Hana MainWindowValidation.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Sources/Hana/JevKeychainStore.swift:34:52: warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+32 |         query[kSecReturnAttributes as String] = true
+33 |         query[kSecMatchLimit as String] = kSecMatchLimitOne
+34 |         query[kSecUseAuthenticationUI as String] = kSecUseAuthenticationUIFail
+   |                                                    `- warning: 'kSecUseAuthenticationUIFail' was deprecated in macOS 11.0: Instead of kSecUseAuthenticationUI, use kSecUseAuthenticationContext and set LAContext.interactionNotAllowed property [#DeprecatedDeclaration]
+35 |         var item: CFTypeRef?
+36 |         let status = copyMatching(query as CFDictionary, &item)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+[355/360] Write Objects.LinkFileList
+[356/360] Linking Hana
+[357/360] Applying Hana
+[359/440] Compiling HanaTests OrganizedCollectionFixture.swift
+[360/440] Compiling HanaTests ResultIconsTests.swift
+[361/440] Compiling HanaTests ScriptedClassifier.swift
+[362/440] Compiling HanaTests SearchExclusionTests.swift
+[363/440] Compiling HanaTests SearchRankingTests.swift
+[364/440] Compiling HanaTests SearchResponsivenessTests.swift
+[365/440] Compiling HanaTests SearchTests.swift
+[366/447] Compiling HanaTests AutomaticSwitchDebugInteractionTests.swift
+[367/447] Compiling HanaTests AutomaticSwitchDebugTests.swift
+[368/447] Compiling HanaTests AutomaticSwitchDeletionTests.swift
+[369/447] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+[370/447] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[371/447] Compiling HanaTests AutomaticSwitchReversalOptionsTests.swift
+[372/447] Compiling HanaTests AutomaticSwitchReviewPolicyTests.swift
+[373/447] Compiling HanaTests AutomaticSwitchSessionCountTests.swift
+[374/447] Compiling HanaTests NativeEditingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[375/447] Compiling HanaTests NativeTaskTitleEditor.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[376/447] Compiling HanaTests NativeWindowSlot.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[377/447] Compiling HanaTests NoteEditingLifetimeReviewTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[378/447] Compiling HanaTests NoteEditingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[379/447] Compiling HanaTests NoteModeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[380/447] Compiling HanaTests NoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[381/447] Compiling HanaTests NotePreviewTests.swift
+[382/447] Compiling HanaTests NoteSaveSafetyNativeTests.swift
+[383/447] Compiling HanaTests NoteSaveSafetyTests.swift
+[384/447] Compiling HanaTests NoteSaveTests.swift
+[385/447] Compiling HanaTests NoteWindowTests.swift
+[386/447] Compiling HanaTests OpenNoteCaptureTests.swift
+[387/447] Compiling HanaTests OpenNoteOrganizationTests.swift
+[388/447] Compiling HanaTests JevRejectionMenuTests.swift
+[389/447] Compiling HanaTests JevRequestActivityTests.swift
+[390/447] Compiling HanaTests JevSharedTransportTests.swift
+[391/447] Compiling HanaTests JevSubmissionNativeTests.swift
+[392/447] Compiling HanaTests JevWordPacedDeletionNativeTests.swift
+[393/447] Compiling HanaTests JevWordPacedNativeFixture.swift
+[394/447] Compiling HanaTests JevWordPacedNativeTests.swift
+[395/447] Compiling HanaTests CollectionExportHarnessTests.swift
+[396/447] Compiling HanaTests CollectionExportTests.swift
+[397/447] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[398/447] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[399/447] Compiling HanaTests CollectionSnapshotTests.swift
+[400/447] Compiling HanaTests CollectionStoreOpeningTests.swift
+[401/447] Compiling HanaTests CollectionStoreTests.swift
+[402/447] Compiling HanaTests AutomaticSwitchSubmissionTests.swift
+[403/447] Compiling HanaTests AutomaticSwitchTests.swift
+[404/447] Compiling HanaTests AutomaticSwitchWakeUpInteractionTests.swift
+[405/447] Compiling HanaTests AutomaticSwitchWakeUpTests.swift
+[406/447] Compiling HanaTests AutomaticSwitchWithdrawalDiagnosticsTests.swift
+[407/447] Compiling HanaTests AutomaticSwitchWithdrawalTests.swift
+[408/447] Compiling HanaTests AutomaticSwitchWordCacheTests.swift
+[409/447] Compiling HanaTests AutomaticSwitchWordPacedTests.swift
+[410/447] Emitting module HanaTests
+[411/447] Compiling HanaTests CalculationInteractionTests.swift
+[412/447] Compiling HanaTests CalculationTests.swift
+[413/447] Compiling HanaTests CaptureSafetyNativeTests.swift
+[414/447] Compiling HanaTests CaptureSafetyTests.swift
+[415/447] Compiling HanaTests CaptureSessionTests.swift
+[416/447] Compiling HanaTests ClassifierAdapterTests.swift
+[417/447] Compiling HanaTests ClassifierMenuTests.swift
+[418/447] Compiling HanaTests JevWordPacedWithdrawalNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[419/447] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[420/447] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[421/447] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[422/447] Compiling HanaTests MarkdownPreviewTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[423/447] Compiling HanaTests ModeIconTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[424/447] Compiling HanaTests NativeAppFixture.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[425/447] Compiling HanaTests CollectionTitleSourceTests.swift
+[426/447] Compiling HanaTests CompletedArchiveTests.swift
+[427/447] Compiling HanaTests DisplayPlacementTests.swift
+[428/447] Compiling HanaTests IndependentExportDecoder.swift
+[429/447] Compiling HanaTests JevBackoffTests.swift
+[430/447] Compiling HanaTests JevHTTPSessionTests.swift
+[431/447] Compiling HanaTests JevKeychainTests.swift
+[432/447] Compiling HanaTests SearchTypingGapTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[433/447] Compiling HanaTests ShortcutMenuTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[434/447] Compiling HanaTests SpotlightStageTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[435/447] Compiling HanaTests StrongMatchGateTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[436/447] Compiling HanaTests SuggestionInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[437/447] Compiling HanaTests TaskLifecycleTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[438/447] Compiling HanaTests TaskOrderingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[439/447] Compiling HanaTests TaskSaveTests.swift
+[440/447] Compiling HanaTests TaskWorkspaceOrderTests.swift
+[441/447] Compiling HanaTests TaskWorkspaceTests.swift
+[442/447] Compiling HanaTests TestClock.swift
+[443/447] Compiling HanaTests TrickyInputCheckTests.swift
+[444/447] Compiling HanaTests WorkingWindowReviewTests.swift
+[445/447] Compiling HanaTests WorkingWindowsValidationTests.swift
+[446/449] Compiling HanaPackageTests runner.swift
+[447/449] Emitting module HanaPackageTests
+[447/449] Write Objects.LinkFileList
+[448/449] Linking HanaPackageTests
+Build complete! (78.27s)
+Test Suite 'Selected tests' started at 2026-10-16 16:41:52.220.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:41:52.221.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:41:52.221.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:41:52.221.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationTests started.
+􀟈  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^3^2", expected → "512" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀢄  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) recorded an issue with 2 arguments text → "2^3^2", expected → "512" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "512")
+􀟈  Test case passing 2 arguments text → "-2^2", expected → "-4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀢄  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) recorded an issue with 2 arguments text → "-2^2", expected → "-4" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "-4")
+􀟈  Test case passing 2 arguments text → "(-2)^2", expected → "4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀢄  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) recorded an issue with 2 arguments text → "(-2)^2", expected → "4" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "4")
+􀟈  Test case passing 2 arguments text → "2^-3", expected → "0.125" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀢄  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) recorded an issue with 2 arguments text → "2^-3", expected → "0.125" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "0.125")
+􀟈  Test case passing 2 arguments text → "2^-2^2", expected → "0.0625" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀢄  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) recorded an issue with 2 arguments text → "2^-2^2", expected → "0.0625" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "0.0625")
+􀟈  Test case passing 2 arguments text → "(0.1 + 0.2)^2", expected → "0.09" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀢄  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) recorded an issue with 2 arguments text → "(0.1 + 0.2)^2", expected → "0.09" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "0.09")
+􀟈  Test case passing 2 arguments text → "1.01^2", expected → "1.0201" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀢄  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) recorded an issue with 2 arguments text → "1.01^2", expected → "1.0201" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "1.0201")
+􀟈  Test case passing 2 arguments text → "3^30", expected → "205,891,132,094,649" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀢄  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) recorded an issue with 2 arguments text → "3^30", expected → "205,891,132,094,649" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "205,891,132,094,649")
+􀢄  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) with 8 test cases failed after 0.001 seconds with 8 issues.
+􀟈  Test basicArithmeticAppearsAsAnAnswer() started.
+􁁛  Test basicArithmeticAppearsAsAnAnswer() passed after 0.001 seconds.
+􀟈  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 *", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * -", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / (3 - 3)", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + *", state → .invalid, title → "Not a valid calculation", subtitle → "3 + *" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1..2", state → .invalid, title → "Not a valid calculation", subtitle → "1..2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1 2 + 3", state → .invalid, title → "Not a valid calculation", subtitle → "1 2 + 3" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + 4)", state → .invalid, title → "Not a valid calculation", subtitle → "3 + 4)" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "(3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + ()", state → .invalid, title → "Not a valid calculation", subtitle → "3 + ()" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * )", state → .invalid, title → "Not a valid calculation", subtitle → "12 * )" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 + * 2", state → .invalid, title → "Not a valid calculation", subtitle → "5 / 0 + * 2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → " 3 + * 4 ", state → .invalid, title → "Not a valid calculation", subtitle → " 3 + * 4 " to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􁁛  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) with 18 test cases passed after 0.001 seconds.
+􀟈  Test recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "e", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "rent 1200 / 3", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "tax 3x4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "extra", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrtish(4)", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "https://3/4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "12 *", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5 / 0", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 + * 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1..2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrt", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "SIN(pi)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2pi", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2(3 + 4)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3x4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → ".3 x .4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3×4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^10", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "50%", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-3 + 2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􁁛  Test recognizesOnlyTheCalculationLanguage(text:expected:) with 26 test cases passed after 0.001 seconds.
+􀟈  Test evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 + 3 * 4", expected → "14" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(2 + 3) * 4", expected → "20" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / (2 + 3)", expected → "2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5 + 3", expected → "-2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 * -3", expected → "-6" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-(2 + 3)", expected → "-5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → "1,998" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.1 + 0.2", expected → "0.3" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / 4", expected → "2.5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􁁛  Test evaluatesArithmeticWithExactDecimals(text:expected:) with 9 test cases passed after 0.001 seconds.
+􀟈  Test formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345 + 0", title → "123,456,789,012,345", copy → "123456789012345" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "999999999999999.9 + 0", title → "1e15", copy → "1e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1234567890123456 + 0", title → "1.2345679e15", copy → "1.2345679e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 3", title → "0.33333333", copy → "0.33333333" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789 / 100", title → "1,234,567.9", copy → "1234567.9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 100000000", title → "0.00000001", copy → "0.00000001" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 1000000000", title → "1e-9", copy → "1e-9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345678901 + 0", title → "1.2345679e20", copy → "1.2345679e20" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "-1234.5 + 0", title → "-1,234.5", copy → "-1234.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "0.0000000001 - 0.0000000001", title → "0", copy → "0" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "10 / 4", title → "2.5", copy → "2.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􁁛  Test formatsAnswersAndCopyableText(text:title:copy:) with 11 test cases passed after 0.001 seconds.
+􀟈  Test typingAndDisplayFollowTheExplicitLocale() started.
+􁁛  Test typingAndDisplayFollowTheExplicitLocale() passed after 0.001 seconds.
+􀢄  Suite CalculationTests failed after 0.005 seconds with 8 issues.
+􀢄  Test run with 7 tests in 1 suite failed after 0.006 seconds with 8 issues.

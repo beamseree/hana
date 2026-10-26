@@ -1,0 +1,125 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests CalculationTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (4.64s)
+Test Suite 'Selected tests' started at 2026-10-16 16:42:42.066.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:42:42.068.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:42:42.068.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:42:42.068.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationTests started.
+􀟈  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "50%", expected → "0.5" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀢄  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) recorded an issue with 2 arguments text → "50%", expected → "0.5" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "0.5")
+􀟈  Test case passing 2 arguments text → "200 + 10%", expected → "220" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀢄  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) recorded an issue with 2 arguments text → "200 + 10%", expected → "220" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "220")
+􀟈  Test case passing 2 arguments text → "200 - 10%", expected → "180" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀢄  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) recorded an issue with 2 arguments text → "200 - 10%", expected → "180" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "180")
+􀟈  Test case passing 2 arguments text → "200 * 10%", expected → "20" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀢄  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) recorded an issue with 2 arguments text → "200 * 10%", expected → "20" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "20")
+􀟈  Test case passing 2 arguments text → "200 / 10%", expected → "2,000" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀢄  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) recorded an issue with 2 arguments text → "200 / 10%", expected → "2,000" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "2,000")
+􀟈  Test case passing 2 arguments text → "200 + 0.1", expected → "200.1" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10% + 10%", expected → "242" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀢄  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) recorded an issue with 2 arguments text → "200 + 10% + 10%", expected → "242" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "242")
+􀟈  Test case passing 2 arguments text → "200 + 10% * 2", expected → "200.2" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀢄  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) recorded an issue with 2 arguments text → "200 + 10% * 2", expected → "200.2" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "200.2")
+􀟈  Test case passing 2 arguments text → "200 + (10%)", expected → "220" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀢄  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) recorded an issue with 2 arguments text → "200 + (10%)", expected → "220" at CalculationTests.swift:13:9: Expectation failed: (Calculation.answer(for: text, locale: locale)?.title → "Not a valid calculation") == (expected → "220")
+􀢄  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) with 9 test cases failed after 0.001 seconds with 8 issues.
+􀟈  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^3^2", expected → "512" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-2^2", expected → "-4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-2)^2", expected → "4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-3", expected → "0.125" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-2^2", expected → "0.0625" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(0.1 + 0.2)^2", expected → "0.09" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.01^2", expected → "1.0201" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3^30", expected → "205,891,132,094,649" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􁁛  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) with 8 test cases passed after 0.001 seconds.
+􀟈  Test basicArithmeticAppearsAsAnAnswer() started.
+􁁛  Test basicArithmeticAppearsAsAnAnswer() passed after 0.001 seconds.
+􀟈  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 *", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * -", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / (3 - 3)", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + *", state → .invalid, title → "Not a valid calculation", subtitle → "3 + *" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1..2", state → .invalid, title → "Not a valid calculation", subtitle → "1..2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "1 2 + 3", state → .invalid, title → "Not a valid calculation", subtitle → "1 2 + 3" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + 4)", state → .invalid, title → "Not a valid calculation", subtitle → "3 + 4)" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + * 4", state → .invalid, title → "Not a valid calculation", subtitle → "(3 + * 4" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "3 + ()", state → .invalid, title → "Not a valid calculation", subtitle → "3 + ()" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * )", state → .invalid, title → "Not a valid calculation", subtitle → "12 * )" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 + * 2", state → .invalid, title → "Not a valid calculation", subtitle → "5 / 0 + * 2" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → " 3 + * 4 ", state → .invalid, title → "Not a valid calculation", subtitle → " 3 + * 4 " to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􁁛  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) with 18 test cases passed after 0.001 seconds.
+􀟈  Test recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "e", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "rent 1200 / 3", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "tax 3x4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x pi", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "extra", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrtish(4)", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "https://3/4", expected → false to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "12 *", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "5 / 0", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 + * 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1..2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "sqrt", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "SIN(pi)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2pi", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2(3 + 4)", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3x4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → ".3 x .4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3 x 4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3×4", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^10", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "50%", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1e-3 + 2", expected → true to recognizesOnlyTheCalculationLanguage(text:expected:) started.
+􁁛  Test recognizesOnlyTheCalculationLanguage(text:expected:) with 26 test cases passed after 0.001 seconds.
+􀟈  Test evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 + 3 * 4", expected → "14" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(2 + 3) * 4", expected → "20" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / (2 + 3)", expected → "2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-5 + 3", expected → "-2" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2 * -3", expected → "-6" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-(2 + 3)", expected → "-5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2024-10-16", expected → "1,998" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "0.1 + 0.2", expected → "0.3" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "10 / 4", expected → "2.5" to evaluatesArithmeticWithExactDecimals(text:expected:) started.
+􁁛  Test evaluatesArithmeticWithExactDecimals(text:expected:) with 9 test cases passed after 0.001 seconds.
+􀟈  Test formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345 + 0", title → "123,456,789,012,345", copy → "123456789012345" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "999999999999999.9 + 0", title → "1e15", copy → "1e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1234567890123456 + 0", title → "1.2345679e15", copy → "1.2345679e15" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 3", title → "0.33333333", copy → "0.33333333" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789 / 100", title → "1,234,567.9", copy → "1234567.9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 100000000", title → "0.00000001", copy → "0.00000001" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "1 / 1000000000", title → "1e-9", copy → "1e-9" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "123456789012345678901 + 0", title → "1.2345679e20", copy → "1.2345679e20" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "-1234.5 + 0", title → "-1,234.5", copy → "-1234.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "0.0000000001 - 0.0000000001", title → "0", copy → "0" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "10 / 4", title → "2.5", copy → "2.5" to formatsAnswersAndCopyableText(text:title:copy:) started.
+􁁛  Test formatsAnswersAndCopyableText(text:title:copy:) with 11 test cases passed after 0.001 seconds.
+􀟈  Test typingAndDisplayFollowTheExplicitLocale() started.
+􁁛  Test typingAndDisplayFollowTheExplicitLocale() passed after 0.001 seconds.
+􀢄  Suite CalculationTests failed after 0.007 seconds with 8 issues.
+􀢄  Test run with 8 tests in 1 suite failed after 0.007 seconds with 8 issues.

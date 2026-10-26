@@ -1,0 +1,29 @@
+01-incomplete-red.log
+􀢄  Test trailingOperatorKeepsAnAnswerWhileTyping() recorded an issue at CalculationTests.swift:16:26: Expectation failed: Calculation.answer(for: "12 *", locale: (locale → en_US (fixed en_US))) → nil
+􀢄  Test run with 1 test in 1 suite failed after 0.001 seconds with 1 issue.
+
+03-division-red.log
+􀢄  Test divisionByZeroExplainsWhyThereIsNoValue() recorded an issue at CalculationTests.swift:24:9: Expectation failed: (answer.title → "Not a valid calculation") == "Uh oh"
+􀢄  Test divisionByZeroExplainsWhyThereIsNoValue() recorded an issue at CalculationTests.swift:25:9: Expectation failed: (answer.subtitle → "5 / 0") == "Can't divide by zero"
+􀢄  Test run with 1 test in 1 suite failed after 0.001 seconds with 2 issues.
+
+05-state-boundaries-red.log
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "sqrt", state → .incomplete, title → "…", subtitle → "Keep typing" at CalculationTests.swift:56:9: Expectation failed: (answer.state → .invalid) == (state → .incomplete)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "sqrt", state → .incomplete, title → "…", subtitle → "Keep typing" at CalculationTests.swift:57:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "…")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "sqrt", state → .incomplete, title → "…", subtitle → "Keep typing" at CalculationTests.swift:58:9: Expectation failed: (answer.subtitle → "sqrt") == (subtitle → "Keep typing")
+􀢄  Test run with 8 tests in 1 suite failed after 0.005 seconds with 3 issues.
+
+07-result-default-red.log
+􀢄  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) recorded an issue with 3 arguments text → "12 *", title → "…", subtitle → "Keep typing" at CalculationInteractionTests.swift:32:9: Expectation failed: (interaction.selectedResult → nil) == (application → SearchResult(name: "12 *", url: file:///fixture/Calculation.app, alternateNames: [], kind: Hana.SearchResult.Kind.application, matchingNames: [Hana.SearchName(full: Hana.(unknown context at $10d44ec08).SearchWords(value: "12 *", wordStarts: ["12 *"]), stem: nil, fileExtension: nil)]))
+􀢄  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) recorded an issue with 3 arguments text → "12 *", title → "…", subtitle → "Keep typing" at CalculationInteractionTests.swift:34:9: Expectation failed: (opened == [application.url] → false) && (copied.isEmpty → <not evaluated>)
+􀢄  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) recorded an issue with 3 arguments text → "5 / 0", title → "Uh oh", subtitle → "Can't divide by zero" at CalculationInteractionTests.swift:32:9: Expectation failed: (interaction.selectedResult → nil) == (application → SearchResult(name: "5 / 0", url: file:///fixture/Calculation.app, alternateNames: [], kind: Hana.SearchResult.Kind.application, matchingNames: [Hana.SearchName(full: Hana.(unknown context at $10d44ec08).SearchWords(value: "5 / 0", wordStarts: ["5 / 0", "0"]), stem: nil, fileExtension: nil)]))
+􀢄  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) recorded an issue with 3 arguments text → "5 / 0", title → "Uh oh", subtitle → "Can't divide by zero" at CalculationInteractionTests.swift:34:9: Expectation failed: (opened == [application.url] → false) && (copied.isEmpty → <not evaluated>)
+􀢄  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) recorded an issue with 3 arguments text → "3 + * 4", title → "Not a valid calculation", subtitle → "3 + * 4" at CalculationInteractionTests.swift:32:9: Expectation failed: (interaction.selectedResult → nil) == (application → SearchResult(name: "3 + * 4", url: file:///fixture/Calculation.app, alternateNames: [], kind: Hana.SearchResult.Kind.application, matchingNames: [Hana.SearchName(full: Hana.(unknown context at $10d44ec08).SearchWords(value: "3 + * 4", wordStarts: ["3 + * 4", "4"]), stem: nil, fileExtension: nil)]))
+􀢄  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) recorded an issue with 3 arguments text → "3 + * 4", title → "Not a valid calculation", subtitle → "3 + * 4" at CalculationInteractionTests.swift:34:9: Expectation failed: (opened == [application.url] → false) && (copied.isEmpty → <not evaluated>)
+􀢄  Test run with 1 test in 1 suite failed after 0.417 seconds with 6 issues.
+
+10-edit-selection-red.log
+􀢄  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) recorded an issue with 1 argument userNavigated → true at CalculationInteractionTests.swift:59:9: Expectation failed: (interaction.selectedRow → .answer) == (expected → .result(Hana.SearchResult.ID(destination: file:///fixture/Second.app)))
+􀢄  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) recorded an issue with 1 argument userNavigated → true at CalculationInteractionTests.swift:66:9: Expectation failed: (interaction.selectedRow → .answer) == (expected → .result(Hana.SearchResult.ID(destination: file:///fixture/Second.app)))
+􀢄  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) recorded an issue with 1 argument userNavigated → true at CalculationInteractionTests.swift:69:9: Expectation failed: (interaction.selectedRow → .answer) == (expected → .result(Hana.SearchResult.ID(destination: file:///fixture/Second.app)))
+􀢄  Test run with 1 test in 1 suite failed after 0.330 seconds with 3 issues.

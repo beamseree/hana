@@ -1,0 +1,70 @@
+[0/1] Planning build
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.43s)
+Test Suite 'Selected tests' started at 2026-10-26 09:29:31.194.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-26 09:29:31.196.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-26 09:29:31.196.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-26 09:29:31.196.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite AutomaticSwitchWordCacheTests started.
+􀟈  Test anAnswerFromAnEarlierBarSessionSwitchesWithoutARequest() started.
+􁁛  Test anAnswerFromAnEarlierBarSessionSwitchesWithoutARequest() passed after 0.001 seconds.
+􀟈  Test cacheHitsAreMarkedWithoutLatencyOrInputText() started.
+􁁛  Test cacheHitsAreMarkedWithoutLatencyOrInputText() passed after 0.003 seconds.
+􀟈  Test theSixtyFifthAnswerEvictsTheLeastRecentlyUsedEntry() started.
+􁁛  Test theSixtyFifthAnswerEvictsTheLeastRecentlyUsedEntry() passed after 0.003 seconds.
+􀟈  Test differentWordingOrModelMissesTheCache(identity:) started.
+􀟈  Test case passing 1 argument identity → CacheIdentity(wordingVersion: "automatic-switch-v2", model: "jev-1.13.0") to differentWordingOrModelMissesTheCache(identity:) started.
+􀟈  Test case passing 1 argument identity → CacheIdentity(wordingVersion: "automatic-switch-v1", model: "jev-future-model") to differentWordingOrModelMissesTheCache(identity:) started.
+􁁛  Test differentWordingOrModelMissesTheCache(identity:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test aBorderlineAnswerWaitsForTheNextAgreeingAnswerWithoutResending() started.
+􁁛  Test aBorderlineAnswerWaitsForTheNextAgreeingAnswerWithoutResending() passed after 0.001 seconds.
+􀟈  Test consecutiveBorderlineAnswersAgreeWhileSearchSourcesAreStillSettling() started.
+􁁛  Test consecutiveBorderlineAnswersAgreeWhileSearchSourcesAreStillSettling() passed after 0.001 seconds.
+􀟈  Test aCachedAnswerAppliesAsSoonAsTheGateAllows() started.
+􁁛  Test aCachedAnswerAppliesAsSoonAsTheGateAllows() passed after 0.001 seconds.
+􀟈  Test anOlderSuccessfulAnswerIsCachedEvenWhenANewerAnswerAlreadyWon() started.
+􁁛  Test anOlderSuccessfulAnswerIsCachedEvenWhenANewerAnswerAlreadyWon() passed after 0.001 seconds.
+􀟈  Test failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .network to failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .authentication to failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .rateLimited to failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .malformedResponse to failuresAreNeverCached(kind:) started.
+􀟈  Test case passing 1 argument kind → .other to failuresAreNeverCached(kind:) started.
+􁁛  Test failuresAreNeverCached(kind:) with 5 test cases passed after 0.001 seconds.
+􀟈  Test oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) started.
+􀟈  Test case passing 1 argument probability → 0.7 to oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) started.
+􀢄  Test oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) recorded an issue with 1 argument probability → 0.7 at AutomaticSwitchWordCacheTests.swift:148:9: Expectation failed: (modes(h.answer(id, .task, probability)) → []) == ([.task] → [Hana.CaptureSession.Mode.task])
+􀅺  removed [Hana.CaptureSession.Mode.task]
+􀟈  Test case passing 1 argument probability → 0.8 to oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) started.
+􀢄  Test oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) recorded an issue with 1 argument probability → 0.8 at AutomaticSwitchWordCacheTests.swift:148:9: Expectation failed: (modes(h.answer(id, .task, probability)) → []) == ([.task] → [Hana.CaptureSession.Mode.task])
+􀅺  removed [Hana.CaptureSession.Mode.task]
+􀟈  Test case passing 1 argument probability → 0.89 to oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) started.
+􀢄  Test oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) recorded an issue with 1 argument probability → 0.89 at AutomaticSwitchWordCacheTests.swift:148:9: Expectation failed: (modes(h.answer(id, .task, probability)) → []) == ([.task] → [Hana.CaptureSession.Mode.task])
+􀅺  removed [Hana.CaptureSession.Mode.task]
+􀟈  Test case passing 1 argument probability → 0.9 to oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) started.
+􀟈  Test case passing 1 argument probability → 0.95 to oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) started.
+􀟈  Test case passing 1 argument probability → 1.0 to oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) started.
+􀢄  Test oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability:) with 6 test cases failed after 0.001 seconds with 3 issues.
+􀟈  Test thePointNineFiveThresholdStillGoverns() started.
+􁁛  Test thePointNineFiveThresholdStillGoverns() passed after 0.001 seconds.
+􀟈  Test disagreementRequiresANewConsecutivePair() started.
+􁁛  Test disagreementRequiresANewConsecutivePair() passed after 0.001 seconds.
+􀟈  Test unsureAndBelowThresholdAnswersBreakAgreement(label:) started.
+􀟈  Test case passing 1 argument label → .unsure to unsureAndBelowThresholdAnswersBreakAgreement(label:) started.
+􀟈  Test case passing 1 argument label → .note to unsureAndBelowThresholdAnswersBreakAgreement(label:) started.
+􁁛  Test unsureAndBelowThresholdAnswersBreakAgreement(label:) with 2 test cases passed after 0.001 seconds.
+􀟈  Test twoAgreeingClearAnswersDoNotResendTheSameText() started.
+􁁛  Test twoAgreeingClearAnswersDoNotResendTheSameText() passed after 0.001 seconds.
+􀟈  Test normalizationSharesTheCacheButPreservesCase() started.
+􁁛  Test normalizationSharesTheCacheButPreservesCase() passed after 0.001 seconds.
+􀟈  Test multilineTaskCacheHitsStillCannotSwitch() started.
+􁁛  Test multilineTaskCacheHitsStillCannotSwitch() passed after 0.001 seconds.
+􀢄  Suite AutomaticSwitchWordCacheTests failed after 0.013 seconds with 3 issues.
+􀄵  /// Cache and confidence behavior through the agreed policy seam. No live Jev or native windows.
+􀢄  Test run with 16 tests in 1 suite failed after 0.013 seconds with 3 issues.

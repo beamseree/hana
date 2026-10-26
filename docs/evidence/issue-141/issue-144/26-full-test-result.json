@@ -1,0 +1,6 @@
+{
+  "command": "xcrun swift test --no-parallel",
+  "source_head": "8dc7e18f99bcd428bd410a4157d1a76fa7181299",
+  "exit_code": 0,
+  "wall_time_seconds": 111.883
+}

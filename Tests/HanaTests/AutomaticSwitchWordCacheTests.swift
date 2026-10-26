@@ -79,19 +79,8 @@ struct AutomaticSwitchWordCacheTests {
         #expect(modes(miss).isEmpty && requests(miss).map(\.text) == ["call mom"])
     }
 
-    @Test func aBorderlineAnswerWaitsForTheNextAgreeingAnswerWithoutResending() throws {
-        var h = Harness()
-        let first = try #require(requests(h.edit("call mom ")).first?.id)
-        let borderline = h.answer(first, .task, 0.80)
-        #expect(modes(borderline).isEmpty && rows(borderline).map(\.outcome) == [.awaitingAgreement])
-        h.clock.advance(by: .seconds(1))
-        #expect(requests(h.policy.handle(.tick)).isEmpty)
-        let next = try #require(requests(h.edit("call mom tomorrow ")).first?.id)
-        #expect(modes(h.answer(next, .task, 0.80)) == [.task])
-    }
-
-    @Test func consecutiveBorderlineAnswersAgreeWhileSearchSourcesAreStillSettling() throws {
-        var h = Harness()
+    @Test func consecutiveAnswersAgreeWhileSearchSourcesAreStillSettling() throws {
+        var h = Harness { $0.agreeingVerdicts = .two }
         _ = h.policy.handle(.gateChanged(.init(decision: .allowed, settled: false, allSourcesSettled: false)))
         let first = try #require(requests(h.edit("call mom ")).first?.id)
         #expect(modes(h.answer(first, .task, 0.80)).isEmpty)
@@ -141,8 +130,8 @@ struct AutomaticSwitchWordCacheTests {
         #expect(modes(retry).isEmpty && requests(retry).map(\.text) == ["call mom"])
     }
 
-    @Test(arguments: [0.90, 0.95, 1.0])
-    func clearAnswersSwitchAtOnce(probability: Double) throws {
+    @Test(arguments: [0.70, 0.80, 0.89, 0.90, 0.95, 1.0])
+    func oneAgreeingVerdictSwitchesAtOnceAtOrAboveTheThreshold(probability: Double) throws {
         var h = Harness()
         let id = try #require(requests(h.edit("call mom ")).first?.id)
         #expect(modes(h.answer(id, .task, probability)) == [.task])
@@ -158,7 +147,7 @@ struct AutomaticSwitchWordCacheTests {
     }
 
     @Test func disagreementRequiresANewConsecutivePair() throws {
-        var h = Harness()
+        var h = Harness { $0.agreeingVerdicts = .two }
         let first = try #require(requests(h.edit("call mom ")).first?.id)
         #expect(modes(h.answer(first, .note, 0.80)).isEmpty)
         let second = try #require(requests(h.edit("call mom tomorrow ")).first?.id)
@@ -169,7 +158,7 @@ struct AutomaticSwitchWordCacheTests {
 
     @Test(arguments: [ClassifierVerdict.Label.unsure, .note])
     func unsureAndBelowThresholdAnswersBreakAgreement(label: ClassifierVerdict.Label) throws {
-        var h = Harness()
+        var h = Harness { $0.agreeingVerdicts = .two }
         let first = try #require(requests(h.edit("call mom ")).first?.id)
         _ = h.answer(first, .task, 0.80)
         let second = try #require(requests(h.edit("call mom tomorrow ")).first?.id)

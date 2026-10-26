@@ -1,0 +1,219 @@
+Building for debugging...
+[0/6] Write sources
+[2/6] Write swift-version--112E4EF74740DA65.txt
+[4/8] Emitting module Hana
+[5/8] Compiling Hana Calculation.swift
+[6/19] Compiling Hana NoteWindowValidation.swift
+[7/19] Compiling Hana HanaApp.swift
+[8/19] Compiling Hana SearchCorrectnessValidation.swift
+[9/19] Compiling Hana PerformanceValidation.swift
+[10/19] Compiling Hana SearchResultsView.swift
+[11/19] Compiling Hana MixedSearchValidation.swift
+[12/19] Compiling Hana WorkingWindowsValidation.swift
+[13/19] Compiling Hana MainWindowValidation.swift
+[14/19] Compiling Hana OpenNoteCaptureValidation.swift
+[15/19] Compiling Hana MacInteraction.swift
+[16/19] Compiling Hana CoverageValidation.swift
+[16/21] Write Objects.LinkFileList
+[17/21] Linking Hana
+[18/21] Applying Hana
+[20/51] Compiling HanaTests NoteWindowTests.swift
+[21/51] Compiling HanaTests OpenNoteCaptureTests.swift
+[22/51] Compiling HanaTests OpenNoteOrganizationTests.swift
+[23/51] Compiling HanaTests SuggestionInteractionTests.swift
+[24/51] Compiling HanaTests TaskSaveTests.swift
+[25/51] Compiling HanaTests TaskWorkspaceOrderTests.swift
+[26/53] Compiling HanaTests MainNoteOrganizationTests.swift
+[27/53] Compiling HanaTests MainWindowTests.swift
+[28/53] Compiling HanaTests ModeIconTests.swift
+[29/53] Compiling HanaTests AutomaticSwitchDebugInteractionTests.swift
+[30/53] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[31/53] Compiling HanaTests AutomaticSwitchWakeUpInteractionTests.swift
+[32/53] Compiling HanaTests CalculationInteractionTests.swift
+[33/53] Compiling HanaTests CalculationTests.swift
+[34/53] Compiling HanaTests CaptureSafetyNativeTests.swift
+[35/53] Compiling HanaTests ClassifierMenuTests.swift
+[36/53] Compiling HanaTests CompletedArchiveTests.swift
+[37/53] Compiling HanaTests DisplayPlacementTests.swift
+[38/53] Emitting module HanaTests
+[39/53] Compiling HanaTests TaskWorkspaceTests.swift
+[40/53] Compiling HanaTests WorkingWindowReviewTests.swift
+[41/53] Compiling HanaTests JevSubmissionNativeTests.swift
+[42/53] Compiling HanaTests JevWordPacedDeletionNativeTests.swift
+[43/53] Compiling HanaTests JevWordPacedNativeFixture.swift
+[44/53] Compiling HanaTests NativeEditingTests.swift
+[45/53] Compiling HanaTests NoteModeTests.swift
+[46/53] Compiling HanaTests NotePreviewTests.swift
+[47/53] Compiling HanaTests NoteSaveSafetyNativeTests.swift
+[48/53] Compiling HanaTests NoteSaveTests.swift
+[49/53] Compiling HanaTests JevWordPacedNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[50/53] Compiling HanaTests JevWordPacedWithdrawalNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[51/53] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[51/53] Write Objects.LinkFileList
+[52/53] Linking HanaPackageTests
+Build complete! (12.86s)
+Test Suite 'Selected tests' started at 2026-10-16 16:46:59.537.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:46:59.538.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:46:59.538.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:46:59.538.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationTests started.
+􀟈  Test implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2(3 + 4)", expected → "14" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(1 + 2)(3 + 4)", expected → "21" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2pi", expected → "6.2831853" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2e", expected → "5.4365637" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2sin(pi / 2)", expected → "2" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "6 / 2(1 + 2)", expected → "9" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3e5", expected → "300,000" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.2e-3", expected → "0.0012" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.2E+3", expected → "1,200" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2e3", expected → "2,000" to implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) started.
+􁁛  Test implicitMultiplicationAndScientificLiteralsHaveUnambiguousAnswers(text:expected:) with 10 test cases passed after 0.001 seconds.
+􀟈  Test functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "sqrt(16)", title → "4", copy → "4" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "SQRT(16)", title → "4", copy → "4" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "sin(pi / 2)", title → "1", copy → "1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "cos(PI)", title → "-1", copy → "-1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "tan(Pi / 4)", title → "1", copy → "1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "log(100)", title → "2", copy → "2" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "ln(E)", title → "1", copy → "1" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "2 * pi", title → "6.2831853", copy → "6.2831853" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "2 * e", title → "5.4365637", copy → "5.4365637" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "e^2", title → "7.3890561", copy → "7.3890561" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "2^0.5", title → "1.4142136", copy → "1.4142136" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "10^200.5", title → "3.1622777e200", copy → "3.1622777e200" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􀟈  Test case passing 3 arguments text → "sqrt(152399025)", title → "12,345", copy → "12345" to functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) started.
+􁁛  Test functionsConstantsAndFractionalPowersUseDoublePrecision(text:title:copy:) with 13 test cases passed after 0.001 seconds.
+􀟈  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "50%", expected → "0.5" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10%", expected → "220" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 - 10%", expected → "180" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 * 10%", expected → "20" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 / 10%", expected → "2,000" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 0.1", expected → "200.1" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10% + 10%", expected → "242" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + 10% * 2", expected → "200.2" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "200 + (10%)", expected → "220" to percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) started.
+􁁛  Test percentagesAreRelativeOnlyForADirectAdditiveOperand(text:expected:) with 9 test cases passed after 0.001 seconds.
+􀟈  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^3^2", expected → "512" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "-2^2", expected → "-4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(-2)^2", expected → "4" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-3", expected → "0.125" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "2^-2^2", expected → "0.0625" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "(0.1 + 0.2)^2", expected → "0.09" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "1.01^2", expected → "1.0201" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􀟈  Test case passing 2 arguments text → "3^30", expected → "205,891,132,094,649" to integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) started.
+􁁛  Test integerPowersAreExactAndBindBeforeUnaryMinus(text:expected:) with 8 test cases passed after 0.001 seconds.
+􀟈  Test basicArithmeticAppearsAsAnAnswer() started.
+􁁛  Test basicArithmeticAppearsAsAnAnswer() passed after 0.001 seconds.
+􀟈  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 *", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "12 * -", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "(3 + 4 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0 +", state → .incomplete, title → "…", subtitle → "Keep typing" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / 0", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "5 / (3 - 3)", state → .divisionByZero, title → "Uh oh", subtitle → "Can't divide by zero" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀟈  Test case passing 4 arguments text → "sqrt(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "sqrt(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .undefined)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "sqrt(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "sqrt(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "sqrt(-1)") == (subtitle → "Undefined")
+􀟈  Test case passing 4 arguments text → "ln(0)", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "ln(0)", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .undefined)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "ln(0)", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "ln(0)", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "ln(0)") == (subtitle → "Undefined")
+􀟈  Test case passing 4 arguments text → "log(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "log(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .undefined)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "log(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "log(-1)", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "log(-1)") == (subtitle → "Undefined")
+􀟈  Test case passing 4 arguments text → "(-2)^0.5", state → .undefined, title → "Uh oh", subtitle → "Undefined" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "(-2)^0.5", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .undefined)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "(-2)^0.5", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "(-2)^0.5", state → .undefined, title → "Uh oh", subtitle → "Undefined" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "(-2)^0.5") == (subtitle → "Undefined")
+􀟈  Test case passing 4 arguments text → "9^9^9", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "9^9^9", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .tooLarge)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "9^9^9", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "9^9^9", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "9^9^9") == (subtitle → "Too large")
+􀟈  Test case passing 4 arguments text → "10^1000.5", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "10^1000.5", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .tooLarge)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "10^1000.5", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "10^1000.5", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "10^1000.5") == (subtitle → "Too large")
+􀟈  Test case passing 4 arguments text → "1e9999", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "1e9999", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .tooLarge)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "1e9999", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "1e9999", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "1e9999") == (subtitle → "Too large")
+􀟈  Test case passing 4 arguments text → "1e127 * 10", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "1e127 * 10", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .tooLarge)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "1e127 * 10", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "1e127 * 10", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "1e127 * 10") == (subtitle → "Too large")
+􀟈  Test case passing 4 arguments text → "1e-128 / 10", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "1e-128 / 10", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .tooLarge)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "1e-128 / 10", state → .tooerror: Process '/Applications/Xcode-26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec/swift/pm/swiftpm-testing-helper --test-bundle-path /Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/.build/arm64-apple-macosx/debug/HanaPackageTests.xctest/Contents/MacOS/HanaPackageTests --no-parallel --filter CalculationTests /Users/beamsereeyothin/.codex/worktrees/issue-144-calculator-language/hana/.build/arm64-apple-macosx/debug/HanaPackageTests.xctest/Contents/MacOS/HanaPackageTests --testing-library swift-testing' exited with unexpected signal code 5
+Large, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "1e-128 / 10", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "1e-128 / 10") == (subtitle → "Too large")
+􀟈  Test case passing 4 arguments text → "2^9223372036854775808", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "2^9223372036854775808", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:104:9: Expectation failed: (answer.state → .invalid) == (state → .tooLarge)
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "2^9223372036854775808", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:105:9: Expectation failed: (answer.title → "Not a valid calculation") == (title → "Uh oh")
+􀢄  Test calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) recorded an issue with 4 arguments text → "2^9223372036854775808", state → .tooLarge, title → "Uh oh", subtitle → "Too large" at CalculationTests.swift:106:9: Expectation failed: (answer.subtitle → "2^9223372036854775808") == (subtitle → "Too large")
+􀟈  Test case passing 4 arguments text → "2^-9223372036854775808", state → .tooLarge, title → "Uh oh", subtitle → "Too large" to calculationsWithoutAValueCarryTheirStateAndExactWording(text:state:title:subtitle:) started.

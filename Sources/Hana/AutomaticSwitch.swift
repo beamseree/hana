@@ -516,7 +516,7 @@ struct AutomaticSwitch {
             if agreementLabel == value.verdict.label { agreements += 1 }
             else { agreementLabel = value.verdict.label; agreements = 1 }
         }
-        let required = requiredAgreements(for: value)
+        let required = requiredAgreements
         if (value.agreementCount ?? agreements) < required || !allowingSwitch {
             // Word-paced never resends the same text for a second opinion; the next answer may agree.
             if !isWordPaced { due = now() + max(firingDelay, .milliseconds(150)) }
@@ -768,6 +768,7 @@ struct AutomaticSwitch {
         }
         if case .blocked(let reason) = gate.decision {
             switch reason {
+            case .calculation: row.gateReason = .calculation
             case .oneWord: row.gateReason = .oneWord
             case .collectionUnavailable: row.gateReason = .collectionUnavailable
             case .strongMatch(let kind): row.gateReason = .strongMatch; row.matchedKind = diagnosticKind(kind)
@@ -780,7 +781,7 @@ struct AutomaticSwitch {
             if outcome != .stale { debugReturnReason = nil }
             debugDecision = DebugDecision(value: value, outcome: outcome,
                 reason: debugReason(value, outcome: outcome, error: error),
-                agreement: value.agreementCount ?? agreements, requiredAgreement: requiredAgreements(for: value),
+                agreement: value.agreementCount ?? agreements, requiredAgreement: requiredAgreements,
                 relevance: debugRelevance(value))
         }
         return .record(.verdict(row))
@@ -808,6 +809,7 @@ struct AutomaticSwitch {
         else if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { state = "idle" }
         else if case .blocked(let reason) = gate.decision {
             state = switch reason {
+            case .calculation: "blocked: Calculation"
             case .oneWord: "not sent: one word"
             case .collectionUnavailable: "blocked: collection unavailable"
             case .strongMatch(let kind): "blocked: strong \(diagnosticKind(kind).rawValue) match"
@@ -831,7 +833,7 @@ struct AutomaticSwitch {
         if let candidate {
             decision = DebugDecision(value: candidate, outcome: .blocked,
                 reason: deletionPause == nil ? "waiting for Search results" : "holding correction",
-                agreement: candidate.agreementCount ?? agreements, requiredAgreement: requiredAgreements(for: candidate),
+                agreement: candidate.agreementCount ?? agreements, requiredAgreement: requiredAgreements,
                 relevance: debugRelevance(candidate))
         } else { decision = debugDecision }
         let answer = decision.map { decision in
@@ -860,16 +862,13 @@ struct AutomaticSwitch {
         return current.utf8.starts(with: sent.utf8) ? .prefix : .stale
     }
 
-    private func requiredAgreements(for value: Candidate) -> Int {
-        isWordPaced && (value.verdict.probability ?? 0) < 0.90
-            ? max(2, options.agreeingVerdicts.rawValue) : options.agreeingVerdicts.rawValue
-    }
+    private var requiredAgreements: Int { options.agreeingVerdicts.rawValue }
 
     private func debugReason(_ value: Candidate, outcome: AutomaticSwitchDiagnostics.Outcome,
                              error: AutomaticSwitchDiagnostics.ErrorKind?) -> String {
         switch outcome {
-        case .switched: "switched · agreement \(value.agreementCount ?? agreements)/\(requiredAgreements(for: value))"
-        case .awaitingAgreement: "agreement \(value.agreementCount ?? agreements)/\(requiredAgreements(for: value))"
+        case .switched: "switched · agreement \(value.agreementCount ?? agreements)/\(requiredAgreements)"
+        case .awaitingAgreement: "agreement \(value.agreementCount ?? agreements)/\(requiredAgreements)"
         case .belowThreshold: "below threshold"
         case .unsure: "unsure: staying in Search"
         case .stale: "ignored: stale"
@@ -881,6 +880,7 @@ struct AutomaticSwitch {
         case .blocked:
             if case .blocked(let reason) = gate.decision {
                 switch reason {
+                case .calculation: "blocked: Calculation"
                 case .oneWord: "blocked: one word"
                 case .collectionUnavailable: "blocked: collection unavailable"
                 case .strongMatch(let kind): "blocked: strong \(diagnosticKind(kind).rawValue) match"

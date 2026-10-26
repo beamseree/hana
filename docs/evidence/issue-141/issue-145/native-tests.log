@@ -1,0 +1,40 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/5] Emitting module HanaTests
+[4/5] Compiling HanaTests CalculationAutomaticSwitchInteractionTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking HanaPackageTests
+Build complete! (4.73s)
+Test Suite 'Selected tests' started at 2026-10-16 16:32:45.503.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:32:45.504.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:32:45.504.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:32:45.504.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationAutomaticSwitchInteractionTests started.
+􀟈  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀟈  Test case passing 1 argument firing → .everyKeystroke to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀟈  Test case passing 1 argument firing → .debounced to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀟈  Test case passing 1 argument firing → .onPause to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􀟈  Test case passing 1 argument firing → .wordPaced to enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) started.
+􁁛  Test enterCopiesImmediatelyWhileSourcesLoadWithoutClassifyingOrSaving(firing:) with 4 test cases passed after 3.031 seconds.
+􀟈  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "12 *" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "(3 + 4" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "sqrt" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "1 / 0" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "sqrt(-1)" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "9^9^9" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "3 + * 4" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􀟈  Test case passing 1 argument text → "1..2" to nonValueCalculationsRemainBlockedInTheDebugFooter(_:) started.
+􁁛  Test nonValueCalculationsRemainBlockedInTheDebugFooter(_:) with 8 test cases passed after 2.740 seconds.
+􀟈  Test addingAWordRestoresSuggestionsAndTheClassifier() started.
+􁁛  Test addingAWordRestoresSuggestionsAndTheClassifier() passed after 0.123 seconds.
+􀟈  Test replacingAQueuedSubmissionWithACalculationCopiesWithoutALateSave() started.
+􁁛  Test replacingAQueuedSubmissionWithACalculationCopiesWithoutALateSave() passed after 0.181 seconds.
+􁁛  Suite CalculationAutomaticSwitchInteractionTests passed after 6.078 seconds.
+􁁛  Test run with 4 tests in 1 suite passed after 6.078 seconds.
