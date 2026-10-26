@@ -1,0 +1,68 @@
+Building for debugging...
+[0/5] Write sources
+[1/5] Write swift-version--112E4EF74740DA65.txt
+[3/7] Compiling Hana OpenNoteCaptureValidation.swift
+[4/7] Emitting module Hana
+[4/9] Write Objects.LinkFileList
+[5/9] Linking Hana
+[6/9] Applying Hana
+[8/10] Emitting module HanaTests
+[8/10] Write Objects.LinkFileList
+[9/10] Linking HanaPackageTests
+Build complete! (7.57s)
+Test Suite 'Selected tests' started at 2026-10-16 16:24:12.407.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:24:12.408.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:24:12.408.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:24:12.409.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite CalculationInteractionTests started.
+􀟈  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "12 *", title → "…", subtitle → "Keep typing" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "5 / 0", title → "Uh oh", subtitle → "Can't divide by zero" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􀟈  Test case passing 3 arguments text → "3 + * 4", title → "Not a valid calculation", subtitle → "3 + * 4" to answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) started.
+􁁛  Test answerWithoutAValuePrecedesResultsButDefaultsToOpeningTheFirstResult(text:title:subtitle:) with 3 test cases passed after 0.302 seconds.
+􀟈  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􀟈  Test case passing 1 argument userNavigated → false to completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􀟈  Test case passing 1 argument userNavigated → true to completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) started.
+􁁛  Test completingACalculationSelectsItsValueUnlessTheUserNavigated(userNavigated:) with 2 test cases passed after 0.209 seconds.
+􀟈  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "12 *" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "5 / 0" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􀟈  Test case passing 1 argument text → "3 + * 4" to enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) started.
+􁁛  Test enterOnTheOnlyAnswerWithoutAValueDismissesLikeEscapeWithoutCopying(text:) with 3 test cases passed after 0.235 seconds.
+􀟈  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin() started.
+􁁛  Test enterCopiesTheDefaultAnswerImmediatelyWhileSourcesLoadAndReturnsToTheOrigin() passed after 0.066 seconds.
+􀟈  Test answerStaysAboveLateBatchesAndPreservesAnExplicitResultSelection() started.
+􁁛  Test answerStaysAboveLateBatchesAndPreservesAnExplicitResultSelection() passed after 0.119 seconds.
+􀟈  Test suggestionsReturnAsSoonAsTheTextGainsAWord() started.
+􁁛  Test suggestionsReturnAsSoonAsTheTextGainsAWord() passed after 0.019 seconds.
+􀟈  Test calculationsStayPlainTextInCapture(mode:) started.
+􀟈  Test case passing 1 argument mode → .note to calculationsStayPlainTextInCapture(mode:) started.
+􀟈  Test case passing 1 argument mode → .task to calculationsStayPlainTextInCapture(mode:) started.
+􁁛  Test calculationsStayPlainTextInCapture(mode:) with 2 test cases passed after 0.175 seconds.
+􀟈  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() started.
+􁁛  Test pastedNegativeCalculationWorksAndEditorCopyRemainsOrdinary() passed after 0.058 seconds.
+􁁛  Suite CalculationInteractionTests passed after 1.187 seconds.
+􀟈  Suite MacInteractionTests started.
+􀟈  Test searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "", mode → .search to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "", mode → .note to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "", mode → .task to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "search text", mode → .search to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "search text", mode → .note to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "search text", mode → .task to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "-", mode → .search to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "-", mode → .note to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "-", mode → .task to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􁁛  Test searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) with 9 test cases passed after 0.614 seconds.
+􁁛  Suite MacInteractionTests passed after 0.614 seconds.
+􀟈  Suite MainNoteOrganizationTests started.
+􀟈  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+NATIVE_APP_FIXTURE mode=main-window status=0 marker=main-window.note-menu-assertions-passed sha256=a1fdfc4e5ab92f24096db93cfe91e8a8df688a20e62d05b96344873e6315fe1a
+􁁛  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 3.983 seconds.
+􁁛  Suite MainNoteOrganizationTests passed after 3.983 seconds.
+􁁛  Test run with 10 tests in 3 suites passed after 5.786 seconds.

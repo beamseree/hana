@@ -4,7 +4,7 @@ import Foundation
 enum StrongMatchGate {
     enum Kind: String, Equatable, Sendable { case application, note, task, file }
     enum Reason: Equatable, Sendable {
-        case oneWord, strongMatch(Kind), collectionUnavailable
+        case calculation, oneWord, strongMatch(Kind), collectionUnavailable
     }
     enum Decision: Equatable, Sendable {
         case allowed, blocked(Reason)
@@ -27,7 +27,9 @@ enum StrongMatchGate {
         let started = rawBuffer.drop(while: \.isWhitespace)
         let hasSeparator = started.contains(where: \.isWhitespace)
         var decision: Decision = hasSeparator ? .allowed : .blocked(.oneWord)
-        if titles.status == .unavailable {
+        if Calculation.recognizes(rawBuffer, locale: .current) {
+            decision = .blocked(.calculation)
+        } else if titles.status == .unavailable {
             decision = .blocked(.collectionUnavailable)
         } else if hasSeparator {
             let query = SearchName.normalized(rawBuffer)

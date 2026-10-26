@@ -1,0 +1,38 @@
+{
+  "command": [
+    "xcrun",
+    "swift",
+    "test",
+    "--no-parallel"
+  ],
+  "tested_head": "995b9c69580a8b25a60ba9e0b6a3cc7c72234127",
+  "runnable_source": "d54049ebef3f4674a27840fbfae0c12d3fed7e78",
+  "started_at_utc": "2026-10-16T12:58:35.343376+00:00",
+  "finished_at_utc": "2026-10-16T13:00:50.906144+00:00",
+  "wall_seconds": 135.558,
+  "hard_timeout_seconds": 180,
+  "timed_out": false,
+  "test_process_exit_code": 0,
+  "validation_exit_code": 0,
+  "suite_summary_found": true,
+  "validation_status": "passed",
+  "tests": 646,
+  "suites": 93,
+  "test_seconds": 134.513,
+  "skip_lines": [
+    "\udbc1\ude5f  Test liveIndexedTeQueryOmitsDependencySystemAndApplicationSupportClutter() skipped.",
+    "\udbc1\ude5f  Test liveIndexedFinderQueryReturnsFinder() skipped.",
+    "\udbc1\ude5f  Test indexedShortlistKeepsWordStartsAheadOfMidwordAndExtensionOnlyMatches() skipped.",
+    "\udbc1\ude5f  Test liveIndexedSearchKeepsInputQueueResponsive() skipped.",
+    "\udbc1\ude5f  Test indexedLiteralExactSurvivesMoreThanTwoThousandBroadFalsePositives() skipped.",
+    "\udbc1\ude5f  Test indexedCompactionRetainsASuccessfulUsageWinnerBeyondItsCandidateCap() skipped.",
+    "\udbc1\ude5f  Test indexedReplacementScanNeverTemporarilyRemovesAStillExistingLateMatch() skipped.",
+    "\udbc1\ude5f  Test liveIndexedFixtureMatchesLiteralPunctuationThroughSearch() skipped.",
+    "\udbc1\ude5f  Test allThreeStagesStartBeforeAnyFinishesGathering() skipped.",
+    "\udbc1\ude5f  Test aNameMatchSurvivesThousandsOfExtensionOnlyMatchesInTheShortlist() skipped.",
+    "\udbc1\ude5f  Test indexedHiddenDestinationsAreExcludedAfterShortlisting() skipped."
+  ],
+  "skip_count": 11,
+  "native_slot_released": true,
+  "owned_native_processes_remaining": false
+}

@@ -1,0 +1,487 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Write sources
+[2/8] Write swift-version--112E4EF74740DA65.txt
+[4/11] Compiling Hana NoteCloseValidation.swift
+[5/11] Emitting module Hana
+[6/11] Compiling Hana HanaApp.swift
+[6/11] Write Objects.LinkFileList
+[7/11] Linking Hana
+[8/11] Applying Hana
+[10/92] Compiling HanaTests NotePreviewTests.swift
+[11/92] Compiling HanaTests NoteSaveSafetyNativeTests.swift
+[12/92] Compiling HanaTests NoteSaveSafetyTests.swift
+[13/92] Compiling HanaTests NoteSaveTests.swift
+[14/92] Compiling HanaTests NoteWindowTests.swift
+[15/92] Compiling HanaTests OpenNoteCaptureTests.swift
+[16/92] Compiling HanaTests OpenNoteOrganizationTests.swift
+[17/99] Compiling HanaTests SearchTypingGapTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[18/99] Compiling HanaTests ShortcutMenuTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[19/99] Compiling HanaTests SpotlightStageTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[20/99] Compiling HanaTests StrongMatchGateTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[21/99] Compiling HanaTests SuggestionInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[22/99] Compiling HanaTests TaskLifecycleTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[23/99] Compiling HanaTests TaskOrderingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/ShortcutMenuTests.swift:118:31: warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+116 |         let defaults: UserDefaults
+117 |         init() throws {
+118 |             _ = NSApplication.shared
+    |                               `- warning: main actor-isolated class property 'shared' can not be referenced from a nonisolated context
+119 |             name = "com.beamseree.hana.tests.shortcut.\(UUID().uuidString)"
+120 |             defaults = try #require(UserDefaults(suiteName: name))
+
+/Applications/Xcode-26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:193:61: note: class property declared here
+191 | APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+192 | 
+193 | @property (class, readonly, strong) __kindof NSApplication *sharedApplication;
+    |                                                             `- note: class property declared here
+194 | @property (nullable, weak) id<NSApplicationDelegate> delegate;
+195 | 
+[24/99] Compiling HanaTests OrganizedCollectionFixture.swift
+[25/99] Compiling HanaTests ResultIconsTests.swift
+[26/99] Compiling HanaTests ScriptedClassifier.swift
+[27/99] Compiling HanaTests SearchExclusionTests.swift
+[28/99] Compiling HanaTests SearchRankingTests.swift
+[29/99] Compiling HanaTests SearchResponsivenessTests.swift
+[30/99] Compiling HanaTests SearchTests.swift
+[31/99] Compiling HanaTests CollectionStoreTests.swift
+[32/99] Compiling HanaTests CollectionTitleSourceTests.swift
+[33/99] Compiling HanaTests CompletedArchiveTests.swift
+[34/99] Compiling HanaTests DisplayPlacementTests.swift
+[35/99] Compiling HanaTests IndependentExportDecoder.swift
+[36/99] Compiling HanaTests JevBackoffTests.swift
+[37/99] Compiling HanaTests JevHTTPSessionTests.swift
+[38/99] Compiling HanaTests AutomaticSwitchDebugInteractionTests.swift
+[39/99] Compiling HanaTests AutomaticSwitchDebugTests.swift
+[40/99] Compiling HanaTests AutomaticSwitchDeletionTests.swift
+[41/99] Compiling HanaTests AutomaticSwitchDiagnosticsTests.swift
+[42/99] Compiling HanaTests AutomaticSwitchInteractionTests.swift
+[43/99] Compiling HanaTests AutomaticSwitchReversalOptionsTests.swift
+[44/99] Compiling HanaTests AutomaticSwitchReviewPolicyTests.swift
+[45/99] Compiling HanaTests AutomaticSwitchSessionCountTests.swift
+[46/99] Compiling HanaTests JevKeychainTests.swift
+[47/99] Compiling HanaTests JevRejectionMenuTests.swift
+[48/99] Compiling HanaTests JevRequestActivityTests.swift
+[49/99] Compiling HanaTests JevSharedTransportTests.swift
+[50/99] Compiling HanaTests JevSubmissionNativeTests.swift
+[51/99] Compiling HanaTests JevWordPacedDeletionNativeTests.swift
+[52/99] Compiling HanaTests JevWordPacedNativeFixture.swift
+[53/99] Compiling HanaTests ClassifierMenuTests.swift
+[54/99] Compiling HanaTests CollectionExportHarnessTests.swift
+[55/99] Compiling HanaTests CollectionExportTests.swift
+[56/99] Compiling HanaTests CollectionFixtureHarnessTests.swift
+[57/99] Compiling HanaTests CollectionSnapshotHarnessTests.swift
+[58/99] Compiling HanaTests CollectionSnapshotTests.swift
+[59/99] Compiling HanaTests CollectionStoreOpeningTests.swift
+[60/99] Compiling HanaTests AutomaticSwitchSubmissionTests.swift
+[61/99] Compiling HanaTests AutomaticSwitchTests.swift
+[62/99] Compiling HanaTests AutomaticSwitchWakeUpInteractionTests.swift
+[63/99] Compiling HanaTests AutomaticSwitchWakeUpTests.swift
+[64/99] Compiling HanaTests AutomaticSwitchWithdrawalDiagnosticsTests.swift
+[65/99] Compiling HanaTests AutomaticSwitchWithdrawalTests.swift
+[66/99] Compiling HanaTests AutomaticSwitchWordCacheTests.swift
+[67/99] Compiling HanaTests AutomaticSwitchWordPacedTests.swift
+[68/99] Emitting module HanaTests
+[69/99] Compiling HanaTests JevWordPacedNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[70/99] Compiling HanaTests JevWordPacedWithdrawalNativeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[71/99] Compiling HanaTests MacInteractionTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[72/99] Compiling HanaTests MainNoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[73/99] Compiling HanaTests MainWindowTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[74/99] Compiling HanaTests MarkdownPreviewTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[75/99] Compiling HanaTests ModeIconTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/MacInteractionTests.swift:457:20: warning: 'shouldFail' mutated after capture by sendable closure
+441 |         let a = app("App A", "/Applications/A.app"), b = app("App B", "/Applications/B.app")
+442 |         let search = Search(source: { AsyncStream { $0.yield(.init(results: [b, a], status: .ready)); $0.finish() } }, typingGap: .zero)
+443 |         var shouldFail = true
+    |             `- note: variable defined here
+444 |         let interaction = MacInteraction(search: search, launchApplication: { _ in
+    |                                                                             `- note: variable captured by sendable closure
+445 |             if shouldFail { throw CocoaError(.fileReadNoPermission) }
+    |                `- note: capturing use
+446 |             return .init(activate: { true })
+447 |         })
+    :
+455 |         #expect(last?.results.map(\.id) == [a.id, b.id])
+456 |         #expect(interaction.currentInvocation == invocation)
+457 |         shouldFail = false
+    |                    `- warning: 'shouldFail' mutated after capture by sendable closure
+458 |         await interaction.requestSelectedOpen()?.value
+459 |         for await batch in search.search(.init(text: "App")) { last = batch }
+[76/99] Compiling HanaTests NativeAppFixture.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[77/99] Compiling HanaTests NativeEditingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[78/99] Compiling HanaTests NativeTaskTitleEditor.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[79/99] Compiling HanaTests NoteEditingLifetimeReviewTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[80/99] Compiling HanaTests NoteEditingTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[81/99] Compiling HanaTests NoteModeTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[82/99] Compiling HanaTests NoteOrganizationTests.swift
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:16:18: warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+14 |         var first: NoteEditingSession? = try await editing.open(note.id)
+15 |         var second: NoteEditingSession? = try await editing.open(note.id)
+16 |         weak var released = first
+   |                  `- warning: weak variable 'released' was never mutated; consider changing to 'let' constant [#WeakMutability]
+17 |         #expect(first === second)
+18 |         first = nil
+
+/Users/beamsereeyothin/.codex/worktrees/issue-141-calculator-numeric-fixes/hana/Tests/HanaTests/NoteEditingLifetimeReviewTests.swift:39:18: warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+37 |         let editing = NoteEditing(store: store, clock: TestClock())
+38 |         var session: NoteEditingSession? = try await editing.open(note.id)
+39 |         weak var retained = session
+   |                  `- warning: weak variable 'retained' was never mutated; consider changing to 'let' constant [#WeakMutability]
+40 |         session?.edit("Owned draft after caller release")
+41 |         session = nil
+
+[#WeakMutability]: <https://docs.swift.org/compiler/documentation/diagnostics/weak-mutability>
+[83/99] Compiling HanaTests CalculationAutomaticSwitchInteractionTests.swift
+[84/99] Compiling HanaTests CalculationAutomaticSwitchTests.swift
+[85/99] Compiling HanaTests CalculationInteractionTests.swift
+[86/99] Compiling HanaTests CalculationTests.swift
+[87/99] Compiling HanaTests CaptureSafetyNativeTests.swift
+[88/99] Compiling HanaTests CaptureSafetyTests.swift
+[89/99] Compiling HanaTests CaptureSessionTests.swift
+[90/99] Compiling HanaTests ClassifierAdapterTests.swift
+[91/99] Compiling HanaTests TaskSaveTests.swift
+[92/99] Compiling HanaTests TaskWorkspaceOrderTests.swift
+[93/99] Compiling HanaTests TaskWorkspaceTests.swift
+[94/99] Compiling HanaTests TestClock.swift
+[95/99] Compiling HanaTests TrickyInputCheckTests.swift
+[96/99] Compiling HanaTests WorkingWindowReviewTests.swift
+[97/99] Compiling HanaTests WorkingWindowsValidationTests.swift
+[97/99] Write Objects.LinkFileList
+[98/99] Linking HanaPackageTests
+Build complete! (17.30s)
+Test Suite 'Selected tests' started at 2026-10-16 19:33:19.972.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 19:33:19.973.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 19:33:19.973.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 19:33:19.973.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite NoteSaveSafetyNativeTests started.
+􀟈  Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() started.
+􁁛  Test failureStatusOffersCopyAndRetryOfTheLatestNativeText() passed after 0.493 seconds.
+􀟈  Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+􀟈  Test case passing 1 argument action → .retry to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+NATIVE_APP_FIXTURE mode=note-close status=0 marker=note-close.failed-retry.assertions-passed sha256=bbeae11db835dfc9e0070bc684dea7c478a9ba5de4ed2cfd7a48cbb949b7d0f2
+􀟈  Test case passing 1 argument action → .discardChanges to failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) started.
+NATIVE_APP_FIXTURE mode=note-close status=0 marker=note-close.failed-discard.assertions-passed sha256=609924b181e6f92e277fbd58fc1a2ababe639d69441f664b7e8de3817b5e13d1
+􁁛  Test failedCloseIsHeldUntilRetryOrExplicitDiscard(action:) with 2 test cases passed after 2.821 seconds.
+􀟈  Test quitCancelsOnFailureThenCommitsEveryNoteAndCompositionBeforeClosingTheStore() started.
+􁁛  Test quitCancelsOnFailureThenCommitsEveryNoteAndCompositionBeforeClosingTheStore() passed after 0.318 seconds.
+􀟈  Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() started.
+􁁛  Test aPausedQuitFreezesAlreadyFlushedTextAndBlocksNewWindowsAndBar() passed after 0.266 seconds.
+􀟈  Test pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+􀟈  Test case passing 1 argument discard → false to pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+NATIVE_APP_FIXTURE mode=note-close status=0 marker=note-close.pending-save.assertions-passed sha256=819c38c83218989b79ffed7357ff5061819d1a97776a3cce109fad28ed8d0f57
+􀟈  Test case passing 1 argument discard → true to pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) started.
+NATIVE_APP_FIXTURE mode=note-close status=0 marker=note-close.pending-discard.assertions-passed sha256=9e684f00416d6a158769aecdec1da2ffbcb890b2330cd9b28ec370a72e96f188
+􁁛  Test pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard:) with 2 test cases passed after 2.680 seconds.
+􀟈  Test invalidatedDirtyEditorKeepsCopyableTextAndCannotApproveQuit() started.
+􁁛  Test invalidatedDirtyEditorKeepsCopyableTextAndCannotApproveQuit() passed after 0.248 seconds.
+􀟈  Test quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+􀟈  Test case passing 1 argument fails → false to quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+􀟈  Test case passing 1 argument fails → true to quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) started.
+􁁛  Test quitWaitsForAnAlreadySubmittedCaptureAndRetainsItIfTheSaveFails(fails:) with 2 test cases passed after 0.389 seconds.
+􁁛  Suite NoteSaveSafetyNativeTests passed after 7.219 seconds.
+􁁛  Test run with 7 tests in 1 suite passed after 7.219 seconds.

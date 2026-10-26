@@ -41,39 +41,11 @@ struct NoteSaveSafetyNativeTests {
     }
     @Test(arguments: [NoteSaveAction.retry, .discardChanges])
     func failedCloseIsHeldUntilRetryOrExplicitDiscard(action: NoteSaveAction) async throws {
-        _ = NSApplication.shared
-        let fixture = try TemporaryFixture()
-        defer { try? FileManager.default.removeItem(at: fixture.directory) }
-        let fail = Mutex(false)
-        let store = try await CollectionStore.open(fixture.location, faults: .init(beforeCommit: { _ in
-            if fail.withLock({ $0 }) { throw CollectionStoreError.storageFailure(code: 8) }
-        }))
-        let note = try await store.perform(.createNote(operation: UUID(), body: "Original"), in: store.generation)
-        let interaction = MacInteraction(collection: Task { store })
-        defer { interaction.window(for: .note(note.id))?.close(); interaction.stop() }
-        _ = interaction.open(.main)
-        _ = interaction.open(.note(note.id))
-        try await eventually { interaction.window(for: .note(note.id))?.firstResponder is NSTextView }
-        let window = try #require(interaction.window(for: .note(note.id)))
-        let editor = try #require(window.firstResponder as? NSTextView)
-        fail.withLock { $0 = true }
-        editor.selectAll(nil)
-        editor.insertText("Keep this unsaved text", replacementRange: NSRange(location: NSNotFound, length: 0))
-        await #expect(throws: CollectionStoreError.storageFailure(code: 8)) { try await interaction.noteSession(note.id)?.flush() }
-        window.performClose(nil)
-        try await eventually { interaction.noteCloseIsHeld(note.id) && window.attachedSheet != nil }
-        #expect(interaction.window(for: .note(note.id)) === window)
-        #expect(interaction.noteActions(note.id) == [.retry, .copyText, .discardChanges])
-        await withRestoredPasteboard {
-            await interaction.performNoteAction(.copyText, id: note.id)
-            #expect(NSPasteboard.general.string(forType: .string) == "Keep this unsaved text")
-            #expect(interaction.window(for: .note(note.id)) === window)
-        }
-        if action == .retry { fail.withLock { $0 = false } }
-        await interaction.performNoteAction(action, id: note.id)
-        try await eventually { interaction.window(for: .note(note.id)) == nil }
-        #expect(try await store.read(.note(note.id), in: store.generation)?.body == (action == .retry ? "Keep this unsaved text" : "Original"))
-        await store.close()
+        // Actual close/sheet dispatch can drain SwiftPM's async-main host.
+        // Keep every native assertion in the owned NSApplication.run child.
+        let scenario = action == .retry ? "failed-retry" : "failed-discard"
+        try await NativeAppFixture.run(.noteClose, requiring: "note-close.\(scenario).assertions-passed",
+                                       arguments: ["--note-close-scenario", scenario])
     }
 
     @Test func quitCancelsOnFailureThenCommitsEveryNoteAndCompositionBeforeClosingTheStore() async throws {
@@ -178,37 +150,9 @@ struct NoteSaveSafetyNativeTests {
 
     @Test(arguments: [false, true])
     func pendingCloseOffersChoicesAndDiscardCancelsItsUncommittedText(discard: Bool) async throws {
-        _ = NSApplication.shared
-        let fixture = try TemporaryFixture()
-        defer { try? FileManager.default.removeItem(at: fixture.directory) }
-        let enabled = Mutex(false)
-        let gate = CommitGate()
-        let store = try await CollectionStore.open(fixture.location, faults: .init(beforeCommit: { _ in
-            if enabled.withLock({ $0 }) { gate.pass() }
-        }))
-        let note = try await store.perform(.createNote(operation: UUID(), body: "Original"), in: store.generation)
-        let interaction = MacInteraction(collection: Task { store })
-        defer { gate.open(); interaction.window(for: .note(note.id))?.close(); interaction.stop() }
-        _ = interaction.open(.main)
-        _ = interaction.open(.note(note.id))
-        try await eventually { interaction.window(for: .note(note.id))?.firstResponder is NSTextView }
-        let window = try #require(interaction.window(for: .note(note.id)))
-        let editor = try #require(window.firstResponder as? NSTextView)
-        enabled.withLock { $0 = true }
-        editor.selectAll(nil)
-        editor.insertText("Pending close", replacementRange: NSRange(location: NSNotFound, length: 0))
-        window.performClose(nil)
-        try await eventually { gate.arrivals == 1 && interaction.noteCloseIsHeld(note.id) && window.attachedSheet != nil }
-        try await eventually { interaction.noteSaveStatus(note.id) == "Saving…" }
-        #expect(interaction.noteActions(note.id) == [.retry, .copyText, .discardChanges])
-        #expect(NSApp.activationPolicy() == .regular)
-        if discard { await interaction.performNoteAction(.discardChanges, id: note.id) }
-        gate.open()
-        try await eventually { interaction.window(for: .note(note.id)) == nil }
-        await store.close()
-        let reopened = try await CollectionStore.open(fixture.location)
-        #expect(try await reopened.read(.note(note.id), in: reopened.generation)?.body == (discard ? "Original" : "Pending close"))
-        await reopened.close()
+        let scenario = discard ? "pending-discard" : "pending-save"
+        try await NativeAppFixture.run(.noteClose, requiring: "note-close.\(scenario).assertions-passed",
+                                       arguments: ["--note-close-scenario", scenario])
     }
 
     @Test func invalidatedDirtyEditorKeepsCopyableTextAndCannotApproveQuit() async throws {

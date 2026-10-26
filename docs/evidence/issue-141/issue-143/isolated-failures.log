@@ -1,0 +1,34 @@
+Building for debugging...
+[0/4] Write swift-version--112E4EF74740DA65.txt
+Build complete! (0.13s)
+Test Suite 'Selected tests' started at 2026-10-16 16:22:15.049.
+Test Suite 'HanaPackageTests.xctest' started at 2026-10-16 16:22:15.050.
+Test Suite 'HanaPackageTests.xctest' passed at 2026-10-16 16:22:15.050.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-16 16:22:15.050.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+􀟈  Test run started.
+􀄵  Testing Library Version: 1902
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite MacInteractionTests started.
+􀟈  Test searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "", mode → .search to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "", mode → .note to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "", mode → .task to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "search text", mode → .search to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "search text", mode → .note to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "search text", mode → .task to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "-", mode → .search to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀟈  Test case passing 2 arguments text → "-", mode → .note to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀢄  Test searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) recorded an issue with 2 arguments text → "-", mode → .note at MacInteractionTests.swift:349:6: Caught error: Error Domain=NSCocoaErrorDomain Code=4866 "The data couldn’t be written because it isn’t in the correct format."
+􀟈  Test case passing 2 arguments text → "-", mode → .task to searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) started.
+􀢄  Test searchShortcutClosesTheBarAndReopensEmptySearch(text:mode:) with 9 test cases failed after 0.653 seconds with 1 issue.
+􀢄  Suite MacInteractionTests failed after 0.654 seconds with 1 issue.
+􀄵  // Real AppKit presentation through the agreed module boundary. These checks do
+􀄵  // not claim that macOS routed a physical keystroke or restored a foreign editor.
+􀟈  Suite MainNoteOrganizationTests started.
+􀟈  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() started.
+NATIVE_APP_FIXTURE mode=main-window status=0 marker=main-window.note-menu-assertions-passed sha256=902c59866b1480f623163915889698221a259a25ce9e472789d3051888f1b755
+􁁛  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 4.051 seconds.
+􁁛  Suite MainNoteOrganizationTests passed after 4.051 seconds.
+􀢄  Test run with 2 tests in 2 suites failed after 4.705 seconds with 1 issue.
