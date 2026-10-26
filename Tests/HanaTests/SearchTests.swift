@@ -383,6 +383,23 @@ struct SearchTests {
         #expect(removed?.results.isEmpty == true)
     }
 
+    @Test func snapshotsReadByOneBatchAreNotRepeatedInTheNext() async throws {
+        let apps = CatalogFeed(), files = CatalogFeed()
+        let application = app("Notes", "/Applications/Notes.app")
+        let file = SearchResult(name: "Notes.txt", url: URL(fileURLWithPath: "/fixture/Notes.txt"), kind: .file)
+        let search = Search(source: { apps.stream() }, files: { _ in files.stream() }, typingGap: .zero)
+        var iterator = search.search(.init(text: "Notes")).makeAsyncIterator()
+        try await eventually { apps.subscriptionCount == 1 && files.subscriptionCount == 1 }
+        // Both arrive before the batch loop reads the sources, so one batch
+        // already shows both; the second snapshot's signal is still pending.
+        await apps.send([application]); await files.send([file])
+        var batch = await iterator.next()
+        while batch?.status != .ready { batch = await iterator.next() }
+        #expect(batch?.results == [application, file])
+        await files.send([])
+        #expect(await iterator.next()?.results == [application])
+    }
+
     @Test func successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() async {
         let exact = app("App", "/Applications/App.app")
         let preferred = app("App Z", "/Applications/App Z.app")
