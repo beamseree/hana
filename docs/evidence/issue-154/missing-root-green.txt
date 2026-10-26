@@ -1,0 +1,4 @@
+􀟈  Test run started.
+􀟈  Test catalogFindsApplicationsInARootCreatedAfterLaunch() started.
+􁁛  Test catalogFindsApplicationsInARootCreatedAfterLaunch() passed after 1.765 seconds.
+􁁛  Test run with 1 test in 1 suite passed after 1.766 seconds.

@@ -1,0 +1,14 @@
+base 1 {"archiveRows":0,"event":"main-window.validation-failed","inboxRows":0,"step":"menu-pin","storedArchivedNotes":0,"storedArchivedTasks":0,"taskBusy":false,"time":"2026-10-26T02:51:22Z","uptime":9468881.6828629598}
+base 1 􀢄  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() failed after 6.209 seconds with 1 issue.
+base 2 􁁛  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 3.997 seconds.
+base 3 {"archiveRows":0,"event":"main-window.validation-failed","inboxRows":0,"step":"menu-pin","storedArchivedNotes":0,"storedArchivedTasks":0,"taskBusy":false,"time":"2026-10-26T02:51:34Z","uptime":9468893.2274315432}
+base 3 􀢄  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() failed after 6.306 seconds with 1 issue.
+base 4 􁁛  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() passed after 4.125 seconds.
+base 5 {"archiveRows":0,"event":"main-window.validation-failed","inboxRows":0,"step":"menu-pin","storedArchivedNotes":0,"storedArchivedTasks":0,"taskBusy":false,"time":"2026-10-26T02:51:46Z","uptime":9468905.0442917086}
+base 5 􀢄  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() failed after 6.309 seconds with 1 issue.
+base 6 {"archiveRows":0,"event":"main-window.validation-failed","inboxRows":0,"step":"menu-pin","storedArchivedNotes":0,"storedArchivedTasks":0,"taskBusy":false,"time":"2026-10-26T02:51:53Z","uptime":9468911.8976691663}
+base 6 􀢄  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() failed after 6.235 seconds with 1 issue.
+base 7 {"archiveRows":0,"event":"main-window.validation-failed","inboxRows":0,"step":"main-key","storedArchivedNotes":0,"storedArchivedTasks":0,"taskBusy":false,"time":"2026-10-26T02:51:59Z","uptime":9468918.6113093756}
+base 7 􀢄  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() failed after 6.090 seconds with 1 issue.
+base 8 {"archiveRows":0,"event":"main-window.validation-failed","inboxRows":0,"step":"menu-pin","storedArchivedNotes":0,"storedArchivedTasks":0,"taskBusy":false,"time":"2026-10-26T02:52:06Z","uptime":9468925.6716781668}
+base 8 􀢄  Test noteMenusActOnSelectionAndHaveKeyboardEquivalents() failed after 6.463 seconds with 1 issue.

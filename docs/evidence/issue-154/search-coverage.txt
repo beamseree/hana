@@ -1,0 +1,12 @@
+􀟈  Test run started.
+􀟈  Suite SearchTests started.
+􀟈  Test catalogRefreshesAnActiveQueryAfterRename() started.
+􀟈  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() started.
+􀟈  Test catalogRefreshesAnActiveQueryForAnOrganizationalFolder() started.
+􀟈  Test catalogRefreshesAnActiveQueryAfterAnInfoPlistNameChange() started.
+􁁛  Test catalogRefreshesAnActiveQueryAfterRename() passed after 0.576 seconds.
+􁁛  Test catalogRefreshesAnActiveQueryAfterAnInfoPlistNameChange() passed after 0.796 seconds.
+􁁛  Test catalogRefreshesAnActiveQueryForAnOrganizationalFolder() passed after 1.239 seconds.
+􁁛  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() passed after 1.456 seconds.
+􁁛  Suite SearchTests passed after 1.456 seconds.
+􁁛  Test run with 4 tests in 1 suite passed after 1.456 seconds.
