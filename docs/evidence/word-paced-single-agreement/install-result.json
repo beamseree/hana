@@ -1,0 +1,13 @@
+{
+  "installed_app": "/Users/beamsereeyothin/Applications/Hana.app",
+  "pids": [
+    "22739"
+  ],
+  "commands": [
+    "/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana"
+  ],
+  "executable_sha256": "a0e48a8d4d39a9655846b11fe5d4e8886aa4cf6983f47f3b4dc04c8bf676d9b5",
+  "built_matches_installed": true,
+  "previous_app_backup": "/private/tmp/claude-501/-Users-beamsereeyothin-Documents-Projects-hana--claude-worktrees-jev-classification-agreements-9528c5/997755f1-e70f-4c99-b3d8-1538228f26a4/scratchpad/hana-word-paced-single-agreement-previous-6qV4TAYl/Hana.app",
+  "native_tests_run": false
+}

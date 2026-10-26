@@ -74,7 +74,7 @@ struct AutomaticSwitchDebugTests {
     }
 
     @Test func agreementAndWaitingForSourcesShowTheActualAnswer() throws {
-        var h = Harness()
+        var h = Harness { $0.agreeingVerdicts = .two }
         let id = try #require(requests(h.edit("call mom ")).first)
         _ = h.answer(id, .note, 0.86)
         let first = try #require(h.policy.debugSnapshot.answer)
@@ -173,10 +173,11 @@ struct AutomaticSwitchDebugTests {
         let clock = TestClock()
         let memory: JevLaunchMemory
         var policy: AutomaticSwitch
-        init(memory: JevLaunchMemory = JevLaunchMemory()) {
+        init(memory: JevLaunchMemory = JevLaunchMemory(), _ configure: (inout AutomaticSwitchOptions) -> Void = { _ in }) {
             self.memory = memory
             var options = AutomaticSwitchOptions()
             options.isEnabled = true; options.classifier = .jev; options.firing = .wordPaced
+            configure(&options)
             let clock = clock
             policy = AutomaticSwitch(options: options, memory: memory, now: { clock.now.offset })
             _ = policy.handle(.invoked)

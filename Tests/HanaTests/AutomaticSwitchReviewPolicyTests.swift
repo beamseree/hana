@@ -6,8 +6,8 @@ import Testing
 @Suite @MainActor
 struct AutomaticSwitchReviewPolicyTests {
     @Test(arguments: ["buy milk ", "call mo "])
-    func replacingThePreviousAnswersWordsBreaksBorderlineAgreement(replacement: String) throws {
-        var h = Harness()
+    func replacingThePreviousAnswersWordsBreaksAgreement(replacement: String) throws {
+        var h = Harness { $0.agreeingVerdicts = .two }
         let first = try #require(requests(h.edit("call mom ")).first?.id)
         #expect(modes(h.answer(first)).isEmpty)
         #expect(requests(h.edit(replacement, replacement: true)).isEmpty)
@@ -50,9 +50,10 @@ struct AutomaticSwitchReviewPolicyTests {
     private struct Harness {
         let clock = TestClock()
         var policy: AutomaticSwitch
-        init(memory: JevLaunchMemory = JevLaunchMemory()) {
+        init(memory: JevLaunchMemory = JevLaunchMemory(), _ configure: (inout AutomaticSwitchOptions) -> Void = { _ in }) {
             var options = AutomaticSwitchOptions()
             options.isEnabled = true; options.classifier = .jev; options.firing = .wordPaced
+            configure(&options)
             let clock = clock
             policy = AutomaticSwitch(options: options, memory: memory, now: { clock.now.offset })
             _ = policy.handle(.invoked)
