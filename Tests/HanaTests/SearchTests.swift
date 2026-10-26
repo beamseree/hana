@@ -399,9 +399,7 @@ struct SearchTests {
         // may be reported more than once.
         try await Task.sleep(for: .seconds(1))
         try FileManager.default.createDirectory(at: root.appendingPathComponent("Late.app"), withIntermediateDirectories: false)
-        var batch = await iterator.next()
-        while let names = batch?.results.map(\.name), names != ["Late"] { batch = await iterator.next() }
-        #expect(batch?.results.map(\.name) == ["Late"])
+        #expect(await advance(&iterator, toNames: ["Late"]) != nil)
     }
 
     @Test func catalogRefreshesAnActiveQueryAfterRename() async throws {
@@ -415,8 +413,7 @@ struct SearchTests {
         while batch?.status == .loading { batch = await iterator.next() }
         #expect(batch?.results.map(\.name) == ["Before Rename"])
         try FileManager.default.moveItem(at: original, to: root.appendingPathComponent("After Rename.app"))
-        let renamed = await iterator.next()
-        #expect(renamed?.results.map(\.name) == ["After Rename"])
+        #expect(await advance(&iterator, toNames: ["After Rename"]) != nil)
     }
 
     @Test func catalogRefreshesAnActiveQueryForAnOrganizationalFolder() async throws {
@@ -428,11 +425,9 @@ struct SearchTests {
         while let batch = await iterator.next(), batch.status == .loading {}
         let folder = root.appendingPathComponent("Suite")
         try FileManager.default.createDirectory(at: folder.appendingPathComponent("Tools/Nested.app"), withIntermediateDirectories: true)
-        let added = await iterator.next()
-        #expect(added?.results.map(\.name) == ["Nested"])
+        #expect(await advance(&iterator, toNames: ["Nested"]) != nil)
         try FileManager.default.removeItem(at: folder)
-        let removed = await iterator.next()
-        #expect(removed?.results.isEmpty == true)
+        #expect(await advance(&iterator, toNames: []) != nil)
     }
 
     @Test func catalogRefreshesAnActiveQueryAfterAnInfoPlistNameChange() async throws {
@@ -451,8 +446,7 @@ struct SearchTests {
         while batch?.status == .loading { batch = await iterator.next() }
         #expect(batch?.results.map(\.name) == ["Old Name"])
         try writeName("New Name")
-        let renamed = await iterator.next()
-        #expect(renamed?.results.map(\.name) == ["New Name"])
+        #expect(await advance(&iterator, toNames: ["New Name"]) != nil)
     }
 
     @Test func successfulUseOnlyReordersWithinNameTiersAndDeliveryIsBounded() async {
@@ -511,6 +505,16 @@ struct SearchTests {
         for await batch in search.search(.init(text: "notes")) { last = batch }
         #expect(last?.results.map(\.name) == ["Notes", "Notes Pro", "My Notes"])
     }
+}
+
+/// Advances to the first batch listing exactly these names. Search can
+/// deliver one source snapshot in two batches, so the next batch after a
+/// change need not be the first to show it; the suite's time limit bounds the wait.
+private func advance(_ iterator: inout Search.Batches.AsyncIterator, toNames names: [String]) async -> Search.Batch? {
+    while let batch = await iterator.next() {
+        if batch.results.map(\.name) == names { return batch }
+    }
+    return nil
 }
 
 func app(_ name: String, _ path: String) -> SearchResult {
