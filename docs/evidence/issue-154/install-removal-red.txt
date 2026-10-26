@@ -1,0 +1,2 @@
+Existing installation-and-removal test, one of three parallel runs, before rescans stopped publishing unchanged snapshots. The fixture root's own creation, made just before watching began, was reported late; its rescan published an identical empty snapshot, read as the installation's batch.
+􀢄  Test catalogRefreshesAnActiveQueryAfterInstallationAndRemoval() recorded an issue at SearchTests.swift:380:9: Expectation failed: (added?.results.map(\.name) → []) == ["Added"]

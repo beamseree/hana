@@ -1,0 +1,4 @@
+Two of three parallel runs of the catalog and Search suites, before the minimum rescan interval (one batch every FSEvents latency window).
+􀢄  Test aLongInstallationRescansAtABoundedRate() recorded an issue at ApplicationCatalogTests.swift:63:9: Expectation failed: (catalog.scans - settled → 7) <= 4
+􀢄  Test aLongInstallationRescansAtABoundedRate() recorded an issue at ApplicationCatalogTests.swift:63:9: Expectation failed: (catalog.scans - settled → 9) <= 4
+An earlier run passed with 1–2 rescans only because fseventsd stalled delivery to every client and then flushed the whole burst at once.
