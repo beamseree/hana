@@ -86,6 +86,9 @@ final class Search {
         var freshApps: [SearchResult] = []
         var freshFiles: [SearchResult] = []
         var visibleIDs: Set<SearchResult.ID>
+        /// Snapshots received so far. A batch that read them all already
+        /// shows any snapshot whose signal is still pending.
+        private(set) var received = 0
         init(apps: [SearchResult], files: [SearchResult], hasFiles: Bool) {
             self.apps = SourceSnapshot(results: apps, status: .loading)
             self.files = SourceSnapshot(results: files, status: hasFiles ? .loading : .ready)
@@ -98,6 +101,7 @@ final class Search {
             let retained = snapshot.status == .loading
                 ? previous.results.filter { visibleIDs.contains($0.id) && !freshIDs.contains($0.id) } : []
             self[keyPath: key] = SourceSnapshot(results: snapshot.results + retained, status: snapshot.status)
+            received += 1
         }
     }
     // Only previously visible matches, with source ownership kept for replacement.
@@ -215,8 +219,13 @@ final class Search {
             }
             let completion = Task { await apps.value; await metadata.value; sink.finish() }
             defer { apps.cancel(); metadata.cancel(); completion.cancel(); sink.finish() }
+            // The initial batch read no snapshot. Snapshots can arrive between a
+            // signal and the read it wakes, so skip a read with nothing new.
+            var read = 0
             for await _ in updates {
                 guard !Task.isCancelled, self?.generation == request.generation else { return }
+                guard state.received != read else { continue }
+                read = state.received
                 let appSnapshot = state.apps, fileSnapshot = state.files
                 let usage = self?.usage ?? [:]
                 let appResults = appSnapshot.results, fileResults = fileSnapshot.results
