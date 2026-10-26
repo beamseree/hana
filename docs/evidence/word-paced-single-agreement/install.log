@@ -1,0 +1,37 @@
+Native installation slot acquired.
+Previous app bundle retained at /private/tmp/claude-501/-Users-beamsereeyothin-Documents-Projects-hana--claude-worktrees-jev-classification-agreements-9528c5/997755f1-e70f-4c99-b3d8-1538228f26a4/scratchpad/hana-word-paced-single-agreement-previous-6qV4TAYl/Hana.app
+Quitting the existing installed Hana normally.
+Hana quit.
+[0/1] Planning build
+Building for production...
+[0/2] Write swift-version--112E4EF74740DA65.txt
+Build complete! (2.76s)
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/jev-classification-agreements-9528c5/build/Hana.app/Contents/Info.plist: OK
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/jev-classification-agreements-9528c5/build/Hana.app: replacing existing signature
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/jev-classification-agreements-9528c5/build/Hana.app: valid on disk
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/jev-classification-agreements-9528c5/build/Hana.app: satisfies its Designated Requirement
+Hana signing identity: 5C1F81113ECCDB4AE9B6D5C89AA22B045A29417B
+designated => identifier "com.beamseree.hana" and certificate leaf = H"5c1f81113eccdb4ae9b6d5c89aa22b045a29417b"
+/Users/beamsereeyothin/Documents/Projects/hana/.claude/worktrees/jev-classification-agreements-9528c5/build/Hana.app
+/Users/beamsereeyothin/Applications/Hana.app: valid on disk
+/Users/beamsereeyothin/Applications/Hana.app: satisfies its Designated Requirement
+/Users/beamsereeyothin/Applications/Hana.app: valid on disk
+/Users/beamsereeyothin/Applications/Hana.app: satisfies its Designated Requirement
+designated => identifier "com.beamseree.hana" and certificate leaf = H"5c1f81113eccdb4ae9b6d5c89aa22b045a29417b"
+built executable sha256: a0e48a8d4d39a9655846b11fe5d4e8886aa4cf6983f47f3b4dc04c8bf676d9b5
+installed executable sha256: a0e48a8d4d39a9655846b11fe5d4e8886aa4cf6983f47f3b4dc04c8bf676d9b5
+Built and installed executables match.
+{
+  "installed_app": "/Users/beamsereeyothin/Applications/Hana.app",
+  "pids": [
+    "22739"
+  ],
+  "commands": [
+    "/Users/beamsereeyothin/Applications/Hana.app/Contents/MacOS/Hana"
+  ],
+  "executable_sha256": "a0e48a8d4d39a9655846b11fe5d4e8886aa4cf6983f47f3b4dc04c8bf676d9b5",
+  "built_matches_installed": true,
+  "previous_app_backup": "/private/tmp/claude-501/-Users-beamsereeyothin-Documents-Projects-hana--claude-worktrees-jev-classification-agreements-9528c5/997755f1-e70f-4c99-b3d8-1538228f26a4/scratchpad/hana-word-paced-single-agreement-previous-6qV4TAYl/Hana.app",
+  "native_tests_run": false
+}
+Native installation slot released.

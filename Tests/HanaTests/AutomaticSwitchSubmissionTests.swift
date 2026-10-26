@@ -75,8 +75,15 @@ struct AutomaticSwitchSubmissionTests {
         #expect(!h.policy.isAwaitingSubmission && h.policy.submissionOutcome == .undecided)
     }
 
-    @Test func aSingleModerateConfidenceAnswerDoesNotBypassWordPacedAgreement() throws {
+    @Test func aSingleModerateConfidenceAnswerSavesWithOneAgreeingVerdict() throws {
         var h = Harness()
+        _ = h.edit("call mom tomorrow")
+        let id = try #require(requests(h.policy.handle(.submitRequested)).first?.id)
+        #expect(commits(h.answer(id, .task, probability: 0.8)) == ["call mom tomorrow"])
+    }
+
+    @Test func aSingleAnswerDoesNotBypassTwoAgreeingVerdicts() throws {
+        var h = Harness { $0.agreeingVerdicts = .two }
         _ = h.edit("call mom tomorrow")
         let id = try #require(requests(h.policy.handle(.submitRequested)).first?.id)
         #expect(commits(h.answer(id, .task, probability: 0.8)).isEmpty)
@@ -84,7 +91,7 @@ struct AutomaticSwitchSubmissionTests {
     }
 
     @Test func reusingTheSameAnswerOnEnterCannotManufactureAgreement() throws {
-        var h = Harness()
+        var h = Harness { $0.agreeingVerdicts = .two }
         let id = try #require(requests(h.edit("call mom tomorrow ")).first?.id)
         #expect(modes(h.answer(id, .task, probability: 0.8)).isEmpty)
         let effects = h.policy.handle(.submitRequested)
